@@ -20,6 +20,8 @@ ihren Heften. Die App läuft als Serveranwendung auf dem Schulserver.
 3. **Phase 3 – Inhalte:** Arbeitsblatt-Generatoren, Ton und Vorlesen,
    Vorlagen-Katalog, persönliches Regal, Teilen im Kollegium.
 
+Der ausführliche Plan steht in [docs/konzept.md](docs/konzept.md).
+
 <!-- schulplattform:installation -->
 ## Installation
 
