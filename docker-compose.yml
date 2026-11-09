@@ -16,8 +16,17 @@ services:
       SESSION_SECRET_FILE: /run/secrets/session-key
       BASE_URL: ${BASE_URL:-http://localhost:3000}
       GRUNDSCHULBUCH_DATA_DIR: /data
+      GRUNDSCHULBUCH_ASSET_DIR: /assets
+      SCHOOL_END_HOUR: ${SCHOOL_END_HOUR:-16}
+      GALLERY_ORIGIN: ${GALLERY_ORIGIN:-}
+      WOERTERBUCH_ORIGIN: ${WOERTERBUCH_ORIGIN:-}
+      AI_PROVIDER: ${AI_PROVIDER:-compatible}
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_MODEL: ${AI_MODEL:-}
+      AI_API_KEY_FILE: ${AI_API_KEY_FILE:-}
     volumes:
       - data:/data
+      - ${GRUNDSCHULBUCH_ASSET_DIR:-./public/inhalte}:/assets:ro
       - ${GRUNDSCHULBUCH_SECRET_FILE:?private session key file required}:/run/secrets/session-key:ro
     ports: ["127.0.0.1:${GRUNDSCHULBUCH_PORT:-3000}:3000"]
     healthcheck:

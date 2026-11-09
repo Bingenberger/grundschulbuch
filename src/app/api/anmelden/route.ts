@@ -1,3 +1,4 @@
+import { stopChildSession } from '@/lib/child-auth';
 import { NextResponse } from 'next/server';
 import { login } from '@/lib/accounts.mjs';
 import { fromOwnOrigin, jsonError, startSession } from '@/lib/auth';
@@ -14,6 +15,7 @@ export async function POST(request: Request) {
       : jsonError('Name oder PIN stimmt nicht.', 401);
   }
   const response = NextResponse.json({ user: result.user });
+  await stopChildSession(response);
   await startSession(response, result.user.id);
   return response;
 }

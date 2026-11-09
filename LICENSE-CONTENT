@@ -6,6 +6,11 @@ Vorlagen, Lineaturen, Symbole und andere mitgelieferte Unterrichtsinhalte
 unter der Creative-Commons-Lizenz Namensnennung 4.0 International
 (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/deed.de
 
+Diese Inhaltslizenz gilt ebenfalls für die Unterrichtsinhalte, die durch
+src/lib/learning/templates.ts und worksheets.ts erzeugt werden, sowie die
+Wortlistendaten in src/lib/learning/words.ts. Der erzeugende Programmcode
+selbst bleibt unter der AGPL-3.0 lizenziert.
+
 Namensnennung: „Grundschulbuch – https://github.com/Bingenberger/grundschulbuch“
 
 Der Programmcode steht unter der GNU Affero General Public License 3.0

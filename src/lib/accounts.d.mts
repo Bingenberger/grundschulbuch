@@ -11,3 +11,6 @@ export function login(name: unknown, pin: unknown): Promise<LoginResult>;
 export function redeemOneTimeCode(name: unknown, code: unknown, pin: string): Promise<LoginResult>;
 export function findAccount(id: string): Promise<PublicAccount | null>;
 export function readAccounts(): Promise<{ version: 1; users: unknown[] }>;
+
+export function listPublicAccounts(): Promise<PublicAccount[]>;
+export function setAccountBlocked(name: string, blocked: boolean): Promise<PublicAccount>;

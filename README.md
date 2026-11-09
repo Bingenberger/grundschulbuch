@@ -5,11 +5,13 @@ Texten, Bildern und Zeichnungen, zeigen sie an der interaktiven Tafel und
 drucken sie aus. Kinder arbeiten auf geteilten iPads mit eigenem Zugang in
 ihren Heften. Die App läuft als Serveranwendung auf dem Schulserver.
 
-> **Stand:** Grundgerüst. Vorhanden sind Anmeldung der Lehrkräfte, Datenspeicher
-> und Betrieb nach dem Vertrag der Schulplattform. Regal, Seiten, Lineaturen und
-> der Zugang für Kinder folgen.
+> **Stand:** Hefteditor, Klassen und Kinderzugang sowie Arbeitsblatt-Generatoren,
+> Ton, Sammlungen, interaktive Übungen, Schul- und Musikwerkzeuge sowie portable
+> Exporte sind implementiert. Referenzumfang und Unterschiede:
+> [Funktionsvergleich](docs/funktionsvergleich.md). Geräteabnahme:
+> [Umsetzung und Abnahme](docs/umsetzung.md).
 
-## Geplanter Umfang
+## Funktionsumfang
 
 1. **Phase 1 – Lehrkräfte:** Regal mit Heften, A4-Seiten mit Grundschul-Lineaturen,
    Text, Bild und Zeichnung frei auf der Seite, Schulschriften, Tafelmodus,
@@ -19,6 +21,11 @@ ihren Heften. Die App läuft als Serveranwendung auf dem Schulserver.
    einsehen.
 3. **Phase 3 – Inhalte:** Arbeitsblatt-Generatoren, Ton und Vorlesen,
    Vorlagen-Katalog, persönliches Regal, Teilen im Kollegium.
+
+Hinzu kommen 48 Arbeitsblatt-Formate, Kommunikationstafeln, Timer, Musikwerkzeuge,
+Animation/Diaschau, Ordner und Regalsicherungen sowie PDF-Import und HTML-/ePub-/SCORM-Export.
+Der optionale KI-Adapter ist standardmäßig inaktiv; Betreiberkonfiguration:
+[KI-Dienst](docs/ki.md).
 
 Der ausführliche Plan steht in [docs/konzept.md](docs/konzept.md).
 
@@ -60,6 +67,22 @@ npm run dev
 ```
 
 Prüfungen: `npm run typecheck`, `npm run lint`, `npm test`.
+Browsertests nach `npm run build -- --webpack` und `npx playwright install chromium`:
+`npm run test:e2e`. Sie nutzen ausschließlich ein temporäres Testverzeichnis.
+
+Lehrkräfte starten unter `/`, die Kinder unter `/kinder`. Klassen und Karten
+werden unter „Meine Klassen“ verwaltet. Die vollständige Bedienübersicht steht
+in [docs/umsetzung.md](docs/umsetzung.md).
+
+Konten anlegen/PIN zurücksetzen: wie bisher `node scripts/bootstrap.mjs NAME`.
+Sperren und Entsperren auf dem Server:
+
+```sh
+node scripts/accounts.mjs sperren "Frau Beispiel"
+node scripts/accounts.mjs entsperren "Frau Beispiel"
+```
+
+Das letzte aktive Admin-Konto kann nicht gesperrt werden.
 
 **Zielgeräte:** iPads mit Safari (Kinder) und interaktive Tafeln von iiyama mit
 einem älteren Browser. Deshalb nur breit unterstütztes CSS verwenden, z. B.

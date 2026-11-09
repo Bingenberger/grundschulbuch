@@ -30,6 +30,39 @@ Alle Dateien werden über eine temporäre Datei mit `fsync` und `rename` atomar
 ersetzt. Schreiber halten eine prozessübergreifende Sperre. Sperren beendeter
 Prozesse werden anhand der PID erkannt und freigegeben.
 
+Zusätzlich werden die folgenden Verzeichnisse bei Bedarf angelegt (additiv zu Schema 1):
+
+| Pfad | Inhalt |
+| --- | --- |
+| `hefte/<id>/heft.json`, `seiten/<id>.json` | Eigentum, Seitenreihenfolge und seitenweise versionierte Inhalte |
+| `medien/`, `medien/rechte/` | Bilder (normalisierte WebP), Ton und Medienberechtigungen je Konto |
+| `vorlagen/`, `sammlungen/` | Eigene Seitenvorlagen und wiederverwendbare Elemente |
+| `klassen/` | Klassen, Kinderkürzel, HMAC-Kartenwerte, Kartenversionen und Bildfreigaben |
+| `kinder-sitzungen/`, `hilfscodes/`, `kinder-versuche.json` | Kinderzugang, kurzlebige Hilfscodes und Begrenzung der Anmeldeversuche |
+| `transfers/` | Auf zehn Minuten begrenzte Smartphone-Uploads |
+
+Seiten enthalten feste Millimeterkoordinaten, keine eingebetteten Medien.
+Seiten- und Heftänderungen halten dieselbe Heftsperre. Veraltete Versionen
+führen zu HTTP 409. Medien können nur von ausdrücklich berechtigten Konten
+gelesen werden. Bilder werden dekodiert, ausgerichtet und ohne EXIF-Daten als
+WebP gespeichert (maximal 12 MB Eingang, 40 Millionen Pixel). Tondateien sind
+auf 20 MB begrenzt. Nicht mehr benötigte Mediendateien werden derzeit behalten;
+eine automatische Bereinigung unreferenzierter Medien ist nicht implementiert.
+
+Weitere optionale Umgebungsvariablen:
+
+| Variable | Bedeutung |
+| --- | --- |
+| `SCHOOL_END_HOUR` | Schulschluss für Kinder in Europe/Berlin, ganze Stunde 1–24, Standard 16 |
+| `GALLERY_ORIGIN` | Link zur Bildergalerie der Schule; kein direkter Importadapter |
+| `WOERTERBUCH_ORIGIN` | Link zum Wörterbuch; kein direkter Suchadapter |
+| `GRUNDSCHULBUCH_ASSET_DIR` | Betreiberinhalte. Im Container `/assets`, in Compose schreibgeschützt gemountet. JSON-Vorlagen unter `vorlagen/`; Beispiel in `docs/schulvorlage.json`. |
+
+Die Kontenverwaltung bleibt ausschließlich auf der Serverkonsole.
+`node scripts/accounts.mjs liste`, `sperren NAME` und `entsperren NAME` ergänzen
+das Bootstrap-Skript. Sperren beendet Sitzungen sofort. Das letzte aktive
+Admin-Konto bleibt erhalten.
+
 ## Migration
 
 `node scripts/migrate.mjs` ist ein expliziter, exklusiver Job. Der Serverstart

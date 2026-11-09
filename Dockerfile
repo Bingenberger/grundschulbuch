@@ -5,9 +5,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 
 FROM dependencies AS builder
-COPY next.config.ts tsconfig.json ./
-COPY src ./src
-COPY public ./public
+COPY . .
 RUN npm run build -- --webpack
 
 FROM builder AS tests
@@ -23,7 +21,7 @@ COPY --from=builder /build/.next/standalone ./
 COPY --from=builder /build/.next/static ./.next/static
 COPY --from=builder /build/public ./public
 COPY --from=dependencies /build/node_modules/bcryptjs ./node_modules/bcryptjs
-COPY scripts/start.mjs scripts/migrate.mjs scripts/bootstrap.mjs ./scripts/
+COPY scripts/start.mjs scripts/migrate.mjs scripts/bootstrap.mjs scripts/accounts.mjs ./scripts/
 COPY src/lib/store.mjs src/lib/sessions.mjs src/lib/accounts.mjs ./src/lib/
 RUN groupadd --gid 10001 buch && useradd --uid 10001 --gid 10001 --no-create-home buch \
     && mkdir -p /data && chown 10001:10001 /data && chmod 700 /data

@@ -42,7 +42,7 @@ export function fromOwnOrigin(request: Request) {
   if (!origin) return false;
   if (origin === publicOrigin()) return true;
   // During development the app is also opened via the LAN address.
-  return process.env.NODE_ENV !== 'production' && new URL(origin).host === request.headers.get('host');
+  try { return process.env.NODE_ENV !== 'production' && new URL(origin).host === request.headers.get('host'); } catch { return false; }
 }
 
 export function jsonError(message: string, status: number) {

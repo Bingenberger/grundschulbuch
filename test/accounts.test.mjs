@@ -104,3 +104,14 @@ test('Gleichzeitige Schreiber verlieren unter der Sperre keine Einträge', async
   })));
   assert.equal((await store.readJson(file)).n, 20);
 });
+
+test('Gesperrte Konten verlieren Sitzungen und können sich weder mit PIN noch mit Einmalcode anmelden', async () => {
+  const { user, code } = await accounts.issueOneTimeCode('Frau Deaktiviert');
+  await accounts.redeemOneTimeCode(user.name, code, '483920'); const token = await sessions.createSession(user.id);
+  await accounts.setAccountBlocked(user.name, true);
+  assert.equal(await sessions.readSession(token), null); assert.equal(await accounts.findAccount(user.id), null);
+  assert.equal((await accounts.login(user.name, '483920')).ok, false);
+  const reset = await accounts.issueOneTimeCode(user.name); assert.equal((await accounts.redeemOneTimeCode(user.name, reset.code, '740215')).ok, false);
+  await accounts.setAccountBlocked(user.name, false); assert.equal((await accounts.login(user.name, '483920')).ok, true);
+  await assert.rejects(accounts.setAccountBlocked('Frau Beispiel', true), /letzte aktive Admin/);
+});

@@ -1,0 +1,263 @@
+export const widgetCatalog = {
+  timer: ['Timer', 'Schule'],
+  multitimer: ['Mehrere Timer', 'Schule'],
+  clock: ['Lernuhr', 'Schule'],
+  calendar: ['Sprechender Kalender', 'Schule'],
+  timetable: ['Bilder-Stundenplan', 'Schule'],
+  noise: ['Lärmampel', 'Schule'],
+  applause: ['Applaus messen', 'Schule'],
+  pitch: ['Kurzvortrag', 'Präsentation'],
+  piano: ['Klavier & Klanginstrumente', 'Musik'],
+  drums: ['Schlagzeug & Klang-Pads', 'Musik'],
+  sequencer: ['Rhythmus-Sequencer', 'Musik'],
+  metronome: ['Metronom', 'Musik'],
+  tuner: ['Stimmgerät', 'Musik'],
+  echo: ['Töne nachspielen', 'Musik'],
+  notequiz: ['Noten erkennen', 'Musik'],
+  falling: ['Notenregen', 'Musik'],
+  recorder: ['Aufnahmegerät', 'Musik'],
+  playlist: ['Playlist', 'Musik'],
+  soundstudio: ['Hörspiel-Studio', 'Musik'],
+  karaoke: ['Karaoke & Liedblatt', 'Musik'],
+  slideshow: ['Diaschau', 'Präsentation'],
+  animation: ['Animation', 'Comic & Film'],
+  map: ['Karte & Wege', 'Schule'],
+  calculator: ['Taschenrechner & Kassenzettel', 'Mathe'],
+  mathboard: ['Rechenmaterial', 'Mathe'],
+  shop: ['Einkaufen & Rückgeld', 'Mathe'],
+  geometry: ['Geometrie mit Prüfen', 'Mathe'],
+  monster: ['Fantasienamen lesen', 'Lesen & Schreiben'],
+  synthesis: ['Laute verbinden', 'Lesen & Schreiben'],
+  clapping: ['Silben klatschen', 'Lesen & Schreiben'],
+  alphabet: ['Anlaut-Tastatur', 'Lesen & Schreiben'],
+  communication: ['Kommunikationstafel', 'Kommunikation'],
+} as const;
+export type WidgetKind = keyof typeof widgetCatalog;
+export const activityCatalog = {
+  quiz: 'Quiz',
+  matching: 'Zuordnungen',
+  cloze: 'Lückentext',
+  typing: 'Abschreiben',
+  reading: 'Blitzlesen',
+  memory: 'Memory',
+  maze: 'Maus & Käse',
+  crossword: 'Kreuzworträtsel',
+  wordsearch: 'Suchsel',
+  wordle: 'Worträtsel',
+  syllables: 'Silbenlesen',
+  connect4: 'Vier in einer Reihe',
+  battleship: 'Koordinaten-Spiel',
+} as const;
+export type ActivityKind = keyof typeof activityCatalog;
+export type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+export type LearningSettings = {
+  title?: string;
+  text?: string;
+  words?: string[];
+  pairs?: { left: string; right: string }[];
+  questions?: {
+    text: string;
+    answers: string[];
+    correct: number;
+    explanation?: string;
+  }[];
+  seconds?: number;
+  bpm?: number;
+  volume?: number;
+  instrument?: string;
+  octaves?: number;
+  rows?: number;
+  columns?: number;
+  maximum?: number;
+  difficulty?: number;
+  seed?: number;
+  cells?: { label: string; image?: string; speak?: string; color?: string }[];
+  slides?: {
+    title: string;
+    text: string;
+    image?: string;
+    audio?: string;
+    seconds?: number;
+  }[];
+  tracks?: { title: string; src?: string; offset?: number; volume?: number }[];
+  frames?: {
+    text: string;
+    symbol?: string;
+    x: number;
+    y: number;
+    color?: string;
+    scale?: number;
+    angle?: number;
+    opacity?: number;
+  }[];
+  actors?: {
+    symbol: string;
+    color: string;
+    image?: string;
+    frames: {
+      text: string;
+      x: number;
+      y: number;
+      scale?: number;
+      angle?: number;
+      opacity?: number;
+    }[];
+  }[];
+  points?: { label: string; x: number; y: number }[];
+  path?: { x: number; y: number }[];
+  beats?: boolean[][];
+  notes?: number[];
+  font?: string;
+  voice?: string;
+  speechRate?: number;
+  speechPitch?: number;
+  mode?: string;
+  background?: string;
+  transition?: string;
+  repeat?: boolean;
+  showWords?: boolean;
+  autoRead?: boolean;
+};
+export type LearningResponse = Record<string, JsonValue>;
+export const defaultWords = [
+  'Sonne',
+  'Blume',
+  'Schule',
+  'Apfel',
+  'Regen',
+  'Haus',
+];
+export function defaultSettings(
+  kind: WidgetKind | ActivityKind,
+): LearningSettings {
+  const settings: LearningSettings = {
+    title:
+      kind in widgetCatalog
+        ? widgetCatalog[kind as WidgetKind][0]
+        : activityCatalog[kind as ActivityKind],
+    words: [...defaultWords],
+    rows: 3,
+    columns: 4,
+    seconds: 60,
+    bpm: 90,
+    volume: 0.35,
+    instrument: 'piano',
+    maximum: 20,
+    difficulty: 1,
+    seed: 42,
+  };
+  if (kind === 'quiz')
+    settings.questions = [
+      {
+        text: 'Wie viele Beine hat eine Katze?',
+        answers: ['Zwei', 'Vier', 'Sechs'],
+        correct: 1,
+        explanation: 'Eine Katze hat vier Beine.',
+      },
+    ];
+  if (kind === 'matching' || kind === 'memory')
+    settings.pairs = [
+      { left: '1 + 1', right: '2' },
+      { left: '2 + 2', right: '4' },
+      { left: '3 + 3', right: '6' },
+      { left: '4 + 4', right: '8' },
+    ];
+  if (kind === 'cloze')
+    settings.text = 'Am Tag scheint die [Sonne]. Nachts sehen wir den [Mond].';
+  if (kind === 'typing' || kind === 'reading')
+    settings.text =
+      'Heute entdecken wir etwas Neues. Gemeinsam macht Lernen Freude.';
+  if (kind === 'communication') {
+    settings.columns = 4;
+    settings.cells = [
+      'Ich',
+      'möchte',
+      'trinken',
+      'essen',
+      'ja',
+      'nein',
+      'helfen',
+      'Pause',
+      'spielen',
+      'lernen',
+      'gut',
+      'fertig',
+    ].map((label) => ({ label }));
+  }
+  if (kind === 'timetable') {
+    settings.columns = 5;
+    settings.cells = [
+      'Montag',
+      'Dienstag',
+      'Mittwoch',
+      'Donnerstag',
+      'Freitag',
+      ...Array.from(
+        { length: 25 },
+        (_, i) => ['Deutsch', 'Mathe', 'Kunst', 'Sport', 'Musik'][i % 5],
+      ),
+    ].map((label) => ({ label }));
+  }
+  if (kind === 'slideshow')
+    settings.slides = [
+      {
+        title: 'Unsere Entdeckungen',
+        text: 'Hier beginnt unsere Geschichte.',
+        seconds: 5,
+      },
+      {
+        title: 'Das haben wir gelernt',
+        text: 'Beschreibe hier deine Entdeckung.',
+        seconds: 5,
+      },
+    ];
+  if (kind === 'animation')
+    settings.frames = [
+      { text: 'Los geht’s!', symbol: '●', x: 15, y: 65, color: '#42685b' },
+      { text: 'In Bewegung', symbol: '●', x: 50, y: 30, color: '#42685b' },
+      { text: 'Geschafft!', symbol: '●', x: 85, y: 65, color: '#42685b' },
+    ];
+  if (kind === 'map')
+    settings.points = [
+      { label: 'Schule', x: 20, y: 30 },
+      { label: 'Park', x: 75, y: 65 },
+    ];
+  if (kind === 'karaoke')
+    settings.text =
+      'Hier steht die erste Zeile.\nHier folgt die zweite Zeile.\nGemeinsam singen wir unser Lied.';
+
+  if (kind === 'animation') settings.seconds = 3;
+  if (kind === 'playlist')
+    settings.tracks = [
+      { title: 'Erster Titel', offset: 0, volume: 1 },
+      { title: 'Zweiter Titel', offset: 0, volume: 1 },
+    ];
+  if (kind === 'soundstudio')
+    settings.tracks = [
+      { title: 'Stimme', offset: 0, volume: 1 },
+      { title: 'Geräusche', offset: 0, volume: 0.5 },
+      { title: 'Musik', offset: 0, volume: 0.3 },
+    ];
+  if (kind === 'sequencer')
+    settings.beats = Array.from({ length: 4 }, (_, r) =>
+      Array.from({ length: 16 }, (_, c) => c % (r + 2) === 0),
+    );
+  if (
+    kind === 'monster' ||
+    kind === 'synthesis' ||
+    kind === 'clapping' ||
+    kind === 'syllables'
+  )
+    settings.words = ['Son-ne', 'Blu-me', 'Re-gen-bo-gen', 'Scho-ko-la-de'];
+  if (kind === 'monster')
+    settings.words = ['Lu-mo', 'Fa-ni', 'Sa-lo', 'Mi-ra', 'Po-la', 'Nu-fi'];
+  if (kind === 'metronome') settings.rows = 4;
+  if (kind === 'wordle') settings.words = ['BLUME', 'SONNE', 'WOLKE'];
+  return settings;
+}

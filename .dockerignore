@@ -4,5 +4,13 @@ node_modules
 .next
 data
 .private
-*.md
-!README.md
+test-results
+playwright-report
+Lernsachen-Heft.html
+
+.aws
+.codex
+.agents
+.env*
+
+public/runtime

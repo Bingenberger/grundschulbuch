@@ -1,3 +1,4 @@
+import { stopChildSession } from '@/lib/child-auth';
 import { NextResponse } from 'next/server';
 import { fromOwnOrigin, jsonError, stopSession } from '@/lib/auth';
 
@@ -7,5 +8,6 @@ export async function POST(request: Request) {
   if (!fromOwnOrigin(request)) return jsonError('Anfrage nicht erlaubt.', 403);
   const response = NextResponse.json({ ok: true });
   await stopSession(response);
+  await stopChildSession(response);
   return response;
 }

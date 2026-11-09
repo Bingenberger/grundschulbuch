@@ -1,6 +1,8 @@
 # Konzept: Grundschulbuch
 
-Stand: 9. November 2026 · Grundgerüst umgesetzt, Phase 1 in Arbeit
+Stand: 9. November 2026 · Server-App mit erweiterten Lernwerkzeugen implementiert;
+Referenzabgleich und verbleibende Unterschiede siehe [Funktionsvergleich](funktionsvergleich.md),
+Geräteabnahme siehe [Umsetzung](umsetzung.md).
 
 Die Grundschultafel ist für den Unterricht an der Tafel gebaut: Die Lehrkraft
 zeigt, schreibt und nutzt Werkzeuge. Das [Lernsachen-Heft](https://github.com/Majort0m0/Lernsachen-Heft)
@@ -25,6 +27,18 @@ eigenem Zugang darin. Code oder Inhalte aus dem Lernsachen-Heft werden nicht
   (siehe [PLATFORM.md](../PLATFORM.md)).
 - **Offene Lizenz.** Die App entsteht in einem neuen Repository unter einer
   offenen Lizenz, unabhängig von der schulinternen Tafel.
+
+## Ergänzung: Funktionsumfang des Lernsachen-Hefts
+
+Maßgeblich ist auch der Funktionsumfang der im Repository bereitgestellten
+`Lernsachen-Heft.html`: neben dem Hefteditor gehören interaktive Übungen,
+Kommunikation, Schul- und Musikwerkzeuge, Präsentation/Animation, differenzierte
+Generatoren, Ordner/Sicherungen und portable Dateiformate zum Zielumfang.
+Die Umsetzung bleibt eigenständig; der Vergleich überträgt Funktionen und
+Arbeitsabläufe. Originalcode, Beispielhefte, Piktogramm- und Klangpakete werden
+nicht übernommen. Rollenregeln und Server-Speicherung dieses Konzepts gelten
+weiterhin. [Funktionsvergleich](funktionsvergleich.md) beschreibt den erreichten
+Stand und ausdrücklich noch fehlende Detailfunktionen.
 
 ## Rollen
 
@@ -308,8 +322,8 @@ Schriftdateien):
 2. ~~Plattformgerüst neu aufbauen (Login für Lehrkräfte, Health, Migration,
    Docker).~~ Erledigt. Offen: das Grundschulbuch in der Schulplattform als
    App eintragen, inklusive Schlüsseldatei für UID 10001.
-3. Schriften mit ihren OFL-Dateien aus den Originalquellen einchecken.
-4. Regal, Seiten und Lineaturen bauen und auf iPad und iiyama-Tafel testen.
-5. Elemente, Schriften, Tafelmodus und Druck ergänzen. Damit ist Phase 1 fertig.
+3. Schriften mit ihren OFL-Dateien aus den Originalquellen einchecken. Erledigt außer der weiterhin ungeklärten Gruschudru-Originaldatei.
+4. Regal, Seiten und Lineaturen: implementiert; Tests auf echten iPads und iiyama-Tafeln offen.
+5. Elemente, Schriften, Tafelmodus und Druck: implementiert. Automatisierte Abnahme und Bedienübersicht siehe [Umsetzung](umsetzung.md).
 6. QR-Anmeldung früh mit einer echten Anton-Karte auf einem geteilten iPad
    ausprobieren, weil sie für Phase 2 entscheidend ist.

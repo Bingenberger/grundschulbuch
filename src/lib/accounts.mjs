@@ -139,7 +139,7 @@ export async function login(rawName, pin) {
   const until = await lockedUntil(key);
   if (until) return { ok: false, reason: 'gesperrt', until };
   const valid = await bcrypt.compare(typeof pin === 'string' ? pin : '', account?.pinHash ?? DUMMY_HASH);
-  const success = Boolean(account?.pinHash) && valid;
+  const success = Boolean(account?.pinHash) && !account?.blocked && valid;
   await recordAttempt(key, success);
   return success && account ? { ok: true, user: toPublic(account) } : { ok: false, reason: 'falsch' };
 }
@@ -163,7 +163,7 @@ export async function redeemOneTimeCode(rawName, code, pin) {
     const until = await lockedUntil(key);
     if (until) return /** @type {LoginResult} */ ({ ok: false, reason: 'gesperrt', until });
     const stored = account?.einmalcode;
-    const matches = Boolean(stored) && Date.parse(stored.expiresAt) > Date.now()
+    const matches = !account?.blocked && Boolean(stored) && Date.parse(stored.expiresAt) > Date.now()
       && crypto.timingSafeEqual(Buffer.from(stored.hash, 'hex'), Buffer.from(codeHash(code), 'hex'));
     await recordAttempt(key, matches);
     if (!matches || !account) return /** @type {LoginResult} */ ({ ok: false, reason: 'falsch' });
@@ -180,5 +180,18 @@ export async function redeemOneTimeCode(rawName, code, pin) {
 /** @param {string} id @returns {Promise<PublicAccount | null>} */
 export async function findAccount(id) {
   const account = (await readAccounts()).users.find(user => user.id === id);
-  return account ? toPublic(account) : null;
+  return account && !account.blocked ? toPublic(account) : null;
+}
+
+/** Public colleague directory, without PIN hashes or bootstrap codes. */
+export async function listPublicAccounts() { return (await readAccounts()).users.filter(user => !user.blocked).map(toPublic); }
+/** Console administration only; disabling an account immediately ends its sessions. */
+export async function setAccountBlocked(name, blocked) {
+  return withLock('lehrkraefte', async () => {
+    const accounts = await readAccounts(); const user = accounts.users.find(u => nameKey(u.name) === nameKey(name));
+    if (!user) throw new Error('Konto nicht gefunden.');
+    const otherAdmins = accounts.users.filter(u => u.id !== user.id && u.role === 'admin' && !u.blocked);
+    if (blocked && user.role === 'admin' && !otherAdmins.length) throw new Error('Das letzte aktive Admin-Konto kann nicht gesperrt werden.');
+    user.blocked = !!blocked; user.updatedAt = new Date().toISOString(); await writeJson(accountsFile(), accounts); await endUserSessions(user.id); return toPublic(user);
+  });
 }
