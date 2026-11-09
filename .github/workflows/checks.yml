@@ -1,0 +1,25 @@
+# Type check, lint, tests and build on every push and pull request.
+# Runs inside the same pinned Node image as the release; no third-party actions.
+name: Prüfungen
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        run: |
+          set -eu
+          git init -q src
+          git -C src fetch -q --depth=1 "https://github.com/${GITHUB_REPOSITORY}.git" "${GITHUB_SHA}"
+          git -C src checkout -q FETCH_HEAD
+      - name: Build test stage
+        run: docker build --target tests src

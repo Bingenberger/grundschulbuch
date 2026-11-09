@@ -1,0 +1,107 @@
+/* Only widely supported CSS: the iiyama panels run an older browser
+   (no dvh/svh units), the children use Safari on iPads. */
+:root {
+  --hintergrund: #f5f7fb;
+  --flaeche: #ffffff;
+  --text: #1e293b;
+  --text-leise: #64748b;
+  --rand: #dbe2ec;
+  --akzent: #2563eb;
+  --akzent-dunkel: #1d4ed8;
+  --fehler: #b91c1c;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--hintergrund);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 18px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+
+button, input { font: inherit; color: inherit; }
+
+.seite {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+}
+
+.kopf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.kopf h1 { margin: 0; font-size: 1.6rem; }
+
+.karte {
+  background: var(--flaeche);
+  border: 1px solid var(--rand);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+
+.knopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--rand);
+  background: var(--flaeche);
+  cursor: pointer;
+}
+
+.knopf-haupt {
+  background: var(--akzent);
+  border-color: var(--akzent);
+  color: #fff;
+  font-weight: 700;
+}
+
+.knopf-haupt:hover { background: var(--akzent-dunkel); }
+.knopf:disabled { opacity: 0.6; cursor: default; }
+
+.feld { display: block; margin-bottom: 16px; }
+.feld span { display: block; font-weight: 600; margin-bottom: 6px; }
+.feld input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid var(--rand);
+  border-radius: 12px;
+  background: #fff;
+}
+.feld input:focus { outline: 3px solid rgba(37, 99, 235, 0.35); border-color: var(--akzent); }
+
+.hinweis { color: var(--text-leise); font-size: 0.9rem; }
+.fehler { color: var(--fehler); font-weight: 600; }
+
+.anmeldung {
+  max-width: 440px;
+  margin: 48px auto;
+}
+
+.reiter { display: flex; gap: 8px; margin-bottom: 20px; }
+.reiter button { flex: 1; }
+.reiter button[aria-pressed="true"] { border-color: var(--akzent); color: var(--akzent); font-weight: 700; }
+
+.leer {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-leise);
+}

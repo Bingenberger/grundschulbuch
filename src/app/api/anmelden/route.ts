@@ -1,0 +1,19 @@
+import { NextResponse } from 'next/server';
+import { login } from '@/lib/accounts.mjs';
+import { fromOwnOrigin, jsonError, startSession } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
+
+export async function POST(request: Request) {
+  if (!fromOwnOrigin(request)) return jsonError('Anfrage nicht erlaubt.', 403);
+  const body = await request.json().catch(() => null);
+  const result = await login(body?.name, body?.pin);
+  if (!result.ok) {
+    return result.reason === 'gesperrt'
+      ? jsonError('Zu viele Fehlversuche. Bitte in 15 Minuten erneut versuchen.', 429)
+      : jsonError('Name oder PIN stimmt nicht.', 401);
+  }
+  const response = NextResponse.json({ user: result.user });
+  await startSession(response, result.user.id);
+  return response;
+}
