@@ -4,7 +4,7 @@
 // which are drawn in the same style under /icons.
 const own = [
   'textmarker', 'radierer', 'geodreieck', 'pipette', 'filzstift', 'fueller',
-  'buntstift', 'pinsel', 'farbeimer', 'seiten', 'schere', 'drehen', 'zuschneiden', 'balken',
+  'buntstift', 'pinsel', 'farbeimer', 'seiten', 'schere', 'drehen', 'zuschneiden', 'balken', 'kassette',
 ] as const;
 export const flatIcons = [
   'about', 'add_image', 'alarm_clock', 'approval', 'audio_file', 'binoculars',

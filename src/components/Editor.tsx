@@ -24,6 +24,7 @@ import { previousArrowShaft } from '@/lib/shape-recognition';
 import { inkPaintOrder } from '@/lib/brushes';
 import { appendSamples, eraseElements, newStroke, pointerSamples, type EraserProgress, type EraserOptions } from '@/lib/drawing';
 import AudioDialog from './AudioDialog';
+import { audioElement, audioPlaceholder, cassetteRecorder, isAudioPlaceholder, withRecording } from './editor/audio-elements';
 import CollectionDialog from './CollectionDialog';
 import GeneratorDialog from './GeneratorDialog';
 import ShareDialog from './ShareDialog';
@@ -654,6 +655,11 @@ export default function Editor({
       })
       .catch((e) => useEditor.setState({ error: (e as Error).message }));
   }
+  /** Opens recording for a sound button or recorder on the page. */
+  function recordInto(id: string) {
+    setRecordTarget(id);
+    setShowAudio(true);
+  }
   function openFill(el: PageElement) {
     setFillId(el.id);
     setShowImages(true);
@@ -1087,6 +1093,7 @@ export default function Editor({
                         onDoubleClick={() => {
                           if (el.type === 'text' && !el.locked) writing.begin(el.id);
                           else if (isPlaceholder(el) && !el.src) openFill(el);
+                          else if (isAudioPlaceholder(el) && !el.src) recordInto(el.id);
                           else if (el.type === 'image' && el.src && !el.locked) setEditImage(el);
                         }}
                         style={{
@@ -1122,6 +1129,7 @@ export default function Editor({
                             onDoubleClick={() => {
                               if (el.type === 'text') writing.begin(el.id);
                               else if (isPlaceholder(el) && !el.src) openFill(el);
+                          else if (isAudioPlaceholder(el) && !el.src) recordInto(el.id);
                           else if (el.type === 'image' && el.src && !el.locked) setEditImage(el);
                             }}
                           />
@@ -1289,47 +1297,28 @@ export default function Editor({
       {showAudio && (
         <AudioDialog
           bookId={s.book.id}
-          onClose={() => setShowAudio(false)}
-          onAudio={(src) => {
+          child={false}
+          only={recordTarget ? ['record', 'upload'] : undefined}
+          elementId={recordTarget || undefined}
+          title={recordTarget ? 'Aufnehmen' : 'Ton hinzufügen'}
+          onClose={() => {
+            setShowAudio(false);
+            setRecordTarget(null);
+          }}
+          onAudio={(src, title) => {
             if (recordTarget) {
               const target = recordTarget;
-              s.edit((p) => ({
-                ...p,
-                elements: p.elements.map((el) =>
-                  el.id === target
-                    ? {
-                        ...el,
-                        response: {
-                          ...el.response,
-                          recordingSrc: src,
-                          recordings: [
-                            ...(Array.isArray(el.response?.recordings)
-                              ? el.response.recordings
-                              : []),
-                            { title: 'Aufnahme', src, offset: 0, volume: 1 },
-                          ],
-                        },
-                      }
-                    : el,
-                ),
-              }));
-              setRecordTarget(null);
-              setShowAudio(false);
-              return;
-            }
-            insert({
-              id: uuid(),
-              type: 'audio',
-              x: 20,
-              y: 25,
-              width: 100,
-              height: 28,
-              rotation: 0,
-              locked: false,
-              color: '#253c42',
-              src,
-              alt: 'Tonaufnahme',
-            });
+              s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === target ? withRecording(el, src, title) : el)) }));
+            } else insert(cascade(audioElement(src, title), page!.elements, size));
+            setRecordTarget(null);
+            setShowAudio(false);
+          }}
+          onPlaceholder={(label) => {
+            insert(cascade(audioPlaceholder(label), page!.elements, size));
+            setShowAudio(false);
+          }}
+          onRecorder={() => {
+            insert(cascade(cassetteRecorder(), page!.elements, size));
             setShowAudio(false);
           }}
         />

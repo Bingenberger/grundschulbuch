@@ -65,6 +65,17 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   (ARASAAC, Schulgalerie) nur, wenn die Lehrkraft sie freischaltet; Wikimedia,
   Platzhalter und Bildschirmfoto gibt es nur für Lehrkräfte. „Von der
   Lehrkraft“ zeigt die freigegebenen Bilder.
+- Ton hinzufügen: ein Dialog mit Reitern wie bei Bildern; „Aufnehmen“ ist
+  vorausgewählt (großer Aufnahmeknopf, Zeit, Pegel, höchstens fünf Minuten,
+  vor dem Übernehmen anhören und benennen). „Hochladen“ (auch Ziehen) zeigt
+  ebenfalls erst eine Vorschau. „Platzhalter“ setzt einen leeren Ton-Knopf mit
+  Aufgabe, „Kassettenrekorder“ das Lernwerkzeug Aufnahmegerät, jetzt als
+  Kassette mit drehenden Spulen, Aufnehmen, Zurück/Vor (5 s), Abspielen,
+  Stopp und Speichern als Datei.
+- Ton-Platzhalter und Kassettenrekorder einer Lehrkraft nehmen Aufnahmen von
+  Kindern auch in gesperrten Seiten und ohne die Heft-Erlaubnis „Kinder dürfen
+  Ton aufnehmen“ an; der Server prüft dazu, dass das Element im Heft des
+  Kindes liegt (`/api/ton?book=…&element=…`).
 - Bild bearbeiten (Doppelklick aufs Bild oder „Gestalten“ › „Bild bearbeiten“):
   Zuschneiden mit Seitenverhältnis (frei, Quadrat, 4:3, 3:4, 16:9), links/rechts
   drehen, spiegeln, Verpixeln mit Pinsel, schwarze Balken und Effekte, die sich

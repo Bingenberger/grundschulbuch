@@ -16,7 +16,19 @@ export async function POST(request: Request) {
         child.id,
         new URL(request.url).searchParams.get('book') || '',
       );
-      if (!data.book.allowChildAudio || data.book.trashed)
+      // A sound button or recorder from the teacher may always be filled.
+      const elementId = new URL(request.url).searchParams.get('element');
+      const invited =
+        !!elementId &&
+        data.pages.some((page) =>
+          page.elements.some(
+            (el) =>
+              el.id === elementId &&
+              ((el.type === 'audio' && typeof el.placeholder === 'string') ||
+                (el.type === 'widget' && ['recorder', 'soundstudio', 'karaoke'].includes(el.widgetKind || ''))),
+          ),
+        );
+      if ((!data.book.allowChildAudio && !invited) || data.book.trashed)
         return jsonError('Aufnahmen sind hier nicht erlaubt.', 403);
     }
     const result = await storeAudio(

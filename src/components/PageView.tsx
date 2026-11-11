@@ -4,6 +4,7 @@ import { inkPaintOrder } from '@/lib/brushes';
 import InkBrush from './InkBrush';
 import { LinkLayer } from './LinkContext';
 import TextFrame, { framePadding } from './TextFrame';
+import { MicGlyph } from './learning/Cassette';
 import { eraserShapePath } from '@/lib/eraser-shapes';
 import Activity from './learning/Activity';
 import Widget from './learning/Widget';
@@ -250,6 +251,13 @@ export function ElementContent({ element: el }: { element: PageElement }) {
     );
   if (el.type === 'embed') return <EmbedContent element={el} />;
   if (el.type === 'image') return <ImageContent element={el} />;
+  if (el.type === 'audio' && !el.src)
+    return (
+      <div className="audio-placeholder">
+        <MicGlyph />
+        <span>{el.placeholder || 'Tippe hier und nimm dich auf.'}</span>
+      </div>
+    );
   if (el.type === 'audio')
     return (
       <div className="audio-content">

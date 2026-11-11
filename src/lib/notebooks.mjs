@@ -205,9 +205,8 @@ export function validatePage(input) {
       }
     } else if (el.type === 'image' || el.type === 'audio') {
       // A photo placeholder may stay empty until someone takes the picture.
-      const emptyPlaceholder =
-        el.type === 'image' && typeof el.placeholder === 'string' && el.src === undefined;
-      if (el.type === 'image' && el.placeholder !== undefined) {
+      const emptyPlaceholder = typeof el.placeholder === 'string' && el.src === undefined;
+      if (el.placeholder !== undefined) {
         if (typeof el.placeholder !== 'string') throw new BookError('Ungültiger Platzhalter.');
         result.placeholder = el.placeholder.slice(0, 200);
       }

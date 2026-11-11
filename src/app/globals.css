@@ -3247,3 +3247,196 @@ input[type='checkbox'] {
   justify-content: flex-end;
   gap: 10px;
 }
+
+/* Sound: placeholder, recording dialog, cassette recorder */
+.audio-placeholder {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 2.5mm;
+  padding: 2mm 3mm;
+  border: 0.5mm dashed #e53935;
+  border-radius: 3mm;
+  background: #fff5f4;
+  color: #b71c1c;
+  font: 4mm/1.3 Andika, sans-serif;
+  overflow: hidden;
+}
+.audio-placeholder .mic-glyph {
+  width: 9mm;
+  height: 9mm;
+  flex-shrink: 0;
+}
+.child-mode .page-element .audio-placeholder,
+.interaction-surface .page-element.locked .audio-placeholder {
+  cursor: pointer;
+}
+.audio-placeholder-preview {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  font-size: 14px;
+}
+.audio-placeholder-preview .audio-placeholder {
+  width: 340px;
+  height: auto;
+  min-height: 64px;
+  font-size: 15px;
+  border-width: 2px;
+}
+.audio-placeholder-preview .mic-glyph {
+  width: 34px;
+  height: 34px;
+}
+.audio-record {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 26px 10px;
+  text-align: center;
+}
+.record-button {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 5px solid #ffcdd2;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 14px #0002;
+  cursor: pointer;
+}
+.record-button .record-symbol {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #e53935;
+  transition: border-radius 0.15s, width 0.15s, height 0.15s;
+}
+.record-button.recording {
+  border-color: #e53935;
+  animation: record-pulse 1.2s ease-in-out infinite;
+}
+.record-button.recording .record-symbol {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+}
+@keyframes record-pulse {
+  50% {
+    box-shadow: 0 0 0 10px #e5393522;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .record-button.recording {
+    animation: none;
+  }
+}
+.record-meter {
+  width: min(320px, 90%);
+  height: 10px;
+  border-radius: 5px;
+  background: #e8ebe5;
+  overflow: hidden;
+}
+.record-meter span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #43a047, #fdd835 70%, #e53935);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.record-time {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.record-time small {
+  font-size: 12px;
+  color: #6b7a70;
+}
+.audio-take {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 10px 0;
+}
+.audio-take audio {
+  width: 100%;
+}
+.audio-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.audio-recorder-preview {
+  display: flex;
+  justify-content: center;
+}
+.audio-recorder-preview .cassette-art {
+  width: 260px;
+}
+.cassette-recorder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5mm;
+  width: 100%;
+}
+.cassette-recorder .cassette-art {
+  width: min(52mm, 100%);
+  height: auto;
+}
+.cassette-time {
+  font: 3.4mm/1 Andika, sans-serif;
+  font-variant-numeric: tabular-nums;
+  color: #37474f;
+}
+.cassette-keys {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 1mm;
+}
+.cassette-key {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4mm;
+  min-width: 12mm;
+  padding: 1mm 1.2mm;
+  border: 0.3mm solid #b0bec5;
+  border-radius: 1.6mm;
+  background: linear-gradient(#fafafa, #e0e4e6);
+  color: #263238;
+  font: 2.7mm/1.1 Andika, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+.cassette-key span {
+  font-size: 3.6mm;
+}
+.cassette-key.record span {
+  color: #e53935;
+}
+.cassette-key:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.spool.spinning {
+  animation: spool-turn 1.4s linear infinite;
+}
+@keyframes spool-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media print {
+  .cassette-keys,
+  .cassette-time {
+    display: none;
+  }
+}

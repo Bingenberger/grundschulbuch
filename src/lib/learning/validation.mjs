@@ -449,7 +449,7 @@ export function safeWebUrl(value) {
 }
 export function lockedDesign(element) {
   // Children fill a locked photo placeholder with their own picture.
-  if (element?.type === 'image' && typeof element.placeholder === 'string') {
+  if ((element?.type === 'image' || element?.type === 'audio') && typeof element.placeholder === 'string') {
     const design = { ...element };
     for (const key of ['src', 'alt', 'credit', 'crop', 'fit']) delete design[key];
     return design;

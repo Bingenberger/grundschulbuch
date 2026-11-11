@@ -1,4 +1,5 @@
 'use client';
+import { CassetteRecorder } from './Cassette';
 import { Picker } from '../ui/Choice';
 import { TextGlyph } from '../ui/Glyphs';
 import { useEffect, useRef, useState } from 'react';
@@ -592,19 +593,13 @@ export default function MusicWidgets({
     );
   } else if (kind === 'recorder')
     content = (
-      <>
-        <div className="cassette">● ━━━━━ ●</div>
-        <button
-          disabled={!interactive || !onRecord}
-          onClick={() => onRecord?.(el.id)}
-        >
-          ● Ton aufnehmen / hinzufügen
-        </button>
-        {typeof state.recordingSrc === 'string' && (
-          <audio controls src={state.recordingSrc} preload="metadata" />
-        )}
-        <small>Die Aufnahme gehört zu dieser Heftkopie.</small>
-      </>
+      <CassetteRecorder
+        key={typeof state.recordingSrc === 'string' ? state.recordingSrc : 'leer'}
+        title={c.title || 'Meine Aufnahme'}
+        src={typeof state.recordingSrc === 'string' ? state.recordingSrc : undefined}
+        interactive={interactive}
+        onRecord={onRecord ? () => onRecord(el.id) : undefined}
+      />
     );
   else if (kind === 'soundstudio') {
     const recordings = Array.isArray(state.recordings)

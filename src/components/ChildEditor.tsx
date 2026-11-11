@@ -19,6 +19,7 @@ import {
 import { ElementView } from './PageView';
 import { LearningRuntime } from './learning/Runtime';
 import AudioDialog from './AudioDialog';
+import { audioElement, audioPlaceholder, cassetteRecorder, isAudioPlaceholder, withRecording } from './editor/audio-elements';
 import ScaledPage from './ScaledPage';
 import { useShapeRecognition } from '@/lib/use-shape-recognition';
 import EditorHeader from './editor/EditorHeader';
@@ -160,6 +161,13 @@ export default function ChildEditor({
     if (s.tool === 'select') {
       // Strokes do not catch pointer events themselves; find one near the tap.
       element ??= strokeAt(page!.elements, p, e.pointerType === 'touch' ? 4 : 2.5);
+      if (isAudioPlaceholder(element) && !element!.src) {
+        s.select(element!.locked ? [] : [element!.id]);
+        setRecordTarget(element!.id);
+        setShowAudio(true);
+        speak('Aufnehmen');
+        return;
+      }
       if (isPlaceholder(element) && !element!.src) {
         s.select(element!.locked ? [] : [element!.id]);
         openFill(element!);
@@ -503,14 +511,11 @@ export default function ChildEditor({
                 ),
               }))
             }
-            onRecord={
-              s.book.allowChildAudio
-                ? (id) => {
-                    setRecordTarget(id);
-                    setShowAudio(true);
-                  }
-                : undefined
-            }
+            onRecord={(id) => {
+              // The server checks that this recorder may take a recording.
+              setRecordTarget(id);
+              setShowAudio(true);
+            }}
           >
             <div
               className={`interaction-surface tool-${s.tool}`}
@@ -603,47 +608,20 @@ export default function ChildEditor({
       {showAudio && (
         <AudioDialog
           bookId={s.book.id}
-          onClose={() => setShowAudio(false)}
-          onAudio={(src) => {
+          child={true}
+          only={recordTarget ? ['record', 'upload'] : undefined}
+          elementId={recordTarget || undefined}
+          title={recordTarget ? 'Aufnehmen' : 'Ton hinzufügen'}
+          onClose={() => {
+            setShowAudio(false);
+            setRecordTarget(null);
+          }}
+          onAudio={(src, title) => {
             if (recordTarget) {
               const target = recordTarget;
-              s.edit((p) => ({
-                ...p,
-                elements: p.elements.map((el) =>
-                  el.id === target
-                    ? {
-                        ...el,
-                        response: {
-                          ...el.response,
-                          recordingSrc: src,
-                          recordings: [
-                            ...(Array.isArray(el.response?.recordings)
-                              ? el.response.recordings
-                              : []),
-                            { title: 'Aufnahme', src, offset: 0, volume: 1 },
-                          ],
-                        },
-                      }
-                    : el,
-                ),
-              }));
-              setRecordTarget(null);
-              setShowAudio(false);
-              return;
-            }
-            insert({
-              id: uuid(),
-              type: 'audio',
-              x: 20,
-              y: 25,
-              width: 100,
-              height: 28,
-              rotation: 0,
-              locked: false,
-              color: '#253c42',
-              src,
-              alt: 'Meine Aufnahme',
-            });
+              s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === target ? withRecording(el, src, title) : el)) }));
+            } else insert(cascade(audioElement(src, title), page!.elements, size));
+            setRecordTarget(null);
             setShowAudio(false);
           }}
         />
