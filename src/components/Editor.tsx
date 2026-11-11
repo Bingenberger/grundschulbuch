@@ -720,9 +720,12 @@ export default function Editor({
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if (
-        event.key === 'Tab' &&
+        ['Tab', 'Enter', ' '].includes(event.key) &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.altKey &&
         event.target instanceof HTMLElement &&
-        event.target.closest('button,a,summary')
+        event.target.closest('button,a,summary,[role="button"]')
       )
         return;
       if (

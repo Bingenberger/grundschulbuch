@@ -54,7 +54,7 @@ test('Kinder können den Ratefortschritt in einer gesperrten Aufgabe wieder öff
     await child.goto(`/kinder/heft/${copies[0].id}`);
     const game = child.locator('.interaction-surface .letter-guess-widget'); await game.locator('[data-guess-letter="ä"]').click();
     await expect(game.locator('.guess-slot.visible')).toHaveText(['Ä']);
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.goto(`/kinder/heft/${copies[0].id}`);
+    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/); await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(game.locator('.guess-slot.visible')).toHaveText(['Ä']);
     await game.focus(); await child.keyboard.type('bume');
     await game.getByRole('button', { name: 'Ergebnis ansehen', exact: true }).click();

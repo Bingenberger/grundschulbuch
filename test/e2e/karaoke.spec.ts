@@ -46,7 +46,7 @@ test('Karaoke folgt der Medienzeit, pausiert gemeinsam und springt beim Vor- und
 });
 test('LRC-Import zeigt eine Vorschau, ersetzt erst bei Übernahme und lässt sich wieder exportieren', async ({ page }) => {
   await login(page); const data = await create(page, false); await page.goto(`/heft/${data.book.id}`);
-  await page.getByRole('button', { name: '◈Lernwerkzeuge', exact: true }).click();
+  await page.getByRole('button', { name: '◈ Lernwerkzeuge', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
   await dialog.getByRole('button', { name: 'Karaoke & Liedblatt', exact: true }).click();
   const text = dialog.getByLabel('Liedtext', { exact: true }), previous = await text.inputValue();

@@ -97,7 +97,7 @@ test('Kinder können Medienantworten in gesperrten Quizaufgaben speichern', asyn
     const widget = child.locator('.interaction-surface .media-activity');
     await widget.getByRole('button', { name: 'Antwort A: Bild', exact: true }).click(); await widget.getByRole('button', { name: 'Prüfen', exact: true }).click();
     await expect(widget.getByText('✓ Richtig!', { exact: true })).toBeVisible();
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.goto(`/kinder/heft/${copies[0].id}`);
+    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/); await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(widget.getByText('✓ Richtig!', { exact: true })).toBeVisible();
   } finally { await context.close(); }
 });

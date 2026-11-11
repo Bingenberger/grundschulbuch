@@ -33,13 +33,13 @@ test('Interaktive Aufgaben sind im Kinderheft bedienbar und bleiben im Entwurf g
     .click();
   await page
     .locator('.interaction-surface .learning-widget')
-    .getByRole('button', { name: 'B · Vier', exact: true })
+    .getByRole('button', { name: 'Antwort B: Vier', exact: true })
     .click();
   await page
     .locator('.interaction-surface .learning-widget')
     .getByRole('button', { name: 'Prüfen', exact: true })
     .click();
-  await expect(page.getByText('Richtig!', { exact: true })).toBeVisible();
+  await expect(page.locator('.interaction-surface').getByText('✓ Richtig!', { exact: true })).toBeVisible();
   await expect(page.locator('.save-status')).toHaveText('✓ Gespeichert');
   const req = async (action: string, values: object = {}) => {
     const r = await page.request.post('/api/klassen', {
@@ -68,14 +68,14 @@ test('Interaktive Aufgaben sind im Kinderheft bedienbar und bleiben im Entwurf g
   await expect(
     child.locator('.answer-options button[aria-pressed="true"]'),
   ).toHaveCount(0);
-  await child.getByRole('button', { name: 'B · Vier', exact: true }).click();
+  await child.getByRole('button', { name: 'Antwort B: Vier', exact: true }).click();
   await child.getByRole('button', { name: 'Prüfen', exact: true }).click();
-  await expect(child.getByText('Richtig!', { exact: true })).toBeVisible();
-  await child.getByRole('button', { name: '‹ Meine Hefte' }).click();
+  await expect(child.getByText('✓ Richtig!', { exact: true })).toBeVisible();
+  await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
   await child.getByRole('link', { name: 'Interaktive Übung' }).click();
   await expect(
     child.locator('.answer-options button[aria-pressed="true"]'),
-  ).toHaveText('B · Vier');
+  ).toHaveAccessibleName('Antwort B: Vier');
   const opened = await child.request.post('/api/kinder', {
     headers: origin,
     data: { action: 'open', id: copies[0].id },

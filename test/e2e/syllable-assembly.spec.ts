@@ -46,14 +46,14 @@ test('Kinder können auch in gesperrten Aufgaben Silben legen und ihren Stand wi
   await login(page); const data = await create(page, { words: ['Son-ne'] });
   const request = async (action: string, values: object) => { const response = await page.request.post('/api/klassen', { headers: origin, data: { action, ...values } }); expect(response.ok()).toBeTruthy(); return response.json(); };
   let klass = await request('create', { title: 'Silbenklasse' }); klass = await request('change', { id: klass.id, addChild: 'Nora' });
-  const digest = '6'.repeat(64); await request('change', { id: klass.id, childId: klass.children[0].id, digest });
+  const digest = 'c'.repeat(64); await request('change', { id: klass.id, childId: klass.children[0].id, digest });
   const copies = await request('distribute', { id: klass.id, bookId: data.book.id }), context = await browser.newContext();
   try {
     const child = await context.newPage(); await child.goto('/kinder');
     expect((await child.request.post('/api/kinder', { headers: origin, data: { action: 'login', digest } })).ok()).toBeTruthy();
     await child.goto(`/kinder/heft/${copies[0].id}`); const game = child.locator('.interaction-surface .syllable-assembly-widget');
     await game.locator('[data-syllable-tile="0"]').click(); await game.locator('[data-syllable-slot="0"]').click();
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.goto(`/kinder/heft/${copies[0].id}`);
+    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/); await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(game.locator('[data-syllable-slot="0"]')).toHaveText('Son');
     await game.locator('[data-syllable-tile="1"]').click(); await game.locator('[data-syllable-slot="1"]').click();
     await game.getByRole('button', { name: 'Wort prüfen', exact: true }).click(); await game.getByRole('button', { name: 'Ergebnis ansehen', exact: true }).click();

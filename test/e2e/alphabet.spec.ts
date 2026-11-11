@@ -85,7 +85,7 @@ test('Kinder bearbeiten geschützte Anlaut-Tastaturen ohne den Entwurf zu änder
     await widget.getByRole('group', { name: 'Geschriebenes Wort', exact: true }).focus(); await child.keyboard.type('maus');
     await widget.getByRole('button', { name: 'Fertig – prüfen', exact: true }).click();
     await expect(widget.getByText('Geschafft! 1 von 1 Sternen.', { exact: true })).toBeVisible();
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click();
+    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
     await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(widget.getByText('Geschafft! 1 von 1 Sternen.', { exact: true })).toBeVisible();
   } finally { await context.close(); }

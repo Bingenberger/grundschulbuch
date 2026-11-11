@@ -19,6 +19,7 @@ async function draw(page: Page, board: Locator, a: [number, number], b: [number,
 }
 test('Eigene Formen lassen sich zeichnen, prüfen, gezielt radieren und nach Abschluss wieder öffnen', async ({ page }) => {
   await login(page); const data = await create(page); await page.goto(`/heft/${data.book.id}`);
+  await page.getByRole('button', { name: 'Ganze Seite', exact: true }).click();
   const game = page.locator('.interaction-surface .geometry-widget'), board = game.locator('.geometry-board');
   await draw(page, board, [40, 80], [160, 80]); await game.getByRole('button', { name: 'Form prüfen', exact: true }).click();
   await expect(game).toContainText('0 Strecken passen.'); await expect(game.locator('.geometry-segment')).toHaveAttribute('stroke', '#ba3c46');

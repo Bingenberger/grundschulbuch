@@ -93,7 +93,7 @@ test('Kinder bearbeiten die gesperrte Übung und können ihre gesammelten Silben
     await widget.getByRole('button', { name: 'Laut m zu a ziehen', exact: true }).focus();
     await child.keyboard.press('Enter');
     await expect(widget.getByRole('heading', { name: 'Geschafft!', exact: true })).toBeVisible();
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click();
+    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
     await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(widget.locator('.synthesis-collection .collected')).toHaveText(['ma']);
     await expect(widget.getByRole('heading', { name: 'Geschafft!', exact: true })).toBeVisible();

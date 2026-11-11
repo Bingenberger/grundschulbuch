@@ -92,7 +92,7 @@ test('Kinder verwenden denselben Flächenradierer und können die Änderung wied
     await child.mouse.move(box.x + box.width * 180 / 210, box.y + box.height * 100 / 297, { steps: 8 });
     await child.mouse.up();
     await rub(child, 100, 2);
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click();
+    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
     await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(child.locator('.interaction-surface mask')).toHaveCount(1);
   } finally {
@@ -328,9 +328,9 @@ test('Kinder können denselben Farbeimer verwenden und die Füllung erneut öffn
     await child.getByLabel('Stiftart', { exact: true }).selectOption('fill');
     await child.getByLabel('Füllart', { exact: true }).selectOption('area');
     const surface = child.locator('.interaction-surface'), box = (await surface.boundingBox())!;
-    await child.mouse.click(box.x + box.width * 0.5, box.y + box.height * 0.6);
+    await child.mouse.click(box.x + box.width * 0.5, box.y + box.height * 0.4);
     await expect(surface.locator('.page-element')).toHaveCount(2);
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click();
+    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
     await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(child.locator('.interaction-surface')).toBeVisible();
     await expect(child.locator('.interaction-surface .page-element')).toHaveCount(2);
