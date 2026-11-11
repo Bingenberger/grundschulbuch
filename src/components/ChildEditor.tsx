@@ -28,6 +28,7 @@ import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
 import { SelectBar } from './editor/ContextBars';
 import { featuresFor } from '@/lib/features';
+import { strokeAt } from '@/lib/selection';
 import DrawingRuler from './learning/DrawingRuler';
 import { captureGuideEdge, projectToGuideEdge, type DrawingGuide, type GuideEdge } from '@/lib/drawing-guide';
 import { previousArrowShaft } from '@/lib/shape-recognition';
@@ -129,6 +130,8 @@ export default function ChildEditor({
     if (s.tool === 'pen' && s.brush === 'fill') return;
     const p = point(e);
     if (s.tool === 'select') {
+      // Strokes do not catch pointer events themselves; find one near the tap.
+      element ??= strokeAt(page!.elements, p, e.pointerType === 'touch' ? 4 : 2.5);
       s.select(element && !element.locked ? [element.id] : []);
       if (!element || element.locked) return;
       gesture.current = { el: element, points: [], start: p, move: true, pointer: e.pointerId };
@@ -455,13 +458,7 @@ export default function ChildEditor({
               }}
             />
           ) : (
-            <SelectBar
-              features={features}
-              elements={page.elements.filter((el) => !el.locked)}
-              multi={false}
-              onMulti={() => undefined}
-              onSelect={(id) => s.select([id])}
-            />
+            <SelectBar features={features} multi={false} onMulti={() => undefined} />
           )}
         </div>
       </div>

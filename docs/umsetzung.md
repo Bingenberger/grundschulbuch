@@ -13,6 +13,10 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   Lernwerkzeuge, Einfügen, Seite), ausklappbare Seitenübersicht daneben und
   eine untere Leiste mit den Einstellungen zum gewählten Werkzeug, Element oder
   zur Seite. Lange Einstellungslisten sind dort in Bereiche gegliedert.
+- Auswahl: Elemente antippen (Striche werden entlang ihrer Linie getroffen)
+  oder auf freier Fläche einen Rahmen aufziehen, um mehrere Elemente zu wählen.
+  Gesperrte Elemente und ein den Rahmen umschließender Hintergrund werden dabei
+  nicht mitgewählt. Kinder können Elemente und Striche antippen.
 - Alle Einstellungen erscheinen als Knöpfe mit Icon und Text; es gibt keine
   Dropdown-Menüs mehr, auch nicht in den Dialogen der Lernwerkzeuge.
 - Icons: Flat Color Icons (icons8, MIT, npm `flat-color-icons`); fehlende

@@ -40,6 +40,7 @@ import ElementBar from './editor/ElementBar';
 import PageBar from './editor/PageBar';
 import { InsertBar, SelectBar, type InsertAction } from './editor/ContextBars';
 import { featuresFor } from '@/lib/features';
+import { elementsInFrame, rectFrom, strokeAt, tapDistance, type Rect } from '@/lib/selection';
 import { DotGlyph } from './ui/Glyphs';
 import Icon from './Icon';
 import { captureGuideEdge, projectToGuideEdge, type DrawingGuide, type GuideEdge } from '@/lib/drawing-guide';
@@ -56,7 +57,7 @@ import { blueprints, blueprintPages } from '@/lib/learning/templates';
 import ImageDialog from './ImageDialog';
 
 type Gesture = {
-  type: 'move' | 'resize' | 'draw' | 'erase';
+  type: 'move' | 'resize' | 'draw' | 'erase' | 'frame';
   start: Point;
   originals: PageElement[];
   points: Point[];
@@ -122,6 +123,7 @@ export default function Editor({
   const [draft, setDraft] = useState<PageElement | null>(null);
   const [preview, setPreview] = useState<PageElement[] | null>(null);
   const [erasePreview, setErasePreview] = useState<PageElement[] | null>(null);
+  const [frame, setFrame] = useState<Rect | null>(null);
   const [panel, setPanel] = useState<'insert' | 'page' | null>(null);
   const features = featuresFor('teacher');
   const surface = useRef<HTMLDivElement>(null);
@@ -431,7 +433,7 @@ export default function Editor({
     const active = gesture.current;
     gesture.current = null;
     if (active && surface.current?.hasPointerCapture(active.pointer)) surface.current.releasePointerCapture(active.pointer);
-    recognition.cancel(); setDraft(null); setPreview(null); setErasePreview(null);
+    recognition.cancel(); setDraft(null); setPreview(null); setErasePreview(null); setFrame(null);
   }
   function presentation(mode: BoardPointerMode) {
     cancelDrawingGesture();
@@ -643,23 +645,30 @@ export default function Editor({
         pointer: event.pointerId,
       };
       erase();
-    } else if (element) {
-      let ids = s.selected.includes(element.id)
+    } else {
+      // Strokes do not catch pointer events themselves; find one near the tap.
+      const target = element ?? strokeAt(page!.elements, point, event.pointerType === 'touch' ? 4 : 2.5);
+      if (!target) {
+        gesture.current = { type: 'frame', start: point, originals: [], points: [], pointer: event.pointerId };
+        setFrame(rectFrom(point, point));
+        return;
+      }
+      let ids = s.selected.includes(target.id)
         ? s.selected
-        : element.groupId
+        : target.groupId
           ? page!.elements
-              .filter((el) => el.groupId === element.groupId)
+              .filter((el) => el.groupId === target.groupId)
               .map((el) => el.id)
-          : [element.id];
+          : [target.id];
       if (multi || event.shiftKey) {
-        ids = s.selected.includes(element.id)
-          ? s.selected.filter((id) => id !== element.id)
-          : [...s.selected, element.id];
+        ids = s.selected.includes(target.id)
+          ? s.selected.filter((id) => id !== target.id)
+          : [...s.selected, target.id];
         s.select(ids);
         return;
       }
       s.select(ids);
-      if (element.locked) return;
+      if (target.locked) return;
       const originals = page!.elements.filter(
         (el) => ids.includes(el.id) && !el.locked,
       );
@@ -670,7 +679,7 @@ export default function Editor({
         points: [],
         pointer: event.pointerId,
       };
-    } else s.select([]);
+    }
   }
   function erase() {
     const g = gesture.current;
@@ -683,6 +692,10 @@ export default function Editor({
     let samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
     if (g.guideEdge) samples = samples.map(point => projectToGuideEdge(point, g.guideEdge!));
     const point = samples[samples.length - 1];
+    if (g.type === 'frame') {
+      setFrame(rectFrom(g.start, point));
+      return;
+    }
     if (g.type === 'draw' || g.type === 'erase') {
       appendSamples(g.points, samples);
       if (g.type === 'erase') erase();
@@ -736,6 +749,20 @@ export default function Editor({
       let samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
       if (g.guideEdge) samples = samples.map(point => projectToGuideEdge(point, g.guideEdge!));
       appendSamples(g.points, samples);
+    }
+    if (g.type === 'frame') {
+      gesture.current = null;
+      const rect = frame;
+      setFrame(null);
+      if (cancel || !rect) return;
+      const additive = multi || event.shiftKey;
+      if (Math.max(rect.width, rect.height) < tapDistance) {
+        if (!additive) s.select([]);
+        return;
+      }
+      const ids = elementsInFrame(page!.elements, rect);
+      s.select(additive ? [...new Set([...s.selected, ...ids])] : ids);
+      return;
     }
     const recognized = !cancel && g.type === 'draw' && !g.guideEdge ? recognition.finish(g.points) : null;
     recognition.cancel();
@@ -1027,6 +1054,12 @@ export default function Editor({
                           </div>
                         );
                       })}
+                    {frame && (
+                      <div
+                        className="selection-frame"
+                        style={{ left: `${frame.x}mm`, top: `${frame.y}mm`, width: `${frame.width}mm`, height: `${frame.height}mm` }}
+                      />
+                    )}
                     {guide && (!board || boardPointer === 'none') && <DrawingRuler guide={guide} onChange={setGuide} onClose={() => setGuide(null)} />}
                     {board && boardPointer !== 'none' && <BoardPointer key={`${page.id}-${boardPointer}`} mode={boardPointer} width={size.width} height={size.height} size={lightSize} onClose={() => setBoardPointer('none')} />}
                   </div>
@@ -1112,10 +1145,9 @@ export default function Editor({
         ) : (
           <SelectBar
             features={features}
-            elements={page.elements}
             multi={multi}
             onMulti={setMulti}
-            onSelect={(id) => s.select([id])}
+            onSelectAll={page.elements.some((el) => !el.locked) ? () => performCommand('selectAll') : undefined}
           />
         )}
         </div>
