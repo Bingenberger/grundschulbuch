@@ -24,9 +24,9 @@ export function linkLabel(link: ElementLink, pageNumber?: (id: string) => number
 }
 
 const linkIcon = (
-  <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
-    <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" fill="none" stroke="#1565c0" strokeWidth="2.4" strokeLinecap="round" />
-    <path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="#42a5f5" strokeWidth="2.4" strokeLinecap="round" />
+  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+    <path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+    <path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
   </svg>
 );
 
@@ -50,6 +50,7 @@ export function LinkBadge({ element }: { element: PageElement }) {
       >
         {linkIcon}
         <span>{label}</span>
+        <b aria-hidden="true">↗</b>
       </a>
     );
   const missing = !pageNumber?.(link.pageId);
@@ -67,6 +68,7 @@ export function LinkBadge({ element }: { element: PageElement }) {
     >
       {linkIcon}
       <span>{label}</span>
+      <b aria-hidden="true">→</b>
     </button>
   );
 }
