@@ -37,6 +37,7 @@ export default function ScaledPage({
     <div
       ref={ref}
       aria-hidden={decorative || undefined}
+      inert={decorative || undefined}
       className="scaled-page"
       style={{ width: '100%' }}
     >

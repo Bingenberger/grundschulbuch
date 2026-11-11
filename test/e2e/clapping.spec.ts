@@ -72,7 +72,7 @@ test('Kinder speichern ihre Klatschserie in einer gesperrten Übung', async ({ p
     await clap.click(); await clap.click(); await widget.getByRole('button', { name: 'Prüfen', exact: true }).click();
     await widget.getByRole('button', { name: 'Weiter', exact: true }).click();
     await expect(widget.getByRole('heading', { name: 'Geschafft!', exact: true })).toBeVisible();
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/); await child.goto(`/kinder/heft/${copies[0].id}`);
+    await child.getByRole('button', { name: 'Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/); await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(widget.locator('.clapping-certificate')).toContainText('1 von 1 Wörtern richtig geklatscht.');
   } finally { await context.close(); }
 });

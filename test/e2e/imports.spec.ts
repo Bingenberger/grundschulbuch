@@ -44,7 +44,7 @@ test('PDF-Import erhält Hoch- und Querformat als geschützte beschreibbare Seit
         p.elements[0].src.startsWith('/api/medien/'),
     ),
   ).toBe(true);
-  await page.getByRole('button', { name: 'T Text', exact: true }).click();
+  await page.getByRole('button', { name: 'Text', exact: true }).click();
   await page
     .getByLabel('Text', { exact: true })
     .fill('Meine Antwort auf dem PDF');

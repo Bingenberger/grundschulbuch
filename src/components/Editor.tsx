@@ -7,7 +7,6 @@ import {
   clone,
   compactStroke,
   dimensions,
-  fonts,
   newPage,
   rulings,
   type BookData,
@@ -19,9 +18,6 @@ import {
 } from '@/lib/notebook-model';
 import { ElementView } from './PageView';
 import ScaledPage from './ScaledPage';
-import DrawingOptions from './DrawingOptions';
-import PageEyedropper from './PageEyedropper';
-import PageFillTool from './PageFillTool';
 import BoardPointer, { type BoardPointerMode } from './BoardPointer';
 import { useShapeRecognition } from '@/lib/use-shape-recognition';
 import { previousArrowShaft } from '@/lib/shape-recognition';
@@ -36,7 +32,16 @@ import LearningDialog from './learning/LearningDialog';
 import ElementsDialog from './learning/ElementsDialog';
 import EmbedDialog from './learning/EmbedDialog';
 import DrawingRuler from './learning/DrawingRuler';
-import DrawingGuideTools from './DrawingGuideTools';
+import EditorHeader from './editor/EditorHeader';
+import ToolRail, { type RailItem } from './editor/ToolRail';
+import PagePanel from './editor/PagePanel';
+import DrawingBar from './editor/DrawingBar';
+import ElementBar from './editor/ElementBar';
+import PageBar from './editor/PageBar';
+import { InsertBar, SelectBar, type InsertAction } from './editor/ContextBars';
+import { featuresFor } from '@/lib/features';
+import { DotGlyph } from './ui/Glyphs';
+import Icon from './Icon';
 import { captureGuideEdge, projectToGuideEdge, type DrawingGuide, type GuideEdge } from '@/lib/drawing-guide';
 import ShortcutDialog from './learning/ShortcutDialog';
 import {
@@ -46,7 +51,6 @@ import {
   type Shortcuts,
 } from '@/lib/editor-commands';
 import { speakGerman } from '@/lib/speech';
-import Inspector from './learning/Inspector';
 import FileDialog from './FileDialog';
 import { blueprints, blueprintPages } from '@/lib/learning/templates';
 import ImageDialog from './ImageDialog';
@@ -118,8 +122,8 @@ export default function Editor({
   const [draft, setDraft] = useState<PageElement | null>(null);
   const [preview, setPreview] = useState<PageElement[] | null>(null);
   const [erasePreview, setErasePreview] = useState<PageElement[] | null>(null);
-  const [templateName, setTemplateName] = useState('');
-  const [title, setTitle] = useState(initial.book.title);
+  const [panel, setPanel] = useState<'insert' | 'page' | null>(null);
+  const features = featuresFor('teacher');
   const surface = useRef<HTMLDivElement>(null);
   const gesture = useRef<Gesture | null>(null);
   const [clipboard, setClipboard] = useState<PageElement[]>([]);
@@ -128,6 +132,9 @@ export default function Editor({
   const selected =
     page?.elements.filter((el) => s.selected.includes(el.id)) || [];
   const first = selected.length === 1 ? selected[0] : undefined;
+  const railActive: RailItem = selected.length
+    ? 'select'
+    : panel ?? (s.tool === 'marker' ? 'pen' : s.tool);
   useEffect(() => {
     useEditor.getState().load(initial);
     return () => {
@@ -282,15 +289,13 @@ export default function Editor({
         setShowCollection(true);
         break;
       case 'pagePanel':
-        s.select([]);
+        setPanel('page');
+        useEditor.setState({ tool: 'select', selected: [] });
         break;
-      case 'itemsPanel': {
-        const details = document.querySelector(
-          '.element-list',
-        ) as HTMLDetailsElement;
-        if (details) details.open = !details.open;
+      case 'itemsPanel':
+        setPanel(null);
+        useEditor.setState({ tool: 'select', selected: [] });
         break;
-      }
       case 'selectNext':
       case 'selectPrev': {
         const at = page.elements.findIndex((el) => el.id === s.selected[0]),
@@ -474,6 +479,75 @@ export default function Editor({
     s.edit((p) => ({ ...p, elements: [...p.elements, el] }));
     s.select([el.id]);
     useEditor.setState({ tool: 'select' });
+  }
+  function chooseRail(item: RailItem) {
+    if (item !== 'insert' && item !== 'page') setPanel(null);
+    switch (item) {
+      case 'select':
+        useEditor.setState({ tool: 'select' });
+        break;
+      case 'pen':
+        s.chooseBrush(s.brush);
+        break;
+      case 'eraser':
+        useEditor.setState({ tool: 'eraser', selected: [] });
+        break;
+      case 'text':
+        insertText();
+        break;
+      case 'image':
+        setShowImages(true);
+        break;
+      case 'audio':
+        setShowAudio(true);
+        break;
+      case 'learning':
+        setLearning('new');
+        break;
+      case 'insert':
+      case 'page':
+        setPanel(railActive === item ? null : item);
+        useEditor.setState({ tool: 'select', selected: [] });
+        break;
+    }
+  }
+  function insertAction(action: InsertAction) {
+    if (action === 'shapes') setShowElements(true);
+    else if (action === 'stamp')
+      insert({
+        id: uuid(),
+        type: 'text',
+        x: 20,
+        y: 20,
+        width: 65,
+        height: 20,
+        rotation: -5,
+        locked: true,
+        color: '#477e4a',
+        text: '★ Gut gemacht!',
+        font: 'Andika',
+        fontSize: 21,
+        bold: true,
+      });
+    else if (action === 'templates') setShowTemplates(true);
+    else if (action === 'worksheet') setShowGenerator(true);
+    else if (action === 'collection') setShowCollection(true);
+    else setShowEmbed(true);
+  }
+  function deletePage() {
+    if (!page || !window.confirm(`Seite ${pageIndex + 1} endgültig entfernen?`)) return;
+    void run(async () => {
+      const book = await api<Notebook>('update', {
+        id: s.book!.id,
+        revision: s.book!.revision,
+        pageIds: s.book!.pageIds.filter((id) => id !== page.id),
+      });
+      useEditor.setState({
+        book,
+        pages: s.pages.filter((p) => p.id !== page.id),
+      });
+      choosePage(book.pageIds[Math.max(0, pageIndex - 1)]);
+    });
   }
   function insertText() {
     insert({
@@ -770,85 +844,35 @@ export default function Editor({
     <main
       className={`editor ${board ? `board-mode ${page.orientation === 'landscape' ? 'board-landscape' : ''}` : ''}`}
     >
-      <header className="editor-header">
-        <button
-          className="back-button"
-          disabled={busy}
-          onClick={() =>
-            run(async () => {
-              window.location.assign('/');
-            })
-          }
-        >
-          ‹ <span>Mein Regal</span>
-        </button>
-        <span className="header-divider" />
-        <input
-          className="book-title"
-          aria-label="Heftname"
-          maxLength={120}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          onBlur={() => {
-            if (title.trim() && title.trim() !== s.book!.title)
-              void run(async () => {
-                const book = await api<Notebook>('update', {
-                  id: s.book!.id,
-                  revision: s.book!.revision,
-                  title,
-                });
-                useEditor.setState({ book });
-              });
-          }}
-        />
-        <span
-          className={`save-status ${s.error ? 'save-error' : ''}`}
-          role="status"
-        >
-          {s.error
-            ? '⚠ Nicht gespeichert'
-            : s.saving
-              ? 'Speichert …'
-              : Object.keys(s.dirty).length
-                ? 'Änderungen …'
-                : '✓ Gespeichert'}
-        </span>
-        <button
-          className="knopf compact"
-          onClick={() => {
-            cancelDrawingGesture(); setBoardPointer('none'); setBoard(true);
-            setBoardDraw(false);
-            useEditor.setState({ tool: 'select', selected: [] });
-            document.documentElement
-              .requestFullscreen?.()
-              .catch(() => undefined);
-          }}
-        >
-          ⛶ Tafelmodus
-        </button>
-        <button
-          className="knopf compact"
-          disabled={busy}
-          onClick={() =>
-            run(async () => {
-              setShowShare(true);
-            })
-          }
-        >
-          Weitergeben
-        </button>
-        <button
-          className="knopf compact"
-          disabled={busy}
-          onClick={() =>
-            run(async () => {
-              window.location.assign(`/drucken/${s.book!.id}`);
-            })
-          }
-        >
-          Drucken / PDF
-        </button>
-      </header>
+      <EditorHeader
+        features={features}
+        backLabel="Mein Regal"
+        busy={busy}
+        onBack={() => run(async () => { window.location.assign('/'); })}
+        title={s.book.title}
+        onRename={(title) =>
+          void run(async () => {
+            const book = await api<Notebook>('update', { id: s.book!.id, revision: s.book!.revision, title });
+            useEditor.setState({ book });
+          })
+        }
+        status={s.error ? '⚠ Nicht gespeichert' : s.saving ? 'Speichert …' : Object.keys(s.dirty).length ? 'Änderungen …' : '✓ Gespeichert'}
+        statusError={!!s.error}
+        canUndo={s.past.length > 0}
+        canRedo={s.future.length > 0}
+        onUndo={s.undo}
+        onRedo={s.redo}
+        onFiles={() => setShowFiles(true)}
+        onBoard={() => {
+          cancelDrawingGesture(); setBoardPointer('none'); setBoard(true);
+          setBoardDraw(false);
+          useEditor.setState({ tool: 'select', selected: [] });
+          document.documentElement.requestFullscreen?.().catch(() => undefined);
+        }}
+        onShare={() => run(async () => { setShowShare(true); })}
+        onPrint={() => run(async () => { window.location.assign(`/drucken/${s.book!.id}`); })}
+        onHelp={() => setShowShortcuts(true)}
+      />
       {s.error && (
         <div className="error-banner" role="alert">
           {s.error}
@@ -886,174 +910,18 @@ export default function Editor({
           )}
         </div>
       )}
-      <nav className="editor-toolbar" aria-label="Werkzeuge">
-        <div className="tool-group">
-          {(
-            [
-              ['select', '↖', 'Auswahl'],
-              ['pen', '✎', 'Stift'],
-              ['marker', '▰', 'Textmarker'],
-              ['eraser', '⌫', 'Radierer'],
-            ] as const
-          ).map(([tool, icon, label]) => (
-            <button
-              key={tool}
-              className="tool"
-              aria-pressed={s.tool === tool}
-              onClick={() => {
-                if (tool === 'marker') s.chooseBrush('marker');
-                else if (tool === 'pen') s.chooseBrush(s.brush === 'marker' ? 'pen' : s.brush);
-                useEditor.setState({ tool });
-                if (tool !== 'select') s.select([]);
-              }}
-            >
-              <span>{icon}</span>
-              {label}
-            </button>
-          ))}
-        </div>
-        <div className="tool-group">
-          <button className="tool" onClick={insertText}>
-            <span>T</span>Text
-          </button>
-          <button className="tool" onClick={() => setShowImages(true)}>
-            <span>▧</span>Bild
-          </button>
-          <button className="tool" onClick={() => setShowTemplates(true)}>
-            <span>▤</span>Vorlagen
-          </button>
-          <button className="tool" onClick={() => setShowGenerator(true)}>
-            <span>＋</span>Arbeitsblatt
-          </button>
-          <button className="tool" onClick={() => setShowCollection(true)}>
-            <span>☆</span>Sammlung
-          </button>
-          <button className="tool" onClick={() => setShowAudio(true)}>
-            <span>♫</span>Ton
-          </button>
-          <button
-            className="tool"
-            onClick={() =>
-              insert({
-                id: uuid(),
-                type: 'text',
-                x: 20,
-                y: 20,
-                width: 65,
-                height: 20,
-                rotation: -5,
-                locked: true,
-                color: '#477e4a',
-                text: '★ Gut gemacht!',
-                font: 'Andika',
-                fontSize: 21,
-                bold: true,
-              })
-            }
-          >
-            <span>☆</span>Stempel
-          </button>
-        </div>
-        <div className="tool-group">
-          <button className="tool" onClick={() => setLearning('new')}>
-            <span>◈</span>Lernwerkzeuge
-          </button>
-          <button className="tool" onClick={() => setShowElements(true)}>
-            <span>◇</span>Formen
-          </button>
-          <button className="tool" onClick={() => setShowEmbed(true)}>
-            <span>↗</span>Internet
-          </button>
-          <button className="tool" onClick={() => setShowFiles(true)}>
-            <span>⇅</span>Dateien
-          </button>
-          <button className="tool" onClick={() => setShowShortcuts(true)}>
-            <span>?</span>Hilfe
-          </button>
-          <label className="tool color-tool">
-            <input
-              type="color"
-              aria-label="Stiftfarbe"
-              value={s.color}
-              onChange={(e) => useEditor.setState({ color: e.target.value })}
-            />
-            Farbe
-          </label>
-        </div>
-        <DrawingGuideTools guide={guide} onChange={setGuide} />
-        <DrawingOptions allowFill />
-        {!board && <PageEyedropper key={page.id} surface={surface} />}
-        <PageFillTool key={`fill-${page.id}`} surface={surface} disabled={board && !boardDraw} />
-        {draft?.geometry && (s.tool === 'pen' || s.tool === 'marker') && <span role="status">Form erkannt – zum Übernehmen loslassen.</span>}
-        <div className="tool-group">
-          <button className="tool" disabled={!s.past.length} onClick={s.undo}>
-            <span>↶</span>Zurück
-          </button>
-          <button className="tool" disabled={!s.future.length} onClick={s.redo}>
-            <span>↷</span>Wiederholen
-          </button>
-        </div>
-        <label className="pencil-only">
-          <input
-            type="checkbox"
-            checked={s.pencilOnly}
-            onChange={(e) =>
-              useEditor.setState({ pencilOnly: e.target.checked })
-            }
-          />{' '}
-          Nur Stift zeichnet
-        </label>
-      </nav>
-      <div className="editor-workspace">
-        <aside className="page-sidebar">
-          <div className="sidebar-heading">
-            <strong>Seiten</strong>
-            <span>{s.pages.length}</span>
-          </div>
-          <div className="page-thumbnails">
-            {s.book.pageIds.map((id, index) => {
-              const p = s.pages.find((p) => p.id === id)!;
-              return (
-                <button
-                  key={id}
-                  className={`page-thumbnail ${page.id === id ? 'active' : ''}`}
-                  aria-label={`Seite ${index + 1} öffnen`}
-                  aria-current={page.id === id ? 'page' : undefined}
-                  disabled={busy}
-                  onClick={() => {
-                    choosePage(id);
-                  }}
-                >
-                  <ScaledPage page={p} decorative />
-                  <span>{String(index + 1).padStart(2, '0')}</span>
-                </button>
-              );
-            })}
-          </div>
-          <button
-            className="knopf add-page"
-            disabled={busy}
-            onClick={() => run(() => add())}
-          >
-            ＋ Seite
-          </button>
-          <button
-            className="sidebar-link"
-            onClick={() => setShowTemplates(true)}
-          >
-            Aus Vorlage einfügen
-          </button>
-        </aside>
+      <div className="editor-body">
+        <ToolRail features={features} active={railActive} onChoose={chooseRail} />
+        <PagePanel
+          pages={s.pages}
+          pageIds={s.book.pageIds}
+          activeId={page.id}
+          busy={busy}
+          onChoose={choosePage}
+          onAdd={() => run(() => add())}
+        />
+        <div className="editor-main">
         <section className="canvas-area">
-          <div className="canvas-caption">
-            <span>
-              {rulings[page.ruling]} <i>·</i> A4{' '}
-              {page.orientation === 'portrait' ? 'Hochformat' : 'Querformat'}
-            </span>
-            <span>
-              Seite {pageIndex + 1} von {s.pages.length}
-            </span>
-          </div>
           <div className="canvas-scroll">
             <div className="canvas-sheet">
               <ScaledPage
@@ -1166,464 +1034,91 @@ export default function Editor({
               </ScaledPage>
             </div>
           </div>
-          <div className="canvas-bottom">
-            <div className="zoom-controls">
-              <button
-                aria-label="Ansicht verkleinern"
-                onClick={() => setZoom((z) => Math.max(0.2, z - 0.1))}
-              >
-                −
-              </button>
-              <span className="zoom-value">{Math.round(zoom * 100)} %</span>
-              <button
-                aria-label="Ansicht vergrößern"
-                onClick={() => setZoom((z) => Math.min(3, z + 0.1))}
-              >
-                ＋
-              </button>
-              <button
-                onClick={() => {
-                  const paper = surface.current?.getBoundingClientRect(),
-                    area = surface.current?.closest('.canvas-scroll');
-                  if (paper && area)
-                    setZoom((z) =>
-                      Math.max(
-                        0.2,
-                        Math.min(
-                          3,
-                          z *
-                            Math.min(
-                              (area.clientHeight - 30) / paper.height,
-                              (area.clientWidth - 40) / paper.width,
-                            ),
-                        ),
-                      ),
-                    );
-                }}
-              >
-                Ganze Seite
-              </button>
-            </div>
-            <span>
-              {s.tool === 'eraser'
-                ? s.eraser.mode === 'area' ? 'Radiere nur die überfahrene Stelle. Bilder und Texte bleiben erhalten.' : 'Radierer entfernt ganze Striche. Gesperrte Elemente bleiben erhalten.'
-                : s.tool === 'select'
-                  ? 'Element antippen · am Eckpunkt vergrößern'
-                  : 'Direkt auf der Seite zeichnen'}
-            </span>
-            <span>Maße in Millimetern</span>
+          <div className="zoom-float" role="group" aria-label="Ansicht">
+            <button type="button" aria-label="Ansicht verkleinern" onClick={() => performCommand('zoomOut')}>
+              <Icon name="minus" size={22} />
+            </button>
+            <span className="zoom-value">{Math.round(zoom * 100)} %</span>
+            <button type="button" aria-label="Ansicht vergrößern" onClick={() => performCommand('zoomIn')}>
+              <Icon name="plus" size={22} />
+            </button>
+            <button type="button" onClick={() => performCommand('zoomFit')}>
+              <Icon name="expand" size={22} />
+              <span>Ganze Seite</span>
+            </button>
           </div>
         </section>
-        <aside className="properties">
-          <details className="element-list">
-            <summary>Elemente der Seite ({page.elements.length})</summary>
-            {page.elements.map((el, i) => (
-              <button
-                key={el.id}
-                className="sidebar-link"
-                onClick={() => {
-                  useEditor.setState({ tool: 'select' });
-                  s.select([el.id]);
-                }}
-              >
-                {i + 1}.{' '}
-                {el.text?.slice(0, 25) ||
-                  el.settings?.title ||
-                  el.alt ||
-                  (
-                    {
-                      text: 'Text',
-                      image: 'Bild',
-                      stroke: 'Zeichnung',
-                      audio: 'Ton',
-                      shape: 'Form',
-                      sticker: 'Symbol',
-                      widget: 'Lernwerkzeug',
-                      activity: 'Übung',
-                      embed: 'Einbettung',
-                    } as Record<string, string>
-                  )[el.type]}
-                {el.locked ? ' · gesperrt' : ''}
-              </button>
-            ))}
-          </details>
-          <h2>
-            {selected.length
-              ? `${selected.length === 1 ? 'Element' : `${selected.length} Elemente`}`
-              : 'Deine Seite'}
-          </h2>
-          {selected.length ? (
-            <>
-              {first?.type === 'text' && (
-                <>
-                  <label className="property-label">
-                    Text
-                    <textarea
-                      aria-label="Text"
-                      ref={textArea}
-                      value={first.text}
-                      disabled={first.locked}
-                      onChange={(e) =>
-                        s.patchElements({
-                          text: e.target.value,
-                          runs: undefined,
-                        })
-                      }
-                    />
-                  </label>
-                  <label className="property-label">
-                    Schrift
-                    <select
-                      aria-label="Schrift"
-                      value={first.font}
-                      disabled={first.locked}
-                      onChange={(e) =>
-                        s.patchElements({
-                          font: e.target.value as PageElement['font'],
-                        })
-                      }
-                    >
-                      {Object.entries(fonts).map(([value, label]) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <div className="property-row">
-                    <label>
-                      Größe (pt)
-                      <input
-                        type="number"
-                        min="6"
-                        max="150"
-                        value={first.fontSize}
-                        disabled={first.locked}
-                        onChange={(e) => {
-                          const n = Number(e.target.value);
-                          if (n >= 6 && n <= 150)
-                            s.patchElements({ fontSize: n });
-                        }}
-                      />
-                    </label>
-                    <button
-                      className="knopf"
-                      disabled={first.locked}
-                      aria-pressed={first.bold}
-                      onClick={() => s.patchElements({ bold: !first.bold })}
-                    >
-                      <strong>Fett</strong>
-                    </button>
-                  </div>
-                </>
-              )}
-              {(first?.type === 'image' || first?.type === 'audio') && (
-                <label className="property-label">
-                  Bildbeschreibung
-                  <input
-                    value={first.alt || ''}
-                    maxLength={300}
-                    disabled={first.locked}
-                    onChange={(e) => s.patchElements({ alt: e.target.value })}
-                  />
-                </label>
-              )}
-              {first && (
-                <>
-                  <div className="property-row">
-                    {(['width', 'height'] as const).map((key) => (
-                      <label key={key}>
-                        {key === 'width' ? 'Breite' : 'Höhe'} (mm)
-                        <input
-                          type="number"
-                          min="1"
-                          max="400"
-                          step="1"
-                          value={Math.round(first[key] * 10) / 10}
-                          disabled={first.locked}
-                          onChange={(e) => {
-                            const n = Number(e.target.value);
-                            if (n >= 1 && n <= 400) patchGeometry(key, n);
-                          }}
-                        />
-                      </label>
-                    ))}
-                  </div>
-                  <label className="property-label">
-                    Drehung · {Math.round(first.rotation)}°
-                    <input
-                      type="range"
-                      min="-180"
-                      max="180"
-                      value={first.rotation}
-                      disabled={first.locked}
-                      onChange={(e) =>
-                        s.patchElements({ rotation: Number(e.target.value) })
-                      }
-                    />
-                  </label>
-                  <label className="property-label">
-                    Farbe
-                    <input
-                      type="color"
-                      value={first.color}
-                      disabled={first.locked}
-                      onChange={(e) =>
-                        s.patchElements({ color: e.target.value })
-                      }
-                    />
-                  </label>
-                </>
-              )}
-              <div className="property-row">
-                <button className="knopf compact" onClick={() => layer(true)}>
-                  Nach vorn
-                </button>
-                <button className="knopf compact" onClick={() => layer(false)}>
-                  Nach hinten
-                </button>
-              </div>
-              <button
-                className="knopf property-button"
-                onClick={() =>
-                  s.edit((p) => ({
-                    ...p,
-                    elements: p.elements.map((el) =>
-                      s.selected.includes(el.id)
-                        ? { ...el, locked: !selected.every((el) => el.locked) }
-                        : el,
-                    ),
-                  }))
-                }
-              >
-                {selected.every((el) => el.locked) ? 'Entsperren' : 'Sperren'}
-              </button>
-              <div className="property-row">
-                <button
-                  className="knopf compact"
-                  onClick={() => {
-                    setClipboard(clone(selected));
-                  }}
-                >
-                  Kopieren
-                </button>
-                <button
-                  className="knopf compact"
-                  disabled={!clipboard.length}
-                  onClick={() => {
-                    const elements = cloneElements(clipboard);
-                    s.edit((p) => ({
-                      ...p,
-                      elements: [...p.elements, ...elements],
-                    }));
-                    s.select(elements.map((el) => el.id));
-                  }}
-                >
-                  Einfügen
-                </button>
-              </div>
-              <button
-                className="knopf property-button"
-                onClick={() => {
-                  const name = prompt('Name für die Sammlung');
-                  if (name?.trim())
-                    void run(async () => {
-                      await api('asset', {
-                        title: name,
-                        page: { ...page, elements: selected },
-                      });
-                      setShowCollection(true);
-                    });
-                }}
-              >
-                In Sammlung sichern
-              </button>
-              <button
-                className="knopf property-button danger-text"
-                disabled={selected.every((el) => el.locked)}
-                onClick={() => {
-                  s.edit((p) => ({
-                    ...p,
-                    elements: p.elements.filter(
-                      (el) => el.locked || !s.selected.includes(el.id),
-                    ),
-                  }));
-                  s.select([]);
-                }}
-              >
-                Elemente entfernen
-              </button>
-              <button className="sidebar-link" onClick={() => s.select([])}>
-                Seiteneinstellungen
-              </button>
-            </>
-          ) : (
-            <>
-              <p className="property-hint">
-                Ein Blatt für deine nächste Unterrichtsidee.
-              </p>
-              <label className="property-label">
-                Lineatur
-                <select
-                  aria-label="Lineatur"
-                  value={page.ruling}
-                  onChange={(e) =>
-                    s.edit((p) => ({
-                      ...p,
-                      ruling: e.target.value as Page['ruling'],
-                    }))
-                  }
-                >
-                  {Object.entries(rulings).map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="property-label">
-                Format
-                <select
-                  aria-label="Format"
-                  value={page.orientation}
-                  onChange={(e) =>
-                    s.edit((p) => ({
-                      ...p,
-                      orientation: e.target.value as Page['orientation'],
-                    }))
-                  }
-                >
-                  <option value="portrait">A4 · Hochformat</option>
-                  <option value="landscape">A4 · Querformat</option>
-                </select>
-              </label>
-              <div className="property-divider" />
-              <button
-                className="knopf property-button"
-                disabled={busy}
-                onClick={() =>
-                  run(() =>
-                    add({ ...page, elements: cloneElements(page.elements, 0) }),
-                  )
-                }
-              >
-                Seite duplizieren
-              </button>
-              <div className="property-row">
-                <button
-                  className="knopf compact"
-                  disabled={busy || pageIndex === 0}
-                  onClick={() => run(() => reorder(-1))}
-                >
-                  ↑ Früher
-                </button>
-                <button
-                  className="knopf compact"
-                  disabled={busy || pageIndex === s.pages.length - 1}
-                  onClick={() => run(() => reorder(1))}
-                >
-                  ↓ Später
-                </button>
-              </div>
-              <button
-                className="knopf property-button danger-text"
-                disabled={busy || s.pages.length < 2}
-                onClick={() => {
-                  if (
-                    window.confirm(
-                      `Seite ${pageIndex + 1} endgültig entfernen?`,
-                    )
-                  )
-                    void run(async () => {
-                      const book = await api<Notebook>('update', {
-                        id: s.book!.id,
-                        revision: s.book!.revision,
-                        pageIds: s.book!.pageIds.filter((id) => id !== page.id),
-                      });
-                      useEditor.setState({
-                        book,
-                        pages: s.pages.filter((p) => p.id !== page.id),
-                      });
-                      choosePage(book.pageIds[Math.max(0, pageIndex - 1)]);
-                    });
-                }}
-              >
-                Seite löschen
-              </button>
-              <div className="property-divider" />
-              <label className="property-label">
-                Als eigene Vorlage
-                <input
-                  placeholder="Name der Vorlage"
-                  maxLength={120}
-                  value={templateName}
-                  onChange={(e) => setTemplateName(e.target.value)}
-                />
-              </label>
-              <button
-                className="knopf property-button"
-                disabled={busy || !templateName.trim()}
-                onClick={() =>
-                  run(async () => {
-                    const template = await api<Template>('template', {
-                      title: templateName,
-                      page,
-                    });
-                    setTemplates([...templates, template]);
-                    setTemplateName('');
-                    setShowTemplates(true);
-                  })
-                }
-              >
-                Vorlage speichern
-              </button>
-              {clipboard.length > 0 && (
-                <button
-                  className="knopf property-button"
-                  onClick={() => {
-                    const elements = cloneElements(clipboard);
-                    s.edit((p) => ({
-                      ...p,
-                      elements: [...p.elements, ...elements],
-                    }));
-                    s.select(elements.map((el) => el.id));
-                  }}
-                >
-                  Elemente einfügen
-                </button>
-              )}
-            </>
-          )}
-          <div className="property-divider" />
-          <Inspector element={first} onConfigure={setLearning} />
-          {selected.length > 1 && (
-            <div className="property-row">
-              <button
-                className="knopf compact"
-                onClick={() => {
-                  const groupId = uuid();
-                  s.patchElements({ groupId });
-                }}
-              >
-                Gruppieren
-              </button>
-              <button
-                className="knopf compact"
-                onClick={() => s.patchElements({ groupId: undefined })}
-              >
-                Gruppe lösen
-              </button>
-            </div>
-          )}
-          <label className="multi-select">
-            <input
-              type="checkbox"
-              checked={multi}
-              onChange={(e) => setMulti(e.target.checked)}
-            />{' '}
-            Mehrfachauswahl
-          </label>
-        </aside>
+        {draft?.geometry && (s.tool === 'pen' || s.tool === 'marker') && <span className="shape-hint" role="status">Form erkannt – zum Übernehmen loslassen.</span>}
+        {s.tool === 'pen' || s.tool === 'marker' || s.tool === 'eraser' ? (
+          <>
+            <DrawingBar
+              features={features}
+              surface={surface}
+              pageId={page.id}
+              guide={guide}
+              onGuide={setGuide}
+              fillDisabled={board && !boardDraw}
+            />
+          </>
+        ) : selected.length ? (
+          <ElementBar
+            features={features}
+            elements={selected}
+            textArea={textArea}
+            actions={{
+              onResize: (factor) => performCommand(factor > 1 ? 'bigger' : 'smaller'),
+              onRotate: (degrees) => performCommand(degrees < 0 ? 'rotateLeft' : 'rotateRight'),
+              onDelete: () => performCommand('delete'),
+              onGeometry: patchGeometry,
+              onLayer: layer,
+              onLock: () => performCommand('lock'),
+              onCopy: () => setClipboard(clone(selected)),
+              onPaste: clipboard.length ? () => performCommand('paste') : undefined,
+              onCollection: () => {
+                const name = prompt('Name für die Sammlung');
+                if (name?.trim())
+                  void run(async () => {
+                    await api('asset', { title: name, page: { ...page, elements: selected } });
+                    setShowCollection(true);
+                  });
+              },
+              onGroup: (group) => performCommand(group ? 'group' : 'ungroup'),
+              onConfigure: setLearning,
+            }}
+          />
+        ) : panel === 'insert' ? (
+          <InsertBar features={features} onInsert={insertAction} />
+        ) : panel === 'page' ? (
+          <PageBar
+            key={page.id}
+            features={features}
+            page={page}
+            pageIndex={pageIndex}
+            pageCount={s.pages.length}
+            busy={busy}
+            onDuplicate={() => run(() => add({ ...page, elements: cloneElements(page.elements, 0) }))}
+            onMove={(delta) => run(() => reorder(delta))}
+            onDelete={deletePage}
+            onTemplates={() => setShowTemplates(true)}
+            onSaveTemplate={(name) =>
+              run(async () => {
+                const template = await api<Template>('template', { title: name, page });
+                setTemplates([...templates, template]);
+                setShowTemplates(true);
+              })
+            }
+            onPaste={clipboard.length ? () => performCommand('paste') : undefined}
+          />
+        ) : (
+          <SelectBar
+            features={features}
+            elements={page.elements}
+            multi={multi}
+            onMulti={setMulti}
+            onSelect={(id) => s.select([id])}
+          />
+        )}
+        </div>
       </div>
       {board && (
         <div className="board-controls" role="group" aria-label="Tafelwerkzeuge">
@@ -1637,13 +1132,21 @@ export default function Editor({
               else s.chooseBrush(s.brush === 'fill' ? 'pen' : s.brush);
             }}
           >
-            {boardDraw ? '✓ Zeichnen beenden' : '✎ Auf der Tafel schreiben'}
+            <Icon name={boardDraw ? 'ok' : 'signature'} size={26} />
+            {boardDraw ? 'Zeichnen beenden' : 'Auf der Tafel schreiben'}
           </button>
-          <button className="knopf" aria-pressed={boardPointer === 'laser'} onClick={() => presentation(boardPointer === 'laser' ? 'none' : 'laser')}>Laserpointer</button>
-          <button className="knopf" aria-pressed={boardPointer === 'light'} onClick={() => presentation(boardPointer === 'light' ? 'none' : 'light')}>Taschenlampe</button>
-          {boardPointer === 'light' && <label>Lichtkreis <select aria-label="Lichtkreisgröße" value={lightSize} onChange={event => setLightSize(Number(event.target.value))}>
-            <option value="0.12">Klein</option><option value="0.2">Mittel</option><option value="0.3">Groß</option>
-          </select></label>}
+          <button className="knopf" aria-pressed={boardPointer === 'laser'} onClick={() => presentation(boardPointer === 'laser' ? 'none' : 'laser')}><Icon name="flash_on" size={26} />Laserpointer</button>
+          <button className="knopf" aria-pressed={boardPointer === 'light'} onClick={() => presentation(boardPointer === 'light' ? 'none' : 'light')}><Icon name="idea" size={26} />Taschenlampe</button>
+          {boardPointer === 'light' && (
+            <div className="board-choice" role="group" aria-label="Lichtkreisgröße">
+              {([[0.12, 'Klein'], [0.2, 'Mittel'], [0.3, 'Groß']] as const).map(([value, label]) => (
+                <button key={value} type="button" className="knopf" aria-pressed={lightSize === value} onClick={() => setLightSize(value)}>
+                  <DotGlyph size={value * 30} />
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
           {boardPointer !== 'none' && <button className="knopf" onClick={() => presentation('none')}>Zeigehilfe beenden</button>}
 
           <button
@@ -1651,7 +1154,7 @@ export default function Editor({
             disabled={pageIndex === 0}
             onClick={() => choosePage(s.book!.pageIds[pageIndex - 1])}
           >
-            ‹ Zurück
+            <Icon name="previous" size={22} /> Zurück
           </button>
           <span>
             {pageIndex + 1} / {s.pages.length}
@@ -1661,10 +1164,10 @@ export default function Editor({
             disabled={pageIndex === s.pages.length - 1}
             onClick={() => choosePage(s.book!.pageIds[pageIndex + 1])}
           >
-            Weiter ›
+            Weiter <Icon name="next" size={22} />
           </button>
           <button className="knopf knopf-haupt" onClick={() => { cancelDrawingGesture(); setBoardPointer('none'); setBoardDraw(false); setBoard(false); }}>
-            Tafelmodus beenden
+            <Icon name="cancel" size={22} /> Tafelmodus beenden
           </button>
         </div>
       )}

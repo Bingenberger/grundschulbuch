@@ -66,7 +66,7 @@ test('Kinder können in einer gesperrten Diaschau blättern und die Folienpositi
     expect((await child.request.post('/api/kinder', { headers: origin, data: { action: 'login', digest } })).ok()).toBeTruthy();
     await child.goto(`/kinder/heft/${copies[0].id}`); const game = child.locator('.interaction-surface .slideshow-widget');
     await game.getByRole('button', { name: 'Nächste Folie', exact: true }).click(); await expect(game.locator('.slideshow h3')).toHaveText('Zweite Folie');
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/); await child.goto(`/kinder/heft/${copies[0].id}`);
+    await child.getByRole('button', { name: 'Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/); await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(game.locator('.slideshow h3')).toHaveText('Zweite Folie'); await expect(game.locator('.slideshow-status')).toContainText('Pausiert');
   } finally { await context.close(); }
 });

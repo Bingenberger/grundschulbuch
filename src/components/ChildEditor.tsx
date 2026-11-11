@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import Icon from './Icon';
 import { useEffect, useRef, useState } from 'react';
 import { useEditor, flushEditor } from '@/lib/editor-store';
 import { speakGerman } from '@/lib/speech';
@@ -19,11 +20,14 @@ import { ElementView } from './PageView';
 import { LearningRuntime } from './learning/Runtime';
 import AudioDialog from './AudioDialog';
 import ScaledPage from './ScaledPage';
-import DrawingOptions from './DrawingOptions';
-import PageEyedropper from './PageEyedropper';
-import PageFillTool from './PageFillTool';
 import { useShapeRecognition } from '@/lib/use-shape-recognition';
-import DrawingGuideTools from './DrawingGuideTools';
+import EditorHeader from './editor/EditorHeader';
+import ToolRail, { type RailItem } from './editor/ToolRail';
+import PagePanel from './editor/PagePanel';
+import DrawingBar from './editor/DrawingBar';
+import ElementBar from './editor/ElementBar';
+import { SelectBar } from './editor/ContextBars';
+import { featuresFor } from '@/lib/features';
 import DrawingRuler from './learning/DrawingRuler';
 import { captureGuideEdge, projectToGuideEdge, type DrawingGuide, type GuideEdge } from '@/lib/drawing-guide';
 import { previousArrowShaft } from '@/lib/shape-recognition';
@@ -40,7 +44,7 @@ export default function ChildEditor({
   const recognition = useShapeRecognition(s.recognizeShapes && !['water', 'fill'].includes(s.brush), s.activeId);
   const [showImages, setShowImages] = useState(false);
   const [readAloud, setReadAloud] = useState(false);
-  const [text, setText] = useState('');
+  const textArea = useRef<HTMLTextAreaElement>(null);
   const [showAudio, setShowAudio] = useState(false);
   const [recordTarget, setRecordTarget] = useState<string | null>(null);
   const [draft, setDraft] = useState<PageElement | null>(null);
@@ -62,6 +66,9 @@ export default function ChildEditor({
   } | null>(null);
   const page = s.pages.find((p) => p.id === s.activeId);
   const selected = page?.elements.find((el) => s.selected.includes(el.id));
+  const selectedElements = page?.elements.filter((el) => s.selected.includes(el.id)) || [];
+  const features = featuresFor('child', s.book);
+  const railActive: RailItem = selectedElements.length ? 'select' : s.tool === 'marker' ? 'pen' : s.tool;
   useEffect(() => {
     useEditor.getState().load(initial, 'child');
   }, [initial]);
@@ -85,7 +92,6 @@ export default function ChildEditor({
   if (!page || s.book?.id !== initial.book.id)
     return <p>Dein Heft wird geöffnet …</p>;
   const size = dimensions(page);
-  const index = s.book.pageIds.indexOf(page.id);
   async function leave(url: string, logout = false) {
     if (!(await flushEditor())) return;
     if (logout) await childApi('logout');
@@ -121,9 +127,6 @@ export default function ChildEditor({
     const p = point(e);
     if (s.tool === 'select') {
       s.select(element && !element.locked ? [element.id] : []);
-      setText(
-        element?.type === 'text' && !element.locked ? element.text || '' : '',
-      );
       if (!element || element.locked) return;
       gesture.current = { el: element, points: [], start: p, move: true, pointer: e.pointerId };
     } else if (s.tool === 'eraser') {
@@ -238,138 +241,114 @@ export default function ChildEditor({
     s.select([el.id]);
     useEditor.setState({ tool: 'select' });
   }
+  function rotateSelected(degrees: number) {
+    s.edit((p) => ({
+      ...p,
+      elements: p.elements.map((el) =>
+        s.selected.includes(el.id) && !el.locked
+          ? { ...el, rotation: (el.rotation + degrees + 360) % 360 }
+          : el,
+      ),
+    }));
+  }
+  function choosePage(id: string) {
+    gesture.current = null;
+    setDraft(null);
+    setErasePreview(null);
+    useEditor.setState({ activeId: id, selected: [], past: [], future: [] });
+  }
+  async function addPage() {
+    if (!(await flushEditor()) || !page) return;
+    try {
+      const result = await childApi<{ book: Notebook; page: Page }>('addPage', {
+        id: s.book!.id,
+        page: newPage(page.ruling, page.orientation),
+      });
+      useEditor.setState({
+        book: result.book,
+        pages: [...useEditor.getState().pages, result.page],
+        activeId: result.page.id,
+        selected: [],
+        past: [],
+        future: [],
+      });
+    } catch (e) {
+      useEditor.setState({ error: (e as Error).message });
+    }
+  }
+  function readPage() {
+    if (
+      !speakGerman(
+        page!.elements
+          .filter((el) => el.type === 'text')
+          .map((el) => el.text)
+          .join('. '),
+      )
+    )
+      useEditor.setState({
+        error: 'Bitte eine deutsche Offline-Stimme auf diesem Gerät installieren.',
+      });
+  }
+  function chooseRail(item: RailItem) {
+    switch (item) {
+      case 'select':
+        tool('select', 'Auswahl');
+        break;
+      case 'pen':
+        s.chooseBrush(s.brush);
+        speak('Stift');
+        break;
+      case 'eraser':
+        tool('eraser', 'Radierer');
+        break;
+      case 'text':
+        insert({
+          id: uuid(),
+          type: 'text',
+          x: 20,
+          y: 25,
+          width: 120,
+          height: 30,
+          rotation: 0,
+          locked: false,
+          color: s.color,
+          text: '',
+          font: 'Andika',
+          fontSize: 22,
+        });
+        speak('Text schreiben');
+        setTimeout(() => textArea.current?.focus(), 50);
+        break;
+      case 'image':
+        setShowImages(true);
+        speak('Bild einfügen');
+        break;
+      case 'audio':
+        setShowAudio(true);
+        speak('Aufnehmen');
+        break;
+    }
+  }
   return (
-    <main className="child-editor">
-      <header className="child-header">
-        <button className="knopf" onClick={() => leave('/kinder')}>
-          ‹ Meine Hefte
-        </button>
-        <h1>{s.book.title}</h1>
-        <label>
-          <input
-            type="checkbox"
-            checked={readAloud}
-            onChange={(e) => setReadAloud(e.target.checked)}
-          />{' '}
-          Vorlesen
-        </label>
-        <button
-          className="knopf knopf-haupt"
-          onClick={() => leave('/kinder', true)}
-        >
-          ✓ Fertig
-        </button>
-      </header>
-      <nav className="child-tools">
-        {(
-          [
-            ['select', '↖', 'Bewegen'],
-            ['pen', '✎', 'Stift'],
-            ['marker', '▰', 'Leuchtstift'],
-            ['eraser', '⌫', 'Radierer'],
-          ] as const
-        ).map(([value, icon, label]) => (
-          <button
-            className="tool"
-            key={value}
-            aria-pressed={s.tool === value}
-            onClick={() => tool(value, label)}
-          >
-            <span>{icon}</span>
-            {label}
-          </button>
-        ))}
-        <button
-          className="tool"
-          onClick={() => {
-            insert({
-              id: uuid(),
-              type: 'text',
-              x: 20,
-              y: 25,
-              width: 120,
-              height: 30,
-              rotation: 0,
-              locked: false,
-              color: s.color,
-              text: '',
-              font: 'Andika',
-              fontSize: 22,
-            });
-            setText('');
-            speak('Text schreiben');
-          }}
-        >
-          <span>T</span>Schreiben
-        </button>
-        <button
-          className="tool"
-          onClick={() => {
-            setShowImages(true);
-            speak('Bild einfügen');
-          }}
-        >
-          <span>▧</span>Bilder
-        </button>
-        {s.book.allowChildAudio && (
-          <button className="tool" onClick={() => setShowAudio(true)}>
-            <span>♫</span>Aufnehmen
-          </button>
-        )}
-        <button
-          className="tool"
-          onClick={() => {
-            if (
-              !speakGerman(
-                page.elements
-                  .filter((el) => el.type === 'text')
-                  .map((el) => el.text)
-                  .join('. '),
-              )
-            )
-              useEditor.setState({
-                error:
-                  'Bitte eine deutsche Offline-Stimme auf diesem Gerät installieren.',
-              });
-          }}
-        >
-          <span>▷</span>Vorlesen
-        </button>
-        <label className="tool">
-          <input
-            type="color"
-            aria-label="Farbe"
-            value={s.color}
-            onChange={(e) => useEditor.setState({ color: e.target.value })}
-          />
-          Farbe
-        </label>
-        <button
-          className="tool"
-          disabled={!s.past.length}
-          onClick={() => {
-            s.undo();
-            speak('Rückgängig');
-          }}
-        >
-          <span>↶</span>Zurück
-        </button>
-        <label className="pencil-only">
-          <input
-            type="checkbox"
-            checked={s.pencilOnly}
-            onChange={(e) =>
-              useEditor.setState({ pencilOnly: e.target.checked })
-            }
-          />{' '}
-          Nur Stift
-        </label>
-        <DrawingGuideTools guide={guide} onChange={setGuide} />
-        <DrawingOptions allowFill />
-        <PageEyedropper key={page.id} surface={surface} />
-        <PageFillTool key={`fill-${page.id}`} surface={surface} />
-        {draft?.geometry && (s.tool === 'pen' || s.tool === 'marker') && <span role="status">Form erkannt – zum Übernehmen loslassen.</span>}
-      </nav>
+    <main className="editor child-mode">
+      <EditorHeader
+        features={features}
+        backLabel="Meine Hefte"
+        onBack={() => void leave('/kinder')}
+        title={s.book.title}
+        status={s.error ? '⚠ Nicht gespeichert' : s.saving || Object.keys(s.dirty).length ? 'Wird gespeichert …' : '✓ Gespeichert'}
+        statusError={!!s.error}
+        canUndo={s.past.length > 0}
+        canRedo={false}
+        onUndo={() => {
+          s.undo();
+          speak('Rückgängig');
+        }}
+        onRedo={() => undefined}
+        readAloud={readAloud}
+        onReadAloud={setReadAloud}
+        onDone={() => void leave('/kinder', true)}
+      />
       {s.error && (
         <div className="error-banner" role="alert">
           {s.error}
@@ -378,53 +357,20 @@ export default function ChildEditor({
           </button>
         </div>
       )}
-      {selected?.type === 'text' && (
-        <div className="child-text">
-          <label>
-            Dein Text
-            <input
-              autoFocus
-              aria-label="Dein Text"
-              value={text}
-              onChange={(e) => {
-                setText(e.target.value);
-                s.patchElements({ text: e.target.value });
-              }}
-            />
-          </label>
-          <button className="knopf" onClick={() => s.select([])}>
-            ✓ Fertig schreiben
-          </button>
-        </div>
-      )}
-      {selected && !selected.locked && (
-        <div className="child-element-controls">
-          <button className="knopf compact" onClick={() => resizeSelected(1.1)}>
-            ＋ Größer
-          </button>
-          <button
-            className="knopf compact"
-            onClick={() => resizeSelected(1 / 1.1)}
-          >
-            − Kleiner
-          </button>
-          <button
-            className="knopf compact"
-            onClick={() => {
-              s.edit((page) => ({
-                ...page,
-                elements: page.elements.filter(
-                  (el) => el.id !== selected.id || el.locked,
-                ),
-              }));
-              s.select([]);
-            }}
-          >
-            Entfernen
-          </button>
-        </div>
-      )}
-      <div className="child-canvas">
+      <div className="editor-body">
+        <ToolRail features={features} active={railActive} onChoose={chooseRail} />
+        <PagePanel
+          pages={s.pages}
+          pageIds={s.book.pageIds}
+          activeId={page.id}
+          onChoose={choosePage}
+          onAdd={features.has('addPage') ? () => void addPage() : undefined}
+        />
+        <div className="editor-main">
+          <section className="canvas-area">
+            <div className="canvas-scroll">
+              <div className="canvas-sheet">
+
         <ScaledPage page={page}>
           <LearningRuntime
             interactive={s.tool === 'select'}
@@ -473,74 +419,48 @@ export default function ChildEditor({
             </div>
           </LearningRuntime>
         </ScaledPage>
+              </div>
+            </div>
+            <div className="zoom-float" role="group" aria-label="Seite">
+              <button type="button" onClick={readPage}>
+                <Icon name="speaker" size={22} />
+                <span>Seite vorlesen</span>
+              </button>
+            </div>
+          </section>
+          {draft?.geometry && (s.tool === 'pen' || s.tool === 'marker') && <span className="shape-hint" role="status">Form erkannt – zum Übernehmen loslassen.</span>}
+          {s.tool === 'pen' || s.tool === 'marker' || s.tool === 'eraser' ? (
+            <>
+              <DrawingBar features={features} surface={surface} pageId={page.id} guide={guide} onGuide={setGuide} />
+            </>
+          ) : selectedElements.length ? (
+            <ElementBar
+              features={features}
+              elements={selectedElements}
+              textArea={textArea}
+              actions={{
+                onResize: resizeSelected,
+                onRotate: rotateSelected,
+                onDelete: () => {
+                  s.edit((p) => ({
+                    ...p,
+                    elements: p.elements.filter((el) => el.locked || !s.selected.includes(el.id)),
+                  }));
+                  s.select([]);
+                },
+              }}
+            />
+          ) : (
+            <SelectBar
+              features={features}
+              elements={page.elements.filter((el) => !el.locked)}
+              multi={false}
+              onMulti={() => undefined}
+              onSelect={(id) => s.select([id])}
+            />
+          )}
+        </div>
       </div>
-      <footer className="child-page-controls">
-        <button
-          className="knopf"
-          disabled={!index}
-          onClick={() =>
-            useEditor.setState({
-              activeId: s.book!.pageIds[index - 1],
-              selected: [],
-              past: [],
-              future: [],
-            })
-          }
-        >
-          ‹ Zurück
-        </button>
-        <span>
-          Seite {index + 1} von {s.pages.length}
-          <small>
-            {s.saving || Object.keys(s.dirty).length
-              ? 'Wird gespeichert …'
-              : '✓ Gespeichert'}
-          </small>
-        </span>
-        <button
-          className="knopf"
-          disabled={index === s.pages.length - 1}
-          onClick={() =>
-            useEditor.setState({
-              activeId: s.book!.pageIds[index + 1],
-              selected: [],
-              past: [],
-              future: [],
-            })
-          }
-        >
-          Weiter ›
-        </button>
-        {s.book.allowChildPages && (
-          <button
-            className="knopf"
-            onClick={async () => {
-              if (!(await flushEditor())) return;
-              try {
-                const result = await childApi<{ book: Notebook; page: Page }>(
-                  'addPage',
-                  {
-                    id: s.book!.id,
-                    page: newPage(page.ruling, page.orientation),
-                  },
-                );
-                useEditor.setState({
-                  book: result.book,
-                  pages: [...s.pages, result.page],
-                  activeId: result.page.id,
-                  selected: [],
-                  past: [],
-                  future: [],
-                });
-              } catch (e) {
-                useEditor.setState({ error: (e as Error).message });
-              }
-            }}
-          >
-            ＋ Seite
-          </button>
-        )}
-      </footer>
       {showAudio && (
         <AudioDialog
           bookId={s.book.id}

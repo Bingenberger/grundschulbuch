@@ -1,4 +1,5 @@
 'use client';
+import Icon, { type IconName } from '../Icon';
 import AiDialog from './AiDialog';
 import VoiceOptions from './VoiceOptions';
 import AlphabetOptions from './AlphabetOptions';
@@ -29,6 +30,29 @@ import {
 } from '@/lib/learning/catalog';
 import { uuid, type PageElement } from '@/lib/notebook-model';
 import { uploadImage } from '@/lib/client-api';
+const activityIcons: Record<ActivityKind, IconName> = {
+  quiz: 'questions', matching: 'flow_chart', cloze: 'rules', typing: 'signature',
+  reading: 'reading', memory: 'gallery', maze: 'sports_mode', letterguess: 'faq',
+  crossword: 'grid', wordsearch: 'search', wordle: 'list', syllables: 'reading_ebook',
+  connect4: 'collaboration', battleship: 'binoculars',
+};
+const widgetIcons: Record<WidgetKind, IconName> = {
+  timer: 'alarm_clock', multitimer: 'overtime', clock: 'clock', calendar: 'calendar',
+  timetable: 'planner', noise: 'high_priority', applause: 'positive_dynamic',
+  pitch: 'podium_with_speaker', piano: 'music', drums: 'speaker', sequencer: 'timeline',
+  metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
+  falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
+  karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
+  map: 'globe', calculator: 'calculator', mathboard: 'org_unit', shop: 'shop',
+  geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
+  alphabet: 'kindle', communication: 'comments',
+};
+const groupIcons: Record<string, IconName> = {
+  Schule: 'graduation_cap', Präsentation: 'podium_with_speaker', Musik: 'music',
+  'Comic & Film': 'clapperboard', Mathe: 'calculator', 'Lesen & Schreiben': 'reading',
+  Kommunikation: 'comments',
+};
+
 export default function LearningDialog({
   element,
   onSave,
@@ -154,7 +178,7 @@ export default function LearningDialog({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
-              <h3>Interaktive Übungen</h3>
+              <h3><Icon name="puzzle" size={20} />Interaktive Übungen</h3>
               {Object.entries(activityCatalog)
                 .filter(([, label]) =>
                   label.toLowerCase().includes(query.toLowerCase()),
@@ -165,6 +189,7 @@ export default function LearningDialog({
                     aria-pressed={type === 'activity' && kind === id}
                     onClick={() => choose('activity', id as ActivityKind)}
                   >
+                    <Icon name={activityIcons[id as ActivityKind]} size={22} />
                     {label}
                   </button>
                 ))}
@@ -172,7 +197,7 @@ export default function LearningDialog({
                 new Set(Object.values(widgetCatalog).map(([, group]) => group)),
               ).map((group) => (
                 <div key={group}>
-                  <h3>{group}</h3>
+                  <h3><Icon name={groupIcons[group] ?? 'puzzle'} size={20} />{group}</h3>
                   {Object.entries(widgetCatalog)
                     .filter(
                       ([, data]) =>
@@ -185,6 +210,7 @@ export default function LearningDialog({
                         aria-pressed={type === 'widget' && kind === id}
                         onClick={() => choose('widget', id as WidgetKind)}
                       >
+                        <Icon name={widgetIcons[id as WidgetKind]} size={22} />
                         {label}
                       </button>
                     ))}

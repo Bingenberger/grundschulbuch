@@ -74,5 +74,5 @@ export default function PageFillTool({ surface, disabled = false }: {
     };
   }, [active, surface, s.activeId, s.fillMode]);
   if (!active) return null;
-  return <small role="status">{busy ? 'Fläche wird gefüllt … · Esc bricht ab' : s.fillMode === 'object' ? 'Geschlossene Form antippen.' : 'Zusammenhängende Fläche antippen. Offene Linien lassen Farbe durch.'}</small>;
+  return <small className="option-hint" role="status">{busy ? 'Fläche wird gefüllt … · Esc bricht ab' : s.fillMode === 'object' ? 'Geschlossene Form antippen.' : 'Zusammenhängende Fläche antippen. Offene Linien lassen Farbe durch.'}</small>;
 }

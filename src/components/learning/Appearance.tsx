@@ -97,7 +97,7 @@ export function Shape({ element: el }: { element: PageElement }) {
     </svg>
   );
 }
-const filters: Record<string, string> = {
+export const imageFilters: Record<string, string> = {
   scan: 'grayscale(1) contrast(2) brightness(1.2)',
   gray: 'grayscale(1)',
   sepia: 'sepia(1)',
@@ -154,7 +154,7 @@ export function ImageContent({ element: el }: { element: PageElement }) {
             left: `${(-crop.x / crop.width) * 100}%`,
             top: `${(-crop.y / crop.height) * 100}%`,
             objectFit: el.crop ? 'fill' : el.fit || 'contain',
-            filter: filters[el.imageFilter || ''] || 'none',
+            filter: imageFilters[el.imageFilter || ''] || 'none',
           }}
         />
       </div>

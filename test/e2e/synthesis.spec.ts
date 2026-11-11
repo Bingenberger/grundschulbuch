@@ -35,9 +35,9 @@ test('Tippen und abgebrochenes Ziehen zählen nicht; gedrehte Karten verbinden s
   await page.mouse.move(p.partial.x, p.partial.y, { steps: 6 }); await page.mouse.up();
   await expect(stage.locator('[data-synthesis-drag]')).toHaveAttribute('transform', 'translate(0 0)');
   await expect(widget.locator('.synthesis-collection .collected')).toHaveCount(0);
-  await page.getByRole('button', { name: '✎ Stift', exact: true }).click();
+  await page.getByRole('button', { name: 'Stift', exact: true }).click();
   await expect(stage).toHaveAttribute('aria-disabled', 'true');
-  await page.getByRole('button', { name: '↖ Auswahl', exact: true }).click();
+  await page.getByRole('button', { name: 'Auswahl', exact: true }).click();
   const next = await points(stage);
   await page.mouse.move(next.start.x, next.start.y); await page.mouse.down();
   await page.mouse.move(next.end.x, next.end.y, { steps: 12 }); await page.mouse.up();
@@ -93,7 +93,7 @@ test('Kinder bearbeiten die gesperrte Übung und können ihre gesammelten Silben
     await widget.getByRole('button', { name: 'Laut m zu a ziehen', exact: true }).focus();
     await child.keyboard.press('Enter');
     await expect(widget.getByRole('heading', { name: 'Geschafft!', exact: true })).toBeVisible();
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
+    await child.getByRole('button', { name: 'Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
     await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(widget.locator('.synthesis-collection .collected')).toHaveText(['ma']);
     await expect(widget.getByRole('heading', { name: 'Geschafft!', exact: true })).toBeVisible();

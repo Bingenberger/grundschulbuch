@@ -27,6 +27,11 @@ await fs.cp(
   'public/runtime/pdf-fonts',
   { recursive: true },
 );
+// Flat Color Icons (icons8, MIT) for the toolbars; only the SVG files are served.
+await fs.rm('public/runtime/icons', { recursive: true, force: true });
+await fs.cp('node_modules/flat-color-icons/svg', 'public/runtime/icons', {
+  recursive: true,
+});
 const licenses = {};
 const manifest = JSON.parse(await fs.readFile('package.json', 'utf8'));
 for (const name of Object.keys(manifest.dependencies)) {

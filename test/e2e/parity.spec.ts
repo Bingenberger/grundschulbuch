@@ -11,7 +11,7 @@ async function login(page: Page) {
 }
 async function notebook(page: Page, title: string) {
   await login(page);
-  await page.getByRole('button', { name: '＋ Neues Heft' }).click();
+  await page.getByRole('button', { name: 'Neues Heft' }).click();
   await page.getByLabel('Name des Hefts').fill(title);
   await page.getByRole('button', { name: 'Heft anlegen', exact: true }).click();
   await expect(page).toHaveURL(/\/heft\//);
@@ -24,7 +24,7 @@ test('Interaktive Aufgaben sind im Kinderheft bedienbar und bleiben im Entwurf g
 }) => {
   const id = await notebook(page, 'Interaktive Übung');
   await page
-    .getByRole('button', { name: '◈ Lernwerkzeuge', exact: true })
+    .getByRole('button', { name: 'Lernwerkzeuge', exact: true })
     .click();
   const dialog = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
   await dialog.getByRole('button', { name: 'Quiz', exact: true }).click();
@@ -66,15 +66,15 @@ test('Interaktive Aufgaben sind im Kinderheft bedienbar und bleiben im Entwurf g
   });
   await child.goto(`/kinder/heft/${copies[0].id}`);
   await expect(
-    child.locator('.answer-options button[aria-pressed="true"]'),
+    child.locator('.interaction-surface .answer-options button[aria-pressed="true"]'),
   ).toHaveCount(0);
   await child.getByRole('button', { name: 'Antwort B: Vier', exact: true }).click();
   await child.getByRole('button', { name: 'Prüfen', exact: true }).click();
-  await expect(child.getByText('✓ Richtig!', { exact: true })).toBeVisible();
-  await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
+  await expect(child.locator('.interaction-surface').getByText('✓ Richtig!', { exact: true })).toBeVisible();
+  await child.getByRole('button', { name: 'Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
   await child.getByRole('link', { name: 'Interaktive Übung' }).click();
   await expect(
-    child.locator('.answer-options button[aria-pressed="true"]'),
+    child.locator('.interaction-surface .answer-options button[aria-pressed="true"]'),
   ).toHaveAccessibleName('Antwort B: Vier');
   const opened = await child.request.post('/api/kinder', {
     headers: origin,
@@ -95,11 +95,11 @@ test('Heftdatei, HTML, PDF, ePub und SCORM lassen sich exportieren und die Heftd
 }) => {
   test.setTimeout(150000);
   await notebook(page, 'Dateiformate-Test');
-  await page.getByRole('button', { name: 'T Text', exact: true }).click();
+  await page.getByRole('button', { name: 'Text', exact: true }).click();
   await page
     .getByLabel('Text', { exact: true })
     .fill('Ein eigenständiges Heft mit Äpfeln & Birnen.');
-  await page.getByRole('button', { name: '⇅ Dateien', exact: true }).click();
+  await page.getByRole('button', { name: 'Dateien', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Heftdateien' });
   const download = async (name: RegExp) => {
     const pending = page.waitForEvent('download');
@@ -159,7 +159,8 @@ test('Formen, Bildgestaltung, Vorlagenkategorien, Zoom und Tastatur sind verfüg
   page,
 }) => {
   await notebook(page, 'Gestalten-Test');
-  await page.getByRole('button', { name: '◇ Formen', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Einfügen', exact: true }).click();
+  await page.getByRole('button', { name: 'Formen & Symbole', exact: true }).click();
   await page.getByRole('button', { name: 'Form speech', exact: true }).click();
   await expect(page.locator('.interaction-surface .page-element')).toHaveCount(
     1,
@@ -168,9 +169,10 @@ test('Formen, Bildgestaltung, Vorlagenkategorien, Zoom und Tastatur sind verfüg
   await page
     .getByRole('button', { name: 'Ansicht vergrößern', exact: true })
     .click();
-  await expect(page.locator('.zoom-controls .zoom-value')).toHaveText('110 %');
+  await expect(page.locator('.zoom-float .zoom-value')).toHaveText('110 %');
   await page.getByRole('button', { name: 'Ganze Seite', exact: true }).click();
-  await page.getByRole('button', { name: '▤ Vorlagen', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Einfügen', exact: true }).click();
+  await page.getByRole('button', { name: 'Vorlagen', exact: true }).click();
   const templates = page.getByRole('dialog', { name: 'Eine neue Seite' });
   await templates
     .getByRole('button', { name: 'Kommunikation', exact: true })

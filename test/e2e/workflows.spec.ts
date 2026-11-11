@@ -19,31 +19,32 @@ test('Heft erstellen, schreiben, zeichnen, Seiten wechseln, wiederöffnen und dr
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await teacher(page);
-  await page.getByRole('button', { name: '＋ Neues Heft' }).click();
+  await page.getByRole('button', { name: 'Neues Heft' }).click();
   await page.getByLabel('Name des Hefts').fill('Unsere Buchstaben');
   await page.getByRole('button', { name: 'Heft anlegen', exact: true }).click();
   await expect(page).toHaveURL(/\/heft\//);
-  await page.getByLabel('Lineatur', { exact: true }).selectOption('linie1');
-  await page.getByRole('button', { name: 'T Text', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Seite', exact: true }).click();
+  await page.getByRole('button', { name: 'Lineatur 1', exact: true }).click();
+  await page.getByRole('button', { name: 'Text', exact: true }).click();
   await page
     .getByLabel('Text', { exact: true })
     .fill('Wir lernen gemeinsam.\nAa Bb Cc');
   const surface = await page.locator('.interaction-surface').boundingBox();
   expect(surface).not.toBeNull();
-  await page.getByRole('button', { name: '✎ Stift', exact: true }).click();
+  await page.getByRole('button', { name: 'Stift', exact: true }).click();
   await page.mouse.move(surface!.x + 50, surface!.y + 160);
   await page.mouse.down();
   await page.mouse.move(surface!.x + 130, surface!.y + 180, { steps: 10 });
   await page.mouse.up();
-  await page.getByRole('button', { name: '＋ Seite', exact: true }).click();
+  await page.getByRole('button', { name: 'Neue Seite', exact: true }).click();
   await page.getByLabel('Seite 1 öffnen').click();
   await expect(page.getByRole('status')).toHaveText('✓ Gespeichert');
   await page.reload();
   await expect(page.locator('.interaction-surface .page-element')).toHaveCount(
     2,
   );
-  await page.getByRole('button', { name: '⛶ Tafelmodus' }).click();
-  await page.getByRole('button', { name: 'Weiter ›' }).click();
+  await page.getByRole('button', { name: 'Tafelmodus', exact: true }).click();
+  await page.getByRole('button', { name: 'Weiter', exact: true }).click();
   await page.getByRole('button', { name: 'Tafelmodus beenden' }).click();
   await page
     .getByRole('button', { name: 'Drucken / PDF', exact: true })
@@ -51,7 +52,7 @@ test('Heft erstellen, schreiben, zeichnen, Seiten wechseln, wiederöffnen und dr
   await expect(page).toHaveURL(/\/drucken\//);
   await expect(page.locator('.print-pages .paper')).toHaveCount(2);
   await page.getByRole('link', { name: '‹ Zurück zum Heft' }).click();
-  await page.getByRole('button', { name: '‹ Mein Regal' }).click();
+  await page.getByRole('button', { name: 'Mein Regal', exact: true }).click();
   await expect(
     page.getByRole('link', { name: 'Unsere Buchstaben', exact: true }),
   ).toBeVisible();
@@ -67,20 +68,20 @@ test('Klasse anlegen, Kartenprüfsumme zuordnen, austeilen und als Kind arbeiten
   browser,
 }) => {
   await teacher(page);
-  await page.getByRole('button', { name: '＋ Neues Heft' }).click();
+  await page.getByRole('button', { name: 'Neues Heft' }).click();
   await page.getByLabel('Name des Hefts').fill('Mein ausgeteiltes Heft');
   await page.getByRole('button', { name: 'Heft anlegen', exact: true }).click();
   await expect(page).toHaveURL(/\/heft\//);
-  await page.getByRole('button', { name: 'T Text', exact: true }).click();
+  await page.getByRole('button', { name: 'Text', exact: true }).click();
   await page.getByLabel('Text', { exact: true }).fill('Schreibe deinen Namen.');
-  await page.getByRole('button', { name: '‹ Mein Regal' }).click();
+  await page.getByRole('button', { name: 'Mein Regal', exact: true }).click();
   await page.getByRole('link', { name: 'Meine Klassen' }).click();
   await page.getByLabel('Name der neuen Klasse').fill('1b');
   await page
     .getByRole('button', { name: 'Klasse anlegen', exact: true })
     .click();
   await page.getByLabel('Vorname oder Kürzel').fill('Ada');
-  await page.getByRole('button', { name: '＋ Kind hinzufügen' }).click();
+  await page.getByRole('button', { name: 'Kind hinzufügen' }).click();
   await expect(page.getByText('Noch keine Karte')).toBeVisible();
   const classesResponse = await page.request.post('/api/klassen', {
     headers: { Origin: 'http://localhost:3100' },
@@ -134,10 +135,9 @@ test('Klasse anlegen, Kartenprüfsumme zuordnen, austeilen und als Kind arbeiten
     path: '/tmp/grundschulbuch-kind-final.png',
     fullPage: true,
   });
-  await child.getByRole('button', { name: 'T Schreiben', exact: true }).click();
-  await child.getByLabel('Dein Text', { exact: true }).fill('Ada');
-  await child.getByRole('button', { name: '✓ Fertig schreiben' }).click();
-  await child.getByRole('button', { name: '✓ Fertig', exact: true }).click();
+  await child.getByRole('button', { name: 'Text', exact: true }).click();
+  await child.getByLabel('Text', { exact: true }).fill('Ada');
+  await child.getByRole('button', { name: 'Fertig', exact: true }).click();
   await expect(
     child.getByRole('heading', { name: 'Dein Heft wartet auf dich.' }),
   ).toBeVisible();
@@ -153,11 +153,12 @@ test('Generator, Sammlung und Kollegium verwenden', async ({
   browser,
 }) => {
   await teacher(page);
-  await page.getByRole('button', { name: '＋ Neues Heft' }).click();
+  await page.getByRole('button', { name: 'Neues Heft' }).click();
   await page.getByLabel('Name des Hefts').fill('Meine Arbeitsblätter');
   await page.getByRole('button', { name: 'Heft anlegen', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Einfügen', exact: true }).click();
   await page
-    .getByRole('button', { name: '＋ Arbeitsblatt', exact: true })
+    .getByRole('button', { name: 'Arbeitsblatt', exact: true })
     .click();
   await page
     .getByLabel('Übungsformat', { exact: true })
@@ -168,11 +169,12 @@ test('Generator, Sammlung und Kollegium verwenden', async ({
     path: '/tmp/grundschulbuch-editor-final.png',
     fullPage: true,
   });
-  await page.getByRole('button', { name: 'T Text', exact: true }).click();
+  await page.getByRole('button', { name: 'Text', exact: true }).click();
   await page
     .getByLabel('Text', { exact: true })
     .fill('Eine wiederverwendbare Idee');
   page.once('dialog', (dialog) => dialog.accept('Meine Idee'));
+  await page.getByRole('button', { name: 'Anordnen', exact: true }).click();
   await page
     .getByRole('button', { name: 'In Sammlung sichern', exact: true })
     .click();

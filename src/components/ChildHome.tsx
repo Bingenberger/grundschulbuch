@@ -1,4 +1,5 @@
 'use client';
+import Icon from './Icon';
 import { useState } from 'react';
 import Link from 'next/link';
 import { childApi } from '@/lib/child-api';
@@ -37,7 +38,8 @@ export default function ChildHome({
           ▤ Grundschulbuch
         </Link>
         <button className="knopf" onClick={() => setScanner(true)}>
-          ▣ {name ? 'Kind wechseln' : 'Karte scannen'}
+          <Icon name={name ? 'conference_call' : 'camera'} size={26} />{' '}
+          {name ? 'Kind wechseln' : 'Karte scannen'}
         </button>
         {name && (
           <button
@@ -47,7 +49,7 @@ export default function ChildHome({
               window.location.replace('/kinder');
             }}
           >
-            ✓ Fertig
+            <Icon name="ok" size={24} /> Fertig
           </button>
         )}
       </header>
@@ -61,7 +63,7 @@ export default function ChildHome({
         {!name && (
           <>
             <button className="child-login" onClick={() => setScanner(true)}>
-              <span>▣</span>Karte scannen
+              <Icon name="camera" size={64} />Karte scannen
             </button>
             <form
               className="help-login"
@@ -144,7 +146,7 @@ export default function ChildHome({
                 }
               }}
             >
-              <span>＋</span>
+              <Icon name="plus" size={56} />
               <strong>Mein neues Heft</strong>
             </button>
           </div>

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import Icon from './Icon';
 import { uuid } from '@/lib/notebook-model';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -68,7 +69,7 @@ export default function Classroom({
           <h1>Meine Klassen</h1>
         </div>
         <Link className="knopf" href="/kinder">
-          Kinder-Anmeldung öffnen
+          <Icon name="camera" size={22} /> Kinder-Anmeldung öffnen
         </Link>
       </header>
       <div className="class-create">
@@ -153,7 +154,7 @@ export default function Classroom({
                 required
               />
               <button className="knopf" disabled={busy}>
-                ＋ Kind hinzufügen
+                <Icon name="plus" size={20} /> Kind hinzufügen
               </button>
               <button
                 className="knopf"
@@ -361,7 +362,7 @@ export default function Classroom({
             <h2>Freigegebene Bilder</h2>
             <p>Diese Sammlung dürfen die Kinder ohne Upload verwenden.</p>
             <label className="knopf">
-              ＋ Bild freigeben
+              <Icon name="picture" size={20} /> Bild freigeben
               <input
                 type="file"
                 className="visually-hidden"

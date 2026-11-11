@@ -1,4 +1,5 @@
 'use client';
+import { ChoiceButton } from './ui/Choice';
 import { useEffect, useState, type RefObject } from 'react';
 import { useEditor } from '@/lib/editor-store';
 import { rgbaHex, canvasPoint } from '@/lib/color-sampling';
@@ -44,10 +45,8 @@ export default function PageEyedropper({ surface }: { surface: RefObject<HTMLDiv
       window.removeEventListener('keydown', cancel, true);
     };
   }, [active, surface]);
-  return <div className="page-eyedropper">
-    <button className="tool" disabled={busy} aria-pressed={active} onClick={() => setActive(!active)}>
-      <span>◉</span>{active ? 'Pipette abbrechen' : 'Pipette'}
-    </button>
-    {active && <span role="status">{busy ? 'Farbe wird aufgenommen …' : 'Farbe auf der Seite antippen · Esc bricht ab'}</span>}
-  </div>;
+  return <>
+    <ChoiceButton icon="pipette" label={active ? 'Pipette abbrechen' : 'Pipette'} disabled={busy} pressed={active} onClick={() => setActive(!active)} />
+    {active && <span className="option-hint" role="status">{busy ? 'Farbe wird aufgenommen …' : 'Farbe auf der Seite antippen · Esc bricht ab'}</span>}
+  </>;
 }

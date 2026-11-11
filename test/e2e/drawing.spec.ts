@@ -26,9 +26,9 @@ async function create(page: Page) {
   return response.json();
 }
 async function rub(page: Page, y = 55, elements = 1) {
-  await page.getByRole('button', { name: '⌫ Radierer', exact: true }).click();
-  await page.getByLabel('Radierart', { exact: true }).selectOption('area');
-  await page.getByLabel('Radiergröße', { exact: true }).selectOption('10');
+  await page.getByRole('button', { name: 'Radierer', exact: true }).click();
+  await page.getByRole('group', { name: 'Radierart' }).getByRole('button', { name: 'Fläche radieren' }).click();
+  await page.getByRole('group', { name: 'Größe' }).getByRole('button', { name: '10 mm' }).click();
   const surface = page.locator('.interaction-surface');
   const box = (await surface.boundingBox())!;
   const x = box.x + box.width * 100 / 210;
@@ -46,14 +46,14 @@ test('Flächenradieren, Undo/Redo, Neuladen und Heftdatei erhalten dieselbe Zeic
   const created = await create(page);
   await page.goto(`/heft/${created.book.id}`);
   await rub(page);
-  await page.getByRole('button', { name: '↶ Zurück', exact: true }).click();
+  await page.getByRole('button', { name: 'Zurück', exact: true }).click();
   await expect(page.locator('.interaction-surface mask')).toHaveCount(0);
-  await page.getByRole('button', { name: '↷ Wiederholen', exact: true }).click();
+  await page.getByRole('button', { name: 'Wiederholen', exact: true }).click();
   await expect(page.locator('.interaction-surface mask')).toHaveCount(1);
   await expect(page.locator('.save-status')).toHaveText('✓ Gespeichert');
   await page.reload();
   await expect(page.locator('.interaction-surface mask')).toHaveCount(1);
-  await page.getByRole('button', { name: '⇅ Dateien', exact: true }).click();
+  await page.getByRole('button', { name: 'Dateien', exact: true }).click();
   const pending = page.waitForEvent('download');
   await page.getByRole('button', { name: /Bearbeitbare Heftdatei/ }).click();
   const download = await pending;
@@ -85,14 +85,14 @@ test('Kinder verwenden denselben Flächenradierer und können die Änderung wied
     const response = await child.request.post('/api/kinder', { headers: origin, data: { action: 'login', digest } });
     expect(response.ok()).toBeTruthy();
     await child.goto(`/kinder/heft/${copies[0].id}`);
-    await child.getByRole('button', { name: '✎ Stift', exact: true }).click();
+    await child.getByRole('button', { name: 'Stift', exact: true }).click();
     const box = (await child.locator('.interaction-surface').boundingBox())!;
     await child.mouse.move(box.x + box.width * 20 / 210, box.y + box.height * 100 / 297);
     await child.mouse.down();
     await child.mouse.move(box.x + box.width * 180 / 210, box.y + box.height * 100 / 297, { steps: 8 });
     await child.mouse.up();
     await rub(child, 100, 2);
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
+    await child.getByRole('button', { name: 'Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
     await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(child.locator('.interaction-surface mask')).toHaveCount(1);
   } finally {
@@ -104,11 +104,12 @@ test('Lineal und Geodreieck führen nur an ihrer tatsächlichen gedrehten Kante'
   await login(page);
   const created = await create(page);
   await page.goto(`/heft/${created.book.id}`);
-  await page.getByRole('button', { name: '✎ Stift', exact: true }).click();
+  await page.getByRole('button', { name: 'Stift', exact: true }).click();
   let count = 1;
-  for (const [kind, button] of [['ruler', '📏 Lineal'], ['triangle', '△ Geodreieck']] as const) {
+  await page.getByRole('button', { name: 'Hilfen', exact: true }).click();
+  for (const [kind, button] of [['ruler', 'Lineal'], ['triangle', 'Geodreieck']] as const) {
     await page.getByRole('button', { name: button, exact: true }).click();
-    await page.getByLabel('Winkel der Zeichenhilfe').fill('30');
+    await page.getByLabel('Winkel der Zeichenhilfe', { exact: true }).fill('30');
     const guide: DrawingGuide = { kind, x: 105, y: 76, angle: 30 };
     const physical = guideEdges(guide)[0];
     const edge = guideEdges(guide, 0.8)[0];
@@ -163,14 +164,15 @@ test('Pipette übernimmt eine Seitenfarbe ohne Strich; Formerkennung wartet auf 
     data: { action: 'page', id: created.book.id, page: { ...created.pages[0], paperColor: '#6aa27d' } } });
   expect(changed.ok()).toBeTruthy();
   await page.goto(`/heft/${created.book.id}`);
-  await page.getByRole('button', { name: '✎ Stift', exact: true }).click();
-  await page.getByRole('button', { name: '◉ Pipette', exact: true }).click();
+  await page.getByRole('button', { name: 'Stift', exact: true }).click();
+  await page.getByRole('button', { name: 'Pipette', exact: true }).click();
   const surface = page.locator('.interaction-surface');
   const box = (await surface.boundingBox())!;
   await page.mouse.click(box.x + box.width * 0.2, box.y + box.height * 0.4);
   await expect(page.getByLabel('Stiftfarbe', { exact: true })).toHaveValue('#6aa27d');
   await expect(surface.locator('.page-element')).toHaveCount(1);
-  await page.getByLabel('Formen erkennen', { exact: true }).check();
+  await page.getByRole('button', { name: 'Hilfen', exact: true }).click();
+  await page.getByRole('group', { name: 'Formen erkennen' }).getByRole('button', { name: 'Erkennen' }).click();
   const at = (x: number, y: number) => ({ x: box.x + x / 210 * box.width, y: box.y + y / 297 * box.height });
   const start = at(30, 110);
   await page.mouse.move(start.x, start.y);
@@ -185,9 +187,9 @@ test('Pipette übernimmt eine Seitenfarbe ohne Strich; Formerkennung wartet auf 
   const response = await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'open', id: created.book.id } });
   const data = await response.json();
   expect(data.pages[0].elements[1].geometry).toBe('rectangle');
-  await page.getByRole('button', { name: '↶ Zurück', exact: true }).click();
+  await page.getByRole('button', { name: 'Zurück', exact: true }).click();
   await expect(surface.locator('.page-element')).toHaveCount(1);
-  await page.getByRole('button', { name: '↷ Wiederholen', exact: true }).click();
+  await page.getByRole('button', { name: 'Wiederholen', exact: true }).click();
   await expect(surface.locator('.page-element')).toHaveCount(2);
 });
 
@@ -195,8 +197,9 @@ test('Formerkennung toleriert laufendes Haltezittern und eine Absetzbewegung', a
   await login(page);
   const created = await create(page);
   await page.goto(`/heft/${created.book.id}`);
-  await page.getByRole('button', { name: '✎ Stift', exact: true }).click();
-  await page.getByLabel('Formen erkennen', { exact: true }).check();
+  await page.getByRole('button', { name: 'Stift', exact: true }).click();
+  await page.getByRole('button', { name: 'Hilfen', exact: true }).click();
+  await page.getByRole('group', { name: 'Formen erkennen' }).getByRole('button', { name: 'Erkennen' }).click();
   const box = (await page.locator('.interaction-surface').boundingBox())!;
   const at = (x: number, y: number) => ({ x: box.x + x / 210 * box.width, y: box.y + y / 297 * box.height });
   const start = at(30, 110);
@@ -224,8 +227,9 @@ test('Zweiteilige Pfeile zeigen eine gemeinsame Vorschau und stellen beim Rückg
   await login(page);
   const created = await create(page);
   await page.goto(`/heft/${created.book.id}`);
-  await page.getByRole('button', { name: '✎ Stift', exact: true }).click();
-  await page.getByLabel('Formen erkennen', { exact: true }).check();
+  await page.getByRole('button', { name: 'Stift', exact: true }).click();
+  await page.getByRole('button', { name: 'Hilfen', exact: true }).click();
+  await page.getByRole('group', { name: 'Formen erkennen' }).getByRole('button', { name: 'Erkennen' }).click();
   const surface = page.locator('.interaction-surface'), box = (await surface.boundingBox())!;
   const draw = async (vertices: number[][]) => {
     await page.mouse.move(box.x + vertices[0][0] / 210 * box.width, box.y + vertices[0][1] / 297 * box.height);
@@ -247,10 +251,10 @@ test('Zweiteilige Pfeile zeigen eine gemeinsame Vorschau und stellen beim Rückg
     return (await response.json()).pages[0].elements;
   };
   expect((await saved()).map((el: PageElement) => el.geometry)).toEqual([undefined, 'arrow']);
-  await page.getByRole('button', { name: '↶ Zurück', exact: true }).click();
+  await page.getByRole('button', { name: 'Zurück', exact: true }).click();
   await expect(page.locator('.save-status')).toHaveText('✓ Gespeichert');
   expect((await saved()).map((el: PageElement) => el.geometry)).toEqual([undefined, 'line']);
-  await page.getByRole('button', { name: '↷ Wiederholen', exact: true }).click();
+  await page.getByRole('button', { name: 'Wiederholen', exact: true }).click();
   await expect(page.locator('.save-status')).toHaveText('✓ Gespeichert');
   expect((await saved()).map((el: PageElement) => el.geometry)).toEqual([undefined, 'arrow']);
 });
@@ -270,10 +274,10 @@ test('Farbeimer prüft gedrehte SVG-Formen und füllt eine aus mehreren Strichen
   } });
   expect(response.ok()).toBeTruthy(); const created = await response.json();
   await page.goto(`/heft/${created.book.id}`);
-  await page.getByRole('button', { name: '✎ Stift', exact: true }).click();
-  await page.getByLabel('Stiftart', { exact: true }).selectOption('fill');
+  await page.getByRole('button', { name: 'Stift', exact: true }).click();
+  await page.getByRole('button', { name: 'Farbeimer', exact: true }).click();
   await page.getByLabel('Stiftfarbe', { exact: true }).fill('#ff0000');
-  await page.getByLabel('Füllart', { exact: true }).selectOption('object');
+  await page.getByRole('button', { name: 'Geschlossene Form', exact: true }).click();
   const surface = page.locator('.interaction-surface'), box = (await surface.boundingBox())!;
   const click = async (x: number, y: number) => page.mouse.click(box.x + x / 210 * box.width, box.y + y / 297 * box.height);
   // A rotated corner is inside the element box but outside its actual ellipse.
@@ -287,7 +291,7 @@ test('Farbeimer prüft gedrehte SVG-Formen und füllt eine aus mehreren Strichen
   await click(80, 50);
   await expect(page.locator('.save-status')).toHaveText('✓ Gespeichert');
   expect((await opened()).elements[4].fill).toBe('#ff0000');
-  await page.getByLabel('Füllart', { exact: true }).selectOption('area');
+  await page.getByRole('button', { name: 'Zusammenhängende Fläche', exact: true }).click();
   await click(80, 170);
   await expect(surface.locator('.page-element')).toHaveCount(6);
   await expect(page.locator('.save-status')).toHaveText('✓ Gespeichert');
@@ -297,9 +301,9 @@ test('Farbeimer prüft gedrehte SVG-Formen und füllt eine aus mehreren Strichen
   expect(saved.elements[5].x).toBeGreaterThan(18);
   expect(saved.elements[5].x + saved.elements[5].width).toBeLessThan(172);
   expect(saved.paperColor).toBe(created.pages[0].paperColor);
-  await page.getByRole('button', { name: '↶ Zurück', exact: true }).click();
+  await page.getByRole('button', { name: 'Zurück', exact: true }).click();
   await expect(surface.locator('.page-element')).toHaveCount(5);
-  await page.getByRole('button', { name: '↷ Wiederholen', exact: true }).click();
+  await page.getByRole('button', { name: 'Wiederholen', exact: true }).click();
   await expect(surface.locator('.page-element')).toHaveCount(6);
   await expect(page.locator('.save-status')).toHaveText('✓ Gespeichert');
   await page.reload();
@@ -324,13 +328,13 @@ test('Kinder können denselben Farbeimer verwenden und die Füllung erneut öffn
     await child.goto('/kinder');
     expect((await child.request.post('/api/kinder', { headers: origin, data: { action: 'login', digest } })).ok()).toBeTruthy();
     await child.goto(`/kinder/heft/${copies[0].id}`);
-    await child.getByRole('button', { name: '✎ Stift', exact: true }).click();
-    await child.getByLabel('Stiftart', { exact: true }).selectOption('fill');
-    await child.getByLabel('Füllart', { exact: true }).selectOption('area');
+    await child.getByRole('button', { name: 'Stift', exact: true }).click();
+    await child.getByRole('button', { name: 'Farbeimer', exact: true }).click();
+    await child.getByRole('button', { name: 'Zusammenhängende Fläche', exact: true }).click();
     const surface = child.locator('.interaction-surface'), box = (await surface.boundingBox())!;
     await child.mouse.click(box.x + box.width * 0.5, box.y + box.height * 0.4);
     await expect(surface.locator('.page-element')).toHaveCount(2);
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
+    await child.getByRole('button', { name: 'Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/);
     await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(child.locator('.interaction-surface')).toBeVisible();
     await expect(child.locator('.interaction-surface .page-element')).toHaveCount(2);
@@ -361,14 +365,14 @@ test('Laser und Taschenlampe verändern weder Seiteninhalt noch Undo-Verlauf', a
   const light = page.getByRole('region', { name: 'Taschenlampe auf der Seite', exact: true });
   await expect(light).toBeVisible();
   const radius = Number(await light.locator('mask circle').getAttribute('r'));
-  await page.getByLabel('Lichtkreisgröße', { exact: true }).selectOption('0.3');
+  await page.getByRole('group', { name: 'Lichtkreisgröße' }).getByRole('button', { name: 'Groß' }).click();
   expect(Number(await light.locator('mask circle').getAttribute('r'))).toBeGreaterThan(radius);
   await light.focus(); await page.keyboard.press('Escape');
   await expect(page.locator('.board-pointer')).toHaveCount(0);
   await expect(page.locator('.editor')).toHaveClass(/board-mode/);
   await page.getByRole('button', { name: 'Tafelmodus beenden', exact: true }).click();
   await expect(page.locator('.editor')).not.toHaveClass(/board-mode/);
-  await expect(page.getByRole('button', { name: '↶ Zurück', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Zurück', exact: true })).toBeDisabled();
   const response = await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'open', id: created.book.id } });
   expect(response.ok()).toBeTruthy();
   expect((await response.json()).pages).toEqual(created.pages);
@@ -385,11 +389,11 @@ test('Seitenwechsel verwirft Laserspuren; Schreiben wird nach Beenden der Zeigeh
   const box = (await layer.boundingBox())!;
   await page.mouse.move(box.x + box.width * 0.2, box.y + box.height * 0.5);
   await page.mouse.move(box.x + box.width * 0.6, box.y + box.height * 0.5, { steps: 8 });
-  await page.getByRole('button', { name: 'Weiter ›', exact: true }).click();
+  await page.getByRole('button', { name: 'Weiter', exact: true }).click();
   await expect(page.locator('.board-controls')).toContainText('2 / 2');
   await expect(layer.locator('[data-laser-dot]')).toHaveCount(0);
   await expect(layer.locator('.board-laser-trail line')).toHaveCount(0);
-  await page.getByRole('button', { name: '✎ Auf der Tafel schreiben', exact: true }).click();
+  await page.getByRole('button', { name: 'Auf der Tafel schreiben', exact: true }).click();
   await expect(layer).toHaveCount(0);
   const surface = page.locator('.interaction-surface'), next = (await surface.boundingBox())!;
   await page.mouse.move(next.x + next.width * 0.2, next.y + next.height * 0.4);
@@ -400,6 +404,6 @@ test('Seitenwechsel verwirft Laserspuren; Schreiben wird nach Beenden der Zeigeh
   await page.getByRole('button', { name: 'Laserpointer', exact: true }).click();
   await page.getByRole('button', { name: 'Zeigehilfe beenden', exact: true }).click();
   await page.getByRole('button', { name: 'Tafelmodus beenden', exact: true }).click();
-  await page.getByRole('button', { name: '↶ Zurück', exact: true }).click();
+  await page.getByRole('button', { name: 'Zurück', exact: true }).click();
   await expect(surface.locator('.page-element')).toHaveCount(0);
 });

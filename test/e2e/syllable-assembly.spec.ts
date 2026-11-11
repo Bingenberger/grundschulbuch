@@ -53,7 +53,7 @@ test('Kinder können auch in gesperrten Aufgaben Silben legen und ihren Stand wi
     expect((await child.request.post('/api/kinder', { headers: origin, data: { action: 'login', digest } })).ok()).toBeTruthy();
     await child.goto(`/kinder/heft/${copies[0].id}`); const game = child.locator('.interaction-surface .syllable-assembly-widget');
     await game.locator('[data-syllable-tile="0"]').click(); await game.locator('[data-syllable-slot="0"]').click();
-    await child.getByRole('button', { name: '‹ Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/); await child.goto(`/kinder/heft/${copies[0].id}`);
+    await child.getByRole('button', { name: 'Meine Hefte' }).click(); await child.waitForURL(/\/kinder$/); await child.goto(`/kinder/heft/${copies[0].id}`);
     await expect(game.locator('[data-syllable-slot="0"]')).toHaveText('Son');
     await game.locator('[data-syllable-tile="1"]').click(); await game.locator('[data-syllable-slot="1"]').click();
     await game.getByRole('button', { name: 'Wort prüfen', exact: true }).click(); await game.getByRole('button', { name: 'Ergebnis ansehen', exact: true }).click();

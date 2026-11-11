@@ -8,7 +8,7 @@ test('Eigene HTML-Apps laufen getrennt vom angemeldeten Editor', async ({
   await page.getByLabel('PIN', { exact: true }).fill('483920');
   await page.getByRole('button', { name: 'Anmelden', exact: true }).click();
   await expect(page).toHaveURL('/');
-  await page.getByRole('button', { name: '＋ Neues Heft' }).click();
+  await page.getByRole('button', { name: 'Neues Heft' }).click();
   await page.getByLabel('Name des Hefts').fill('HTML-App Test');
   await page.getByRole('button', { name: 'Heft anlegen', exact: true }).click();
   await expect(page).toHaveURL(/\/heft\//);
@@ -16,7 +16,8 @@ test('Eigene HTML-Apps laufen getrennt vom angemeldeten Editor', async ({
   page.on('request', (r) => {
     if (r.url().includes('example.invalid')) leaked = true;
   });
-  await page.getByRole('button', { name: '↗ Internet', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Einfügen', exact: true }).click();
+  await page.getByRole('button', { name: 'Internet', exact: true }).click();
   const dialog = page.getByRole('dialog', {
     name: 'Video, Webseite oder QR-Code',
   });

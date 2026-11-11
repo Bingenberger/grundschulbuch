@@ -1,4 +1,5 @@
 'use client';
+import Icon from './Icon';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/client-api';
@@ -135,7 +136,9 @@ export default function Shelf({
           <span className="brand-icon">▤</span> Grundschulbuch
         </Link>
         <div className="account">
-          <Link href="/klassen">Meine Klassen</Link>
+          <Link href="/klassen" className="icon-link">
+            <Icon name="conference_call" size={24} /> Meine Klassen
+          </Link>
           <span>{name}</span>
           <LogoutButton />
         </div>
@@ -157,15 +160,15 @@ export default function Shelf({
               setColor(colors[books.length % colors.length]);
             }}
           >
-            ＋ Neues Heft
+            <Icon name="plus" size={22} /> Neues Heft
           </button>
         </div>
         <button className="knopf" onClick={() => setShowFiles(true)}>
-          Heft, ePub oder PDF öffnen
+          <Icon name="opened_folder" size={22} /> Heft, ePub oder PDF öffnen
         </button>
         <div className="shelf-filter">
           <label className="search">
-            ⌕{' '}
+            <Icon name="search" size={20} />
             <input
               aria-label="Hefte suchen"
               placeholder="Ein Heft suchen …"
@@ -215,7 +218,7 @@ export default function Shelf({
                 aria-pressed={folder === f.id}
                 onClick={() => setFolder(f.id)}
               >
-                ▱ {f.title}
+                <Icon name="folder" size={18} /> {f.title}
               </button>
               <button
                 className="folder-edit"
@@ -234,7 +237,7 @@ export default function Shelf({
             </div>
           ))}
           <button className="knopf compact" onClick={() => void createFolder()}>
-            ＋ Ordner
+            <Icon name="folder" size={18} /> Neuer Ordner
           </button>
         </div>
         <div className="book-grid">
@@ -341,7 +344,7 @@ export default function Shelf({
               setTitle('');
             }}
           >
-            <span>＋</span>
+            <Icon name="idea" size={56} />
             <strong>Eine neue Idee?</strong>
             <small>Lege ein leeres Heft an.</small>
           </button>
