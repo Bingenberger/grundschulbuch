@@ -31,6 +31,19 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   Editor, im Kinderheft, an der Tafel und im HTML-Export zum Ziel führt; beim
   Drucken ist es ausgeblendet. Beim Kopieren, Austeilen und Importieren eines
   Hefts werden Seitenlinks auf die neuen Seiten umgeschrieben.
+- Text wird nur direkt im Textfeld auf der Seite geschrieben (nach dem
+  Einfügen sofort, sonst ausgewähltes Textfeld erneut antippen, Doppelklick
+  oder Eingabetaste). Ein dicker, blinkender roter Cursor zeigt die
+  Schreibstelle; Escape oder ein Tipp daneben beendet das Schreiben, ein leeres
+  Textfeld verschwindet wieder. Schriftart, -größe, Auszeichnung und
+  Ausrichtung stehen unter „Gestalten“.
+- Auf Seiten mit Lineatur 1–4 und Bild mit Schreibzeilen passt sich Text der
+  Lineatur an (`src/lib/text-fit.ts`): Die Kleinbuchstaben füllen das
+  Mittelband, die Grundlinie liegt auf der roten Linie, jede neue Zeile
+  rutscht in die nächste Lineatur-Zeile, und das Textfeld wächst zeilenweise.
+  Beim Verschieben rastet der Text in die nächste Zeile ein. Gedrehte,
+  gerahmte, gesperrte Texte und solche außerhalb des linierten Bereichs
+  bleiben frei.
 - Alle Einstellungen erscheinen als Knöpfe mit Icon und Text; es gibt keine
   Dropdown-Menüs mehr, auch nicht in den Dialogen der Lernwerkzeuge.
 - Icons: Flat Color Icons (icons8, MIT, npm `flat-color-icons`); fehlende

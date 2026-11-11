@@ -26,6 +26,10 @@ import ToolRail, { type RailItem } from './editor/ToolRail';
 import PagePanel from './editor/PagePanel';
 import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
+import InlineText from './editor/InlineText';
+import { useTextEditing } from './editor/use-text-editing';
+import { fitText } from './editor/text-measure';
+import { tapDistance } from '@/lib/selection';
 import ElementActions from './editor/ElementActions';
 import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
 import { elementCenter, resizeAtCorner, rotateTo, type Corner } from '@/lib/transform';
@@ -52,7 +56,6 @@ export default function ChildEditor({
   const recognition = useShapeRecognition(s.recognizeShapes && !['water', 'fill'].includes(s.brush), s.activeId);
   const [showImages, setShowImages] = useState(false);
   const [readAloud, setReadAloud] = useState(false);
-  const textArea = useRef<HTMLTextAreaElement>(null);
   const [showAudio, setShowAudio] = useState(false);
   const [recordTarget, setRecordTarget] = useState<string | null>(null);
   const [draft, setDraft] = useState<PageElement | null>(null);
@@ -72,9 +75,12 @@ export default function ChildEditor({
     originals?: PageElement[];
     eraserId?: string;
     eraserProgress?: EraserProgress;
-  eraserOptions?: EraserOptions;
+    eraserOptions?: EraserOptions;
+    /** Tapping a selected text box again starts writing in it. */
+    editOnTap?: string;
   } | null>(null);
   const page = s.pages.find((p) => p.id === s.activeId);
+  const writing = useTextEditing(page?.id);
   const selected = page?.elements.find((el) => s.selected.includes(el.id));
   const selectedElements = page?.elements.filter((el) => s.selected.includes(el.id)) || [];
   const features = featuresFor('child', s.book, allowed);
@@ -147,9 +153,13 @@ export default function ChildEditor({
     if (s.tool === 'select') {
       // Strokes do not catch pointer events themselves; find one near the tap.
       element ??= strokeAt(page!.elements, p, e.pointerType === 'touch' ? 4 : 2.5);
+      const editOnTap =
+        element?.type === 'text' && !element.locked && s.selected.length === 1 && s.selected[0] === element.id
+          ? element.id
+          : undefined;
       s.select(element && !element.locked ? [element.id] : []);
       if (!element || element.locked) return;
-      gesture.current = { el: element, points: [], start: p, move: true, pointer: e.pointerId };
+      gesture.current = { el: element, points: [], start: p, move: true, pointer: e.pointerId, editOnTap };
     } else if (s.tool === 'eraser') {
       gesture.current = {
         el: {
@@ -188,8 +198,10 @@ export default function ChildEditor({
     if (gesture.current || e.button !== 0 || el.locked) return;
     e.preventDefault();
     e.stopPropagation();
+    const editOnTap =
+      handle === 'move' && el.type === 'text' && s.selected.length === 1 && s.selected[0] === el.id ? el.id : undefined;
     s.select([el.id]);
-    gesture.current = { el, points: [], start: point(e), move: true, handle, pointer: e.pointerId };
+    gesture.current = { el, points: [], start: point(e), move: true, handle, pointer: e.pointerId, editOnTap };
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   }
   function move(e: React.PointerEvent) {
@@ -227,12 +239,23 @@ export default function ChildEditor({
       if (g.guideEdge) samples = samples.map(point => projectToGuideEdge(point, g.guideEdge!));
       appendSamples(g.points, samples);
     }
+    if (!cancel && g.editOnTap) {
+      const p = point(e);
+      if (Math.hypot(p.x - g.start.x, p.y - g.start.y) < tapDistance) {
+        gesture.current = null;
+        setDraft(null);
+        writing.begin(g.editOnTap);
+        return;
+      }
+    }
     const recognized = !cancel && !g.move && !g.erase && !g.guideEdge ? recognition.finish(g.points) : null;
     recognition.cancel();
     gesture.current = null;
     if (g && !cancel && !g.erase) {
       const el = g.move
-        ? draft || g.el
+        ? g.el.type === 'text'
+          ? fitText(draft || g.el, page!)
+          : draft || g.el
         : compactStroke({ ...g.el, points: recognized?.points || g.points, geometry: recognized?.kind });
       s.edit((page) => ({
         ...page,
@@ -334,8 +357,8 @@ export default function ChildEditor({
       case 'eraser':
         tool('eraser', 'Radierer');
         break;
-      case 'text':
-        insert({
+      case 'text': {
+        const text = fitText({
           id: uuid(),
           type: 'text',
           x: 20,
@@ -348,10 +371,12 @@ export default function ChildEditor({
           text: '',
           font: 'Andika',
           fontSize: 22,
-        });
+        }, page!, { autoSize: true });
+        insert(text);
+        writing.begin(text.id);
         speak('Text schreiben');
-        setTimeout(() => textArea.current?.focus(), 50);
         break;
+      }
       case 'image':
         setShowImages(true);
         speak('Bild einfügen');
@@ -463,15 +488,28 @@ export default function ChildEditor({
                 <ElementView
                   element={draft?.id === el.id ? draft : el}
                   key={el.id}
-                  className={selected?.id === el.id ? 'selected' : ''}
+                  className={`${selected?.id === el.id ? 'selected' : ''} ${writing.editingId === el.id ? 'text-editing' : ''}`}
                   onPointerDown={(e) => down(e, el)}
+                  onDoubleClick={() => {
+                    if (el.type === 'text' && !el.locked) writing.begin(el.id);
+                  }}
                   style={{
                     pointerEvents:
                       s.tool === 'select' && el.type !== 'stroke'
                         ? 'auto'
                         : 'none',
                   }}
-                />
+                >
+                  {writing.editingId === el.id ? (
+                    <InlineText
+                      element={el}
+                      selectAll={writing.selectAll}
+                      onText={writing.type}
+                      onHeight={writing.height}
+                      onDone={writing.done}
+                    />
+                  ) : undefined}
+                </ElementView>
               ))}
               {selected && !selected.locked && (
                 <SelectionHandles
@@ -480,8 +518,9 @@ export default function ChildEditor({
                   onStart={(e, handle) => grab(e, selected, handle)}
                   onMove={move}
                   onEnd={up}
+                  editing={writing.editingId === selected.id}
                   onDoubleClick={() => {
-                    if (selected.type === 'text') textArea.current?.focus();
+                    if (selected.type === 'text') writing.begin(selected.id);
                   }}
                 />
               )}
@@ -509,7 +548,6 @@ export default function ChildEditor({
             <ElementBar
               features={features}
               elements={selectedElements}
-              textArea={textArea}
               actions={{
                 onResize: resizeSelected,
                 onRotate: rotateSelected,

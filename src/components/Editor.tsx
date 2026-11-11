@@ -38,6 +38,9 @@ import PagePanel from './editor/PagePanel';
 import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
 import ElementActions from './editor/ElementActions';
+import InlineText from './editor/InlineText';
+import { settleText, useTextEditing } from './editor/use-text-editing';
+import { fitText } from './editor/text-measure';
 import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
 import { elementCenter, resizeAtCorner, rotateTo, type Corner } from '@/lib/transform';
 import PageBar from './editor/PageBar';
@@ -74,6 +77,8 @@ type Gesture = {
   eraserId?: string;
   eraserProgress?: EraserProgress;
   eraserOptions?: EraserOptions;
+  /** Tapping a selected text box again starts writing in it. */
+  editOnTap?: string;
 };
 const cloneElements = (elements: PageElement[], offset = 5) => {
   const groups = new Map<string, string>();
@@ -136,8 +141,8 @@ export default function Editor({
   const surface = useRef<HTMLDivElement>(null);
   const gesture = useRef<Gesture | null>(null);
   const [clipboard, setClipboard] = useState<PageElement[]>([]);
-  const textArea = useRef<HTMLTextAreaElement>(null);
   const page = s.pages.find((p) => p.id === s.activeId);
+  const writing = useTextEditing(page?.id, board);
   const selected =
     page?.elements.filter((el) => s.selected.includes(el.id)) || [];
   const first = selected.length === 1 ? selected[0] : undefined;
@@ -332,7 +337,7 @@ export default function Editor({
       case 'activate':
         if (first?.type === 'widget' || first?.type === 'activity')
           setLearning(first);
-        else if (first?.type === 'text') textArea.current?.focus();
+        else if (first?.type === 'text' && !first.locked) writing.begin(first.id);
         break;
       case 'copy':
         setClipboard(clone(selected));
@@ -568,7 +573,7 @@ export default function Editor({
     });
   }
   function insertText() {
-    insert({
+    const element = fitText({
       id: uuid(),
       type: 'text',
       x: 20,
@@ -582,11 +587,9 @@ export default function Editor({
       font: 'Andika',
       fontSize: 18,
       bold: false,
-    });
-    setTimeout(() => {
-      textArea.current?.focus();
-      textArea.current?.select();
-    }, 50);
+    }, page!, { autoSize: true });
+    insert(element);
+    writing.begin(element.id, true);
   }
   function insertImage(src: string) {
     const image = new Image();
@@ -683,6 +686,10 @@ export default function Editor({
         s.select(ids);
         return;
       }
+      const editOnTap =
+        handle === 'move' && target.type === 'text' && !target.locked && s.selected.length === 1 && s.selected[0] === target.id
+          ? target.id
+          : undefined;
       s.select(ids);
       if (target.locked) return;
       const originals = page!.elements.filter(
@@ -696,6 +703,7 @@ export default function Editor({
         originals,
         points: [],
         pointer: event.pointerId,
+        editOnTap,
       };
     }
   }
@@ -759,6 +767,15 @@ export default function Editor({
       s.select(additive ? [...new Set([...s.selected, ...ids])] : ids);
       return;
     }
+    if (!cancel && g.editOnTap) {
+      const p = pointer(event);
+      if (Math.hypot(p.x - g.start.x, p.y - g.start.y) < tapDistance) {
+        gesture.current = null;
+        setPreview(null);
+        writing.begin(g.editOnTap);
+        return;
+      }
+    }
     const recognized = !cancel && g.type === 'draw' && !g.guideEdge ? recognition.finish(g.points) : null;
     recognition.cancel();
     gesture.current = null;
@@ -776,7 +793,7 @@ export default function Editor({
       s.edit((p) => ({
         ...p,
         elements: p.elements.map(
-          (el) => preview.find((n) => n.id === el.id) || el,
+          (el) => settleText(preview, p).find((n) => n.id === el.id) || el,
         ),
       }));
     setDraft(null);
@@ -1009,11 +1026,10 @@ export default function Editor({
                       <ElementView
                         key={el.id}
                         element={preview?.find((p) => p.id === el.id) || el}
-                        className={`${s.selected.includes(el.id) && !board ? 'selected' : ''} ${el.locked ? 'locked' : ''}`}
+                        className={`${s.selected.includes(el.id) && !board ? 'selected' : ''} ${el.locked ? 'locked' : ''} ${writing.editingId === el.id ? 'text-editing' : ''}`}
                         onPointerDown={(e) => start(e, el)}
                         onDoubleClick={() => {
-                          if (el.type === 'text' && !el.locked)
-                            textArea.current?.focus();
+                          if (el.type === 'text' && !el.locked) writing.begin(el.id);
                         }}
                         style={{
                           pointerEvents:
@@ -1022,7 +1038,15 @@ export default function Editor({
                               : 'none',
                         }}
                       >
-                        {undefined}
+                        {writing.editingId === el.id ? (
+                          <InlineText
+                            element={el}
+                            selectAll={writing.selectAll}
+                            onText={writing.type}
+                            onHeight={writing.height}
+                            onDone={writing.done}
+                          />
+                        ) : undefined}
                       </ElementView>
                     ))}
                     {!board &&
@@ -1036,8 +1060,9 @@ export default function Editor({
                             onStart={(e, kind) => start(e, el, kind)}
                             onMove={move}
                             onEnd={end}
+                            editing={writing.editingId === el.id}
                             onDoubleClick={() => {
-                              if (el.type === 'text') textArea.current?.focus();
+                              if (el.type === 'text') writing.begin(el.id);
                             }}
                           />
                         ))}
@@ -1086,7 +1111,6 @@ export default function Editor({
           <ElementBar
             features={features}
             elements={selected}
-            textArea={textArea}
             actions={{
               onResize: (factor) => performCommand(factor > 1 ? 'bigger' : 'smaller'),
               onRotate: (degrees) => performCommand(degrees < 0 ? 'rotateLeft' : 'rotateRight'),

@@ -1,5 +1,5 @@
 'use client';
-import { useState, type RefObject } from 'react';
+import { useState } from 'react';
 import { useEditor } from '@/lib/editor-store';
 import { fonts, type PageElement } from '@/lib/notebook-model';
 import type { Feature } from '@/lib/features';
@@ -9,6 +9,7 @@ import { ChoiceButton, Choices, ColorChoice, OptionGroup, Stepper } from '../ui/
 import { AlignGlyph, FontGlyph, ImageFilterGlyph, OpacityGlyph, SwatchGlyph } from '../ui/Glyphs';
 import OptionBar, { type OptionSection } from './OptionBar';
 import { palette } from './DrawingBar';
+import { fitText, onRuling } from './text-measure';
 
 export type ElementActions = {
   onResize: (factor: number) => void;
@@ -49,12 +50,10 @@ const imageFrames: [string, string, Parameters<typeof ChoiceButton>[0]['icon']][
 export default function ElementBar({
   features,
   elements,
-  textArea,
   actions,
 }: {
   features: Set<Feature>;
   elements: PageElement[];
-  textArea?: RefObject<HTMLTextAreaElement | null>;
   actions: ElementActions;
 }) {
   const s = useEditor();
@@ -64,6 +63,20 @@ export default function ElementBar({
   const allLocked = elements.every((el) => el.locked);
   const locked = first?.locked ?? allLocked;
   const patch = (values: Partial<PageElement>) => s.patchElements(values);
+  const page = s.pages.find((p) => p.id === s.activeId);
+  // Text on a lined page keeps sitting on the rows when its font changes.
+  const patchText = (values: Partial<PageElement>, autoSize = false) =>
+    s.edit((p) => ({
+      ...p,
+      elements: p.elements.map((el) =>
+        s.selected.includes(el.id) && !el.locked
+          ? el.type === 'text'
+            ? fitText({ ...el, ...values }, p, { autoSize })
+            : { ...el, ...values }
+          : el,
+      ),
+    }));
+  const ruled = first?.type === 'text' && !!page && onRuling(first, page);
   const sections: OptionSection[] = [];
   const colorful = first && ['text', 'shape', 'stroke', 'sticker'].includes(first.type);
 
@@ -81,14 +94,16 @@ export default function ElementBar({
           )}
           {first.type === 'text' && (
             <>
-              <OptionGroup label="Text" plain>
-                <textarea
-                  className="option-text"
-                  aria-label="Text"
-                  ref={textArea}
-                  value={first.text}
-                  onChange={(e) => patch({ text: e.target.value, runs: undefined })}
-                />
+              <OptionGroup label="Schrift">
+                {Object.entries(fonts).map(([font, label]) => (
+                  <ChoiceButton
+                    key={font}
+                    icon={<FontGlyph font={font} />}
+                    label={label}
+                    pressed={first.font === font}
+                    onClick={() => patchText({ font: font as PageElement['font'] }, true)}
+                  />
+                ))}
               </OptionGroup>
               <Stepper
                 label="Schriftgröße"
@@ -97,8 +112,13 @@ export default function ElementBar({
                 max={150}
                 step={2}
                 unit="pt"
-                onChange={(fontSize) => patch({ fontSize })}
+                onChange={(fontSize) => patchText({ fontSize })}
               />
+              {ruled && (
+                <OptionGroup label="Lineatur">
+                  <ChoiceButton icon="rules" label="Passend zur Lineatur" onClick={() => patchText({}, true)} />
+                </OptionGroup>
+              )}
               <OptionGroup label="Auszeichnung">
                 <ChoiceButton
                   icon={<span className="font-glyph"><strong>F</strong></span>}
@@ -110,6 +130,24 @@ export default function ElementBar({
                   <ChoiceButton icon="rules" label="Wörter einzeln formatieren" onClick={() => setRich(true)} />
                 )}
               </OptionGroup>
+              <Choices
+                label="Ausrichtung"
+                value={first.align || 'left'}
+                onChange={(align) => patch({ align })}
+                options={(
+                  [['left', 'Links'], ['center', 'Mitte'], ['right', 'Rechts'], ['justify', 'Blocksatz']] as const
+                ).map(([value, label]) => ({ value, label, icon: <AlignGlyph align={value} /> }))}
+              />
+              {!ruled && (
+                <Stepper
+                  label="Zeilenabstand"
+                  value={first.lineHeight || 1.6}
+                  min={0.8}
+                  max={3}
+                  step={0.1}
+                  onChange={(lineHeight) => patch({ lineHeight })}
+                />
+              )}
             </>
           )}
           {(first.type === 'image' || first.type === 'audio') && (
@@ -175,42 +213,6 @@ export default function ElementBar({
     });
     if (first.type === 'text')
       sections.push(
-        {
-          id: 'font',
-          label: 'Schrift',
-          icon: 'kindle',
-          content: (
-            <>
-              <OptionGroup label="Schrift">
-                {Object.entries(fonts).map(([font, label]) => (
-                  <ChoiceButton
-                    key={font}
-                    icon={<FontGlyph font={font} />}
-                    label={label}
-                    pressed={first.font === font}
-                    onClick={() => patch({ font: font as PageElement['font'] })}
-                  />
-                ))}
-              </OptionGroup>
-              <Choices
-                label="Ausrichtung"
-                value={first.align || 'left'}
-                onChange={(align) => patch({ align })}
-                options={(
-                  [['left', 'Links'], ['center', 'Mitte'], ['right', 'Rechts'], ['justify', 'Blocksatz']] as const
-                ).map(([value, label]) => ({ value, label, icon: <AlignGlyph align={value} /> }))}
-              />
-              <Stepper
-                label="Zeilenabstand"
-                value={first.lineHeight || 1.6}
-                min={0.8}
-                max={3}
-                step={0.1}
-                onChange={(lineHeight) => patch({ lineHeight })}
-              />
-            </>
-          ),
-        },
         {
           id: 'textframe',
           label: 'Textkasten',

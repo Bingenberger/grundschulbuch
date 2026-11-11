@@ -2725,3 +2725,81 @@ input[type='checkbox'] {
   pointer-events: none;
   z-index: 25;
 }
+
+/* Writing directly in a text box */
+.inline-text {
+  position: relative;
+}
+.inline-text-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.inline-text textarea,
+.inline-text-mirror {
+  position: absolute;
+  inset: 0 0 auto 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  text-decoration: inherit;
+  letter-spacing: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: normal;
+  tab-size: 4;
+}
+.inline-text textarea {
+  height: 100%;
+  min-height: 100%;
+  background: transparent;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  caret-color: transparent;
+  user-select: text;
+  -webkit-user-select: text;
+  touch-action: manipulation;
+  cursor: text;
+}
+.inline-text textarea::selection {
+  background: rgba(30, 136, 229, 0.3);
+}
+.inline-text-mirror {
+  visibility: hidden;
+  pointer-events: none;
+}
+.text-caret {
+  position: absolute;
+  width: 0.7mm;
+  margin-left: -0.35mm;
+  border-radius: 0.35mm;
+  background: #e53935;
+  pointer-events: none;
+  animation: text-caret-blink 1.05s steps(1, end) infinite;
+}
+@keyframes text-caret-blink {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .text-caret {
+    animation-duration: 2s;
+  }
+}
+.page-element.text-editing {
+  outline: 0.35mm dashed #1e88e5;
+  outline-offset: 0.4mm;
+  background: rgba(255, 253, 231, 0.55);
+  cursor: text;
+}

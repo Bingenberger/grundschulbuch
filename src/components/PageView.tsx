@@ -134,6 +134,31 @@ export function RulingView({ page }: { page: Page }) {
     </svg>
   );
 }
+/** Look of a text element; shared by the page and the inline text editor. */
+export function textStyle(el: PageElement): React.CSSProperties {
+  return {
+    fontFamily: `"${el.font}", sans-serif`,
+    fontSize: `${((el.fontSize || 18) * 25.4) / 72}mm`,
+    fontWeight: el.bold ? 700 : 400,
+    fontStyle: el.italic ? 'italic' : undefined,
+    textDecoration: el.underline ? 'underline' : undefined,
+    textAlign: el.align || 'left',
+    background: el.background,
+    border:
+      el.textFrame && el.textFrame !== 'none'
+        ? `.3mm solid ${el.color}`
+        : undefined,
+    borderRadius:
+      el.textFrame === 'speech' || el.textFrame === 'thought'
+        ? '5mm'
+        : undefined,
+    padding: el.textFrame && el.textFrame !== 'none' ? '2mm' : undefined,
+    color: el.color,
+    whiteSpace: 'pre-wrap',
+    overflowWrap: 'break-word',
+    lineHeight: el.lineHeight || 1.6,
+  };
+}
 export function Stroke({ element: el }: { element: PageElement }) {
   const points = el.points || [];
   const id = `ink-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
@@ -248,28 +273,7 @@ export function ElementContent({ element: el }: { element: PageElement }) {
   if (el.type === 'stroke') return <Stroke element={el} />;
   return (
     <div
-      style={{
-        fontFamily: `"${el.font}", sans-serif`,
-        fontSize: `${((el.fontSize || 18) * 25.4) / 72}mm`,
-        fontWeight: el.bold ? 700 : 400,
-        fontStyle: el.italic ? 'italic' : undefined,
-        textDecoration: el.underline ? 'underline' : undefined,
-        textAlign: el.align || 'left',
-        background: el.background,
-        border:
-          el.textFrame && el.textFrame !== 'none'
-            ? `.3mm solid ${el.color}`
-            : undefined,
-        borderRadius:
-          el.textFrame === 'speech' || el.textFrame === 'thought'
-            ? '5mm'
-            : undefined,
-        padding: el.textFrame && el.textFrame !== 'none' ? '2mm' : undefined,
-        color: el.color,
-        whiteSpace: 'pre-wrap',
-        overflowWrap: 'break-word',
-        lineHeight: el.lineHeight || 1.6,
-      }}
+      style={textStyle(el)}
     >
       {el.runs?.length
         ? el.runs.map((run, i) => (

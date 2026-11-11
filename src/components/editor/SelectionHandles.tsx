@@ -24,6 +24,7 @@ export default function SelectionHandles({
   onMove,
   onEnd,
   onDoubleClick,
+  editing,
 }: {
   element: PageElement;
   locked: boolean;
@@ -31,6 +32,8 @@ export default function SelectionHandles({
   onMove: (event: React.PointerEvent) => void;
   onEnd: (event: React.PointerEvent, cancel?: boolean) => void;
   onDoubleClick?: () => void;
+  /** While writing, taps go into the text instead of moving it. */
+  editing?: boolean;
 }) {
   const events = (kind: HandleKind) => ({
     onPointerDown: (e: React.PointerEvent) => onStart(e, kind),
@@ -58,7 +61,7 @@ export default function SelectionHandles({
             <button className="move-element-handle" aria-label="Element verschieben" {...events('move')}>
               ↔ Verschieben
             </button>
-          ) : (
+          ) : editing ? null : (
             <div className="move-area" aria-hidden="true" onDoubleClick={onDoubleClick} {...events('move')} />
           )}
           <span className="rotate-stem" aria-hidden="true" />

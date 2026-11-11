@@ -163,7 +163,7 @@ export function validatePage(input) {
         result.align = el.align;
       }
       if (el.lineHeight !== undefined)
-        result.lineHeight = num(el.lineHeight, 0.8, 3);
+        result.lineHeight = num(el.lineHeight, 0.8, 8);
       if (el.background !== undefined) result.background = color(el.background);
       if (el.textFrame !== undefined) {
         if (
