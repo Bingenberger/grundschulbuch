@@ -16,7 +16,7 @@ export function audioPlaceholder(label: string): PageElement {
 
 export function cassetteRecorder(): PageElement {
   return {
-    id: uuid(), type: 'widget', widgetKind: 'recorder', x: 20, y: 25, width: 120, height: 88, rotation: 0, locked: false,
+    id: uuid(), type: 'widget', widgetKind: 'recorder', x: 20, y: 25, width: 125, height: 108, rotation: 0, locked: false,
     color: '#253c42', settings: { ...defaultSettings('recorder'), title: 'Meine Aufnahme' },
   };
 }

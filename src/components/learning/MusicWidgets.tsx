@@ -22,7 +22,7 @@ export default function MusicWidgets({
 }: {
   element: PageElement;
 }) {
-  const { state, update, interactive, onRecord } = useLearning(el),
+  const { state, update, interactive, onRecord, uploadAudio } = useLearning(el),
     c = el.settings || {},
     kind = el.widgetKind;
   const [playing, setPlaying] = useState(false),
@@ -598,7 +598,21 @@ export default function MusicWidgets({
         title={c.title || 'Meine Aufnahme'}
         src={typeof state.recordingSrc === 'string' ? state.recordingSrc : undefined}
         interactive={interactive}
-        onRecord={onRecord ? () => onRecord(el.id) : undefined}
+        onOpen={onRecord ? () => onRecord(el.id) : undefined}
+        onSave={
+          uploadAudio
+            ? async (file) => {
+                const src = await uploadAudio(el.id, file);
+                update({
+                  recordingSrc: src,
+                  recordings: [
+                    ...(Array.isArray(state.recordings) ? state.recordings : []),
+                    { title: 'Aufnahme', src, offset: 0, volume: 1 },
+                  ],
+                });
+              }
+            : undefined
+        }
       />
     );
   else if (kind === 'soundstudio') {

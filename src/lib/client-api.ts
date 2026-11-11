@@ -33,3 +33,16 @@ export async function uploadImage(file: Blob, query = ''): Promise<string> {
   if (!response.ok) throw new Error(body.error);
   return body.src;
 }
+
+/** Saves a sound for a notebook; `elementId` lets children record into a teacher's recorder or sound button. */
+export async function uploadAudio(file: Blob, bookId: string, elementId?: string): Promise<string> {
+  const query = new URLSearchParams({ book: bookId, ...(elementId ? { element: elementId } : {}) });
+  const response = await fetch(`/api/ton?${query}`, {
+    method: 'POST',
+    headers: { 'Content-Type': file.type || 'application/octet-stream' },
+    body: file,
+  });
+  const body = await response.json().catch(() => ({ error: 'Der Ton konnte nicht gespeichert werden.' }));
+  if (!response.ok) throw new Error(body.error);
+  return body.src;
+}

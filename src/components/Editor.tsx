@@ -65,7 +65,7 @@ import { blueprints, blueprintPages } from '@/lib/learning/templates';
 import ImageDialog from './ImageDialog';
 import ImageEditor, { editFromElement } from './ImageEditor';
 import { cascade, fillPlaceholder, imageElement, isPlaceholder, withEditedPicture, placeholderElement, type ChosenImage } from './editor/image-elements';
-import { uploadImage } from '@/lib/client-api';
+import { uploadAudio, uploadImage } from '@/lib/client-api';
 
 type Gesture = {
   type: 'move' | 'resize' | 'rotate' | 'draw' | 'erase' | 'frame';
@@ -1054,6 +1054,7 @@ export default function Editor({
                 zoom={board ? 1 : zoom}
               >
                 <LearningRuntime
+                  uploadAudio={(id, file) => uploadAudio(file, s.book!.id, id)}
                   interactive={boardPointer === 'none' && (s.tool === 'select' || (board && !boardDraw))}
                   allowExternal
                   onResponse={(id, response) =>

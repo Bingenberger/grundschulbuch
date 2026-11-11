@@ -18,6 +18,7 @@ import {
 } from '@/lib/notebook-model';
 import { ElementView } from './PageView';
 import { LearningRuntime } from './learning/Runtime';
+import { uploadAudio } from '@/lib/client-api';
 import AudioDialog, { AudioEditDialog } from './AudioDialog';
 import { audioElement, audioPlaceholder, cassetteRecorder, isAudioPlaceholder, withRecording } from './editor/audio-elements';
 import ScaledPage from './ScaledPage';
@@ -504,6 +505,7 @@ export default function ChildEditor({
 
         <ScaledPage page={page}>
           <LearningRuntime
+                  uploadAudio={(id, file) => uploadAudio(file, s.book!.id, id)}
             interactive={s.tool === 'select'}
             onResponse={(id, response) =>
               s.edit((p) => ({

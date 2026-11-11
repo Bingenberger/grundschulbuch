@@ -77,9 +77,12 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   Auf der Seite ist ein Ton ein großer runder Knopf: Antippen spielt ab, noch
   einmal hält an, ein Ring zeigt den Fortschritt. Ausgewählt wird er an den
   Ecken seines Rahmens. „Platzhalter“ setzt einen leeren Ton-Knopf mit
-  Aufgabe, „Kassettenrekorder“ das Lernwerkzeug Aufnahmegerät, jetzt als
-  Kassette mit drehenden Spulen, Aufnehmen, Zurück/Vor (5 s), Abspielen,
-  Stopp und Speichern als Datei.
+  Aufgabe, „Kassettenrekorder“ das Lernwerkzeug Aufnahmegerät, gestaltet
+  wie ein Spielzeug-Rekorder (Griff, Lautsprecher, Kassette mit drehenden
+  Spulen, rote Aufnahmelampe, Anzeige) mit großen runden Farbtasten:
+  Aufnehmen startet sofort mit dem Mikrofon (noch einmal = Fertig, höchstens
+  fünf Minuten), Zurück/Vor (5 s), Abspielen/Pause, Stopp; dazu „Datei öffnen“
+  und „Speichern“.
 - Ton-Platzhalter und Kassettenrekorder einer Lehrkraft nehmen Aufnahmen von
   Kindern auch in gesperrten Seiten und ohne die Heft-Erlaubnis „Kinder dürfen
   Ton aufnehmen“ an; der Server prüft dazu, dass das Element im Heft des

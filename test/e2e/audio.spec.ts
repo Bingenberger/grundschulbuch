@@ -96,17 +96,22 @@ test('Ton: Aufnehmen ist vorausgewählt, Hochladen, Platzhalter und Kassettenrek
   dialog = await open();
   await dialog.getByRole('button', { name: 'Kassettenrekorder', exact: true }).click();
   await dialog.getByRole('button', { name: 'Kassettenrekorder einfügen' }).click();
-  const recorder = surface.locator('.cassette-recorder');
-  await expect(recorder).toContainText('Noch keine Aufnahme');
-  await recorder.getByRole('button', { name: /Aufnehmen/ }).click();
+  const recorder = surface.locator('.tape-recorder');
+  await expect(recorder.getByRole('status')).toHaveText('Noch leer');
+  // The record key records right away; pressing it again finishes.
+  await recorder.getByRole('button', { name: 'Aufnehmen' }).click();
+  await expect(recorder.getByRole('status')).toContainText('Aufnahme 0:01', { timeout: 5000 });
+  await recorder.getByRole('button', { name: 'Fertig' }).click();
+  await expect(recorder.getByRole('button', { name: 'Abspielen' })).toBeEnabled({ timeout: 10000 });
+  await expect(recorder.getByRole('link', { name: 'Speichern' })).toHaveAttribute('href', /^\/api\/medien\//);
+  // A sound file can be opened instead.
+  await recorder.getByRole('button', { name: 'Datei öffnen' }).click();
   const record = page.getByRole('dialog', { name: 'Aufnehmen' });
   await expect(record.getByRole('navigation', { name: 'Art des Tons' }).getByRole('button')).toHaveText([/Aufnehmen/, /Hochladen/]);
   await record.getByRole('button', { name: 'Hochladen', exact: true }).click();
   await record.getByLabel('Tondatei auswählen').setInputFiles(wav(2));
   await record.getByRole('button', { name: 'Übernehmen' }).click();
-  await expect(recorder.locator('.cassette-time')).toHaveText('0:00 / 0:02');
-  await expect(recorder.getByRole('button', { name: /Abspielen/ })).toBeEnabled();
-  await expect(recorder.getByRole('link', { name: /Speichern/ })).toHaveAttribute('href', /^\/api\/medien\//);
+  await expect(recorder.getByRole('status')).toHaveText('0:00 / 0:02');
 });
 
 test('Kinder sprechen in gesperrte Ton-Platzhalter und Rekorder, auch ohne Ton-Erlaubnis', async ({ page, browser }) => {
@@ -141,12 +146,12 @@ test('Kinder sprechen in gesperrte Ton-Platzhalter und Rekorder, auch ohne Ton-E
   await record.getByRole('button', { name: 'Aufnahme beenden' }).click();
   await record.getByRole('button', { name: 'Übernehmen' }).click();
   await expect(child.locator('.interaction-surface .audio-button')).toHaveCount(1);
-  // So does the recorder.
-  await child.locator('.interaction-surface .cassette-recorder').getByRole('button', { name: /Aufnehmen/ }).click();
-  await record.getByRole('button', { name: 'Hochladen', exact: true }).click();
-  await record.getByLabel('Tondatei auswählen').setInputFiles(wav());
-  await record.getByRole('button', { name: 'Übernehmen' }).click();
-  await expect(child.locator('.interaction-surface .cassette-time')).toHaveText('0:00 / 0:01');
+  // So does the recorder, right with its record key.
+  const tapeRecorder = child.locator('.interaction-surface .tape-recorder');
+  await tapeRecorder.getByRole('button', { name: 'Aufnehmen' }).click();
+  await expect(tapeRecorder.getByRole('status')).toContainText('Aufnahme 0:01', { timeout: 5000 });
+  await tapeRecorder.getByRole('button', { name: 'Fertig' }).click();
+  await expect(tapeRecorder.getByRole('button', { name: 'Abspielen' })).toBeEnabled({ timeout: 10000 });
   await expect.poll(async () => {
     const data = await (await child.request.post('/api/kinder', { headers: origin, data: { action: 'open', id: book } })).json();
     const [sound, recorder] = data.pages[0].elements;
