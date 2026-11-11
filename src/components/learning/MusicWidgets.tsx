@@ -11,7 +11,6 @@ import {
   rhythmWav,
   tone,
 } from '@/lib/learning/audio';
-import { speakGerman } from '@/lib/speech';
 import { useLearning } from './Runtime';
 const scale = [60, 62, 64, 65, 67, 69, 71, 72],
   names = ['C', 'D', 'E', 'F', 'G', 'A', 'H', 'C'];
@@ -59,18 +58,13 @@ export default function MusicWidgets({
     if (
       !playing ||
       !interactive ||
-      !['sequencer', 'metronome', 'falling', 'karaoke'].includes(kind!)
+      !['sequencer', 'metronome', 'falling'].includes(kind!)
     )
       return;
-    const delay =
-      kind === 'karaoke'
-        ? Math.max(1000, (c.seconds || 3) * 1000)
-        : 60000 /
-          Math.max(30, Math.min(240, c.bpm || 90)) /
-          (kind === 'sequencer' ? 4 : 1);
+    const delay = 60000 / Math.max(30, Math.min(240, c.bpm || 90)) / (kind === 'sequencer' ? 4 : 1);
     const id = setInterval(() => setStep((old) => old + 1), delay);
     return () => clearInterval(id);
-  }, [playing, interactive, kind, c.bpm, c.seconds]);
+  }, [playing, interactive, kind, c.bpm]);
   useEffect(() => {
     if (!playing || !interactive) return;
     if (kind === 'sequencer')
@@ -757,50 +751,8 @@ export default function MusicWidgets({
         </div>
       </>
     );
-  } else if (kind === 'karaoke') {
-    const lines = (c.text || 'Dein Liedtext').split('\n').filter(Boolean),
-      index = step % lines.length;
-    content = (
-      <>
-        <div className="karaoke-lines">
-          {lines.map((line, i) => (
-            <button
-              key={i}
-              disabled={!interactive}
-              className={playing && i === index ? 'active' : ''}
-              onClick={() => {
-                setStep(i);
-                speakGerman(line);
-              }}
-            >
-              {line}
-            </button>
-          ))}
-        </div>
-        <div className="learning-actions">
-          <button
-            disabled={!interactive}
-            onClick={() => {
-              setPlaying(!playing);
-              setStep(0);
-            }}
-          >
-            {playing ? 'Pause' : '▷ Text begleiten'}
-          </button>
-          <button
-            disabled={!interactive || !onRecord}
-            onClick={() => onRecord?.(el.id)}
-          >
-            ● Gesang aufnehmen
-          </button>
-        </div>
-        {c.tracks?.[0]?.src && <audio controls src={c.tracks[0].src} />}{' '}
-        {typeof state.recordingSrc === 'string' && (
-          <audio controls src={state.recordingSrc} />
-        )}
-      </>
-    );
   }
+
   return (
     <section
       className="learning-widget music-widget"

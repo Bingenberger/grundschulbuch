@@ -31,7 +31,24 @@ export const fonts = {
   Bangers: 'Comic · Bangers',
 } as const;
 export type Font = keyof typeof fonts;
-export type Point = { x: number; y: number; pressure: number };
+export type Point = {
+  x: number;
+  y: number;
+  pressure: number;
+  time?: number;
+  tiltX?: number;
+  tiltY?: number;
+};
+export type Erasure = {
+  id: string;
+  points: { x: number; y: number }[];
+  size: number;
+  opacity: number;
+  soft: boolean;
+  tip?: 'round' | 'square' | 'slant';
+  width: number;
+  height: number;
+};
 export type PageElement = {
   id: string;
   type:
@@ -60,6 +77,12 @@ export type PageElement = {
   points?: Point[];
   penWidth?: number;
   penStyle?: 'pen' | 'fountain' | 'crayon' | 'marker' | 'water';
+  brushVersion?: 2;
+  fillOnly?: boolean;
+  nibHand?: 'left' | 'right';
+  simulatePressure?: boolean;
+  geometry?: 'line' | 'ellipse' | 'triangle' | 'rectangle' | 'arrow' | 'star' | 'heart';
+  erasures?: Erasure[];
   opacity?: number;
   groupId?: string;
   italic?: boolean;
@@ -156,7 +179,7 @@ export function newPage(
 /** Tight vector bounds keep transparent stroke boxes from covering other content. */
 export function compactStroke(element: PageElement): PageElement {
   if (element.type !== 'stroke' || !element.points?.length) return element;
-  const pad = Math.max(0.3, (element.penWidth || 0.7) / 2);
+  const pad = Math.max(0.3, (element.penWidth || 0.7) * (element.brushVersion === 2 ? 1.7 : 0.5));
   const minX = Math.min(...element.points.map((p) => p.x)) - pad;
   const minY = Math.min(...element.points.map((p) => p.y)) - pad;
   const maxX = Math.max(...element.points.map((p) => p.x)) + pad;

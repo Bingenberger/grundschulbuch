@@ -78,9 +78,7 @@ async function embeddedFonts(css: string, data: BookData) {
   const used = new Set([
     'Andika',
     ...data.pages.flatMap((p) =>
-      p.elements
-        .filter((el) => el.type === 'text')
-        .map((el) => el.font || 'Andika'),
+      p.elements.flatMap(el => [el.font, el.settings?.font].filter((font): font is string => !!font)),
     ),
   ]);
   const rules = Array.from(css.matchAll(/@font-face\s*\{[^}]+\}/g));
@@ -148,7 +146,7 @@ export async function exportEpub(data: BookData) {
   const usedFonts = new Set([
     'Andika',
     ...data.pages.flatMap((p) =>
-      p.elements.map((el) => el.font).filter(Boolean),
+      p.elements.flatMap(el => [el.font, el.settings?.font]).filter(Boolean),
     ),
   ]);
   for (const match of Array.from(css.matchAll(/@font-face\s*\{[^}]+\}/g))) {

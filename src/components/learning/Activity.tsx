@@ -9,26 +9,26 @@ import {
   mazeGrid,
   normalized,
   searchGrid,
-  shuffled,
   wordleFeedback,
 } from '@/lib/learning/algorithms';
 import { speakGerman } from '@/lib/speech';
 import { useLearning } from './Runtime';
-export default function Activity({ element: el }: { element: PageElement }) {
+import MediaActivity from './MediaActivity';
+import LetterGuessActivity from './LetterGuessActivity';
+import SyllableAssemblyActivity from './SyllableAssemblyActivity';
+export default function Activity({ element }: { element: PageElement }) {
+  if (element.activityKind === 'syllables') return <SyllableAssemblyActivity element={element} />;
+  if (element.activityKind === 'letterguess') return <LetterGuessActivity element={element} />;
+  if (['quiz', 'matching', 'memory'].includes(element.activityKind!)) return <MediaActivity element={element} />;
+  return <OtherActivity element={element} />;
+}
+function OtherActivity({ element: el }: { element: PageElement }) {
   const { state, update, interactive } = useLearning(el);
   const config = el.settings || {},
     kind = el.activityKind!;
   const words = useMemo(
     () => (config.words?.length ? config.words : defaultWords).slice(0, 30),
     [config.words],
-  );
-  const pairs = useMemo(
-    () =>
-      (config.pairs?.length
-        ? config.pairs
-        : words.map((word, i) => ({ left: String(i + 1), right: word }))
-      ).slice(0, 12),
-    [config.pairs, words],
   );
   const values = Array.isArray(state.values) ? state.values.map(String) : [];
   const numbers = (key: string): number[] =>
@@ -51,36 +51,6 @@ export default function Activity({ element: el }: { element: PageElement }) {
   const readWords = (config.text || words.join(' '))
     .split(/\s+/)
     .filter(Boolean);
-  const open = useMemo(
-      () => (Array.isArray(state.open) ? state.open.map(Number) : []),
-      [state.open],
-    ),
-    matched = useMemo(
-      () => (Array.isArray(state.matched) ? state.matched.map(Number) : []),
-      [state.matched],
-    );
-  useEffect(() => {
-    if (kind !== 'memory' || open.length !== 2) return;
-    const deck = shuffled(
-      pairs.flatMap((p, i) => [
-        { text: p.left, pair: i },
-        { text: p.right, pair: i },
-      ]),
-      config.seed,
-    );
-    const timer = setTimeout(() => {
-      if (deck[open[0]]?.pair === deck[open[1]]?.pair) {
-        const next = [...matched, ...open];
-        update({
-          matched: next,
-          open: [],
-          completed: next.length === deck.length,
-          score: Math.round((next.length / deck.length) * 100),
-        });
-      } else update({ open: [] });
-    }, 750);
-    return () => clearTimeout(timer);
-  }, [kind, open, matched, config.seed, pairs, update]);
   useEffect(() => {
     if (!playing || !interactive || kind !== 'reading') return;
     const timer = setInterval(
@@ -97,104 +67,7 @@ export default function Activity({ element: el }: { element: PageElement }) {
     return () => clearInterval(timer);
   }, [playing, kind, interactive, readWords.length, config.seconds]);
   let content: React.ReactNode;
-  if (kind === 'quiz') {
-    const questions = config.questions?.length
-      ? config.questions
-      : [{ text: 'Wie viel ist 2 + 2?', answers: ['3', '4', '5'], correct: 1 }];
-    const index = Math.min(Number(state.index) || 0, questions.length - 1),
-      question = questions[index],
-      chosen = values[index];
-    content = (
-      <>
-        <div className="activity-question">{question.text}</div>
-        <div className="answer-options">
-          {question.answers.map((answer, i) => (
-            <button
-              disabled={!interactive}
-              key={i}
-              aria-pressed={chosen === String(i)}
-              onClick={() => setValue(index, String(i))}
-            >
-              {String.fromCharCode(65 + i)} · {answer}
-            </button>
-          ))}
-        </div>
-        <div className="learning-actions">
-          <button
-            disabled={!interactive || chosen === undefined}
-            onClick={() => {
-              score(
-                questions.filter(
-                  (q, i) =>
-                    Number(values[i]) === q.correct && values[i] !== undefined,
-                ).length,
-                questions.length,
-              );
-              setNotice(
-                Number(chosen) === question.correct
-                  ? 'Richtig!'
-                  : question.explanation || 'Probiere es noch einmal.',
-              );
-            }}
-          >
-            Prüfen
-          </button>
-          <span>
-            {index + 1} / {questions.length}
-          </span>
-          <button
-            disabled={!interactive || index >= questions.length - 1}
-            onClick={() => {
-              update({ index: index + 1, checked: false });
-              setNotice('');
-            }}
-          >
-            Weiter ›
-          </button>
-        </div>
-      </>
-    );
-  } else if (kind === 'matching') {
-    const options = shuffled(
-      pairs.map((p) => p.right),
-      config.seed,
-    );
-    content = (
-      <>
-        <div className="matching-grid">
-          {pairs.map((pair, i) => (
-            <label key={i}>
-              <span>{pair.left}</span>
-              <select
-                aria-label={`Zuordnung für ${pair.left}`}
-                disabled={!interactive}
-                value={values[i] || ''}
-                onChange={(e) => setValue(i, e.target.value)}
-              >
-                <option value="">Bitte zuordnen</option>
-                {options.map((text, i) => (
-                  <option key={i}>{text}</option>
-                ))}
-              </select>
-            </label>
-          ))}
-        </div>
-        <button
-          disabled={!interactive}
-          onClick={() =>
-            score(
-              pairs.filter(
-                (p, i) => normalized(values[i] || '') === normalized(p.right),
-              ).length,
-              pairs.length,
-            )
-          }
-        >
-          Zuordnungen prüfen
-        </button>
-      </>
-    );
-  } else if (kind === 'cloze') {
+  if (kind === 'cloze') {
     const text = config.text || 'Die [Sonne] scheint.';
     const answers = Array.from(text.matchAll(/\[([^\]]+)\]/g), (m) => m[1]);
     let index = 0;
@@ -257,12 +130,8 @@ export default function Activity({ element: el }: { element: PageElement }) {
         </button>
       </>
     );
-  } else if (kind === 'reading' || kind === 'syllables') {
-    const index =
-      kind === 'reading'
-        ? readingIndex
-        : Math.min(Number(state.index) || 0, words.length - 1);
-    const word = kind === 'reading' ? readWords[index] : words[index];
+  } else if (kind === 'reading') {
+    const word = readWords[readingIndex];
     content = (
       <>
         <div className="flash-word">
@@ -273,26 +142,9 @@ export default function Activity({ element: el }: { element: PageElement }) {
           ))}
         </div>
         <div className="learning-actions">
-          {kind === 'reading' ? (
-            <button
-              disabled={!interactive}
-              onClick={() => setPlaying(!playing)}
-            >
-              {playing ? 'Pause' : 'Blitzlesen starten'}
-            </button>
-          ) : (
-            <button
-              disabled={!interactive}
-              onClick={() =>
-                update({
-                  index: (index + 1) % words.length,
-                  completed: index === words.length - 1,
-                })
-              }
-            >
-              Nächstes Wort
-            </button>
-          )}
+          <button disabled={!interactive} onClick={() => setPlaying(!playing)}>
+            {playing ? 'Pause' : 'Blitzlesen starten'}
+          </button>
           <button
             disabled={!interactive}
             onClick={() => {
@@ -303,49 +155,6 @@ export default function Activity({ element: el }: { element: PageElement }) {
             ▷ Anhören
           </button>
         </div>
-      </>
-    );
-  } else if (kind === 'memory') {
-    const deck = shuffled(
-      pairs.flatMap((p, i) => [
-        { text: p.left, pair: i },
-        { text: p.right, pair: i },
-      ]),
-      config.seed,
-    );
-    content = (
-      <>
-        <div
-          className="memory-grid"
-          style={{
-            gridTemplateColumns: `repeat(${Math.min(4, config.columns || 4)},1fr)`,
-          }}
-        >
-          {deck.map((card, i) => (
-            <button
-              key={i}
-              className={matched.includes(i) ? 'matched' : ''}
-              disabled={
-                !interactive ||
-                matched.includes(i) ||
-                open.includes(i) ||
-                open.length === 2
-              }
-              onClick={() =>
-                update({
-                  open: [...open, i],
-                  attempts: (Number(state.attempts) || 0) + 1,
-                })
-              }
-            >
-              {open.includes(i) || matched.includes(i) ? card.text : '?'}
-            </button>
-          ))}
-        </div>
-        <small>
-          {matched.length / 2} von {pairs.length} Paaren ·{' '}
-          {Number(state.attempts) || 0} Karten aufgedeckt
-        </small>
       </>
     );
   } else if (kind === 'wordle') {

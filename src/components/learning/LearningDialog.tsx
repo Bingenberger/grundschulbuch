@@ -1,6 +1,21 @@
 'use client';
 import AiDialog from './AiDialog';
 import VoiceOptions from './VoiceOptions';
+import AlphabetOptions from './AlphabetOptions';
+import SynthesisOptions from './SynthesisOptions';
+import ClappingOptions from './ClappingOptions';
+import MediaActivityOptions from './MediaActivityOptions';
+import LetterGuessOptions from './LetterGuessOptions';
+import SyllableOptions from './SyllableOptions';
+import GeometryOptions from './GeometryOptions';
+import { geometryCustom } from '@/lib/learning/geometry';
+import KaraokeOptions from './KaraokeOptions';
+import { karaokeLines, validKaraokeTimes } from '@/lib/learning/karaoke';
+import { assemblyWords } from '@/lib/learning/syllable-assembly';
+import { guessWords, validGuessWord } from '@/lib/learning/letter-guess';
+import { clappingWords } from '@/lib/learning/clapping';
+import { synthesisPairs } from '@/lib/learning/synthesis';
+import { practiceWords } from '@/lib/learning/alphabet';
 import WordBank from './WordBank';
 import { effectWav, soundEffects } from '@/lib/learning/audio';
 import { useState } from 'react';
@@ -43,6 +58,7 @@ export default function LearningDialog({
     type: 'widget' | 'activity',
     kind: WidgetKind | ActivityKind,
   ) {
+    if (busy) return;
     setType(type);
     setKind(kind);
     setSettings(defaultSettings(kind));
@@ -91,16 +107,18 @@ export default function LearningDialog({
       />
     </label>
   );
-  const upload = (accept: string, done: (src: string) => void) => (
+  const upload = (accept: string, done: (src: string) => void, label = 'Datei wählen') => (
     <label className="knopf compact">
-      Datei wählen
+      {label}
       <input
         className="visually-hidden"
         type="file"
         accept={accept}
+        aria-label={label}
         disabled={busy}
         onChange={(e) => {
           if (e.target.files?.[0]) void media(e.target.files[0], done);
+          e.target.value = '';
         }}
       />
     </label>
@@ -178,13 +196,25 @@ export default function LearningDialog({
             className="learning-options"
             onSubmit={(e) => {
               e.preventDefault();
+              if (kind === 'alphabet' && settings.words?.some(word => word.length > 80)) { setError('Ein Übungswort darf höchstens 80 Zeichen haben.'); return; }
+              if (kind === 'alphabet' && settings.alphabetPractice && !practiceWords(settings).length) { setError('Bitte mindestens ein Übungswort hinterlegen.'); return; }
+              if (kind === 'synthesis' && (!synthesisPairs(settings).length || settings.synthesisPairs?.some(p => !p.left.trim() || !p.right.trim() || p.left.length > 80 || p.right.length > 80))) { setError('Bitte gültige Laute oder Verbindungen auswählen. Jeder Teil darf höchstens 80 Zeichen haben.'); return; }
+              if (kind === 'synthesis' && settings.synthesisPronunciations?.some(p => !p.text.trim() || !p.speak.trim() || p.text.length > 80 || p.speak.length > 80)) { setError('Bitte jede Aussprachekorrektur vollständig und mit höchstens 80 Zeichen je Teil eingeben.'); return; }
+              if (kind === 'clapping' && (!clappingWords(settings).length || (settings.words || []).length > 16 || settings.words?.some(word => word.length > 80 || word.split('-').filter(Boolean).length > 12))) { setError('Bitte eine bis 16 Wörter mit höchstens 80 Zeichen und zwölf Silben je Wort eingeben.'); return; }
+              if (kind === 'geometry' && geometryCustom(settings) && (!settings.path || settings.path.length < 2 || settings.path.length > 30 || settings.path.some((p, i, points) => !Number.isFinite(p.x) || !Number.isFinite(p.y) || p.x < 0 || p.y < 0 || p.x > 100 || p.y > 100 || i > 0 && p.x === points[i - 1].x && p.y === points[i - 1].y))) { setError('Bitte zwei bis 30 gültige Eckpunkte der eigenen Form eingeben.'); return; }
+              if (kind === 'karaoke' && (!karaokeLines(settings.text).length || (settings.text || '').replace(/\r\n?/g, '\n').split('\n').length > 300 || (settings.karaokeTimes !== undefined && !validKaraokeTimes(settings.karaokeTimes, karaokeLines(settings.text).length)))) { setError('Bitte einen Liedtext mit bis zu 300 Zeilen und aufsteigenden Startzeiten hinterlegen.'); return; }
+              if (kind === 'syllables' && (!assemblyWords(settings).length || (settings.words || []).length > 30 || settings.words?.some(word => word.trim() && !assemblyWords({ words: [word] }).length))) { setError('Bitte bis 30 Wörter mit höchstens 80 Zeichen und zwölf Silben eingeben.'); return; }
+              if (kind === 'letterguess' && (!guessWords(settings).length || (settings.words || []).length > 20 || settings.words?.some(word => word.trim() && !validGuessWord(word)))) { setError('Bitte eine bis 20 gültige Wörter oder kurze Ausdrücke mit höchstens 40 Zeichen eingeben.'); return; }
+              const taskContent = (text: string, media?: { image?: string; audio?: string }) => !!text.trim() || !!media?.image || !!media?.audio;
+              if (kind === 'quiz' && (!settings.questions?.length || settings.questions.some(q => !taskContent(q.text, q.media) || q.answers.length < 2 || q.answers.some((answer, i) => !taskContent(answer, q.answerMedia?.[i]))))) { setError('Bitte jede Frage und Antwort mit Text, Bild oder Ton ausfüllen.'); return; }
+              if ((kind === 'matching' || kind === 'memory') && (!settings.pairs?.length || settings.pairs.some(pair => !taskContent(pair.left, pair.leftMedia) || !taskContent(pair.right, pair.rightMedia)))) { setError('Bitte beide Seiten jedes Paars mit Text, Bild oder Ton ausfüllen.'); return; }
               const learning: PageElement = {
                 ...(element || {
                   id: uuid(),
                   x: 15,
                   y: 45,
                   width: 180,
-                  height: 140,
+                  height: kind === 'alphabet' ? 210 : kind === 'synthesis' || kind === 'clapping' || kind === 'letterguess' || kind === 'syllables' || kind === 'geometry' ? 180 : 140,
                   rotation: 0,
                   locked: false,
                   color: '#253c42',
@@ -221,19 +251,22 @@ export default function LearningDialog({
                 onChange={(e) => patch({ title: e.target.value })}
               />
             </label>
+            {kind === 'karaoke' && <KaraokeOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
+            {kind === 'syllables' && <SyllableOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
+            {kind === 'letterguess' && <LetterGuessOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
+            {kind === 'clapping' && <ClappingOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
+            {kind === 'synthesis' && <SynthesisOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
+            {kind === 'alphabet' && <AlphabetOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
             {[
               'monster',
-              'synthesis',
-              'clapping',
               'alphabet',
-              'syllables',
               'crossword',
               'wordsearch',
               'wordle',
               'reading',
             ].includes(kind) && (
               <label className="property-label">
-                Wörter, je eines pro Zeile; Silben mit Bindestrich trennen
+                {kind === 'alphabet' ? 'Übungswörter, je eines pro Zeile · bis 40 Wörter' : 'Wörter, je eines pro Zeile; Silben mit Bindestrich trennen'}
                 <textarea
                   aria-label="Wörter der Übung"
                   value={(settings.words || []).join('\n')}
@@ -247,7 +280,6 @@ export default function LearningDialog({
               'cloze',
               'typing',
               'reading',
-              'karaoke',
               'pitch',
               'calculator',
             ].includes(kind) && (
@@ -265,109 +297,8 @@ export default function LearningDialog({
                 />
               </label>
             )}
-            {kind === 'quiz' && (
-              <div>
-                <p>Fragen und Antworten</p>
-                {(settings.questions || []).map((question, i) => (
-                  <fieldset key={i}>
-                    <legend>Frage {i + 1}</legend>
-                    <input
-                      aria-label={`Frage ${i + 1}`}
-                      value={question.text}
-                      onChange={(e) =>
-                        patch({
-                          questions: settings.questions!.map((q, n) =>
-                            n === i ? { ...q, text: e.target.value } : q,
-                          ),
-                        })
-                      }
-                    />
-                    {question.answers.map((answer, j) => (
-                      <label className="quiz-answer-editor" key={j}>
-                        <input
-                          type="radio"
-                          name={`correct-${i}`}
-                          checked={question.correct === j}
-                          onChange={() =>
-                            patch({
-                              questions: settings.questions!.map((q, n) =>
-                                n === i ? { ...q, correct: j } : q,
-                              ),
-                            })
-                          }
-                        />
-                        <input
-                          aria-label={`Frage ${i + 1}, Antwort ${j + 1}`}
-                          value={answer}
-                          onChange={(e) =>
-                            patch({
-                              questions: settings.questions!.map((q, n) =>
-                                n === i
-                                  ? {
-                                      ...q,
-                                      answers: q.answers.map((a, k) =>
-                                        k === j ? e.target.value : a,
-                                      ),
-                                    }
-                                  : q,
-                              ),
-                            })
-                          }
-                        />
-                      </label>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        patch({
-                          questions: settings.questions!.map((q, n) =>
-                            n === i
-                              ? {
-                                  ...q,
-                                  answers: [...q.answers, 'Neue Antwort'],
-                                }
-                              : q,
-                          ),
-                        })
-                      }
-                    >
-                      ＋ Antwort
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        patch({
-                          questions: settings.questions!.filter(
-                            (_, n) => n !== i,
-                          ),
-                        })
-                      }
-                    >
-                      Frage entfernen
-                    </button>
-                  </fieldset>
-                ))}
-                <button
-                  type="button"
-                  className="knopf"
-                  onClick={() =>
-                    patch({
-                      questions: [
-                        ...(settings.questions || []),
-                        {
-                          text: 'Neue Frage',
-                          answers: ['Antwort 1', 'Antwort 2'],
-                          correct: 0,
-                        },
-                      ],
-                    })
-                  }
-                >
-                  ＋ Frage
-                </button>
-              </div>
-            )}
-            {['matching', 'memory', 'crossword'].includes(kind) && (
+            {(kind === 'quiz' || kind === 'matching' || kind === 'memory') && <MediaActivityOptions kind={kind} settings={settings} onChange={patch} upload={media} busy={busy} />}
+            {kind === 'crossword' && (
               <label className="property-label">
                 Paare, je eine Zeile: Begriff = Zuordnung
                 <textarea
@@ -397,8 +328,7 @@ export default function LearningDialog({
                 'timer',
                 'multitimer',
                 'pitch',
-                'karaoke',
-                'animation',
+                  'animation',
                 'reading',
               ].includes(kind) &&
                 numeric(
@@ -524,6 +454,9 @@ export default function LearningDialog({
             )}
             {kind === 'slideshow' && (
               <>
+                <label><input type="checkbox" checked={settings.slideshowSound !== false} onChange={event => patch({ slideshowSound: event.target.checked })} /> Folienton automatisch mit der Folie starten</label>
+                <label><input type="checkbox" checked={settings.slideshowWaitAudio !== false} onChange={event => patch({ slideshowWaitAudio: event.target.checked })} /> Vor dem Folienwechsel auch das Tonende abwarten</label>
+                <p>Die Sekundenangabe ist die Mindestdauer einer Folie. Ohne Abwarten wird ein längerer Ton beim Wechsel beendet.</p>
                 <label className="property-label">
                   Textposition
                   <select
@@ -726,7 +659,7 @@ export default function LearningDialog({
                     { title: 'Erster Abschnitt', text: '', seconds: 60 },
                   ]
                 ).map((slide, i) => (
-                  <fieldset key={i}>
+                  <fieldset key={i} disabled={busy}>
                     <legend>
                       {kind === 'multitimer' ? 'Timer' : 'Folie'} {i + 1}
                     </legend>
@@ -753,7 +686,7 @@ export default function LearningDialog({
                       }
                     />
                     <label>
-                      Sekunden{' '}
+                      {kind === 'slideshow' ? 'Mindestdauer in Sekunden' : 'Sekunden'}{' '}
                       <input
                         type="number"
                         min="1"
@@ -763,7 +696,7 @@ export default function LearningDialog({
                           patch({
                             slides: settings.slides!.map((s, n) =>
                               n === i
-                                ? { ...s, seconds: Number(e.target.value) }
+                                ? { ...s, seconds: Math.max(1, Math.min(3600, Number(e.target.value) || 5)) }
                                 : s,
                             ),
                           })
@@ -778,6 +711,7 @@ export default function LearningDialog({
                               n === i ? { ...s, image: src } : s,
                             ),
                           }),
+                          `Bild für Folie ${i + 1} wählen`,
                         )}
                         {upload('audio/*', (src) =>
                           patch({
@@ -785,7 +719,10 @@ export default function LearningDialog({
                               n === i ? { ...s, audio: src } : s,
                             ),
                           }),
+                          `Ton für Folie ${i + 1} wählen`,
                         )}
+                        {slide.image && <button type="button" onClick={() => patch({ slides: settings.slides!.map((s, n) => n === i ? { ...s, image: undefined } : s) })}>Bild entfernen</button>}
+                        {slide.audio && <><p>Folienton hinterlegt.</p><button type="button" onClick={() => patch({ slides: settings.slides!.map((s, n) => n === i ? { ...s, audio: undefined } : s) })}>Ton entfernen</button></>}
                       </>
                     )}
                     <button
@@ -803,6 +740,7 @@ export default function LearningDialog({
                 <button
                   type="button"
                   className="knopf"
+                  disabled={busy}
                   onClick={() =>
                     patch({
                       slides: [
@@ -846,7 +784,7 @@ export default function LearningDialog({
                   </select>
                 </label>
                 {(settings.frames || []).map((frame, i) => (
-                  <fieldset key={i}>
+                  <fieldset key={i} disabled={busy}>
                     <legend>Schlüsselbild {i + 1}</legend>
                     <input
                       aria-label={`Text im Schlüsselbild ${i + 1}`}
@@ -924,7 +862,7 @@ export default function LearningDialog({
               <>
                 <h4>Weitere Objekte</h4>
                 {(settings.actors || []).map((actor, i) => (
-                  <fieldset key={i}>
+                  <fieldset key={i} disabled={busy}>
                     <legend>Objekt {i + 2}</legend>
                     <label>
                       Symbol{' '}
@@ -1029,7 +967,7 @@ export default function LearningDialog({
                 </button>
               </>
             )}
-            {['soundstudio', 'karaoke', 'playlist', 'animation'].includes(
+            {['soundstudio', 'playlist', 'animation'].includes(
               kind,
             ) && (
               <div>
@@ -1158,38 +1096,7 @@ export default function LearningDialog({
                 {upload('image/*', (src) => patch({ background: src }))}
               </>
             )}
-            {kind === 'geometry' && (
-              <label className="property-label">
-                Eckpunkte des Linienzuges: X,Y je Zeile (0–100)
-                <textarea
-                  value={(
-                    settings.path || [
-                      { x: 20, y: 20 },
-                      { x: 80, y: 20 },
-                      { x: 80, y: 70 },
-                      { x: 20, y: 70 },
-                      { x: 20, y: 20 },
-                    ]
-                  )
-                    .map((p) => `${p.x},${p.y}`)
-                    .join('\n')}
-                  onChange={(e) =>
-                    patch({
-                      path: e.target.value
-                        .split('\n')
-                        .slice(0, 30)
-                        .map((line) => {
-                          const [x, y] = line.split(',').map(Number);
-                          return {
-                            x: Math.max(0, Math.min(100, x || 0)),
-                            y: Math.max(0, Math.min(100, y || 0)),
-                          };
-                        }),
-                    })
-                  }
-                />
-              </label>
-            )}
+            {kind === 'geometry' && <GeometryOptions key={`${kind}:${element?.id || 'new'}`} settings={settings} onChange={patch} />}
             {[
               'monster',
               'synthesis',
@@ -1226,16 +1133,13 @@ export default function LearningDialog({
             ].includes(kind) && numeric('seed', 'Aufgabenvariante', 1, 999999)}
             {[
               'monster',
-              'synthesis',
-              'clapping',
               'alphabet',
-              'syllables',
               'crossword',
               'wordsearch',
               'wordle',
               'reading',
             ].includes(kind) && (
-              <WordBank onSelect={(words) => patch({ words })} />
+              <WordBank onSelect={(words) => patch({ words: kind === 'alphabet' ? words.slice(0, 40) : words })} />
             )}
             {error && (
               <p className="fehler" role="alert">
@@ -1264,7 +1168,7 @@ export default function LearningDialog({
                     : 'words'
             }
             onClose={() => setShowAI(false)}
-            onAccept={(values) => patch(values)}
+            onAccept={(values) => patch(kind === 'karaoke' && values.text !== undefined ? { ...values, karaokeTimes: undefined } : values)}
           />
         )}
       </section>

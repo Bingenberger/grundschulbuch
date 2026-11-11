@@ -1,5 +1,10 @@
 # Vergleich mit Lernsachen-Heft.html
 
+> **Korrektur vom 10. November 2026:** Die folgende ältere Übersicht bewertet
+> Werkzeugnamen und Funktionskategorien zu großzügig. Sie ist kein Nachweis für
+> Funktionsgleichheit. Der aktuelle [Abgleich mit konkreten Lücken](abgleich-2026-11-10.md)
+> hat Vorrang, insbesondere für Stift, Radierer und didaktische Abläufe.
+
 Stand: 9. November 2026. Die lokale Referenz wurde im Browser geöffnet und ihre
 Werkzeuge, Dialoge, Vorlagenkategorien und Dateifunktionen untersucht. Die frühere
 Umsetzung der drei Konzeptphasen deckte diesen Umfang noch nicht ab.

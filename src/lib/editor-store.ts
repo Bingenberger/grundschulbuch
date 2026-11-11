@@ -4,6 +4,9 @@ import { create } from 'zustand';
 import { childApi } from './child-api';
 import { api } from './client-api';
 import type { BookData, Notebook, Page, PageElement } from './notebook-model';
+import type { EraserOptions } from './drawing';
+import { brushProfiles, type Brush } from './brushes';
+type BrushPreference = { color: string; size: number; opacity: number };
 type State = {
   mode: 'teacher' | 'child';
   book: Notebook | null;
@@ -14,6 +17,13 @@ type State = {
   color: string;
   penWidth: number; brush: 'pen'|'fountain'|'crayon'|'marker'|'water'|'fill';
   pencilOnly: boolean;
+  penOpacity: number;
+  brushPreferences: Record<Brush, BrushPreference>;
+  nibHand: 'left' | 'right';
+  recognizeShapes: boolean;
+  fillMode: 'area' | 'object';
+  chooseBrush: (brush: Brush) => void;
+  eraser: EraserOptions;
   dirty: Record<string, number>;
   saving: boolean;
   error: string;
@@ -37,8 +47,22 @@ export const useEditor = create<State>((set, get) => ({
   selected: [],
   tool: 'select',
   color: '#253c42',
-  penWidth: 0.7, brush: 'pen',
+  penWidth: brushProfiles.pen.size, brush: 'pen',
   pencilOnly: false,
+  penOpacity: 1,
+  nibHand: 'right',
+  recognizeShapes: false,
+  fillMode: 'area',
+  brushPreferences: Object.fromEntries(Object.entries(brushProfiles).map(([key, profile]) =>
+    [key, { color: '#253c42', size: profile.size, opacity: profile.opacity }])) as Record<Brush, BrushPreference>,
+  chooseBrush: brush => {
+    const s = get();
+    const current = { color: s.color, size: s.penWidth, opacity: s.penOpacity };
+    const preferences = { ...s.brushPreferences, [s.brush]: current };
+    const target = preferences[brush];
+    set({ brush, tool: 'pen', color: target.color, penWidth: target.size, penOpacity: target.opacity, brushPreferences: preferences, selected: [] });
+  },
+  eraser: { mode: 'area', size: 5, opacity: 1, soft: false },
   dirty: {},
   saving: false,
   error: '',

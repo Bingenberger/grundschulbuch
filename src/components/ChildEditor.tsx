@@ -19,6 +19,16 @@ import { ElementView } from './PageView';
 import { LearningRuntime } from './learning/Runtime';
 import AudioDialog from './AudioDialog';
 import ScaledPage from './ScaledPage';
+import DrawingOptions from './DrawingOptions';
+import PageEyedropper from './PageEyedropper';
+import PageFillTool from './PageFillTool';
+import { useShapeRecognition } from '@/lib/use-shape-recognition';
+import DrawingGuideTools from './DrawingGuideTools';
+import DrawingRuler from './learning/DrawingRuler';
+import { captureGuideEdge, projectToGuideEdge, type DrawingGuide, type GuideEdge } from '@/lib/drawing-guide';
+import { previousArrowShaft } from '@/lib/shape-recognition';
+import { inkPaintOrder } from '@/lib/brushes';
+import { appendSamples, eraseElements, newStroke, pointerSamples, type EraserProgress, type EraserOptions } from '@/lib/drawing';
 export default function ChildEditor({
   initial,
   images,
@@ -27,19 +37,28 @@ export default function ChildEditor({
   images: string[];
 }) {
   const s = useEditor();
+  const recognition = useShapeRecognition(s.recognizeShapes && !['water', 'fill'].includes(s.brush), s.activeId);
   const [showImages, setShowImages] = useState(false);
   const [readAloud, setReadAloud] = useState(false);
   const [text, setText] = useState('');
   const [showAudio, setShowAudio] = useState(false);
   const [recordTarget, setRecordTarget] = useState<string | null>(null);
   const [draft, setDraft] = useState<PageElement | null>(null);
+  const [guide, setGuide] = useState<DrawingGuide | null>(null);
+  const [erasePreview, setErasePreview] = useState<PageElement[] | null>(null);
   const surface = useRef<HTMLDivElement>(null);
   const gesture = useRef<{
     el: PageElement;
     points: Point[];
     start: Point;
     move: boolean;
+    guideEdge?: GuideEdge;
     erase?: boolean;
+    pointer?: number;
+    originals?: PageElement[];
+    eraserId?: string;
+    eraserProgress?: EraserProgress;
+  eraserOptions?: EraserOptions;
   } | null>(null);
   const page = s.pages.find((p) => p.id === s.activeId);
   const selected = page?.elements.find((el) => s.selected.includes(el.id));
@@ -80,37 +99,25 @@ export default function ChildEditor({
       });
   }
   function tool(value: typeof s.tool, label: string) {
+    if (value === 'marker') s.chooseBrush('marker');
+    else if (value === 'pen') s.chooseBrush(s.brush === 'marker' || s.brush === 'fill' ? 'pen' : s.brush);
     useEditor.setState({ tool: value, selected: [] });
     speak(label);
   }
-  function point(e: React.PointerEvent) {
-    const rect = surface.current!.getBoundingClientRect();
-    return {
-      x: Math.max(
-        0,
-        Math.min(
-          size.width,
-          ((e.clientX - rect.left) / rect.width) * size.width,
-        ),
-      ),
-      y: Math.max(
-        0,
-        Math.min(
-          size.height,
-          ((e.clientY - rect.top) / rect.height) * size.height,
-        ),
-      ),
-      pressure: e.pressure || 0.5,
-    };
+  function point(e: React.PointerEvent): Point {
+    const samples = pointerSamples(e.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+    return samples[samples.length - 1];
   }
+
   function down(e: React.PointerEvent, element?: PageElement) {
     if (
-      e.button !== 0 ||
+      gesture.current || e.button !== 0 ||
       (s.pencilOnly && e.pointerType !== 'pen' && s.tool !== 'select')
     )
       return;
     e.preventDefault();
     e.stopPropagation();
+    if (s.tool === 'pen' && s.brush === 'fill') return;
     const p = point(e);
     if (s.tool === 'select') {
       s.select(element && !element.locked ? [element.id] : []);
@@ -118,9 +125,8 @@ export default function ChildEditor({
         element?.type === 'text' && !element.locked ? element.text || '' : '',
       );
       if (!element || element.locked) return;
-      gesture.current = { el: element, points: [], start: p, move: true };
+      gesture.current = { el: element, points: [], start: p, move: true, pointer: e.pointerId };
     } else if (s.tool === 'eraser') {
-      s.checkpoint();
       gesture.current = {
         el: {
           id: '',
@@ -133,38 +139,36 @@ export default function ChildEditor({
           locked: false,
           color: s.color,
         },
-        points: [],
+        points: [p],
         start: p,
+        pointer: e.pointerId,
+        originals: page!.elements,
+        eraserId: uuid(),
+        eraserProgress: { checked: 0, hits: new Set() },
+        eraserOptions: s.eraser,
         move: false,
         erase: true,
       };
-      erase(p);
+      erase();
     } else {
-      const el: PageElement = {
-        id: uuid(),
-        type: 'stroke',
-        x: 0,
-        y: 0,
-        width: size.width,
-        height: size.height,
-        rotation: 0,
-        locked: false,
-        color: s.color,
-        penWidth: s.tool === 'marker' ? 5 : s.penWidth,
-        opacity: s.tool === 'marker' ? 0.3 : 1,
-        points: [p],
-      };
-      gesture.current = { el, points: [p], start: p, move: false };
+      recognition.cancel();
+      const guideEdge = s.tool === 'marker' || !['water', 'fill'].includes(s.brush) ? captureGuideEdge(p, guide, s.penWidth) : undefined;
+      const initialPoint = guideEdge ? projectToGuideEdge(p, guideEdge) : p;
+      const el = newStroke(initialPoint, size.width, size.height, s, e.pointerType);
+      gesture.current = { el, guideEdge, points: [initialPoint], start: initialPoint, move: false, pointer: e.pointerId };
       setDraft(el);
     }
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   }
   function move(e: React.PointerEvent) {
     const g = gesture.current;
-    if (!g) return;
-    const p = point(e);
+    if (!g || g.pointer !== e.pointerId) return;
+    let samples = pointerSamples(e.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+    if (g.guideEdge) samples = samples.map(point => projectToGuideEdge(point, g.guideEdge!));
+    const p = samples[samples.length - 1];
     if (g.erase) {
-      erase(p);
+      appendSamples(g.points, samples);
+      erase();
       return;
     }
     if (g.move)
@@ -174,58 +178,40 @@ export default function ChildEditor({
         y: Math.max(0, Math.min(size.height - 5, g.el.y + p.y - g.start.y)),
       });
     else if (g.points.length < 19000) {
-      g.points.push(p);
-      setDraft({ ...g.el, points: [...g.points] });
+      appendSamples(g.points, samples);
+      if (g.guideEdge) setDraft({ ...g.el, points: [...g.points] });
+      else recognition.update(g.points, shape => setDraft({ ...g.el, points: shape?.points || [...g.points], geometry: shape?.kind }), surface.current!.getBoundingClientRect().width / size.width, previousArrowShaft(page!.elements, g.el));
     }
   }
-  function up(cancel = false) {
+  function up(e: React.PointerEvent, cancel = false) {
     const g = gesture.current;
+    if (!g || g.pointer !== e.pointerId) return;
+    if (!cancel && !g.move) {
+      let samples = pointerSamples(e.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+      if (g.guideEdge) samples = samples.map(point => projectToGuideEdge(point, g.guideEdge!));
+      appendSamples(g.points, samples);
+    }
+    const recognized = !cancel && !g.move && !g.erase && !g.guideEdge ? recognition.finish(g.points) : null;
+    recognition.cancel();
     gesture.current = null;
     if (g && !cancel && !g.erase) {
       const el = g.move
         ? draft || g.el
-        : compactStroke({ ...g.el, points: g.points });
+        : compactStroke({ ...g.el, points: recognized?.points || g.points, geometry: recognized?.kind });
       s.edit((page) => ({
         ...page,
         elements: g.move
           ? page.elements.map((old) => (old.id === el.id ? el : old))
-          : [...page.elements, el],
+          : [...page.elements.filter(old => old.id !== recognized?.replaceId), el],
       }));
     }
+    if (g && !cancel && g.erase) s.edit(p => ({ ...p, elements: eraseElements(g.originals!, g.points, g.eraserId!, g.eraserOptions!, g.eraserProgress) }));
     setDraft(null);
+    setErasePreview(null);
   }
-  function erase(point: Point) {
-    s.edit(
-      (p) => ({
-        ...p,
-        elements: p.elements.filter((el) => {
-          if (el.locked || el.type !== 'stroke') return true;
-          const angle = (-el.rotation * Math.PI) / 180,
-            dx = point.x - el.x - el.width / 2,
-            dy = point.y - el.y - el.height / 2;
-          const x = dx * Math.cos(angle) - dy * Math.sin(angle) + el.width / 2,
-            y = dx * Math.sin(angle) + dy * Math.cos(angle) + el.height / 2;
-          const points = el.points || [];
-          return !points.some((p, i) => {
-            const q = points[Math.max(0, i - 1)],
-              vx = p.x - q.x,
-              vy = p.y - q.y;
-            const t = Math.max(
-              0,
-              Math.min(
-                1,
-                ((x - q.x) * vx + (y - q.y) * vy) / (vx * vx + vy * vy || 1),
-              ),
-            );
-            return (
-              Math.hypot(x - q.x - t * vx, y - q.y - t * vy) <
-              Math.max(3, (el.penWidth || 1) / 2 + 1)
-            );
-          });
-        }),
-      }),
-      false,
-    );
+  function erase() {
+    const g = gesture.current;
+    if (g?.erase) setErasePreview(eraseElements(g.originals!, g.points, g.eraserId!, g.eraserOptions!, g.eraserProgress));
   }
   function resizeSelected(factor: number) {
     s.edit((p) => ({
@@ -378,6 +364,11 @@ export default function ChildEditor({
           />{' '}
           Nur Stift
         </label>
+        <DrawingGuideTools guide={guide} onChange={setGuide} />
+        <DrawingOptions allowFill />
+        <PageEyedropper key={page.id} surface={surface} />
+        <PageFillTool key={`fill-${page.id}`} surface={surface} />
+        {draft?.geometry && (s.tool === 'pen' || s.tool === 'marker') && <span role="status">Form erkannt – zum Übernehmen loslassen.</span>}
       </nav>
       {s.error && (
         <div className="error-banner" role="alert">
@@ -460,10 +451,11 @@ export default function ChildEditor({
               style={{ touchAction: s.pencilOnly ? 'pan-x pan-y' : 'none' }}
               onPointerDown={(e) => down(e)}
               onPointerMove={move}
-              onPointerUp={() => up()}
-              onPointerCancel={() => up(true)}
+              onPointerUp={(e) => up(e)}
+              onPointerCancel={(e) => up(e, true)}
+              onLostPointerCapture={(e) => up(e, true)}
             >
-              {page.elements.map((el) => (
+              {inkPaintOrder((erasePreview || page.elements).filter(el => el.id !== recognition.replaceId), draft).map((el) => (
                 <ElementView
                   element={draft?.id === el.id ? draft : el}
                   key={el.id}
@@ -477,12 +469,7 @@ export default function ChildEditor({
                   }}
                 />
               ))}
-              {draft && !page.elements.some((el) => el.id === draft.id) && (
-                <ElementView
-                  element={draft}
-                  style={{ pointerEvents: 'none' }}
-                />
-              )}
+              {guide && <DrawingRuler guide={guide} onChange={setGuide} onClose={() => setGuide(null)} />}
             </div>
           </LearningRuntime>
         </ScaledPage>

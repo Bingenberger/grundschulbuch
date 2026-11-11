@@ -40,7 +40,8 @@ export const activityCatalog = {
   typing: 'Abschreiben',
   reading: 'Blitzlesen',
   memory: 'Memory',
-  maze: 'Maus & Käse',
+  maze: 'Labyrinth · Maus & Käse',
+  letterguess: 'Buchstaben raten',
   crossword: 'Kreuzworträtsel',
   wordsearch: 'Suchsel',
   wordle: 'Worträtsel',
@@ -56,16 +57,58 @@ export type JsonValue =
   | null
   | JsonValue[]
   | { [key: string]: JsonValue };
+export type LearningMedia = { image?: string; audio?: string; hideText?: boolean };
 export type LearningSettings = {
+  syllablePrompt?: 'image' | 'word' | 'audio' | 'both';
+  syllableColours?: boolean;
+  syllableConfirmed?: string[];
+  syllableItems?: { word: string; image?: string; audio?: string }[];
+  letterGuessLives?: number;
+  letterGuessCase?: 'lower' | 'upper';
+  letterGuessLayout?: 'abc' | 'qwertz';
+  letterGuessClue?: 'none' | 'image' | 'audio' | 'both';
+  letterGuessItems?: { word: string; image?: string; audio?: string }[];
+  mediaReadText?: boolean;
+  clappingConfirmed?: string[];
+  clappingHelp?: 'none' | 'dots' | 'word' | 'both';
+  clappingItems?: { word: string; image?: string; audio?: string; hideImage?: boolean; syllables?: { text: string; audio?: string }[] }[];
+  clappingSensitivity?: number;
+  synthesisMode?: 'sounds' | 'pairs';
+  synthesisLetters?: string[];
+  synthesisCount?: number;
+  synthesisCase?: 'lower' | 'upper' | 'mixed';
+  synthesisSpeak?: boolean;
+  synthesisDragSound?: boolean;
+  synthesisPairs?: { left: string; right: string }[];
+  synthesisSounds?: { sound: string; audio: string }[];
+  synthesisPronunciations?: { text: string; speak: string }[];
+  alphabetTable?: 'basic' | 'full';
+  alphabetLayout?: 'abc' | 'qwertz';
+  alphabetLetters?: 'both' | 'lower' | 'upper';
+  alphabetPractice?: boolean;
+  alphabetPrompt?: 'word' | 'image' | 'both' | 'audio';
+  alphabetSpeech?: boolean;
+  alphabetVowels?: boolean;
+  alphabetKeys?: { id: string; variants: { word: string; image?: string; audio?: string }[] }[];
+  alphabetPrompts?: { word: string; image?: string; audio?: string }[];
   title?: string;
   text?: string;
+  karaokeTimes?: number[];
+  geometryMode?: 'series' | 'custom';
+  geometryHelp?: 'preview' | 'trace';
+  geometryCount?: number;
+  geometryPreview?: number;
+  slideshowSound?: boolean;
+  slideshowWaitAudio?: boolean;
   words?: string[];
-  pairs?: { left: string; right: string }[];
+  pairs?: { left: string; right: string; leftMedia?: LearningMedia; rightMedia?: LearningMedia }[];
   questions?: {
     text: string;
     answers: string[];
     correct: number;
     explanation?: string;
+    media?: LearningMedia;
+    answerMedia?: LearningMedia[];
   }[];
   seconds?: number;
   bpm?: number;
@@ -152,6 +195,12 @@ export function defaultSettings(
     difficulty: 1,
     seed: 42,
   };
+  if (kind === 'geometry') Object.assign(settings, { geometryMode: 'series', geometryHelp: 'preview', geometryCount: 5, geometryPreview: 3 });
+  if (kind === 'syllables') Object.assign(settings, { syllablePrompt: 'image', syllableColours: true, font: 'Andika', speechRate: 0.85, volume: 0.8 });
+  if (kind === 'letterguess') Object.assign(settings, { words: ['Sonne', 'Haus', 'Apfel', 'Blume'], letterGuessLives: 8, letterGuessCase: 'upper', letterGuessLayout: 'abc', letterGuessClue: 'image', font: 'Andika', speechRate: 0.85, volume: 0.8 });
+  if (kind === 'clapping') Object.assign(settings, { clappingHelp: 'word', clappingSensitivity: 0.06, font: 'Andika', speechRate: 0.85, volume: 0.7 });
+  if (kind === 'synthesis') Object.assign(settings, { synthesisMode: 'sounds', synthesisLetters: ['m', 'l', 's', 'f', 'n', 'a', 'e', 'i', 'o', 'u'], synthesisCount: 6, synthesisCase: 'lower', synthesisSpeak: true, synthesisDragSound: false, font: 'Andika', speechRate: 0.85, speechPitch: 1.1, volume: 0.8 });
+  if (kind === 'alphabet') Object.assign(settings, { alphabetTable: 'basic', alphabetLayout: 'abc', alphabetLetters: 'both', alphabetPractice: false, alphabetPrompt: 'word', alphabetSpeech: true, alphabetVowels: true, font: 'Andika', speechRate: 0.85, speechPitch: 1.1, volume: 0.8 });
   if (kind === 'quiz')
     settings.questions = [
       {
@@ -228,6 +277,7 @@ export function defaultSettings(
       { label: 'Schule', x: 20, y: 30 },
       { label: 'Park', x: 75, y: 65 },
     ];
+  if (kind === 'karaoke') settings.seconds = 3;
   if (kind === 'karaoke')
     settings.text =
       'Hier steht die erste Zeile.\nHier folgt die zweite Zeile.\nGemeinsam singen wir unser Lied.';

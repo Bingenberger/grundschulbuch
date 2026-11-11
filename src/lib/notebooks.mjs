@@ -118,7 +118,7 @@ export function validatePage(input) {
       color: color(el.color),
     };
     if (el.groupId !== undefined) result.groupId = id(el.groupId);
-    if (el.opacity !== undefined) result.opacity = num(el.opacity, 0.05, 1);
+    if (el.opacity !== undefined) result.opacity = num(el.opacity, 0.01, 1);
     if (el.type === 'text') {
       if (
         typeof el.text !== 'string' ||
@@ -296,19 +296,65 @@ export function validatePage(input) {
       )
         throw new BookError('Zu viele Zeichenpunkte.');
       Object.assign(result, {
-        points: el.points.map((p) => ({
-          x: num(p.x, -594, 594),
-          y: num(p.y, -594, 594),
-          pressure: num(p.pressure, 0, 1),
-        })),
-        penWidth: num(el.penWidth, 0.1, 20),
-        opacity: num(el.opacity, 0.05, 1),
+        points: el.points.map((p) => {
+          const result = { x: num(p.x, -594, 594), y: num(p.y, -594, 594), pressure: num(p.pressure, 0, 1) };
+          for (const key of ['time', 'tiltX', 'tiltY']) {
+            if (p[key] !== undefined) result[key] = num(p[key], key === 'time' ? 0 : -90, key === 'time' ? Number.MAX_SAFE_INTEGER : 90);
+          }
+          return result;
+        }),
+        penWidth: num(el.penWidth, 0.1, 40),
+        opacity: num(el.opacity, 0.01, 1),
         ...(el.penStyle &&
         ['pen', 'fountain', 'crayon', 'marker', 'water'].includes(el.penStyle)
           ? { penStyle: el.penStyle }
           : {}),
         ...(el.fill ? { fill: color(el.fill) } : {}),
       });
+      if (el.fillOnly !== undefined) {
+        if (el.fillOnly !== true || !el.fill || el.points.length < 4) throw new BookError('Ungültige Füllfläche.');
+        result.fillOnly = true;
+      }
+      if (el.brushVersion !== undefined) {
+        if (el.brushVersion !== 2) throw new BookError('Ungültige Pinselversion.');
+        result.brushVersion = 2;
+      }
+      if (el.nibHand !== undefined) {
+        if (!['left', 'right'].includes(el.nibHand)) throw new BookError('Ungültige Schreibhand.');
+        result.nibHand = el.nibHand;
+      }
+      if (el.simulatePressure !== undefined) {
+        if (typeof el.simulatePressure !== 'boolean') throw new BookError('Ungültige Stifteingabe.');
+        result.simulatePressure = el.simulatePressure;
+      }
+      if (el.geometry !== undefined) {
+        if (!['line', 'ellipse', 'triangle', 'rectangle', 'arrow', 'star', 'heart'].includes(el.geometry)) throw new BookError('Ungültige erkannte Form.');
+        result.geometry = el.geometry;
+      }
+      if (el.erasures !== undefined) {
+        if (!Array.isArray(el.erasures) || el.erasures.length > 256)
+          throw new BookError('Zu viele Radierwege.');
+        const ids = new Set();
+        result.erasures = el.erasures.map((erasure) => {
+          if (!erasure || !Array.isArray(erasure.points) || !erasure.points.length ||
+              erasure.points.length > 20000 || (count += erasure.points.length) > 150000 ||
+              typeof erasure.soft !== 'boolean') throw new BookError('Ungültiger Radierweg.');
+          const key = id(erasure.id);
+          if (ids.has(key)) throw new BookError('Doppelter Radierweg.');
+          ids.add(key);
+          if (erasure.tip !== undefined && !['round', 'square', 'slant'].includes(erasure.tip))
+            throw new BookError('Ungültige Radierform.');
+          return {
+            id: key, size: num(erasure.size, 0.1, 40), opacity: num(erasure.opacity, 0.05, 1),
+            soft: erasure.soft, width: num(erasure.width, 0.1, 594), height: num(erasure.height, 0.1, 594),
+            ...(erasure.tip !== undefined ? { tip: erasure.tip } : {}),
+            points: erasure.points.map(p => {
+              if (!p || typeof p !== 'object') throw new BookError('Ungültiger Radierpunkt.');
+              return { x: num(p.x, -1500, 1500), y: num(p.y, -1500, 1500) };
+            }),
+          };
+        });
+      }
     }
     return result;
   });

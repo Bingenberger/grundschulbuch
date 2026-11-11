@@ -1,3 +1,8 @@
+import { useId } from 'react';
+import { fountainOutline, pathBounds, smoothPath, strokeFillPolygon } from '@/lib/drawing';
+import { inkPaintOrder } from '@/lib/brushes';
+import InkBrush from './InkBrush';
+import { eraserShapePath } from '@/lib/eraser-shapes';
 import Activity from './learning/Activity';
 import Widget from './learning/Widget';
 import {
@@ -6,7 +11,6 @@ import {
   PageDecoration,
   EmbedContent,
 } from './learning/Appearance';
-import { useId } from 'react';
 import { dimensions, type Page, type PageElement } from '@/lib/notebook-model';
 export function RulingView({ page }: { page: Page }) {
   const uid = useId().replace(/:/g, '');
@@ -131,6 +135,8 @@ export function RulingView({ page }: { page: Page }) {
 }
 export function Stroke({ element: el }: { element: PageElement }) {
   const points = el.points || [];
+  const id = `ink-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
+  const pad = (el.penWidth || 0.7) * 2 + 2;
   return (
     <svg
       viewBox={`0 0 ${el.width} ${el.height}`}
@@ -139,35 +145,39 @@ export function Stroke({ element: el }: { element: PageElement }) {
       style={{ overflow: 'visible', display: 'block', pointerEvents: 'none' }}
       aria-label="Zeichnung"
     >
+      {!!el.erasures?.length && <defs>
+        <mask id={id} maskUnits="userSpaceOnUse" x={-pad} y={-pad} width={el.width + pad * 2} height={el.height + pad * 2} style={{ maskType: 'luminance' }}>
+          <rect x={-pad} y={-pad} width={el.width + pad * 2} height={el.height + pad * 2} fill="white" />
+          {el.erasures.map((erasure, i) => {
+            const bounds = pathBounds(erasure.points, erasure.size * 1.2);
+            return <g key={erasure.id} transform={`scale(${el.width / erasure.width} ${el.height / erasure.height})`} opacity={erasure.opacity}>
+            {erasure.soft && <filter id={`${id}-soft-${i}`} filterUnits="userSpaceOnUse" {...bounds} colorInterpolationFilters="sRGB">
+              <feGaussianBlur stdDeviation={erasure.size * 0.12} />
+            </filter>}
+            <g filter={erasure.soft ? `url(#${id}-soft-${i})` : undefined}>
+              {erasure.tip && erasure.tip !== 'round' ? <path d={eraserShapePath(erasure.points, erasure.size, erasure.tip)} fill="black" /> : erasure.points.length === 1 ? <circle cx={erasure.points[0].x} cy={erasure.points[0].y} r={erasure.size / 2} fill="black" /> :
+                <polyline points={erasure.points.map(p => `${p.x},${p.y}`).join(' ')} fill="none" stroke="black" strokeWidth={erasure.size} strokeLinecap="round" strokeLinejoin="round" />}
+            </g>
+          </g>;
+          })}
+        </mask>
+      </defs>}
+      <g mask={el.erasures?.length ? `url(#${id})` : undefined} opacity={!el.fillOnly && el.brushVersion === 2 && (el.penStyle === 'water' || el.penStyle === 'crayon') ? 1 : el.opacity ?? 1}>
       {el.fill && (
         <polygon
-          points={points.map((p) => `${p.x},${p.y}`).join(' ')}
+          points={strokeFillPolygon(el).map((p) => `${p.x},${p.y}`).join(' ')}
           fill={el.fill}
+          fillRule={el.fillOnly ? 'evenodd' : 'nonzero'}
         />
       )}
+      {!el.fillOnly && (el.brushVersion === 2 ? <InkBrush element={el} id={id} /> : <>
       {el.penStyle === 'fountain' &&
-        points
-          .slice(1)
-          .map((point, i) => (
-            <line
-              key={i}
-              x1={points[i].x}
-              y1={points[i].y}
-              x2={point.x}
-              y2={point.y}
-              stroke={el.color}
-              strokeWidth={(el.penWidth || 0.7) * (0.3 + point.pressure * 1.4)}
-              strokeLinecap="round"
-              style={{ pointerEvents: 'stroke' }}
-            />
-          ))}
+        points.length > 1 && <path d={fountainOutline(points, el.penWidth || 0.7)} fill={el.color} />}
       {el.penStyle === 'crayon' &&
         [-0.2, 0.2].map((offset) => (
-          <polyline
+          <path
             key={offset}
-            points={points
-              .map((p) => `${p.x + offset},${p.y - offset}`)
-              .join(' ')}
+            d={smoothPath(points.map(p => ({ x: p.x + offset, y: p.y - offset })))}
             fill="none"
             stroke={el.color}
             strokeWidth={(el.penWidth || 0.7) * 0.4}
@@ -181,20 +191,21 @@ export function Stroke({ element: el }: { element: PageElement }) {
           cy={points[0].y}
           r={(el.penWidth || 0.6) / 2}
           fill={el.color}
-          opacity={el.penStyle === 'fountain' ? 0 : el.opacity}
         />
       ) : (
-        <polyline
+        <path
           style={{ pointerEvents: 'stroke' }}
-          points={points.map((p) => `${p.x},${p.y}`).join(' ')}
+          d={el.penStyle ? smoothPath(points) : `M${points.map(p => `${p.x} ${p.y}`).join(' L')}`}
           fill="none"
           stroke={el.color}
           strokeWidth={el.penWidth}
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity={el.penStyle === 'fountain' ? 0 : el.opacity}
+          opacity={el.penStyle === 'fountain' ? 0 : 1}
         />
       )}
+      </>)}
+      </g>
     </svg>
   );
 }
@@ -288,6 +299,7 @@ export function ElementView({
   return (
     <div
       {...props}
+      data-element-id={element.id}
       className={`page-element ${props.className || ''}`}
       style={{
         left: `${element.x}mm`,
@@ -319,7 +331,7 @@ export default function PageView({
       <PageDecoration page={page} />
       <RulingView page={page} />
       {children ||
-        page.elements.map((el) => <ElementView key={el.id} element={el} />)}
+        inkPaintOrder(page.elements).map((el) => <ElementView key={el.id} element={el} />)}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element -- Stored school media use authenticated URLs. */
 'use client';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import type { PageElement } from '@/lib/notebook-model';
 import { calculate, seeded } from '@/lib/learning/algorithms';
 import { useLearning } from './Runtime';
@@ -11,7 +11,6 @@ export default function MathWidgets({ element: el }: { element: PageElement }) {
     c = el.settings || {},
     kind = el.widgetKind;
   const [notice, setNotice] = useState('');
-  const drawing = useRef<{ x: number; y: number } | null>(null);
   const maximum = Math.max(10, Math.min(1000, c.maximum || 20));
   let content: React.ReactNode;
   if (kind === 'calculator') {
@@ -355,148 +354,8 @@ export default function MathWidgets({ element: el }: { element: PageElement }) {
         </div>
       </>
     );
-  } else if (kind === 'geometry') {
-    const target = c.path?.length
-        ? c.path
-        : [
-            { x: 20, y: 20 },
-            { x: 80, y: 20 },
-            { x: 80, y: 70 },
-            { x: 20, y: 70 },
-            { x: 20, y: 20 },
-          ],
-      path = Array.isArray(state.path)
-        ? (state.path as unknown as { x: number; y: number }[])
-        : [];
-    const at = (e: React.PointerEvent<SVGSVGElement>) => {
-      const r = e.currentTarget.getBoundingClientRect();
-      return {
-        x:
-          Math.round(
-            Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100)) /
-              5,
-          ) * 5,
-        y:
-          Math.round(
-            Math.max(0, Math.min(100, ((e.clientY - r.top) / r.height) * 100)) /
-              5,
-          ) * 5,
-      };
-    };
-    content = (
-      <>
-        <p>
-          Zeichne die gestrichelte Form mit geraden Strecken nach. Ziehe vom
-          Anfang zum Ende einer Strecke.
-        </p>
-        <svg
-          viewBox="0 0 100 100"
-          className="geometry-board"
-          style={{ touchAction: 'none' }}
-          onPointerDown={(e) => {
-            if (!interactive) return;
-            e.currentTarget.setPointerCapture(e.pointerId);
-            drawing.current = at(e);
-          }}
-          onPointerUp={(e) => {
-            if (!interactive || !drawing.current) return;
-            const end = at(e),
-              start = drawing.current;
-            drawing.current = null;
-            update({
-              path: [...path, start, end].map((p) => ({ ...p })),
-              checked: false,
-            });
-          }}
-        >
-          <defs>
-            <pattern
-              id={`geometry-${el.id}`}
-              width="5"
-              height="5"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M5 0H0V5"
-                fill="none"
-                stroke="#c8d9dc"
-                strokeWidth=".2"
-              />
-            </pattern>
-          </defs>
-          <rect width="100" height="100" fill={`url(#geometry-${el.id})`} />
-          <polyline
-            points={target.map((p) => `${p.x},${p.y}`).join(' ')}
-            fill="none"
-            stroke="#8c9d8a"
-            strokeDasharray="2 2"
-            strokeWidth="1"
-          />
-          {Array.from({ length: Math.floor(path.length / 2) }, (_, i) => (
-            <line
-              key={i}
-              x1={path[i * 2].x}
-              y1={path[i * 2].y}
-              x2={path[i * 2 + 1].x}
-              y2={path[i * 2 + 1].y}
-              stroke="#376b9a"
-              strokeWidth="1"
-            />
-          ))}
-        </svg>
-        <div className="learning-actions">
-          <button
-            disabled={!interactive}
-            onClick={() => {
-              const edges = target.slice(1).map((p, i) => [target[i], p]),
-                drawn = Array.from(
-                  { length: Math.floor(path.length / 2) },
-                  (_, i) => [path[i * 2], path[i * 2 + 1]],
-                );
-              const near = (
-                a: { x: number; y: number },
-                b: { x: number; y: number },
-              ) => Math.hypot(a.x - b.x, a.y - b.y) < 1;
-              const correct =
-                edges.length === drawn.length &&
-                edges.every(([a, b]) =>
-                  drawn.some(
-                    ([p, q]) =>
-                      (near(a, p) && near(b, q)) || (near(a, q) && near(b, p)),
-                  ),
-                );
-              update({
-                checked: true,
-                completed: correct,
-                score: correct ? 100 : 0,
-              });
-              setNotice(
-                correct
-                  ? '✓ Die Form stimmt!'
-                  : 'Vergleiche die Strecken und Eckpunkte.',
-              );
-            }}
-          >
-            Form prüfen
-          </button>
-          <button
-            disabled={!interactive}
-            onClick={() => update({ path: [], checked: false })}
-          >
-            Neu zeichnen
-          </button>
-          <button
-            disabled={!interactive}
-            onClick={() =>
-              update({ path: path.slice(0, -2).map((p) => ({ ...p })) })
-            }
-          >
-            ↶
-          </button>
-        </div>
-      </>
-    );
   }
+
   return (
     <section
       className="learning-widget"

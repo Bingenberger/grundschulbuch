@@ -1,6 +1,5 @@
-/* eslint-disable @next/next/no-img-element -- Stored school media use authenticated URLs. */
 'use client';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { PageElement } from '@/lib/notebook-model';
 import { animationPose } from '@/lib/learning/algorithms';
 import { downloadBlob, audioContext } from '@/lib/learning/audio';
@@ -23,39 +22,14 @@ export default function CreativeWidgets({
     videoStream = useRef<MediaStream | null>(null);
   const map = useRef<SVGSVGElement>(null),
     recordTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const slides = useMemo(
-      () =>
-        c.slides?.length
-          ? c.slides
-          : [
-              {
-                title: 'Meine Geschichte',
-                text: 'Gestalte deine Folien im Einstellungsfenster.',
-                seconds: 5,
-              },
-            ],
-      [c.slides],
-    ),
-    frames = c.frames?.length
+  const frames = c.frames?.length
       ? c.frames
       : [
           { text: 'Los!', symbol: '●', x: 15, y: 50, color: '#52796f' },
           { text: 'Ziel!', symbol: '●', x: 85, y: 50, color: '#52796f' },
-        ],
-    index = Math.max(0, Math.min(slides.length - 1, Number(state.index) || 0));
+        ];
   useEffect(() => {
     if (!playing || !interactive) return;
-    if (kind === 'slideshow') {
-      const timer = setTimeout(
-        () => {
-          if (index + 1 < slides.length) update({ index: index + 1 });
-          else if (c.repeat) update({ index: 0 });
-          else setPlaying(false);
-        },
-        Math.max(1, slides[index].seconds || 5) * 1000,
-      );
-      return () => clearTimeout(timer);
-    }
     if (kind === 'animation') {
       const start = performance.now();
       let raf = 0;
@@ -72,7 +46,7 @@ export default function CreativeWidgets({
       raf = requestAnimationFrame(tick);
       return () => cancelAnimationFrame(raf);
     }
-  }, [playing, interactive, kind, index, slides, c.repeat, c.seconds, update]);
+  }, [playing, interactive, kind, c.repeat, c.seconds]);
   useEffect(() => {
     alive.current = true;
     const timers = recordTimers.current,
@@ -142,52 +116,7 @@ export default function CreativeWidgets({
   ];
   const animated = animationPose(frames, phase, c.mode);
   let content: React.ReactNode;
-  if (kind === 'slideshow') {
-    const slide = slides[index];
-    content = (
-      <>
-        <div
-          className={`slideshow transition-${c.transition || 'fade'} slide-text-${c.mode || 'center'}`}
-          key={index}
-          style={{
-            background: c.background?.startsWith('#')
-              ? c.background
-              : '#f4f5eb',
-          }}
-        >
-          {slide.image && <img src={slide.image} alt="" />}
-          <div>
-            <h3>{slide.title}</h3>
-            <p>{slide.text}</p>
-          </div>
-          {slide.audio && <audio controls src={slide.audio} />}
-        </div>
-        <div className="learning-actions">
-          <button
-            disabled={!interactive || index === 0}
-            onClick={() => update({ index: index - 1 })}
-          >
-            ‹
-          </button>
-          <span>
-            {index + 1} / {slides.length}
-          </span>
-          <button
-            disabled={!interactive || exporting}
-            onClick={() => setPlaying(!playing)}
-          >
-            {playing ? 'Pause' : '▷ Automatisch'}
-          </button>
-          <button
-            disabled={!interactive || index >= slides.length - 1}
-            onClick={() => update({ index: index + 1 })}
-          >
-            ›
-          </button>
-        </div>
-      </>
-    );
-  } else if (kind === 'animation')
+  if (kind === 'animation')
     content = (
       <>
         <svg

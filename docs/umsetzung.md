@@ -98,6 +98,758 @@ Alle anderen im Konzept genannten Familien liegen einschließlich OFL und Herkun
 in [public/fonts/SOURCES.md](../public/fonts/SOURCES.md). Es wurde nichts aus dem
 Lernsachen-Heft extrahiert.
 
+## Zeichnen und Radieren: erste Überarbeitung vom 10. November 2026
+
+Lehrkräfte- und Kindereditor verwenden jetzt gemeinsame Pinselparameter und
+dieselbe Radierlogik. Nach Auswahl des Stifts erscheinen Stiftart, Stärke und
+Deckkraft. Der Füller zeichnet eine zusammenhängende Kontur;
+einzelne Punkte bleiben sichtbar. Neue Freihandlinien werden geglättet,
+zusammengefasste Eingabeereignisse und der letzte Punkt beim Absetzen verarbeitet.
+Kantige Striche ohne Pinselart, etwa aus Arbeitsblattgeneratoren, bleiben kantig.
+
+Nach Auswahl des Radierers stehen diese Optionen bereit:
+
+- **Fläche radieren:** entfernt nur die überfahrenen Teile einer Zeichnung.
+- **Ganze Striche:** entfernt berührte Striche vollständig.
+- **Größe:** Durchmesser 2, 5, 10 oder 20 mm, in beiden Editoren gleich.
+- **Weiche Kante:** lässt den Rand des Radierbereichs weich auslaufen.
+- **Stärke:** 25, 50 oder 100 Prozent; bei geringerer Stärke wird aufgehellt.
+  Eine weitere Radierbewegung über dieselbe Stelle hellt erneut auf.
+
+Bilder, Texte und gesperrte Zeichnungen bleiben erhalten. Eine abgeschlossene
+Radierbewegung bildet einen Rückgängig-Schritt; eine abgebrochene Bewegung wird
+verworfen. Masken werden mit dem Strich gespeichert und beim Verschieben,
+Drehen, Vergrößern und Verkleinern mitgeführt. Bearbeitbare Heftdateien behalten
+die Masken auch bei Export und Reimport. Ältere Programmversionen kennen dieses
+neue optionale Feld nicht; solche Dateien mit der aktualisierten Version öffnen.
+
+`node test/drawing.test.mjs` prüft die sichtbare Wirkung gerenderter Masken,
+Füllerpunkte, gedrehte/vergrößerte Striche, Undo/Redo, Speicherung und
+Heftdatei-Export/Reimport. Die zusätzlichen Browsertests in
+`test/e2e/drawing.spec.ts` prüfen die Bedienwege für Lehrkräfte und Kinder.
+Sie konnten in der eingeschränkten Entwicklungssitzung nicht ausgeführt werden.
+
+Dies ist der erste Umsetzungsschritt, keine vollständige Angleichung der
+Zeichenwerkzeuge. Die folgenden Abschnitte beschreiben die weiteren Schritte.
+Die Stift-/Handflächenbedienung muss
+weiterhin auf echten Geräten abgenommen werden.
+
+### Stiftarten: anschließende Korrektur
+
+Die erste Überarbeitung hatte die Stiftarten noch zu ähnlich behandelt. Die
+Zeichenlogik der lokalen Vorlage wurde deshalb gesondert untersucht. Neue
+Striche verwenden jetzt unterschiedliche Modelle:
+
+| Stiftart | Verhalten |
+| --- | --- |
+| Stift | Runde Spitze; Druck beeinflusst die Breite. Bei Maus/Finger wird der Verlauf aus der Bewegung abgeleitet. |
+| Füller | Schräge elliptische Feder; die Breite hängt von der Zeichenrichtung ab. „Schreibhand“ spiegelt die Feder. Geschwindigkeit beeinflusst die Federgröße, Druck bestimmt hier nicht die Strichbreite. |
+| Buntstift | Reproduzierbare Papierkörnung und abgestufter Farbauftrag. Schnellere Bewegung zeichnet leichter; ein geneigter Eingabestift schraffiert breiter und heller. Die Neigungsrichtung beeinflusst die breite Spitze. |
+| Marker | Gleichmäßige breite, runde Spitze ohne druckabhängige Breitenänderung. Überlappungen verschiedener Striche dunkeln nach. |
+| Aquarell | Mehrere durchscheinende, unterschiedlich breite Schichten mit weichen Rändern und auslaufenden Spitzen. Liegt unter anderer Tinte, auch in der Vorschau, im Druck und im portablen Viewer. |
+
+Jede Stiftart bietet passende Größen und eine eigene Standarddeckkraft. Beim
+Werkzeugwechsel bleiben Farbe, Breite und Deckkraft je Stiftart während der
+Editorsitzung erhalten. Breite und Deckkraft werden nicht mehr durch pauschale
+Marker-/Aquarell-Multiplikatoren verändert.
+
+Neue Striche speichern Pinselversion, gegebenenfalls Schreibhand und simulierte
+Druckeingabe sowie Zeit-/Neigungswerte der Stiftpunkte. Bestehende Striche ohne
+die neue Pinselversion behalten ihren bisherigen Zeichenpfad. Die Darstellung
+ist eine eigenständige Implementierung der beobachteten Verhaltensweisen;
+pixelgleiche Darstellung oder identisches Schreibgefühl zur Vorlage wird nicht
+behauptet. Gerade das Verhalten auf einem echten Pencil muss praktisch verglichen
+werden. Ohne Neigungssensor zeichnet der Buntstift mit aufrechter Spitze.
+
+Die 20 gezielten Zeichentests prüfen zusätzlich Federdiagonalen und Schreibhand,
+Druck-/Geschwindigkeitsunterschiede, Markerbreite, Buntstiftkörnung und -neigung,
+Aquarellschichten/-reihenfolge sowie die Speicherung der Sensordaten. Reale
+Browser-/Pencil-Abnahme bleibt offen.
+
+Die Glättung arbeitet inzwischen in zwei Stufen: Eine von der Stiftart abhängige,
+räumliche Beruhigung der Eingabepunkte dämpft kleine Zitterbewegungen, bevor die
+Kurve und Federkontur berechnet werden. Anfang und Ende bleiben an der gezeichneten
+Position; Rohpunkte, Druck-, Zeit- und Neigungswerte bleiben gespeichert.
+Zusätzliche Tests prüfen die Zitterdämpfung, kurze Striche und gerade Lineallinien.
+
+### Lineal und Geodreieck
+
+Beide Editoren bieten jetzt ein verschiebbares 18-cm-Lineal und ein Geodreieck
+mit Millimeter-/Zentimeterskala, Mittellinie und Winkelteilung. Die gesamte
+Werkzeugfläche lässt sich mit Maus, Finger oder Stift anfassen und verschieben.
+Zum Drehen am Drehgriff ziehen oder den Winkel in der Werkzeugleiste eingeben.
+Der ×-Button direkt auf der Zeichenhilfe schließt sie. Zwei Finger
+verschieben und drehen sie gemeinsam. Mit den Pfeiltasten lassen sich die
+fokussierten Griffe ebenfalls bedienen. Umschalt vergrößert den Bewegungsschritt
+auf 10 mm beziehungsweise den Winkelschritt auf 15 Grad.
+
+Stift, Füller, Buntstift und Marker rasten ein, wenn ein Strich höchstens 3 mm
+außerhalb neben einer tatsächlichen Kante beginnt. Direkt auf der Werkzeugfläche
+wird die Zeichenhilfe verschoben. Der Abstand der Strichmitte zur Kante
+berücksichtigt die halbe Strichbreite. Die gewählte Kante bleibt für diesen Strich
+fest; die Linie endet an den Werkzeugenden. Beim Geodreieck sind alle drei Kanten
+nutzbar. Weiter entfernt gezeichnete Striche bleiben frei. Aquarell und Farbeimer
+werden nicht an einer Kante geführt.
+
+Die Führung verwendet dieselben Positions- und Winkeldaten wie das sichtbare
+Werkzeug. Die erzeugten Striche bleiben gewöhnliche bearbeitbare Zeichnungen;
+Zeichenhilfen selbst sind temporär und werden nicht mitgedruckt oder exportiert.
+
+26 gezielte Zeichentests bestehen, einschließlich aller Kanten bei verschiedenen
+Winkeln, Verschiebung, Zwei-Finger-Berechnung, Strichbegrenzung, Sensordaten und
+erneutem Öffnen geführter Striche. Der Browser-Bedienweg ist als zusätzlicher
+Playwright-Test vorbereitet; reale Browser-/Touch-Abnahme bleibt in der
+eingeschränkten Entwicklungssitzung offen.
+
+### Pipette, Radierformen und Erkennung von Grundformen
+
+Diese Funktionen sind ebenfalls in beiden Editoren eingebunden:
+
+- **Pipette:** aktivieren und eine Farbe auf der Seite antippen. Die Farbe des
+  gerenderten Seitenpixels wird als Zeichenfarbe übernommen, ohne einen Strich
+  zu erzeugen. Bilder, Transparenz und Seitenzoom werden dabei berücksichtigt.
+  Zeichenhilfen werden beim Auslesen ausgeblendet. Esc bricht die Aufnahme ab.
+  Wenn der Browser die Seite nicht in eine lesbare Grafik umsetzen kann, wird
+  eine Fehlermeldung angezeigt.
+- **Radierform:** im Modus „Fläche radieren“ unter „Spitze“ zwischen Rund,
+  Eckig und Schräg wählen. Auch die neuen Spitzen unterstützen weiche Kanten
+  und teilweises Aufhellen. Ihre Form bleibt beim Speichern und beim Export
+  einer bearbeitbaren Heftdatei erhalten.
+- **Formen erkennen:** in den Stifteinstellungen einschalten. Am Ende eines
+  Strichs ungefähr eine halbe Sekunde stillhalten. Erkannte Linien, Kreise/Ellipsen,
+  Dreiecke oder Rechtecke erscheinen als Vorschau. Loslassen übernimmt die
+  Form; Weiterzeichnen verwirft die Vorschau. Gedrehte Ellipsen und Rechtecke
+  werden unterstützt. Das ist eine Erkennung von Grundformen, noch keine
+  vollständige Übernahme aller Referenzformen wie Herzen, Sterne und Pfeile.
+
+Die Formerkennung startet ausgeschaltet und greift weder bei Aquarell/Farbeimer
+noch bei bereits an einer Zeichenhilfe geführten Strichen ein. Bereinigte Formen
+bleiben Strichobjekte mit ihrer Stiftart, Farbe und Deckkraft. Ihre bereinigten
+Punkte werden gespeichert; geometrische Ecken werden nicht erneut durch die
+Freihandglättung verrundet. Radieren, Verschieben, Undo/Redo und Weitergabe bleiben
+damit über dieselben Zeichenfunktionen verfügbar.
+
+31 gezielte Zeichentests bestehen. Neu geprüft werden Farbumrechnung und Zoom,
+die gerenderte Fläche eckiger/schräger Radiermasken, Grundformerkennung und die
+Speicherung sowie Weitergabe der neuen Attribute. Zusätzliche Browser-Bedienwege
+für Pipette und Stillhalten-Vorschau sind vorbereitet, konnten in dieser Sitzung
+aber nicht ausgeführt werden.
+
+Die Bedienlogik der Formerkennung wurde anschließend korrigiert: Die ursprünglichen
+Grenzen von 0,3 mm beim Halten und 0,5 mm beim Loslassen waren zu empfindlich.
+Die gemeinsame Haltesteuerung berücksichtigt jetzt die tatsächliche Darstellung
+der Seite (7 Bildschirmpixel für die Haltezone, 14 für das Verlassen der Vorschau).
+Eine Haltephase dauert 550 ms. Bewegungen innerhalb der Haltezone starten diese
+Zeit nicht immer wieder neu; Sensorzittern am Ende wird vor der Erkennung
+zusammengefasst. Kleine Bewegungen beim Absetzen erhalten die erkannte Form.
+Bei verzögertem Timer kann die Haltezeit auch beim Loslassen ausgewertet werden.
+
+Acht zusätzliche Tests prüfen den zeitlichen Ablauf mit einem steuerbaren Takt:
+laufende Zitterereignisse, verschiedene Seitenmaßstäbe, vollständige Zeichenfolgen,
+Absetzen, bewusstes Weiterzeichnen, verzögerte Timer, erneute Erkennungsversuche
+und Abbruch. Auch schnelle Mauslinien mit nur zwei Eingabeereignissen werden
+erkannt. Ein weiterer Browser-Regressionsfall führt die Maus während des
+Haltens absichtlich weiter in kleinen Bewegungen. Die praktische Browser- und
+Pencil-Prüfung steht weiterhin aus.
+
+Die Formerkennung wurde um Pfeile, fünfzackige Sterne (Umriss oder durchgezogener
+Stern) und geschlossene Herzen ergänzt. Drehrichtung, Startpunkt, Lage und Größe
+werden beim Vergleich berücksichtigt. Bereinigte Ecken bleiben beim Verdichten
+der Punkte exakt erhalten.
+
+Pfeile können in einem Zug oder als Linie mit anschließender separater Spitze
+gezeichnet werden. Für die zweite Variante muss die Linie der unmittelbar letzte,
+unveränderte Strich mit derselben Stiftart, Farbe, Breite und Deckkraft sein.
+Die Spitze wird als V am Ende der Linie gezeichnet und dort kurz gehalten.
+Gesperrte, gruppierte, gefüllte oder bereits radierte Striche werden nicht verbunden.
+Die Vorschau blendet die ursprüngliche Linie vorübergehend aus; erst beim Loslassen
+entsteht der gemeinsame Pfeil. Einmal Rückgängig stellt die ursprüngliche Linie
+wieder her. Weiterzeichnen oder Abbrechen verwirft die Zusammenfügung.
+
+Aktueller Prüfstand: 36 Zeichentests und neun Tests der Haltesteuerung bestehen.
+Die neuen Fälle prüfen beide Zeichenrichtungen, gedrehte Formen, getrennte
+Pfeilspitzen, Undo/Redo und Speichern sowie Export/Reimport der neuen Geometrien.
+Ein zusätzlicher Browserfall für die zweiteilige Pfeilgeste ist vorbereitet;
+Browser- und Geräteprüfung bleiben in dieser Ausführungsumgebung ausstehend.
+
+### Farbeimer
+
+Der Farbeimer steht jetzt in beiden Editoren unter **Stiftart → Farbeimer** bereit:
+
+- **Zusammenhängende Fläche:** Füllt den angeklickten, farblich zusammenhängenden
+  Bereich der sichtbaren Seite. Auch mehrere einzelne Striche können eine Fläche
+  begrenzen. Innenlöcher bleiben frei. Offene Konturen lassen Farbe hindurch.
+  Die gewählte Deckkraft gilt für die neue Fläche.
+- **Geschlossene Form:** Ändert die Füllfarbe einer vorhandenen Form oder eines
+  geschlossenen, unbeschädigten Strichs. Die Trefferprüfung berücksichtigt die
+  Drehung und bei SVG-Formen die tatsächlich gerenderte Kontur. Linien, offene
+  Striche und Klicks außerhalb einer Form färben nicht mehr die gesamte Seite.
+
+Flächenfüllungen werden als eigene Vektorpolygone ohne zusätzliche Randstriche
+abgelegt. Sie lassen sich verschieben, skalieren, radieren und mit einem Schritt
+rückgängig machen. Speichern sowie Heftdatei-Export/Reimport erhalten die Flächen
+und ihre Innenlöcher. Die vorhandenen Konturen werden nicht verändert.
+Gesperrte Objekte sind einschließlich ihrer gedrehten rechteckigen Objektfläche
+für Flächenfüllungen ausgespart. Dies ist bei unregelmäßigen Formen bewusst
+konservativer als nur der sichtbare Umriss.
+
+Die Flächensuche verwendet vier Bildpunkte pro Millimeter und eine feste
+Farbtoleranz. Sehr feine Lücken, Antialiasing und ähnliche Farben können das Ergebnis
+beeinflussen. Stark detailreiche Flächen werden mit einer Meldung abgelehnt, ohne
+Teile stillschweigend abzuschneiden. Esc bricht eine laufende Berechnung ab;
+Seitenwechsel oder Änderungen am Seiteninhalt verwerfen ein veraltetes Ergebnis.
+Eine zwischenzeitliche automatische Speicherung allein verwirft die Füllung nicht.
+
+Zehn zusätzliche Tests prüfen Flächensuche, Konturen und Löcher, aus mehreren
+real gerenderten Strichen gebildete Grenzen, gedrehte Treffer, Schutzbereiche,
+Füllregeln, Radieren, Undo/Redo, Speicherrevisionen und Heftdatei-Export/Reimport.
+Die bisherigen 36 Zeichentests und neun Tests der Haltesteuerung bestehen weiterhin.
+Browserfälle für beide Editoren sind vorbereitet. Ihr Start scheitert in dieser
+Sitzung bereits am Testserver: `spawnSync ... node EPERM`. Die tatsächliche
+Browserbedienung ist damit noch nicht abgenommen.
+
+### Laser und Taschenlampe im Tafelmodus
+
+Im Tafelmodus stehen jetzt **Laserpointer** und **Taschenlampe** zur Verfügung.
+Der Laser zeigt einen roten Punkt mit einer nach 750 ms ausblendenden Spur.
+Die Taschenlampe dunkelt die Seite außerhalb eines weich begrenzten Lichtkreises
+ab; dessen Größe lässt sich auf Klein, Mittel oder Groß einstellen.
+Die Größe bleibt beim Wechsel der Zeigehilfe innerhalb der geöffneten Ansicht
+erhalten. Eine Speicherung über das Neuladen hinaus ist noch nicht implementiert.
+
+Mausbewegungen und Stifthover führen die Anzeige; Finger können sie durch Ziehen
+verschieben. Bei mehreren gleichzeitigen Berührungen bleibt die erste aktive
+Geste zuständig. Die fokussierte Zeigeebene lässt sich mit Pfeiltasten verschieben,
+mit Umschalt in größeren Schritten. **Zeigehilfe beenden**, erneutes Antippen des
+aktiven Werkzeugknopfs oder Escape schaltet die Hilfe aus. Der Browser kann mit
+Escape zugleich den Vollbildmodus verlassen. Seitenwechsel setzen Punkt und Spur
+zurück; Verlassen des Tafelmodus entfernt die Anzeige vollständig.
+
+Die temporäre Ebene fängt Eingaben ab und ist von Seitenobjekten, Undo-Verlauf
+und Speicherung getrennt. Lernwerkzeuge werden währenddessen nicht bedient.
+Der Wechsel zu einer Zeigehilfe verwirft eine noch nicht abgeschlossene
+Zeichengeste. **Auf der Tafel schreiben** beendet die Zeigehilfe und aktiviert
+wieder einen Stift, auch wenn zuvor der Farbeimer gewählt war.
+Druck und PDF-/Heftdatei-Export verwenden die Heftseite ohne Zeigeebene.
+Die Bedienleiste liegt unterhalb des Seitenbereichs und kann auf kleinen
+Bildschirmen umbrechen.
+
+Vier neue Tests prüfen tatsächlich gerenderte SVGs: freie Lichtkreismitte,
+Abdunklung und weiche Kante, Größenwechsel, Positionen am Seitenrand, Laserfarbe,
+transparente Spur und getrennte Masken-IDs. Zwei vorbereitete Browserfälle prüfen
+unveränderten Seiteninhalt/Undo-Verlauf, Tastaturbedienung, Seitenwechsel und den
+Wechsel zurück zum Schreiben. Diese Browserfälle und echte Touch-/Pencil-Eingaben
+sind weiterhin nicht praktisch abgenommen.
+
+### Anlaut-Tastatur
+
+Die Anlaut-Tastatur verwendet jetzt eine eigene gemeinsame Komponente im
+Lehrkräfteeditor, Kinderheft und portablen Viewer. Im Gestaltungsdialog lassen
+sich folgende Einstellungen wählen:
+
+- Erste Tabelle mit 35 oder vollständige Tabelle mit 44 Tasten, einschließlich
+  ß und den zusätzlichen Lautverbindungen äu, ie, sp, st, pf, ng, ck, tz und ai.
+- ABC- oder QWERTZ-Anordnung; Groß und klein mit Umschalttaste, nur klein oder
+  nur GROSS; Schrift und rote Kennzeichnung der Selbstlaute.
+- Freies Schreiben oder Wörter üben, bis zu 40 Wörter mit je höchstens 80 Zeichen.
+  Vorhandene thematische Wortlisten können übernommen werden. Bindestriche zur
+  Silbentrennung werden für die Schreibaufgabe entfernt.
+- Wortvorgabe als Wort, Bild, Wort und Bild oder nur zum Anhören. Eigene Wortbilder
+  und Wortaufnahmen lassen sich hinterlegen. Ohne eigenes Wortbild wird, soweit
+  passend, ein Bild aus der verwendeten Tastatur angeboten.
+
+Ein Tipp schreibt die ausgewählte Taste; „sch“ bleibt dabei eine zusammengehörige
+Eingabe und wird mit einmal Zurück gelöscht. Gedrückt halten erklärt die Taste
+mit „M wie Maus“, ohne zu schreiben. Geschriebene Zeichen lassen sich zum erneuten
+Anhören antippen; bei Tasten mit zwei Varianten bleibt die ausgewählte Variante
+zugeordnet. Eine angeschlossene Tastatur und Unicode-Komposition werden ebenfalls
+verarbeitet. Bereits vorhandene freie Texte, auch längere Alttexte, bleiben erhalten.
+
+Das Worttraining prüft die tatsächliche Schreibweise einschließlich der gewählten
+Groß-/Kleinschreibung. Fehlende oder zusätzliche Buchstaben verschieben nicht die
+Bewertung aller nachfolgenden Buchstaben. Nach zwei erfolglosen Prüfungen erscheint
+das Zielwort als Hilfe. Ein richtig geschriebenes Wort erhält einen Stern und
+führt nach einer Sekunde automatisch zum nächsten Wort; alternativ ist „Weiter“
+möglich. Nach zwei Fehlern kann ein Wort ohne Stern übersprungen werden. Am Ende
+werden die Sterne angezeigt; „Nochmal“ beginnt eine neue Serie. Bearbeitungsstand
+und Ergebnis werden als Antwort am Lernwerkzeug gespeichert, auch bei gesperrtem
+Entwurf im Kinderheft. Änderungen an der Aufgabenliste oder Buchstabenart setzen
+das Training zurück; Layout-/Medienänderungen erhalten den Fortschritt.
+
+Unter „Tastenbilder und Laute anpassen“ können Bildwörter, eigene Bilder und
+Lautaufnahmen je Taste geändert werden. Selbstlaute sowie ch und v haben getrennte
+Varianten. Die Audioaufnahme nutzt den vorhandenen Aufnahmedialog; Tondateien können
+auch hochgeladen und wieder entfernt werden. Diese Anpassungen gelten für das
+jeweilige Lernwerkzeug und werden mit dem Heft gespeichert, ausgeteilt und exportiert.
+Die für die Tastatur gewählte Schrift wird jetzt ebenfalls im HTML-/ePub-Export
+berücksichtigt.
+
+**Verbleibende Unterschiede zur Vorlage:** Es gibt noch keine mitgelieferten
+Phonemaufnahmen. Ohne eigene Lautaufnahme spricht die lokale deutsche Gerätestimme
+das Bildwort, nicht zuverlässig den einzelnen Laut. „Tastenklang einschalten“ steuert
+die automatische Wiedergabe beim Schreiben; bewusstes Anhören bleibt möglich.
+Eigene Aufnahmen gelten noch nicht automatisch für alle Tastaturen, und sie werden
+noch nicht automatisch auf den Laut zugeschnitten. Silbenfärbung und die spezifischen
+Wortlisten der Vorlage sind nicht übernommen. Emoji-Bilder ersetzen kein vollständiges
+bebildertes Fibelmaterial.
+
+14 neue Tests prüfen Tastenbestand/-anordnung, Schreibweisen, Löschschritte,
+Wortprüfung, Korrekturzuordnung, Sterne/Abschluss, Alttexte, Lautvarianten,
+Medienfreigaben an Kinder, Speicherung und Heftdatei-Export/Reimport sowie die
+Schrifteinbettung. Die 18 allgemeinen Lernwerkzeugtests, acht Hefttests und vier
+Klassentests bestehen weiterhin. Drei Browserfälle für lange Tastendrücke,
+angeschlossene Tastatur, automatische Wortfolge und geschützte Kinderhefte sind
+vorbereitet, in dieser Ausführungsumgebung aber noch nicht praktisch geprüft.
+
+### Laute verbinden
+
+„Laute verbinden“ verwendet jetzt einen Ziehablauf statt der bisherigen
+Schaltfläche zum Zusammenrücken von Wortteilen. Links steht der Anfangslaut,
+rechts der Selbstlaut. Die linke Karte wird auf einer waagerechten Bahn zur
+rechten gezogen. Erst beim tatsächlichen Kontakt werden beide verbunden.
+Ein kurzer Tipp lässt die Karte nur wackeln, ein zu früh beendeter oder
+abgebrochener Zug setzt sie zurück und zählt nicht als Aufgabe.
+Dehnbare Anfangslaute erhalten beim Ziehen eine sichtbare Lautspur; bei
+Verschlusslauten wird keine künstlich gedehnte Spur angezeigt.
+
+Die Ziehkoordinaten werden über die SVG-Transformation berechnet und berücksichtigen
+damit Seitenzoom und Objektdrehung. Während einer Geste bleibt deren Pointer
+zuständig; weitere Berührungen übernehmen sie nicht. Abbruch, Verlust des
+Pointer-Captures, Fensterwechsel und das Abschalten der Lernbedienung stoppen
+den Zug und die dazugehörige Lautaufnahme. Eingabe- oder Leertaste auf der
+fokussierten Kartenfläche verbindet die Laute ebenfalls. Nach dem Transport
+wird für die Tastaturbedienung die nächste Karte fokussiert.
+
+Nach jeder Verbindung transportiert ein wechselndes Fahrzeug die Silbe in die
+Sammelreihe. Erst nach diesem Transport steigt der Fortschritt. Nach der letzten
+Silbe erscheint eine Abschlussansicht mit allen gesammelten Silben. „Nochmal“
+beziehungsweise „Von vorn“ wiederholt dieselbe Serie; „Neue Silben“ erzeugt eine
+neue Variante. Eigene Verbindungen können mit „Neu mischen“ umgeordnet werden.
+Ein Neustart oder Seitenwechsel beendet einen laufenden Transport. Reduzierte
+Bewegung wird berücksichtigt; Vorschau und Druck zeigen den Transport statisch.
+
+Im Gestaltungsdialog stehen zur Verfügung:
+
+- Gelernte Mitlaute und Selbstlaute als auswählbare Tasten. Dehnbare Mitlaute sind
+  grün umrandet. Es werden nur Kombinationen aus dieser Auswahl erzeugt.
+- Eine Serie mit einer bis zwölf Silben, klein, GROSS oder gemischt, sowie die
+  vorhandenen Schriften. Bei sehr wenigen ausgewählten Lauten sind Wiederholungen
+  innerhalb einer Serie möglich.
+- Eigene Verbindungen mit zwei Teilen, etwa `m + a` oder `la + ma`.
+  Vorhandene Wortlisten älterer Elemente bleiben als solche Verbindungen verfügbar:
+  Trennstriche haben Vorrang; sonst werden Wortanfang und Rest getrennt.
+  Die neue Serie beginnt zunächst von vorn, da der alte Klickzustand keinen
+  verlässlichen Sammelfortschritt abbildete.
+- Vorlesen der verbundenen Silbe über eine lokale deutsche Gerätestimme,
+  einschließlich einstellbarer Stimme/Geschwindigkeit und eigener
+  Aussprachekorrekturen in der Form `Silbe = Sprechweise`.
+- Optionales Vorsprechen des Anfangslauts beim Ziehen, standardmäßig aus.
+  Dafür können eigene Tondateien hochgeladen oder aufgenommen werden. Nur bei
+  dehnbaren Lauten wird die Aufnahme wiederholt; Verschlusslaute erklingen einmal.
+
+**Verbleibende Unterschiede:** Es gibt weiterhin keine mitgelieferten Phonem- oder
+Silbenaufnahmen. Ohne eigene Aufnahme bleibt der Anfangslaut stumm, damit keine
+Buchstabennamen als vermeintliche Laute vorgelesen werden. Silbenaussprache und
+Korrekturen hängen von der lokalen Stimme ab. Eigene Lautaufnahmen gelten für
+dieses Lernwerkzeug; die Aufnahmen der Anlaut-Tastatur werden noch nicht automatisch
+übernommen. Automatischer Zuschnitt der Aufnahmen fehlt weiterhin.
+
+Serienvariante, Position und Transport-/Abschlusszustand werden als Antwort am
+Lernwerkzeug gespeichert. Auch gesperrte Übungen im Kinderheft dürfen diese Antwort
+speichern, ohne den Entwurf zu ändern. Eigene Audiodateien werden beim Austeilen
+freigegeben und kommen beim Heftdatei-Export mit. Eine zusätzliche Abbruchfunktion
+für die Vorlesestimme verhindert, dass ein verlassenes Lernwerkzeug die neuere
+Sprachausgabe eines anderen Werkzeugs abbricht.
+
+Zwölf zusätzliche Tests prüfen Aufgabenbildung, alte und eigene Verbindungen,
+Schreibweisen und Dehnbarkeit, Kontakt-/Fortschrittslogik, Wiederherstellung,
+Vorschau, Validierung, Sprachabbruch, Medienfreigabe und Export/Reimport.
+Die 14 Tests der Anlaut-Tastatur sowie die bisherigen Lernwerkzeug-, Heft- und
+Klassentests bestehen weiterhin. Drei Browserfälle für gedrehte Karten,
+abgebrochene Gesten, Neustart, automatische Tastaturfokussierung und Kinderhefte
+sind vorbereitet; Browser- und echte Touch-/Pencil-Prüfung stehen weiterhin aus.
+
+### Silben klatschen
+
+„Silben klatschen“ verwendet jetzt eine endliche Serie von bis zu 16 Wörtern mit
+Wortbildern, Silbenhilfen und gespeicherten Ergebnissen. Statt nach einem einzelnen
+richtigen Wort bereits die gesamte Übung als abgeschlossen zu markieren, speichert
+jedes „Weiter“ das Ergebnis dieses Wortes. Am Ende erscheinen alle Wörter mit Bild
+und Ergebnis; „Nochmal“ beginnt eine neue Serie. Auch gesperrte Übungen im Kinderheft
+speichern dabei nur die Antwort, ohne ihren Entwurf zu verändern.
+
+Im Gestaltungsdialog können Wörter direkt eingetragen oder aus den vorhandenen
+Themenlisten übernommen werden. Die Listenauswahl lässt sich nach Silbenzahl und
+bekannten Lauten filtern; Lautverbindungen wie „sch“ und „äu“ werden dabei als
+zusammengehörige Einheiten berücksichtigt. Die Wörter und ihre Trennungen bleiben
+in einer Vorschau prüfbar. Eigene Bilder, Wortaufnahmen und Dateien für einzelne
+Silben lassen sich hinterlegen. Bekannte Wörter haben auch einfache Emoji-Bilder;
+fehlende oder ausdrücklich weggelassene Bilder werden durch das geschriebene Wort
+ersetzt. Eine integrierte Bildsuche wie in der Referenz ist weiterhin offen.
+
+**Silbentrennung:** Explizite Bindestriche und die bereits mit Silbengrenzen
+hinterlegten Wortlisten haben Vorrang. Für unbekannte Wörter gibt es eine eigene
+heuristische Vorschau. Diese ist kein vollständiges deutsches Silbentrennverfahren:
+Sie muss im Gestaltungsdialog bestätigt oder korrigiert werden, bevor automatisch
+bewertet wird. Einsilbige Wörter lassen sich ebenfalls bestätigen, ohne zusätzliche
+Zeichen in das Wort einzufügen. Eine Änderung der Silbentrennung setzt die Serie
+zurück. Wortbilder, Stimme und andere Hilfen verändern den gespeicherten Fortschritt
+nicht. Gespeicherte Silbenaufnahmen sind an den zugehörigen Silbentext gebunden;
+nach einer abweichenden Trennung wird keine unpassende Aufnahme abgespielt.
+
+„Wort hören“ liest das Wort oder spielt die eigene Wortaufnahme ab. „Silben zeigen“
+führt Silbe für Silbe vor: Blau und Rot, Silbenbogen, Punkt und aktive Markierung
+begleiten die Wiedergabe mit einem lokal erzeugten Klatschimpuls. Eigene
+Silbenaufnahmen haben Vorrang vor der lokalen deutschen Gerätestimme. Die Abfolge
+orientiert sich am tatsächlichen Tonende und hat eine Zeitbegrenzung für fehlende
+Endereignisse. Vorführung, Wortwechsel und Seitenwechsel sind abbrechbar; verspätete
+Tonereignisse können eine neue Vorführung nicht fortsetzen. Die Vorführung zählt
+keine Klatscher und vergibt keine Punkte. Punkte und Silbenschrift können auch von
+Anfang an als Hilfen eingeblendet werden.
+
+Zusätzlich zur Klatschtaste gibt es **Klatschen mit Mikrofon**. Erst dieser Knopf
+fordert den Mikrofonzugriff an. Ein lokaler Detektor zählt kurze Lautstärkebursts,
+sperrt Nachschwinger und bewertet die Folge nach ungefähr einer Sekunde Stille.
+Dauerlärm gilt nicht als Stille. Bei einer zu langen oder nicht erkannten Folge
+bleibt die manuelle Bedienung verfügbar. Die Empfindlichkeit ist im Gestaltungsdialog
+wählbar. Sprache und Klassenlärm können ebenfalls Impulse auslösen; die Erkennung
+ist deshalb ausdrücklich näherungsweise und muss am echten Gerät geprüft werden.
+
+Zwischen Wörtern kann dieselbe Mikrofonverbindung offen bleiben, ohne erneute
+Berechtigungsabfrage. „Mikrofon aus“, Verlassen der Seite, Fenster-/Tabwechsel und
+das Abschalten der Lernbedienung beenden die Aufnahmequelle und ihren eigenen
+AudioContext. Auch erst nach einem Abbruch erlaubte Zugriffe werden sofort
+freigegeben. Während einer Vorführung wird nicht mitgezählt; das Mikrofon kann
+dabei im sichtbaren Bereitschaftszustand offen bleiben. Es gibt keinen
+MediaRecorder, keinen Tonupload und keine gespeicherte Mikrofonaufnahme – nur
+Klatschzahl und Übungsergebnis werden als Antwort gespeichert.
+
+16 zusätzliche Tests prüfen Silbengrenzen und deren Bestätigung, Wortlistenfilter,
+Serienauswertung, Hilfen und Wiederherstellung, Darstellung, Impuls-/Stilleerkennung,
+Wiedergabereihenfolge und Abbruch, verweigerte und verspätete Berechtigungen,
+Ressourcenfreigabe sowie Medienweitergabe an Kinder und Heftdatei-Export/Reimport.
+Die bisherigen Anlaut-, Lauteverbinden-, Lernwerkzeug-, Heft- und Klassentests
+bestehen weiterhin. Drei Browserfälle für manuelle Serien, Vorführungsabbruch,
+Berechtigungsverweigerung und Kinderhefte sind vorbereitet, aber in dieser
+Ausführungsumgebung nicht praktisch geprüft. Echte Klatschgeräusche, Raumakustik
+und die Browser-/Touchbedienung stehen als Geräteabnahme aus.
+
+### Quiz, Zuordnungen und Memory mit Medien
+
+Die drei Aufgabenformate unterstützen jetzt optionale Bild- und Tonfelder. Die
+bisherigen Textfelder bleiben erhalten: Quizfragen und einzelne Antworten sowie
+beide Seiten eines Zuordnungs-/Memory-Paars können Medien bekommen. Im
+Gestaltungsdialog lassen sich Dateien hochladen, Ton aufnehmen und die sichtbare
+Beschriftung ausblenden. Beschriftungen bleiben für Alternativtexte und die
+Vorlesebedienung verfügbar. Die Bild-/Tonvorschau im Spiel ist getrennt von der
+Quizantwort oder Zuordnung: Anhören ändert die Antwort nicht. Optional können
+Texte mit einer lokalen deutschen Gerätestimme vorgelesen werden.
+
+**Quiz:** Fragen können vorwärts und rückwärts durchgesehen werden. Nur tatsächlich
+geprüfte richtige Antworten zählen zum Ergebnis. Eine nachträgliche Änderung einer
+Antwort hebt die Prüfung dieser Frage auf; die anderen Prüfungen bleiben erhalten.
+Rückmeldungen, Gesamtfortschritt und Neustart stehen im Spiel zur Verfügung.
+
+**Zuordnungen:** Karten werden aus einer gemischten Ablage auf die passenden
+Plätze gezogen. Alternativ kann zuerst eine Karte, dann der Zielplatz angeklickt
+oder mit Tab/Eingabe ausgewählt werden. Eine Karte belegt nur einen Platz; beim
+Verschieben wird ihr alter Platz frei und eine verdrängte Karte kehrt in die Ablage
+zurück. Bereits abgelegte Karten sind ebenfalls ziehbar. Abbruch, Escape und
+Neustart entfernen den temporären Ziehzustand. Die Trefferprüfung verwendet
+Bildschirmkoordinaten und ist unabhängig von Seitenzoom und Objektdrehung.
+
+Die Auswertung berücksichtigt den vollständigen Karteninhalt. Gleich beschriftete
+Karten mit unterschiedlichen Bildern oder Tondateien gelten nicht automatisch als
+dieselbe Antwort. Vollständig identische reine Textkarten bleiben austauschbar.
+Bis zu zwölf Paare werden gespielt; weitere bereits gespeicherte Paare werden
+nicht stillschweigend aus dem Heft gelöscht.
+
+**Memory:** Bild/Bild-, Bild/Wort- und Bild/Ton-Paare können über die beiden Seiten
+eines Paars gestaltet werden. Verdeckte Karten geben ihren Vorderseitentext nicht
+über die zugängliche Beschriftung preis und rendern ihre Medien noch nicht. Beim
+Aufdecken kann der Kartenton abgespielt und anschließend separat wiederholt werden.
+Es sind höchstens zwei offene Karten erlaubt. Die Paarprüfung erfolgt über die
+Paarzugehörigkeit, nicht über zufällig gleiche Texte. Tonkarten bleiben bis zum
+Wiedergabeende offen; anschließend folgt eine kurze Merkpause, bevor unpassende
+Karten wieder verdeckt werden. „Ton stoppen“ beendet die Wiedergabe, ein Neustart
+beendet auch eine noch ausstehende Paarprüfung. Gefundene Paare, offene Karten und
+Spielzüge werden gespeichert. Memory ist weiterhin ein Einzelspiel; ein eigener
+Zweispielermodus wie in der Referenz fehlt noch.
+
+Alte Quiz- und Zuordnungsantworten bleiben als Auswahl erhalten und werden erst
+nach erneuter Prüfung bewertet. Bereits gefundene Paare bestehender Memory-Aufgaben
+bleiben erhalten, sofern die Paardaten vorhanden sind. Änderungen am eigentlichen
+Aufgabeninhalt oder an seinen Medien setzen den Aufgabenstand zurück; die gewählte
+Vorlesestimme verändert ihn nicht. Ein kompakter Inhaltsstempel vermeidet, den
+gesamten Aufgabeninhalt nochmals als Antwort zu speichern.
+
+Eigene Medien werden beim Austeilen für Kinder freigegeben und über den
+Heftdatei-Export weitergegeben. Gesperrte Aufgaben erlauben die Bearbeitungsantwort,
+aber keine Änderung des Entwurfs. Diese Erweiterung schafft noch keine
+Dateikompatibilität mit Quizsachen-/Schiebesachen-Dateien der Referenz.
+
+14 neue Tests prüfen geprüfte Quizantworten, eindeutige Kartenbewegungen,
+Medienunterscheidung, Memory-Paaridentität und Spielzüge, Wiederherstellung und
+Altstände, verdeckte Karten, zugängliche Medienbeschriftungen, Validierung und
+Medienfreigabe einschließlich Export/Reimport. Die bisherigen Anlaut-,
+Lauteverbinden-, Klatsch-, Lernwerkzeug-, Heft- und Klassentests bestehen weiterhin.
+Vier Browserfälle für getrennte Tonvorschau, Ziehen/Tastatur, längere Tonkarten und
+Kinderhefte sind vorbereitet; Browser-, Touch- und reale Tonprüfung stehen weiter aus.
+
+### Buchstaben raten · Maus und Käse
+
+„Buchstaben raten“ ist jetzt ein eigenes Aufgabenformat unter den interaktiven
+Übungen. Das vorhandene Labyrinth bleibt als separates Format erhalten und heißt
+im Katalog nun „Labyrinth · Maus & Käse“. Bereits gespeicherte Titel dieser
+Labyrinthaufgaben werden nicht umgeschrieben.
+
+Beim Buchstabenraten sind die Buchstaben des Zielworts zunächst verdeckt. Ein
+richtiger Buchstabe deckt alle zugehörigen Stellen auf. Ein falscher bewegt die
+Maus einen Schritt in Richtung Käse. Derselbe Buchstabe kann nicht mehrfach
+Versuche verbrauchen. Nach der gewählten Zahl falscher Buchstaben wird das Wort
+aufgedeckt; weitere Eingaben verändern diesen Versuch nicht mehr. „Lösung zeigen“
+deckt das Wort ohne Stern auf, „Wort neu versuchen“ beginnt denselben Versuch neu.
+Nur ein beendetes Wort kann weitergeschaltet werden. Am Ende einer Serie zeigt
+eine Abschlussansicht die erratenen und nicht erratenen Wörter. „Nochmal“ beginnt
+dieselbe Serie von vorn.
+
+Die Gestaltung bietet bis zu 20 Wörter oder kurze Ausdrücke mit höchstens 40
+Zeichen, vier bis zwölf Fehlversuche, ABC-/QWERTZ-Anordnung, große oder kleine
+Buchstaben und die vorhandenen Schriften. Themenlisten lassen sich übernehmen;
+Bindestriche aus Silbenlisten werden für dieses Spiel entfernt. Wortabstände
+und Apostrophe stehen sichtbar fest. Umlaute und ß sind eigenständige Tasten;
+die Großschreibung von ß wird als ẞ gezeigt. Eingaben über eine angeschlossene
+Tastatur werden unabhängig von ihrer Groß-/Kleinschreibung ausgewertet,
+einschließlich Unicode-Komposition. Nach einem Tastentipp oder Wortwechsel
+bleibt der Fokus für das Weiterschreiben im Spiel.
+
+Als Hinweis kann kein Hinweis, ein Wortbild, ein anhörbares Wort oder beides
+gewählt werden. Einfache Bilder bekannter Wörter sind vorhanden; eigene Bilder
+und Wortaufnahmen lassen sich ergänzen. Ohne eigene Wortaufnahme nutzt „Wort
+anhören“ eine lokal installierte deutsche Stimme. Fehlt ein Bild, wird der
+Lösungsbegriff während des Ratens nicht ersatzweise ausgeschrieben. In der
+hinweislosen Ansicht enthalten auch die zugänglichen Bezeichnungen verdeckter
+Felder keine Lösungsbuchstaben. Explizite Bildhinweise haben dagegen einen
+passenden Alternativtext.
+
+Geratene Buchstaben, aktuelle Wortposition und Serienergebnis werden als Antwort
+am Lernwerkzeug gespeichert. Layout, Schrift und Hinweismedien können geändert
+werden, ohne diesen Stand zu löschen. Neue Wörter oder eine geänderte
+Versuchsgrenze beginnen eine neue Serie. Auch im gesperrten Kinderheft bleibt die
+Antwort bearbeitbar; Entwurf und Vorgaben bleiben geschützt. Eigene Medien werden
+beim Austeilen freigegeben und beim Heftdatei-Export/Reimport mitgeführt.
+Wortwechsel, Neustart und Verlassen der Seite beenden eine laufende Wiedergabe.
+Die Mausbewegung berücksichtigt reduzierte Bewegung.
+
+13 neue Tests prüfen Katalog und Validierung, Tastaturen, doppelte und mehrfache
+Treffer, Umlaute/ß, feste Wortabstände, Versuchsende, aufgedeckte Lösungen,
+Serienabschluss, Wiederherstellung, verdeckte Lösungen, Mausdarstellung und
+Medienweitergabe einschließlich geschützter Kinderantworten und Export/Reimport.
+Die bisherigen allgemeinen Lernwerkzeug-, Heft-, Klassen- und Medienaufgabentests
+sowie die Tests der vorherigen Sprachwerkzeuge bestehen weiterhin.
+Drei Browserfälle für gemischte Bildschirm-/Tastaturbedienung, Verlust/Neustart
+und Kinderhefte sind vorbereitet; die praktische Browser- und Touchprüfung
+steht weiterhin aus. Dateien des entsprechenden Textsachen-Spiels aus der
+Referenz können damit noch nicht direkt importiert werden.
+
+## Silbenlesen: Wörter aus Silben zusammensetzen
+
+Das vorhandene Format „Silbenlesen“ bietet jetzt gemischte Silbenkarten und
+Ablagefelder. Karten lassen sich ziehen oder durch Auswahl von Karte und Feld
+zuordnen; die Schaltflächen funktionieren auch mit Tab und Eingabetaste.
+Bereits abgelegte Karten können verschoben oder zurückgelegt werden. Beim
+Belegen eines besetzten Felds wird dessen bisherige Karte wieder frei.
+Gleich geschriebene Silben sind bei der Prüfung austauschbar.
+
+Die Prüfung ist erst bei vollständiger Belegung möglich. Eine falsche Reihenfolge
+kann korrigiert werden; Änderungen verwerfen die vorherige Prüfung. Nur richtig
+geprüfte Wörter erhalten einen Stern. Überspringen, aktuelles Wort neu legen,
+Serienabschluss mit Wortliste und Neustart sind getrennte Schritte. Die Karten
+bleiben neutral; abgelegte Silben und ein optionales geschriebenes Vorbild
+können abwechselnd blau und rot erscheinen.
+
+Als Hinweis stehen Bild, geschriebenes Wort, Ton oder Bild mit geschriebenem Wort
+zur Verfügung. Eigene Wortbilder und Aufnahmen können hochgeladen, Wortaufnahmen
+auch direkt aufgenommen werden. Ohne eigenes Audio wird eine vorhandene deutsche
+Gerätestimme verwendet; ohne Bild gibt es einen Hinweis und die Hörmöglichkeit.
+Im reinen Hörmodus wird die richtige Wortreihenfolge nicht zusätzlich ausgeschrieben.
+Unbekannte automatische Silbentrennungen müssen in den Einstellungen geprüft und
+übernommen werden, bevor automatisch bewertet wird. Explizite Bindestriche und
+bekannte Unterrichtswortlisten haben Vorrang. Bis 30 Wörter mit höchstens 80
+Zeichen und zwölf Silben werden unterstützt.
+
+Platzierungen, Prüfungen und Serienergebnisse werden gespeichert, auch in
+Kinderheften mit geschütztem Entwurf. Hinweis-, Farb- und Schriftänderungen
+behalten den Stand; Änderungen an Wörtern oder Trennungen beginnen eine neue
+Serie. Alte reine Weiterblätter-Stände werden nicht als gelöste Aufgaben gewertet.
+Eigene Medien werden beim Austeilen freigegeben und beim Heftdatei-Export samt
+Reimport mitgeführt. Ziehvorschau und Kartenauswahl werden nicht gespeichert.
+Laufender Wortton endet bei Wortwechsel, Neustart und Verlassen der Seite.
+
+13 neue Tests prüfen Platzierungen, doppelte Silben, Korrektur, Prüfung,
+Bestätigung unbekannter Trennungen, Serienabschluss, Wiederherstellung, geschützte
+Kinderantworten sowie Medienfreigabe und Export/Reimport. Allgemeine Lernwerkzeug-,
+Heft-, Klassen-, Medienaufgaben-, Buchstabenraten- und Klatschtests bestehen ebenfalls.
+Drei Browserfälle für Ziehen und Korrigieren, Tastatur und Abbruch sowie
+Kinderfortschritt sind vorbereitet. Browser-, Touch- und Gerätestimmenprüfung
+stehen weiterhin aus; die Ausführungsumgebung blockiert den Browser-Testserver.
+Die externen Dateiformate der Referenz sind weiterhin nicht direkt importierbar.
+
+## Karaoke: Musikzeit, Zeitplan und LRC
+
+„Karaoke & Liedblatt“ verwendet jetzt die tatsächliche Abspielzeit seiner Musik
+für die Textmarkierung. Start/Pause bedienen denselben Audioplayer; native
+Audiosteuerung, Vor- und Zurückspulen sowie ein Sprung durch Antippen einer
+Liedzeile verwenden dieselbe Position. Während einer Pause bleibt die aktuelle
+Zeile markiert. Vor dem ersten Zeitstempel ist keine Zeile aktiv; am Liedende
+endet die Markierung. Mehrere Zeilen mit derselben Startzeit werden gemeinsam
+markiert. Leerzeilen mit eigenem Zeitstempel sind Instrumentalpausen.
+
+Ohne Musik gibt es weiterhin eine Textbegleitung, jetzt mit einer monotonen Uhr,
+erhaltener Pausenposition und endlichem Ablauf. Antippen einer Zeile setzt diese
+Begleitung dort auf Pause. „Zum Anfang“ setzt die Wiedergabe zurück; optional
+kann das Lied wiederholt werden. Seitenwechsel, geänderte Liedvorgaben,
+Schreibschutz, Fensterwechsel und ausgeblendete Seite beenden beziehungsweise
+pausieren die Wiedergabe. Abspielposition und Animation werden nicht laufend als
+Kinderantwort gespeichert. Die vorhandene Aufnahmefunktion bleibt erreichbar;
+das Anhören einer eigenen Aufnahme pausiert die Begleitung.
+
+Im Einstellungsdialog lassen sich bis 300 Zeilen und deren Startzeiten bearbeiten.
+Gleichmäßige Zeilenabstände dienen als Rückfall; neue Werkzeuge starten mit drei
+Sekunden pro Zeile. Bestehende Sekundenwerte bleiben erhalten. Ein reiner
+Textwechsel bei gleicher Zeilenzahl behält eigene Zeiten; eine geänderte
+Zeilenzahl setzt sie zurück und meldet dies. Ein neuer KI-Liedtext setzt den
+bisherigen Zeitplan ebenfalls zurück. Ungültige oder absteigende Zeiten werden
+beim Übernehmen und serverseitig abgefangen.
+
+Zeilenweise LRC-Dateien lassen sich laden und herunterladen. Der Import zeigt
+eine Vorschau und ersetzt Text und Zeiten erst durch „Liedtext und Zeiten
+übernehmen“. Mehrfachzeitmarken, Millisekunden, übliche Metadaten und getimte
+Leerzeilen werden berücksichtigt. Nicht unterstützte wortweise Zeitmarken und
+von null abweichende offset-Tags werden ausdrücklich abgelehnt. Die Musik wird
+beim Übernehmen eines LRC nicht verändert. Eigene Musikdateien, Aufnahmen und
+Zeitpläne werden mit Heftdateien weitergegeben und beim Austeilen freigegeben.
+Karaoke nutzt wie zuvor die erste Tonspur; weitere gespeicherte Spuren werden
+im Dialog erklärt und bleiben erhalten.
+
+Zwölf neue Tests prüfen Zeitmarken und Rundung, Rückwärtssprünge, gemeinsame
+Zeilenstarts, Pausen, Importfehler, Export/Reimport, alte Einstellungen,
+Schreibschutz und die Medienweitergabe in Kinderhefte. Allgemeine Lernwerkzeug-,
+Silbenlesen-, Heft- und Klassentests bestehen weiterhin. Drei Browserfälle für
+Mediensteuerung, LRC-Übernahme und Textbegleitung sind vorbereitet; sie sind in
+der eingeschränkten Ausführungsumgebung nicht gelaufen. Echte Musikwiedergabe,
+iPad/Safari und Aufnahme müssen noch praktisch geprüft werden.
+
+Bild-/Wortersatz einzelner Liedzeilen, Kanon-Durchläufe und eine gemeinsame
+Mischung aus Musik und Klassenaufnahme entsprechen noch nicht der Referenz.
+Der Druck blendet Wiedergabesteuerung und Markierungen aus; lange Liedblätter
+benötigen weiterhin ausreichend Platz im Seitendesign. Eine automatische
+Aufteilung langer Lieder auf mehrere Druckseiten ist nicht ergänzt.
+
+## Diaschau: gemeinsame Folien- und Tonwiedergabe
+
+Die automatische Diaschau startet nun den zur Folie gehörenden Ton mit.
+Standardmäßig wartet ein Wechsel sowohl die eingestellte Mindestdauer als auch
+das tatsächliche Tonende ab. Ein kurzer Ton verkürzt die Bilddauer nicht, ein
+längerer wird vollständig abgespielt. Im Einstellungsdialog lässt sich das
+Abwarten ausschalten; dann endet der Ton spätestens beim zeitgesteuerten Wechsel.
+Folienton kann auch vollständig deaktiviert werden. Bestehende Folien mit eigenen
+Bildern, Tondateien, Dauer, Übergang und Textposition bleiben nutzbar.
+
+Pause hält die verbleibende Foliendauer und den Ton an. Fortsetzen verwendet
+beide an ihrer bisherigen Position. Manuelles Blättern während der Wiedergabe
+beendet die alte Tonspur und startet die neue Folie; im Pausenzustand bleibt es
+stumm. „Zum Anfang“ setzt die Diaschau auf die erste Folie und pausiert.
+Ohne Wiederholung endet die Serie auf der letzten Folie und lässt sich erneut
+von vorn starten. Wiederholung funktioniert auch mit einer einzigen Folie.
+Fensterwechsel, ausgeblendete Seite und Verlassen des Werkzeugs stoppen oder
+pausieren die zugehörigen Timer und Töne. Eine reine Vorschau lädt keinen Ton.
+Bewegungsreduzierung wird berücksichtigt; pausierte Vorschauen bleiben sichtbar.
+
+Wenn der Browser den Tonstart ablehnt oder eine Tondatei nicht reagiert, pausiert
+der Ablauf mit einem Hinweis. Erneutes Starten oder „Ohne Ton fortsetzen“ sind
+möglich. Ausbleibende Tonfortschrittsereignisse werden nach 30 Sekunden gemeldet;
+verspätete Ereignisse und Wiedergabeablehnungen einer verlassenen Folie können
+keinen neuen Wechsel auslösen. Timer und Tonspur werden jeweils von einer
+Ablaufsteuerung verwaltet, unabhängig von laufenden Speichervorgängen.
+
+Die Folienposition und der Abschluss bleiben als Antwort gespeichert, auch im
+Kinderheft mit geschütztem Entwurf. Erneutes Öffnen startet keinen Ton;
+Rückgängig kann die gespeicherte Folie wiederherstellen. Übergangsanimationen
+und verbleibende Millisekunden einer pausierten Folie werden nicht dauerhaft
+gespeichert. Bild-/Tonwahl im Dialog ist ausdrücklich beschriftet; Medien können
+entfernt werden. Während eines Uploads bleiben die betreffenden Folienfelder
+gesperrt, damit die Datei nicht versehentlich einer inzwischen verschobenen
+Folie zugeordnet wird. Die Medienfreigabe beim Austeilen und Heftdatei-Export
+mit Reimport sind geprüft.
+
+17 neue Tests prüfen den vollständigen Ablauf mit einer kontrollierten Uhr und
+simulierten Audioereignissen, einschließlich Pause, Blättern, Wiederholung,
+Abbruch, Fehlern, späteren Rückrufen, gespeicherter Position und Medienweitergabe.
+Karaoke-, allgemeine Lernwerkzeug-, Heft- und Klassentests bestehen weiterhin.
+Typprüfung, Lint und der Bau der Viewer-Assets sind erfolgreich. Drei Browserfälle
+für Folienton, Pause/Blättern und Kinderposition sind vorbereitet, aber in der
+eingeschränkten Ausführungsumgebung nicht gelaufen. Insbesondere Tonfreigabe und
+Wiederanlauf auf iPad/Safari sowie die praktische Tafelbedienung bleiben zu prüfen.
+Eine vollständige Gleichheit der Präsentationslayouts und Dateiformate mit der
+Referenz wird damit nicht behauptet.
+
+## Geometrie: Aufgabenserien, Vorschau und Zeichenhilfen
+
+Das vorhandene Geometriewerkzeug bietet jetzt endliche Aufgabenserien mit drei
+Schwierigkeitsstufen: waagerechte/senkrechte Strecken, schräge Drei-/Vierecke
+und mehrteilige Konturen. Anzahl und Aufgabenvariante sind einstellbar. Ein
+roter Punkt markiert den Anfang; die Aufgabenbeschreibung nennt Breite und Höhe
+in Rasterkästchen. Die Vorlage wird auf Wunsch kurz eingeblendet und danach
+verdeckt. Alternativ bleibt sie zum Nachzeichnen sichtbar. Weitere Vorschauen
+und das Nachzeichnen werden im Ergebnis als Hilfe vermerkt, ohne gelöste Formen
+vom Punktestand auszuschließen.
+
+Strecken werden vom Anfang zum Ende gezogen; eine Vorschau folgt dem Zeiger.
+Ohne Zeichenhilfe rasten Endpunkte im Raster ein. Lineal und Geodreieck können
+am Körper verschoben, über einen Griff oder Winkelwert gedreht und über einen
+eigenen Schließknopf entfernt werden. Ein in Kantennähe begonnener Strich folgt
+der tatsächlichen, auch gedrehten Werkzeugkante. Eine einmal eingefangene Kante
+bleibt für diese Strecke fest. Zeichenhilfen lassen sich auch per Pfeiltasten
+bewegen, mit Umschalt/Pfeil drehen und über die Winkelangabe einstellen.
+Die Zeichenfläche bietet eine Tastaturbedienung: Pfeile bewegen einen
+Zeichenpunkt, Enter/Leertaste setzen Anfang und Ende, Umschalt erlaubt feinere
+Schritte. Escape und abgebrochene Pointer-Gesten verwerfen die Vorschau.
+
+Die Prüfung ordnet gezeichnete Strecken eindeutig den Zielkanten zu. Richtung
+und Zeichenreihenfolge sind frei; doppelte Linien ersetzen keine fehlende Kante.
+Passende Strecken werden grün, unpassende rot; fehlende und zusätzliche Strecken
+werden gezählt. Ein Streckenradierer entfernt gezielt eine angetippte Linie,
+„Letzte Strecke zurück“ und „Neu zeichnen“ ermöglichen weitere Korrekturen.
+Änderungen verwerfen die alte Prüfung. Nach zwei Prüfversuchen kann die Lösung
+angezeigt werden; dadurch wird die Form noch nicht als gelöst gewertet.
+Überspringen, Weiter, Abschlussliste mit Hilfemarkierung und Neustart sind
+getrennte Schritte.
+
+Eigene Formen können weiterhin über Eckpunkte definiert werden. Bestehende
+Formen und bereits gezeichnete alte Strecken werden übernommen; alte
+Prüfergebnisse müssen wegen der verbesserten Zuordnung erneut geprüft werden.
+Ungültige Texteingaben werden gemeldet. Neue Zeichnungen, Vorschau-/Hilfestand,
+Prüfungen und Serienergebnisse werden gespeichert und bleiben im geschützten
+Kinderheft bearbeitbar. Andere Aufgaben oder ein geänderter Hilfemodus beginnen
+eine neue Serie; Titel und Vorschaudauer löschen den Stand nicht. Zeichenhilfen
+und laufende Pointer-Gesten werden nicht dauerhaft gespeichert.
+
+16 neue Tests prüfen Erzeugung, alte Formen, eindeutige Streckenzuordnung,
+Korrektur und Radieren, Vorschau-/Lösungsregeln, Abschluss, Wiederherstellung,
+Kantenprojektion, Validierung, Kinderantworten und Heftdatei-Export/Reimport.
+Allgemeine Lernwerkzeug-, Heft- und Klassentests bestehen ebenfalls. Drei
+Browserfälle für Zeichnen/Radieren, Vorschau/Tastatur und Zeichenhilfen sind
+vorbereitet. Browser-, Touch-, Pencil- und Tafelprüfung stehen weiterhin aus.
+
+Die Anzeige verwendet Rastereinheiten. Eine maßhaltige Zentimeter-/Millimeterskala,
+Längenfehler in Millimetern, automatisches Einrasten des Linealnullpunkts an
+Eckpunkten und das Vorlesen der Aufgaben sind noch nicht ergänzt. Innerhalb dieser
+Übung werden gerade Strecken konstruiert; der Streckenradierer entfernt ganze
+Strecken. Das flächenweise Radieren freier Zeichnungen im übrigen Editor bleibt
+ein eigener Ablauf. Diese Umsetzung belegt noch keine vollständige Gleichheit
+mit der Geometrievorlage.
+
 ## Prüfungen
 
 ```sh

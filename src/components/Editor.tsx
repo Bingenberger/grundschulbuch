@@ -19,6 +19,14 @@ import {
 } from '@/lib/notebook-model';
 import { ElementView } from './PageView';
 import ScaledPage from './ScaledPage';
+import DrawingOptions from './DrawingOptions';
+import PageEyedropper from './PageEyedropper';
+import PageFillTool from './PageFillTool';
+import BoardPointer, { type BoardPointerMode } from './BoardPointer';
+import { useShapeRecognition } from '@/lib/use-shape-recognition';
+import { previousArrowShaft } from '@/lib/shape-recognition';
+import { inkPaintOrder } from '@/lib/brushes';
+import { appendSamples, eraseElements, newStroke, pointerSamples, type EraserProgress, type EraserOptions } from '@/lib/drawing';
 import AudioDialog from './AudioDialog';
 import CollectionDialog from './CollectionDialog';
 import GeneratorDialog from './GeneratorDialog';
@@ -28,6 +36,8 @@ import LearningDialog from './learning/LearningDialog';
 import ElementsDialog from './learning/ElementsDialog';
 import EmbedDialog from './learning/EmbedDialog';
 import DrawingRuler from './learning/DrawingRuler';
+import DrawingGuideTools from './DrawingGuideTools';
+import { captureGuideEdge, projectToGuideEdge, type DrawingGuide, type GuideEdge } from '@/lib/drawing-guide';
 import ShortcutDialog from './learning/ShortcutDialog';
 import {
   defaultShortcuts,
@@ -47,6 +57,11 @@ type Gesture = {
   originals: PageElement[];
   points: Point[];
   pointer: number;
+  stroke?: PageElement;
+  guideEdge?: GuideEdge;
+  eraserId?: string;
+  eraserProgress?: EraserProgress;
+  eraserOptions?: EraserOptions;
 };
 const cloneElements = (elements: PageElement[], offset = 5) => {
   const groups = new Map<string, string>();
@@ -73,6 +88,8 @@ export default function Editor({
   dictionaryOrigin: string;
 }) {
   const s = useEditor();
+  const recognition = useShapeRecognition(s.recognizeShapes && !['water', 'fill'].includes(s.brush), s.activeId);
+  const cancelRecognition = recognition.cancel;
   const ready = s.book?.id === initial.book.id;
   const [templates, setTemplates] = useState(initialTemplates);
   const [showTemplates, setShowTemplates] = useState(false);
@@ -88,9 +105,10 @@ export default function Editor({
   const [zoom, setZoom] = useState(1);
   const [shortcuts, setShortcuts] = useState<Shortcuts>(defaultShortcuts),
     [showShortcuts, setShowShortcuts] = useState(false);
-  const [ruler, setRuler] = useState(false),
-    [rulerAngle, setRulerAngle] = useState(0),
-    [boardDraw, setBoardDraw] = useState(false);
+  const [guide, setGuide] = useState<DrawingGuide | null>(null);
+  const [boardDraw, setBoardDraw] = useState(false);
+  const [boardPointer, setBoardPointer] = useState<BoardPointerMode>('none');
+  const [lightSize, setLightSize] = useState(0.2);
   const [showFiles, setShowFiles] = useState(false),
     [templateCategory, setTemplateCategory] = useState('Alle');
   const [templateQuery, setTemplateQuery] = useState('');
@@ -99,6 +117,7 @@ export default function Editor({
   const [multi, setMulti] = useState(false);
   const [draft, setDraft] = useState<PageElement | null>(null);
   const [preview, setPreview] = useState<PageElement[] | null>(null);
+  const [erasePreview, setErasePreview] = useState<PageElement[] | null>(null);
   const [templateName, setTemplateName] = useState('');
   const [title, setTitle] = useState(initial.book.title);
   const surface = useRef<HTMLDivElement>(null);
@@ -128,11 +147,14 @@ export default function Editor({
   }, [board]);
   useEffect(() => {
     const changed = () => {
-      if (!document.fullscreenElement) setBoard(false);
+      if (!document.fullscreenElement) {
+        gesture.current = null; cancelRecognition(); setDraft(null); setPreview(null); setErasePreview(null);
+        setBoard(false); setBoardDraw(false); setBoardPointer('none');
+      }
     };
     document.addEventListener('fullscreenchange', changed);
     return () => document.removeEventListener('fullscreenchange', changed);
-  }, []);
+  }, [cancelRecognition]);
   useEffect(() => {
     const unload = (event: BeforeUnloadEvent) => {
       if (Object.keys(useEditor.getState().dirty).length) {
@@ -253,7 +275,8 @@ export default function Editor({
         setShowEmbed(true);
         break;
       case 'pen':
-        useEditor.setState({ tool: s.tool === 'pen' ? 'select' : 'pen' });
+        if (s.tool === 'pen') useEditor.setState({ tool: 'select' });
+        else s.chooseBrush(s.brush === 'marker' ? 'pen' : s.brush);
         break;
       case 'shelf':
         setShowCollection(true);
@@ -385,21 +408,33 @@ export default function Editor({
       }
       case 'board':
       case 'boardNow':
+        cancelDrawingGesture(); setBoardPointer('none');
         setBoard(true);
         setBoardDraw(command === 'boardNow');
-        useEditor.setState({
-          tool: command === 'boardNow' ? 'pen' : 'select',
-          selected: [],
-        });
+        if (command === 'boardNow') s.chooseBrush(s.brush === 'fill' ? 'pen' : s.brush);
+        else useEditor.setState({ tool: 'select', selected: [] });
         break;
       case 'escape':
-        setBoard(false);
+        if (board && boardPointer !== 'none') { setBoardPointer('none'); break; }
+        cancelDrawingGesture(); setBoard(false);
         setBoardDraw(false);
         s.select([]);
         break;
     }
   }
+  function cancelDrawingGesture() {
+    const active = gesture.current;
+    gesture.current = null;
+    if (active && surface.current?.hasPointerCapture(active.pointer)) surface.current.releasePointerCapture(active.pointer);
+    recognition.cancel(); setDraft(null); setPreview(null); setErasePreview(null);
+  }
+  function presentation(mode: BoardPointerMode) {
+    cancelDrawingGesture();
+    setBoardDraw(false); setBoardPointer(mode);
+    useEditor.setState({ tool: 'select', selected: [] });
+  }
   function choosePage(id: string) {
+    cancelDrawingGesture();
     useEditor.setState({ activeId: id, selected: [], past: [], future: [] });
     setPreview(null);
     setDraft(null);
@@ -489,31 +524,16 @@ export default function Editor({
     image.src = src;
   }
   function pointer(event: React.PointerEvent): Point {
-    const rect = surface.current!.getBoundingClientRect();
-    return {
-      x: Math.max(
-        0,
-        Math.min(
-          size.width,
-          ((event.clientX - rect.left) / rect.width) * size.width,
-        ),
-      ),
-      y: Math.max(
-        0,
-        Math.min(
-          size.height,
-          ((event.clientY - rect.top) / rect.height) * size.height,
-        ),
-      ),
-      pressure: event.pressure || 0.5,
-    };
+    const samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+    return samples[samples.length - 1];
   }
+
   function start(
     event: React.PointerEvent,
     element?: PageElement,
     resize = false,
   ) {
-    if ((board && !boardDraw) || event.button !== 0) return;
+    if (gesture.current || (board && !boardDraw) || event.button !== 0) return;
     if (s.tool !== 'select' && s.pencilOnly && event.pointerType !== 'pen')
       return;
     event.preventDefault();
@@ -521,86 +541,34 @@ export default function Editor({
     const point = pointer(event);
     const target = event.currentTarget as HTMLElement;
     target.setPointerCapture(event.pointerId);
-    if (s.tool === 'pen' && s.brush === 'fill') {
-      const target = [...page!.elements].reverse().find((el) => {
-        if (el.locked) return false;
-        if (el.type === 'shape')
-          return (
-            point.x >= el.x &&
-            point.x <= el.x + el.width &&
-            point.y >= el.y &&
-            point.y <= el.y + el.height
-          );
-        if (el.type !== 'stroke' || !el.points?.length) return false;
-        const pts = el.points;
-        let inside = false;
-        for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
-          const a = pts[i],
-            b = pts[j],
-            x = point.x - el.x,
-            y = point.y - el.y;
-          if (
-            a.y > y !== b.y > y &&
-            x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y) + a.x
-          )
-            inside = !inside;
-        }
-        return inside;
-      });
-      if (target)
-        s.edit((p) => ({
-          ...p,
-          elements: p.elements.map((el) =>
-            el.id === target.id ? { ...el, fill: s.color } : el,
-          ),
-        }));
-      else s.edit((p) => ({ ...p, paperColor: s.color }));
-      return;
-    }
+    if (s.tool === 'pen' && s.brush === 'fill') return;
     if (s.tool === 'pen' || s.tool === 'marker') {
+      recognition.cancel();
+      const guideEdge = s.tool === 'marker' || !['water', 'fill'].includes(s.brush) ? captureGuideEdge(point, guide, s.penWidth) : undefined;
+      const initialPoint = guideEdge ? projectToGuideEdge(point, guideEdge) : point;
+      const stroke = newStroke(initialPoint, size.width, size.height, s, event.pointerType);
       gesture.current = {
+        stroke,
+        guideEdge,
         type: 'draw',
-        start: point,
-        points: [point],
+        start: initialPoint,
+        points: [initialPoint],
         originals: [],
         pointer: event.pointerId,
       };
-      setDraft({
-        id: uuid(),
-        type: 'stroke',
-        x: 0,
-        y: 0,
-        width: size.width,
-        height: size.height,
-        rotation: 0,
-        locked: false,
-        color: s.color,
-        points: [point],
-        penWidth:
-          s.tool === 'marker' || s.brush === 'marker'
-            ? s.penWidth * 6
-            : s.brush === 'water'
-              ? s.penWidth * 8
-              : s.penWidth,
-        penStyle:
-          s.tool === 'marker' ? 'marker' : s.brush === 'fill' ? 'pen' : s.brush,
-        opacity:
-          s.tool === 'marker' || s.brush === 'marker'
-            ? 0.3
-            : s.brush === 'water'
-              ? 0.15
-              : 1,
-      });
+      setDraft(stroke);
     } else if (s.tool === 'eraser') {
-      s.checkpoint();
       gesture.current = {
         type: 'erase',
+        eraserId: uuid(),
+        eraserProgress: { checked: 0, hits: new Set() },
+        eraserOptions: s.eraser,
         start: point,
-        points: [],
-        originals: [],
+        points: [point],
+        originals: page!.elements,
         pointer: event.pointerId,
       };
-      erase(point);
+      erase();
     } else if (element) {
       let ids = s.selected.includes(element.id)
         ? s.selected
@@ -630,65 +598,23 @@ export default function Editor({
       };
     } else s.select([]);
   }
-  function erase(point: Point) {
-    s.edit(
-      (p) => ({
-        ...p,
-        elements: p.elements.filter((el) => {
-          if (el.type !== 'stroke' || el.locked) return true;
-          const angle = (-el.rotation * Math.PI) / 180;
-          const dx = point.x - el.x - el.width / 2;
-          const dy = point.y - el.y - el.height / 2;
-          const x = dx * Math.cos(angle) - dy * Math.sin(angle) + el.width / 2;
-          const y = dx * Math.sin(angle) + dy * Math.cos(angle) + el.height / 2;
-          const points = el.points || [];
-          const radius = Math.max(2, (el.penWidth || 1) / 2 + 1);
-          return !points.some((p, i) => {
-            const q = points[Math.max(0, i - 1)];
-            const vx = p.x - q.x,
-              vy = p.y - q.y;
-            const t = Math.max(
-              0,
-              Math.min(
-                1,
-                ((x - q.x) * vx + (y - q.y) * vy) / (vx * vx + vy * vy || 1),
-              ),
-            );
-            return Math.hypot(x - q.x - t * vx, y - q.y - t * vy) < radius;
-          });
-        }),
-      }),
-      false,
-    );
+  function erase() {
+    const g = gesture.current;
+    if (g?.type === 'erase') setErasePreview(eraseElements(g.originals, g.points, g.eraserId!, g.eraserOptions!, g.eraserProgress));
   }
   function move(event: React.PointerEvent) {
     const g = gesture.current;
     if (!g || g.pointer !== event.pointerId) return;
-    let point = pointer(event);
-    if (ruler && g.type === 'draw') {
-      const angle = (rulerAngle * Math.PI) / 180,
-        dx = point.x - g.start.x,
-        dy = point.y - g.start.y,
-        length = dx * Math.cos(angle) + dy * Math.sin(angle);
-      point = {
-        ...point,
-        x: g.start.x + length * Math.cos(angle),
-        y: g.start.y + length * Math.sin(angle),
-      };
-    }
     event.preventDefault();
-    if (g.type === 'draw') {
-      if (g.points.length >= 19000) return;
-      if (
-        Math.hypot(
-          point.x - g.points[g.points.length - 1].x,
-          point.y - g.points[g.points.length - 1].y,
-        ) < 0.15
-      )
-        return;
-      g.points.push(point);
-      setDraft((el) => (el ? { ...el, points: [...g.points] } : null));
-    } else if (g.type === 'erase') erase(point);
+    let samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+    if (g.guideEdge) samples = samples.map(point => projectToGuideEdge(point, g.guideEdge!));
+    const point = samples[samples.length - 1];
+    if (g.type === 'draw' || g.type === 'erase') {
+      appendSamples(g.points, samples);
+      if (g.type === 'erase') erase();
+      else if (g.guideEdge) setDraft(el => el ? { ...el, points: [...g.points] } : null);
+      else recognition.update(g.points, shape => setDraft({ ...g.stroke!, points: shape?.points || [...g.points], geometry: shape?.kind }), surface.current!.getBoundingClientRect().width / size.width, previousArrowShaft(page!.elements, g.stroke!));
+    }
     else {
       const dx = point.x - g.start.x,
         dy = point.y - g.start.y;
@@ -732,15 +658,24 @@ export default function Editor({
   function end(event: React.PointerEvent, cancel = false) {
     const g = gesture.current;
     if (!g || g.pointer !== event.pointerId) return;
+    if (!cancel && (g.type === 'draw' || g.type === 'erase')) {
+      let samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+      if (g.guideEdge) samples = samples.map(point => projectToGuideEdge(point, g.guideEdge!));
+      appendSamples(g.points, samples);
+    }
+    const recognized = !cancel && g.type === 'draw' && !g.guideEdge ? recognition.finish(g.points) : null;
+    recognition.cancel();
     gesture.current = null;
-    if (!cancel && g.type === 'draw' && draft)
+    if (!cancel && g.type === 'draw' && g.stroke)
       s.edit((p) => ({
         ...p,
         elements: [
-          ...p.elements,
-          compactStroke({ ...draft, points: [...g.points] }),
+          ...p.elements.filter(el => el.id !== recognized?.replaceId),
+          compactStroke({ ...g.stroke!, points: recognized?.points || [...g.points], geometry: recognized?.kind }),
         ],
       }));
+    if (!cancel && g.type === 'erase')
+      s.edit(p => ({ ...p, elements: eraseElements(g.originals, g.points, g.eraserId!, g.eraserOptions!, g.eraserProgress) }));
     if (!cancel && preview && (g.type === 'move' || g.type === 'resize'))
       s.edit((p) => ({
         ...p,
@@ -750,6 +685,7 @@ export default function Editor({
       }));
     setDraft(null);
     setPreview(null);
+    setErasePreview(null);
   }
   function layer(front: boolean) {
     s.edit((p) => {
@@ -877,7 +813,7 @@ export default function Editor({
         <button
           className="knopf compact"
           onClick={() => {
-            setBoard(true);
+            cancelDrawingGesture(); setBoardPointer('none'); setBoard(true);
             setBoardDraw(false);
             useEditor.setState({ tool: 'select', selected: [] });
             document.documentElement
@@ -962,6 +898,8 @@ export default function Editor({
               className="tool"
               aria-pressed={s.tool === tool}
               onClick={() => {
+                if (tool === 'marker') s.chooseBrush('marker');
+                else if (tool === 'pen') s.chooseBrush(s.brush === 'marker' ? 'pen' : s.brush);
                 useEditor.setState({ tool });
                 if (tool !== 'select') s.select([]);
               }}
@@ -1026,42 +964,9 @@ export default function Editor({
           <button className="tool" onClick={() => setShowFiles(true)}>
             <span>⇅</span>Dateien
           </button>
-          <button
-            className="tool"
-            aria-pressed={ruler}
-            onClick={() => setRuler(!ruler)}
-          >
-            <span>📏</span>Lineal
-          </button>
           <button className="tool" onClick={() => setShowShortcuts(true)}>
             <span>?</span>Hilfe
           </button>
-          <label className="pen-size">
-            Stiftart
-            <select
-              aria-label="Stiftart"
-              value={s.brush}
-              onChange={(e) =>
-                useEditor.setState({
-                  brush: e.target.value as typeof s.brush,
-                  tool: 'pen',
-                })
-              }
-            >
-              {[
-                ['pen', 'Stift'],
-                ['fountain', 'Füller'],
-                ['crayon', 'Buntstift'],
-                ['marker', 'Marker'],
-                ['water', 'Aquarell'],
-                ['fill', 'Farbeimer'],
-              ].map(([id, label]) => (
-                <option key={id} value={id}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
           <label className="tool color-tool">
             <input
               type="color"
@@ -1071,23 +976,12 @@ export default function Editor({
             />
             Farbe
           </label>
-          <label className="pen-size">
-            Stärke{' '}
-            <select
-              aria-label="Stiftstärke in Millimetern"
-              value={s.penWidth}
-              onChange={(e) =>
-                useEditor.setState({ penWidth: Number(e.target.value) })
-              }
-            >
-              {[0.3, 0.7, 1.2, 2].map((n) => (
-                <option key={n} value={n}>
-                  {n} mm
-                </option>
-              ))}
-            </select>
-          </label>
         </div>
+        <DrawingGuideTools guide={guide} onChange={setGuide} />
+        <DrawingOptions allowFill />
+        {!board && <PageEyedropper key={page.id} surface={surface} />}
+        <PageFillTool key={`fill-${page.id}`} surface={surface} disabled={board && !boardDraw} />
+        {draft?.geometry && (s.tool === 'pen' || s.tool === 'marker') && <span role="status">Form erkannt – zum Übernehmen loslassen.</span>}
         <div className="tool-group">
           <button className="tool" disabled={!s.past.length} onClick={s.undo}>
             <span>↶</span>Zurück
@@ -1165,7 +1059,7 @@ export default function Editor({
                 zoom={board ? 1 : zoom}
               >
                 <LearningRuntime
-                  interactive={s.tool === 'select' || (board && !boardDraw)}
+                  interactive={boardPointer === 'none' && (s.tool === 'select' || (board && !boardDraw))}
                   allowExternal
                   onResponse={(id, response) =>
                     s.edit((p) => ({
@@ -1195,8 +1089,9 @@ export default function Editor({
                     onPointerMove={move}
                     onPointerUp={(e) => end(e)}
                     onPointerCancel={(e) => end(e, true)}
+                    onLostPointerCapture={(e) => end(e, true)}
                   >
-                    {page.elements.map((el) => (
+                    {inkPaintOrder((erasePreview || page.elements).filter(el => el.id !== recognition.replaceId), draft).map((el) => (
                       <ElementView
                         key={el.id}
                         element={preview?.find((p) => p.id === el.id) || el}
@@ -1261,18 +1156,8 @@ export default function Editor({
                           </div>
                         );
                       })}
-                    {ruler && (
-                      <DrawingRuler
-                        angle={rulerAngle}
-                        onAngle={setRulerAngle}
-                      />
-                    )}
-                    {draft && (
-                      <ElementView
-                        element={draft}
-                        style={{ pointerEvents: 'none' }}
-                      />
-                    )}
+                    {guide && (!board || boardPointer === 'none') && <DrawingRuler guide={guide} onChange={setGuide} onClose={() => setGuide(null)} />}
+                    {board && boardPointer !== 'none' && <BoardPointer key={`${page.id}-${boardPointer}`} mode={boardPointer} width={size.width} height={size.height} size={lightSize} onClose={() => setBoardPointer('none')} />}
                   </div>
                 </LearningRuntime>
               </ScaledPage>
@@ -1318,7 +1203,7 @@ export default function Editor({
             </div>
             <span>
               {s.tool === 'eraser'
-                ? 'Radierer entfernt ganze Striche. Gesperrte Elemente bleiben erhalten.'
+                ? s.eraser.mode === 'area' ? 'Radiere nur die überfahrene Stelle. Bilder und Texte bleiben erhalten.' : 'Radierer entfernt ganze Striche. Gesperrte Elemente bleiben erhalten.'
                 : s.tool === 'select'
                   ? 'Element antippen · am Eckpunkt vergrößern'
                   : 'Direkt auf der Seite zeichnen'}
@@ -1738,20 +1623,26 @@ export default function Editor({
         </aside>
       </div>
       {board && (
-        <div className="board-controls">
+        <div className="board-controls" role="group" aria-label="Tafelwerkzeuge">
           <button
             className="knopf"
             aria-pressed={boardDraw}
             onClick={() => {
+              cancelDrawingGesture(); setBoardPointer('none');
               setBoardDraw(!boardDraw);
-              useEditor.setState({
-                tool: boardDraw ? 'select' : 'pen',
-                selected: [],
-              });
+              if (boardDraw) useEditor.setState({ tool: 'select', selected: [] });
+              else s.chooseBrush(s.brush === 'fill' ? 'pen' : s.brush);
             }}
           >
             {boardDraw ? '✓ Zeichnen beenden' : '✎ Auf der Tafel schreiben'}
           </button>
+          <button className="knopf" aria-pressed={boardPointer === 'laser'} onClick={() => presentation(boardPointer === 'laser' ? 'none' : 'laser')}>Laserpointer</button>
+          <button className="knopf" aria-pressed={boardPointer === 'light'} onClick={() => presentation(boardPointer === 'light' ? 'none' : 'light')}>Taschenlampe</button>
+          {boardPointer === 'light' && <label>Lichtkreis <select aria-label="Lichtkreisgröße" value={lightSize} onChange={event => setLightSize(Number(event.target.value))}>
+            <option value="0.12">Klein</option><option value="0.2">Mittel</option><option value="0.3">Groß</option>
+          </select></label>}
+          {boardPointer !== 'none' && <button className="knopf" onClick={() => presentation('none')}>Zeigehilfe beenden</button>}
+
           <button
             className="knopf"
             disabled={pageIndex === 0}
@@ -1769,7 +1660,7 @@ export default function Editor({
           >
             Weiter ›
           </button>
-          <button className="knopf knopf-haupt" onClick={() => setBoard(false)}>
+          <button className="knopf knopf-haupt" onClick={() => { cancelDrawingGesture(); setBoardPointer('none'); setBoardDraw(false); setBoard(false); }}>
             Tafelmodus beenden
           </button>
         </div>
