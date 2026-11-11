@@ -2803,3 +2803,15 @@ input[type='checkbox'] {
   background: rgba(255, 253, 231, 0.55);
   cursor: text;
 }
+
+/* Frames of text boxes (drawn as SVG in mm) */
+.text-frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.text-frame.frame-note {
+  filter: drop-shadow(0.4mm 0.6mm 0.5mm rgba(0, 0, 0, 0.18));
+}

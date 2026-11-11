@@ -65,6 +65,7 @@ export function fitTextToRuling(
   const rows = rulingRows(page);
   if (!rows || el.type !== 'text' || el.locked || el.rotation % 360 !== 0) return null;
   if (el.textFrame && el.textFrame !== 'none') return null;
+  if ((el.borderWidth ?? 0) > 0 || (el.background && el.background !== 'none')) return null;
   const font = el.font || 'Andika';
   let fontMm = (el.fontSize || 18) * ptToMm;
   if (autoSize) {

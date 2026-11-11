@@ -6,10 +6,11 @@ import type { Feature } from '@/lib/features';
 import { imageFilters } from '../learning/Appearance';
 import RichTextDialog from '../learning/RichTextDialog';
 import { ChoiceButton, Choices, ColorChoice, OptionGroup, Stepper } from '../ui/Choice';
-import { AlignGlyph, FontGlyph, ImageFilterGlyph, OpacityGlyph, SwatchGlyph } from '../ui/Glyphs';
+import { AlignGlyph, FontGlyph, ImageFilterGlyph, OpacityGlyph, StrokeGlyph, SwatchGlyph } from '../ui/Glyphs';
 import OptionBar, { type OptionSection } from './OptionBar';
 import { palette } from './DrawingBar';
-import { fitText, onRuling } from './text-measure';
+import { FrameGlyph, frameFill, frameKind, frameLine, frameWidth, type TextFrameKind } from '../TextFrame';
+import { fitText, onRuling, pxToMm } from './text-measure';
 
 export type ElementActions = {
   onResize: (factor: number) => void;
@@ -22,14 +23,30 @@ export type ElementActions = {
   onConfigure?: (element: PageElement) => void;
 };
 
-const textFrames: [string, string, Parameters<typeof ChoiceButton>[0]['icon']][] = [
-  ['none', 'Ohne', 'cancel'],
-  ['box', 'Kasten', 'frame'],
-  ['note', 'Notizzettel', 'document'],
-  ['speech', 'Sprechblase', 'comments'],
-  ['thought', 'Denkblase', 'idea'],
-  ['shout', 'Rufblase', 'high_priority'],
-  ['banner', 'Banner', 'bookmark'],
+const textFrames: [TextFrameKind, string][] = [
+  ['none', 'Ohne'],
+  ['box', 'Kasten'],
+  ['note', 'Notizzettel'],
+  ['speech', 'Sprechblase'],
+  ['thought', 'Denkblase'],
+  ['shout', 'Rufblase'],
+  ['banner', 'Banner'],
+];
+const fills: [string, string][] = [
+  ['#ffffff', 'Weiß'],
+  ['#fff59d', 'Gelb'],
+  ['#ffe0b2', 'Orange'],
+  ['#f8bbd0', 'Rosa'],
+  ['#c8e6c9', 'Grün'],
+  ['#bbdefb', 'Blau'],
+  ['#e1bee7', 'Lila'],
+  ['#eceff1', 'Grau'],
+];
+const lineWidths: [number, string][] = [
+  [0, 'Ohne'],
+  [0.4, 'Dünn'],
+  [0.8, 'Mittel'],
+  [1.4, 'Dick'],
 ];
 const filterLabels: [string, string][] = [
   ['none', 'Original'], ['scan', 'Arbeitsblatt'], ['gray', 'Schwarzweiß'],
@@ -76,6 +93,22 @@ export default function ElementBar({
           : el,
       ),
     }));
+  // After a new frame shape, the box grows until the text fits inside again.
+  const growToFit = (id: string) => {
+    let tries = 0;
+    const step = () => {
+      const text = document.querySelector<HTMLElement>(`.interaction-surface [data-element-id="${id}"] > div`);
+      const state = useEditor.getState();
+      const el = state.pages.find((p) => p.id === state.activeId)?.elements.find((e) => e.id === id);
+      if (!text || !el) return;
+      const need = Math.round(pxToMm(text.offsetHeight) * 100) / 100;
+      if (need > el.height + 0.3 && tries++ < 4) {
+        state.edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === id ? { ...e, height: need } : e)) }), false);
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  };
   const ruled = first?.type === 'text' && !!page && onRuling(first, page);
   const sections: OptionSection[] = [];
   const colorful = first && ['text', 'shape', 'stroke', 'sticker'].includes(first.type);
@@ -218,12 +251,78 @@ export default function ElementBar({
           label: 'Textkasten',
           icon: 'comments',
           content: (
-            <Choices
-              label="Textkasten"
-              value={first.textFrame || 'none'}
-              onChange={(textFrame) => patch({ textFrame })}
-              options={textFrames.map(([value, label, icon]) => ({ value, label, icon }))}
-            />
+            <>
+              <Choices
+                label="Form"
+                value={frameKind(first)}
+                onChange={(textFrame) => {
+                  patch({ textFrame });
+                  growToFit(first.id);
+                }}
+                options={textFrames.map(([value, label]) => ({ value, label, icon: <FrameGlyph kind={value} /> }))}
+              />
+              <OptionGroup label="Hintergrund">
+                <ChoiceButton
+                  icon="cancel"
+                  label="Ohne"
+                  pressed={frameFill(first) === 'none'}
+                  onClick={() => patch({ background: 'none' })}
+                />
+                {fills.map(([color, label]) => (
+                  <ChoiceButton
+                    key={color}
+                    icon={<SwatchGlyph color={color} />}
+                    label={label}
+                    pressed={frameFill(first).toLowerCase() === color}
+                    onClick={() => patch({ background: color })}
+                  />
+                ))}
+                <ColorChoice
+                  label="Eigene Farbe"
+                  ariaLabel="Hintergrundfarbe"
+                  value={frameFill(first) === 'none' ? '#ffffff' : frameFill(first)}
+                  onChange={(background) => patch({ background })}
+                />
+              </OptionGroup>
+              <Choices
+                label="Rahmenlinie"
+                value={frameWidth(first)}
+                onChange={(borderWidth) => {
+                  patch({ borderWidth });
+                  growToFit(first.id);
+                }}
+                options={Array.from(new Set([...lineWidths.map(([n]) => n), frameWidth(first)])).map((n) => ({
+                  value: n,
+                  label: lineWidths.find(([w]) => w === n)?.[1] || `${n} mm`,
+                  icon: n ? <StrokeGlyph width={n * 3} color={frameLine(first)} /> : 'cancel',
+                }))}
+              />
+              {frameWidth(first) > 0 && (
+                <OptionGroup label="Rahmenfarbe">
+                  <ChoiceButton
+                    icon={<span className="font-glyph" style={{ color: first.color }}>A</span>}
+                    label="Wie die Schrift"
+                    pressed={!first.borderColor}
+                    onClick={() => patch({ borderColor: undefined })}
+                  />
+                  {palette.map(([color, label]) => (
+                    <ChoiceButton
+                      key={color}
+                      icon={<SwatchGlyph color={color} />}
+                      label={label}
+                      pressed={first.borderColor?.toLowerCase() === color}
+                      onClick={() => patch({ borderColor: color })}
+                    />
+                  ))}
+                  <ColorChoice
+                    label="Eigene Farbe"
+                    ariaLabel="Rahmenfarbe"
+                    value={frameLine(first)}
+                    onChange={(borderColor) => patch({ borderColor })}
+                  />
+                </OptionGroup>
+              )}
+            </>
           ),
         },
       );

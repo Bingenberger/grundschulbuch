@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { PageElement } from '@/lib/notebook-model';
 import { textStyle } from '../PageView';
+import TextFrame from '../TextFrame';
 import { pxToMm } from './text-measure';
 
 type Caret = { left: number; top: number; height: number } | null;
@@ -74,6 +75,8 @@ export default function InlineText({
 
   const style = textStyle(element);
   return (
+    <>
+    <TextFrame element={element} />
     <div className="inline-text" style={{ ...style, height: '100%', boxSizing: 'border-box' }}>
       <div className="inline-text-inner">
         <div className="inline-text-mirror" ref={mirror} aria-hidden="true">
@@ -117,5 +120,6 @@ export default function InlineText({
         )}
       </div>
     </div>
+    </>
   );
 }

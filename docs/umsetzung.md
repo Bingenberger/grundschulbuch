@@ -37,6 +37,12 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   Schreibstelle; Escape oder ein Tipp daneben beendet das Schreiben, ein leeres
   Textfeld verschwindet wieder. Schriftart, -größe, Auszeichnung und
   Ausrichtung stehen unter „Gestalten“.
+- Textkasten: Formen Kasten, Notizzettel, Sprechblase, Denkblase, Rufblase
+  und Banner werden als SVG in Originalgröße gezeichnet (`TextFrame.tsx`),
+  also gleich im Editor, im Druck und im HTML-Export. Hintergrundfarbe,
+  Rahmenlinie (Ohne/Dünn/Mittel/Dick) und Rahmenfarbe sind für jedes
+  Textfeld einstellbar, auch ohne Form. Nach einem Formwechsel wächst das
+  Feld, bis der Text wieder hineinpasst.
 - Auf Seiten mit Lineatur 1–4 und Bild mit Schreibzeilen passt sich Text der
   Lineatur an (`src/lib/text-fit.ts`): Die Kleinbuchstaben füllen das
   Mittelband, die Grundlinie liegt auf der roten Linie, jede neue Zeile

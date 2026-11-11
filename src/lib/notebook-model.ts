@@ -89,8 +89,12 @@ export type PageElement = {
   underline?: boolean;
   align?: 'left' | 'center' | 'right' | 'justify';
   lineHeight?: number;
+  /** Fill behind the text; 'none' removes the default fill of a frame. */
   background?: string;
   textFrame?: string;
+  /** Frame line of a text box (mm); 0 hides it. */
+  borderColor?: string;
+  borderWidth?: number;
   runs?: {
     text: string;
     bold?: boolean;

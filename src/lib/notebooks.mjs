@@ -164,7 +164,10 @@ export function validatePage(input) {
       }
       if (el.lineHeight !== undefined)
         result.lineHeight = num(el.lineHeight, 0.8, 8);
-      if (el.background !== undefined) result.background = color(el.background);
+      if (el.background !== undefined)
+        result.background = el.background === 'none' ? 'none' : color(el.background);
+      if (el.borderColor !== undefined) result.borderColor = color(el.borderColor);
+      if (el.borderWidth !== undefined) result.borderWidth = num(el.borderWidth, 0, 5);
       if (el.textFrame !== undefined) {
         if (
           ![

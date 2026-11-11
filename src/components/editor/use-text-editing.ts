@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useEditor } from '@/lib/editor-store';
 import type { Page, PageElement } from '@/lib/notebook-model';
 import { fitTextToRuling, rowHeight } from '@/lib/text-fit';
+import { frameHeightFor } from '../TextFrame';
 import { browserMeasure, fitText, preloadTextFonts } from './text-measure';
 
 /** In-place writing in text boxes, shared by the teacher and the child editor. */
@@ -62,8 +63,7 @@ export function useTextEditing(pageId: string | undefined, blocked = false) {
           const next = fitTextToRuling(el, page, browserMeasure, { lines })!;
           return Math.abs(next.height - el.height) > 0.05 || Math.abs(next.y - el.y) > 0.05 ? next : el;
         }
-        const frame = el.textFrame && el.textFrame !== 'none' ? 4.6 : 0;
-        const needed = Math.round((mm + frame) * 100) / 100;
+        const needed = Math.round(frameHeightFor(el, mm) * 100) / 100;
         return needed > el.height + 0.05 ? { ...el, height: needed } : el;
       }, false);
     },

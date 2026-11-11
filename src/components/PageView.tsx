@@ -3,6 +3,7 @@ import { fountainOutline, pathBounds, smoothPath, strokeFillPolygon } from '@/li
 import { inkPaintOrder } from '@/lib/brushes';
 import InkBrush from './InkBrush';
 import { LinkLayer } from './LinkContext';
+import TextFrame, { framePadding } from './TextFrame';
 import { eraserShapePath } from '@/lib/eraser-shapes';
 import Activity from './learning/Activity';
 import Widget from './learning/Widget';
@@ -143,16 +144,8 @@ export function textStyle(el: PageElement): React.CSSProperties {
     fontStyle: el.italic ? 'italic' : undefined,
     textDecoration: el.underline ? 'underline' : undefined,
     textAlign: el.align || 'left',
-    background: el.background,
-    border:
-      el.textFrame && el.textFrame !== 'none'
-        ? `.3mm solid ${el.color}`
-        : undefined,
-    borderRadius:
-      el.textFrame === 'speech' || el.textFrame === 'thought'
-        ? '5mm'
-        : undefined,
-    padding: el.textFrame && el.textFrame !== 'none' ? '2mm' : undefined,
+    padding: framePadding(el),
+    position: 'relative',
     color: el.color,
     whiteSpace: 'pre-wrap',
     overflowWrap: 'break-word',
@@ -272,6 +265,8 @@ export function ElementContent({ element: el }: { element: PageElement }) {
     );
   if (el.type === 'stroke') return <Stroke element={el} />;
   return (
+    <>
+    <TextFrame element={el} />
     <div
       style={textStyle(el)}
     >
@@ -291,6 +286,7 @@ export function ElementContent({ element: el }: { element: PageElement }) {
           ))
         : el.text}
     </div>
+    </>
   );
 }
 export function ElementView({
