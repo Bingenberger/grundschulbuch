@@ -2884,3 +2884,219 @@ input[type='checkbox'] {
   display: grid;
   filter: brightness(0) invert(1);
 }
+
+/* Photo placeholder and image credit */
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5mm;
+  padding: 2mm;
+  border: 0.5mm dashed #1e88e5;
+  border-radius: 2mm;
+  background: repeating-linear-gradient(45deg, #f5faff, #f5faff 2mm, #eaf4fe 2mm, #eaf4fe 4mm);
+  color: #1565c0;
+  font-family: Andika, sans-serif;
+  font-size: 4mm;
+  text-align: center;
+  overflow: hidden;
+}
+.image-placeholder.round {
+  border-radius: 50%;
+}
+.image-placeholder svg {
+  width: min(16mm, 40%);
+  height: auto;
+  flex-shrink: 0;
+}
+.image-credit {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  max-width: 100%;
+  padding: 0.3mm 1mm;
+  background: rgba(255, 255, 255, 0.82);
+  color: #37474f;
+  font-family: 'Atkinson Hyperlegible', sans-serif;
+  font-size: 1.9mm;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.child-mode .page-element .image-placeholder,
+.interaction-surface .page-element.locked .image-placeholder {
+  cursor: pointer;
+}
+
+/* Image dialog with sources as tabs */
+.modal.image-dialog {
+  width: min(980px, 100%);
+  height: min(720px, calc(100vh - 44px));
+  display: flex;
+  flex-direction: column;
+  padding: 22px 24px;
+}
+.image-dialog-layout {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 18px;
+  margin-top: 12px;
+}
+.image-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 150px;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+.image-tabs .choice {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  max-width: none;
+  min-height: 46px;
+  padding: 6px 10px;
+  text-align: left;
+}
+.image-tab-panel {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.image-tab-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.image-tab-body .upload-area {
+  margin: 0;
+  position: relative;
+  min-height: 170px;
+  justify-content: center;
+}
+.upload-area.drag-over {
+  background: #dfeee0;
+  border-color: #43a047;
+}
+.image-tab-intro,
+.image-tab-note {
+  margin: 0;
+  color: #4f5d55;
+  font-size: 13px;
+}
+.image-tab-note {
+  font-size: 11.5px;
+  color: #6b7a70;
+}
+.image-search {
+  display: flex;
+  gap: 8px;
+}
+.image-search input {
+  flex: 1;
+  min-width: 0;
+}
+.image-hits {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+.image-hit {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid #dce3d9;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+}
+.image-hit:hover:not(:disabled),
+.image-hit:focus-visible {
+  border-color: #1e88e5;
+  box-shadow: 0 0 0 2px #1e88e533;
+}
+.image-hit img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: #f7f8f5;
+  border-radius: 6px;
+}
+.image-hit span {
+  font-size: 11px;
+  line-height: 1.25;
+  color: #33463c;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.camera-tab {
+  align-items: center;
+}
+.camera-view {
+  width: 100%;
+  max-height: 440px;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #1d2621;
+  border-radius: 10px;
+}
+.camera-actions {
+  display: flex;
+  gap: 8px;
+}
+.screenshot-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.screenshot-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 22px 16px;
+  border: 1px solid #cfd9cb;
+  border-radius: 12px;
+  background: #fff;
+  text-align: center;
+  cursor: pointer;
+}
+.screenshot-choice:hover:not(:disabled) {
+  border-color: #1e88e5;
+  background: #f5faff;
+}
+.screenshot-choice small {
+  color: #6b7a70;
+  font-size: 12px;
+}
+@media (max-width: 720px) {
+  .image-dialog-layout {
+    flex-direction: column;
+  }
+  .image-tabs {
+    flex-direction: row;
+    width: auto;
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .image-tabs .choice {
+    flex-direction: column;
+    width: auto;
+    min-width: 84px;
+    text-align: center;
+  }
+}

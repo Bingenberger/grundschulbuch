@@ -5,6 +5,8 @@ export const CHILD_FEATURES = [
   'eraser',
   'text',
   'image',
+  'imageUpload',
+  'imageSearch',
   'pages',
   'readAloud',
   'brushFountain',

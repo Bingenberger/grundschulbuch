@@ -448,6 +448,12 @@ export function safeWebUrl(value) {
   return url.href;
 }
 export function lockedDesign(element) {
+  // Children fill a locked photo placeholder with their own picture.
+  if (element?.type === 'image' && typeof element.placeholder === 'string') {
+    const design = { ...element };
+    for (const key of ['src', 'alt', 'credit', 'crop', 'fit']) delete design[key];
+    return design;
+  }
   if (!['activity', 'widget'].includes(element.type)) return element;
   const design = { ...element };
   delete design.response;

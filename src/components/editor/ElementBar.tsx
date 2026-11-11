@@ -9,6 +9,7 @@ import { ChoiceButton, Choices, ColorChoice, OptionGroup, Stepper } from '../ui/
 import { AlignGlyph, FontGlyph, ImageFilterGlyph, OpacityGlyph, StrokeGlyph, SwatchGlyph } from '../ui/Glyphs';
 import OptionBar, { type OptionSection } from './OptionBar';
 import { palette } from './DrawingBar';
+import { isPlaceholder } from './image-elements';
 import { FrameGlyph, frameFill, frameKind, frameLine, frameWidth, type TextFrameKind } from '../TextFrame';
 import { fitText, onRuling, pxToMm } from './text-measure';
 
@@ -21,6 +22,8 @@ export type ElementActions = {
   onCollection?: () => void;
   onGroup?: (group: boolean) => void;
   onConfigure?: (element: PageElement) => void;
+  /** Opens the image dialog for a photo placeholder. */
+  onFill?: (element: PageElement) => void;
 };
 
 const textFrames: [TextFrameKind, string][] = [
@@ -182,6 +185,39 @@ export default function ElementBar({
                 />
               )}
             </>
+          )}
+          {isPlaceholder(first) && (
+            <>
+              <OptionGroup label="Platzhalter">
+                {actions.onFill && (
+                  <ChoiceButton icon="camera" label={first.src ? 'Anderes Bild' : 'Bild wählen'} onClick={() => actions.onFill!(first)} />
+                )}
+                {first.src && (
+                  <ChoiceButton icon="remove_image" label="Bild entfernen" onClick={() => patch({ src: undefined, credit: undefined, crop: undefined, alt: '' })} />
+                )}
+              </OptionGroup>
+              <OptionGroup label="Hinweis im Rahmen" plain>
+                <input
+                  className="option-input"
+                  aria-label="Hinweis im Rahmen"
+                  value={first.placeholder}
+                  maxLength={200}
+                  onChange={(e) => patch({ placeholder: e.target.value })}
+                />
+              </OptionGroup>
+            </>
+          )}
+          {first.type === 'image' && first.src && (
+            <OptionGroup label="Bildnachweis" plain>
+              <input
+                className="option-input"
+                aria-label="Bildnachweis"
+                placeholder="z. B. Foto: Klasse 2b"
+                value={first.credit || ''}
+                maxLength={400}
+                onChange={(e) => patch({ credit: e.target.value || undefined })}
+              />
+            </OptionGroup>
           )}
           {(first.type === 'image' || first.type === 'audio') && (
             <OptionGroup label="Beschreibung" plain>

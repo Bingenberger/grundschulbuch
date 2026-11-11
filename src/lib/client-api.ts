@@ -20,15 +20,16 @@ export async function api<T>(action: string, values: object = {}): Promise<T> {
     );
   return body as T;
 }
-export async function uploadImage(file: File): Promise<string> {
+/** `query` lets children fill a placeholder (book and element id). */
+export async function uploadImage(file: Blob, query = ''): Promise<string> {
   if (file.size > 12 * 1024 * 1024)
     throw new Error('Bilder dürfen höchstens 12 MB groß sein.');
-  const response = await fetch('/api/medien', {
+  const response = await fetch(`/api/medien${query}`, {
     method: 'POST',
     headers: { 'Content-Type': file.type || 'application/octet-stream' },
     body: file,
   });
-  const body = await response.json();
+  const body = await response.json().catch(() => ({ error: 'Das Bild konnte nicht gespeichert werden.' }));
   if (!response.ok) throw new Error(body.error);
   return body.src;
 }

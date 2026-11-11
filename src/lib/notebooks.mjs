@@ -203,15 +203,26 @@ export function validatePage(input) {
         result.text = result.runs.map((r) => r.text).join('');
       }
     } else if (el.type === 'image' || el.type === 'audio') {
+      // A photo placeholder may stay empty until someone takes the picture.
+      const emptyPlaceholder =
+        el.type === 'image' && typeof el.placeholder === 'string' && el.src === undefined;
+      if (el.type === 'image' && el.placeholder !== undefined) {
+        if (typeof el.placeholder !== 'string') throw new BookError('Ungültiger Platzhalter.');
+        result.placeholder = el.placeholder.slice(0, 200);
+      }
+      if (el.type === 'image' && el.credit !== undefined) {
+        if (typeof el.credit !== 'string') throw new BookError('Ungültiger Bildnachweis.');
+        result.credit = el.credit.slice(0, 400);
+      }
       if (
-        typeof el.src !== 'string' ||
+        !emptyPlaceholder && (typeof el.src !== 'string' ||
         !/^\/api\/medien\/[a-f0-9]{64}\.(png|jpg|webp|mp3|wav|ogg|webm|m4a|apphtml)$/.test(
           el.src,
-        )
+        ))
       )
         throw new BookError('Nur Bilder aus dem Medienspeicher sind erlaubt.');
       Object.assign(result, {
-        src: el.src,
+        ...(emptyPlaceholder ? {} : { src: el.src }),
         alt: typeof el.alt === 'string' ? el.alt.slice(0, 300) : '',
       });
       if (el.type === 'image') {
@@ -735,7 +746,8 @@ export async function storeImage(owner, buffer) {
     buffer.toString('ascii', 8, 12) === 'WEBP'
   )
     extension = 'webp';
-  else throw new BookError('Bitte ein PNG-, JPEG- oder WebP-Bild auswählen.');
+  else if (buffer.toString('ascii', 0, 4) === 'GIF8') extension = 'gif';
+  else throw new BookError('Bitte ein PNG-, JPEG-, WebP- oder GIF-Bild auswählen.');
   try {
     buffer = await sharp(buffer, { limitInputPixels: 40000000 })
       .rotate()

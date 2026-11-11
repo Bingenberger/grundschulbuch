@@ -62,6 +62,8 @@ import { speakGerman } from '@/lib/speech';
 import FileDialog from './FileDialog';
 import { blueprints, blueprintPages } from '@/lib/learning/templates';
 import ImageDialog from './ImageDialog';
+import { cascade, fillPlaceholder, imageElement, isPlaceholder, placeholderElement, type ChosenImage } from './editor/image-elements';
+import { uploadImage } from '@/lib/client-api';
 
 type Gesture = {
   type: 'move' | 'resize' | 'rotate' | 'draw' | 'erase' | 'frame';
@@ -96,12 +98,10 @@ const cloneElements = (elements: PageElement[], offset = 5) => {
 export default function Editor({
   initial,
   initialTemplates,
-  galleryOrigin,
   dictionaryOrigin,
 }: {
   initial: BookData;
   initialTemplates: Template[];
-  galleryOrigin: string;
   dictionaryOrigin: string;
 }) {
   const s = useEditor();
@@ -111,6 +111,8 @@ export default function Editor({
   const [templates, setTemplates] = useState(initialTemplates);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showImages, setShowImages] = useState(false);
+  /** Placeholder that gets the chosen picture (instead of a new element). */
+  const [fillId, setFillId] = useState<string | null>(null);
   const [showAudio, setShowAudio] = useState(false);
   const [showCollection, setShowCollection] = useState(false);
   const [showGenerator, setShowGenerator] = useState(false);
@@ -629,32 +631,42 @@ export default function Editor({
     insert(element);
     writing.begin(element.id, true);
   }
-  function insertImage(src: string) {
-    const image = new Image();
-    image.onload = () => {
-      const width = Math.min(90, size.width - 40);
-      const height = Math.min(
-        (width * image.height) / image.width,
-        size.height - 40,
-      );
-      insert({
-        id: uuid(),
-        type: 'image',
-        x: 20,
-        y: 25,
-        width: (height * image.width) / image.height,
-        height,
-        rotation: 0,
-        locked: false,
-        color: '#253c42',
-        src,
-        alt: '',
-      });
-      setShowImages(false);
-    };
-    image.onerror = () =>
-      useEditor.setState({ error: 'Das Bild konnte nicht geöffnet werden.' });
-    image.src = src;
+  function closeImages() {
+    setShowImages(false);
+    setFillId(null);
+  }
+  function insertImage(image: ChosenImage) {
+    if (fillId) {
+      const id = fillId;
+      s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === id ? fillPlaceholder(el, image) : el)) }));
+      closeImages();
+      return;
+    }
+    imageElement(image, size)
+      .then((element) => {
+        insert(cascade(element, page!.elements, size));
+        closeImages();
+      })
+      .catch((e) => useEditor.setState({ error: (e as Error).message }));
+  }
+  function openFill(el: PageElement) {
+    setFillId(el.id);
+    setShowImages(true);
+  }
+  /** Picture of the current page, placed on a new page right behind it (80 % wide). */
+  async function pageScreenshot() {
+    const { pageSnapshot } = await import('@/lib/portable');
+    const current = page!;
+    const { png } = await pageSnapshot(current);
+    const src = await uploadImage(await (await fetch(png)).blob());
+    const element = await imageElement({ src, alt: `Bildschirmfoto von Seite ${pageIndex + 1}` }, size, {
+      maxWidth: size.width * 0.8,
+      x: size.width * 0.1,
+      y: 15,
+    });
+    await run(() => add(newPage('blanko', current.orientation)));
+    insert(element);
+    closeImages();
   }
   function pointer(event: React.PointerEvent): Point {
     const samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
@@ -1069,6 +1081,7 @@ export default function Editor({
                         onPointerDown={(e) => start(e, el)}
                         onDoubleClick={() => {
                           if (el.type === 'text' && !el.locked) writing.begin(el.id);
+                          else if (isPlaceholder(el)) openFill(el);
                         }}
                         style={{
                           pointerEvents:
@@ -1102,6 +1115,7 @@ export default function Editor({
                             editing={writing.editingId === el.id}
                             onDoubleClick={() => {
                               if (el.type === 'text') writing.begin(el.id);
+                              else if (isPlaceholder(el)) openFill(el);
                             }}
                           />
                         ))}
@@ -1168,6 +1182,7 @@ export default function Editor({
               onGeometry: patchGeometry,
               onLayer: layer,
               onLock: () => performCommand('lock'),
+              onFill: openFill,
               onCollection: () => {
                 const name = prompt('Name für die Sammlung');
                 if (name?.trim())
@@ -1385,9 +1400,16 @@ export default function Editor({
       )}
       {showImages && (
         <ImageDialog
-          galleryOrigin={galleryOrigin}
+          features={features}
+          only={fillId ? ['camera', 'upload', 'arasaac', 'wikimedia', 'galerie'] : undefined}
+          title={fillId ? 'Bild für den Platzhalter' : 'Ein Bild einfügen'}
           onImage={insertImage}
-          onClose={() => setShowImages(false)}
+          onPlaceholder={(label, shape) => {
+            insert(cascade(placeholderElement(label, shape), page!.elements, size));
+            closeImages();
+          }}
+          onPageScreenshot={pageScreenshot}
+          onClose={closeImages}
         />
       )}
       {showTemplates && (

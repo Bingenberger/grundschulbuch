@@ -34,7 +34,6 @@ export default async function Heft({
         })),
         ...(await listTemplates(user.id)),
       ]}
-      galleryOrigin={process.env.GALLERY_ORIGIN || ''}
       dictionaryOrigin={process.env.WOERTERBUCH_ORIGIN || ''}
     />
   );

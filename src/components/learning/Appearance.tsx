@@ -109,7 +109,30 @@ export const imageFilters: Record<string, string> = {
   cold: 'hue-rotate(18deg) saturate(.8)',
   invert: 'invert(1)',
 };
+/** Empty photo frame; whoever taps it takes or chooses the picture. */
+function ImagePlaceholder({ element: el }: { element: PageElement }) {
+  const round = el.imageFrame === 'round';
+  return (
+    <div className={`image-placeholder ${round ? 'round' : ''}`}>
+      <svg viewBox="0 0 48 40" aria-hidden="true">
+        <path d="M6 12h8l4-6h12l4 6h8a3 3 0 0 1 3 3v19a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#e3f2fd" stroke="#1e88e5" strokeWidth="2" strokeLinejoin="round" />
+        <circle cx="24" cy="24" r="8" fill="#fff" stroke="#1e88e5" strokeWidth="2" />
+        <circle cx="24" cy="24" r="3.5" fill="#90caf9" />
+      </svg>
+      <span>{el.placeholder || 'Tippe hier für ein Foto'}</span>
+    </div>
+  );
+}
 export function ImageContent({ element: el }: { element: PageElement }) {
+  if (!el.src) return <ImagePlaceholder element={el} />;
+  return (
+    <>
+      <ImagePicture element={el} />
+      {el.credit && <span className="image-credit">{el.credit}</span>}
+    </>
+  );
+}
+function ImagePicture({ element: el }: { element: PageElement }) {
   const crop = el.crop || { x: 0, y: 0, width: 1, height: 1 },
     frame = el.imageFrame || 'none';
   return (

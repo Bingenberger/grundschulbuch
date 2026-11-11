@@ -145,7 +145,7 @@ Die Datenschutzfragen bleiben vorerst offen. Als Leitlinien für die Umsetzung g
 | Seiten | A4 hoch/quer, Seitenleiste mit Vorschau, einfügen, verdoppeln, umsortieren, löschen |
 | Lineaturen | Blanko, Grundschul-Lineaturen 1–4, kariert (5 mm / 1 cm), Rechenkästchen, Punkte, Notenlinien, Bild mit Schreibzeilen |
 | Elemente | Text, Bild, Zeichnung (Stift, Textmarker, Radierer); frei verschieben, skalieren, drehen, Ebenenreihenfolge, sperren |
-| Bilder | Upload, Smartphone-QR wie in der Tafel, Bildergalerie (`GALLERY_ORIGIN`) |
+| Bilder | Upload, Kamera, Smartphone-QR, Platzhalter, Bildschirmfoto, ARASAAC, Wikimedia Commons, Schulgalerie (`GALLERY_ORIGIN`, JSON-API v1) |
 | Vorlagen | Zum Start nur die Lineaturen als Seitenvorlagen; eigene Seite als Vorlage speichern |
 | Schriften | Schulschriften (siehe [Schriften](#schriften)) für Textelemente |
 | Bearbeiten | Rückgängig/Wiederholen, Kopieren/Einfügen, Mehrfachauswahl |

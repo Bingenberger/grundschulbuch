@@ -3,6 +3,8 @@ export type ChildFeature =
   | 'eraser'
   | 'text'
   | 'image'
+  | 'imageUpload'
+  | 'imageSearch'
   | 'pages'
   | 'readAloud'
   | 'brushFountain'

@@ -26,6 +26,8 @@ import ToolRail, { type RailItem } from './editor/ToolRail';
 import PagePanel from './editor/PagePanel';
 import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
+import ImageDialog from './ImageDialog';
+import { cascade, fillPlaceholder, imageElement, isPlaceholder, type ChosenImage } from './editor/image-elements';
 import InlineText from './editor/InlineText';
 import { useTextEditing } from './editor/use-text-editing';
 import { fitText } from './editor/text-measure';
@@ -55,6 +57,8 @@ export default function ChildEditor({
   const s = useEditor();
   const recognition = useShapeRecognition(s.recognizeShapes && !['water', 'fill'].includes(s.brush), s.activeId);
   const [showImages, setShowImages] = useState(false);
+  /** Placeholder that gets the photo (instead of a new picture). */
+  const [fillId, setFillId] = useState<string | null>(null);
   const [readAloud, setReadAloud] = useState(false);
   const [showAudio, setShowAudio] = useState(false);
   const [recordTarget, setRecordTarget] = useState<string | null>(null);
@@ -153,6 +157,11 @@ export default function ChildEditor({
     if (s.tool === 'select') {
       // Strokes do not catch pointer events themselves; find one near the tap.
       element ??= strokeAt(page!.elements, p, e.pointerType === 'touch' ? 4 : 2.5);
+      if (isPlaceholder(element) && !element!.src) {
+        s.select(element!.locked ? [] : [element!.id]);
+        openFill(element!);
+        return;
+      }
       const editOnTap =
         element?.type === 'text' && !element.locked && s.selected.length === 1 && s.selected[0] === element.id
           ? element.id
@@ -345,6 +354,30 @@ export default function ChildEditor({
         error: 'Bitte eine deutsche Offline-Stimme auf diesem Gerät installieren.',
       });
   }
+  function closeImages() {
+    setShowImages(false);
+    setFillId(null);
+  }
+  function openFill(el: PageElement) {
+    setFillId(el.id);
+    setShowImages(true);
+    speak('Foto machen');
+  }
+  function chooseImage(image: ChosenImage) {
+    if (fillId) {
+      const id = fillId;
+      // Locked placeholders keep their place; only the picture changes.
+      s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === id ? fillPlaceholder(el, image) : el)) }));
+      closeImages();
+      return;
+    }
+    imageElement(image, size)
+      .then((element) => {
+        insert(cascade(element, page!.elements, size));
+        closeImages();
+      })
+      .catch((e) => useEditor.setState({ error: (e as Error).message }));
+  }
   function chooseRail(item: RailItem) {
     switch (item) {
       case 'select':
@@ -492,6 +525,7 @@ export default function ChildEditor({
                   onPointerDown={(e) => down(e, el)}
                   onDoubleClick={() => {
                     if (el.type === 'text' && !el.locked) writing.begin(el.id);
+                    else if (isPlaceholder(el)) openFill(el);
                   }}
                   style={{
                     pointerEvents:
@@ -607,55 +641,16 @@ export default function ChildEditor({
         />
       )}
       {showImages && (
-        <div className="modal-backdrop">
-          <section
-            className="modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="child-images-title"
-          >
-            <h2 id="child-images-title">Deine Bilder</h2>
-            <div className="uploaded-images">
-              {images.map((src) => (
-                <button
-                  key={src}
-                  onClick={() => {
-                    const image = new Image();
-                    image.onload = () => {
-                      const height = Math.min(
-                        (90 * image.height) / image.width,
-                        120,
-                      );
-                      insert({
-                        id: uuid(),
-                        type: 'image',
-                        x: 20,
-                        y: 20,
-                        width: (height * image.width) / image.height,
-                        height,
-                        rotation: 0,
-                        locked: false,
-                        color: '#253c42',
-                        src,
-                        alt: '',
-                      });
-                      setShowImages(false);
-                    };
-                    image.src = src;
-                  }}
-                >
-                  <img src={src} alt="Bild einfügen" />
-                </button>
-              ))}
-            </div>
-            {!images.length && (
-              <p>Deine Lehrkraft hat noch keine Bilder freigegeben.</p>
-            )}
-            <button className="knopf" onClick={() => setShowImages(false)}>
-              Schließen
-            </button>
-          </section>
-        </div>
+        <ImageDialog
+          features={features}
+          child
+          released={images}
+          only={fillId ? ['camera', 'upload'] : undefined}
+          uploadQuery={fillId ? `?${new URLSearchParams({ book: s.book!.id, element: fillId })}` : ''}
+          title={fillId ? 'Mach ein Foto' : 'Ein Bild einfügen'}
+          onImage={chooseImage}
+          onClose={closeImages}
+        />
       )}
     </main>
   );

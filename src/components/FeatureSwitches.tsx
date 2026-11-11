@@ -8,6 +8,8 @@ const info: Record<ChildFeature, [IconName, string]> = {
   eraser: ['radierer', 'Radierer'],
   text: ['document', 'Text schreiben'],
   image: ['picture', 'Bilder einfügen'],
+  imageUpload: ['camera', 'Eigene Bilder & Fotos'],
+  imageSearch: ['search', 'Bilder suchen'],
   pages: ['seiten', 'Seitenübersicht'],
   readAloud: ['speaker', 'Vorlesen'],
   brushFountain: ['fueller', 'Füller'],
@@ -22,6 +24,7 @@ const info: Record<ChildFeature, [IconName, string]> = {
 
 const groups: [string, ChildFeature[]][] = [
   ['Werkzeuge', ['pen', 'eraser', 'text', 'image', 'pages', 'readAloud']],
+  ['Bilder', ['imageUpload', 'imageSearch']],
   ['Stift & Radierer', ['brushFountain', 'brushWater', 'fill', 'eyedropper', 'guides', 'shapeRecognition', 'eraserOptions']],
   ['Gestalten', ['elementStyle']],
 ];

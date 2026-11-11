@@ -74,6 +74,10 @@ export type PageElement = {
   bold?: boolean;
   src?: string;
   alt?: string;
+  /** Photo placeholder: label shown until someone puts a picture in. */
+  placeholder?: string;
+  /** Image credit (author, licence, source), shown on the page. */
+  credit?: string;
   points?: Point[];
   penWidth?: number;
   penStyle?: 'pen' | 'fountain' | 'crayon' | 'marker' | 'water';

@@ -50,6 +50,25 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   Beim Verschieben rastet der Text in die nächste Zeile ein. Gedrehte,
   gerahmte, gesperrte Texte und solche außerhalb des linierten Bereichs
   bleiben frei.
+- Bilder einfügen: ein Dialog mit Reitern für Hochladen (auch Ziehen und
+  Strg+V, Lehrkräfte zusätzlich per Smartphone-QR), Kamera, Platzhalter,
+  Bildschirmfoto (diese Seite → neue Seite dahinter, oder ein anderes Fenster),
+  ARASAAC, Wikimedia Commons und die Schulgalerie. Suchen, Vorschauen und
+  Übernahmen laufen über den Server (`/api/bilder`, `src/lib/image-sources.mjs`):
+  Geräte von Kindern sprechen keine fremden Server an, nur Adressen aus den
+  eigenen Suchergebnissen werden geladen (Zeit- und Größenlimit, keine
+  Umleitungen, nur Rasterbilder), und jedes gewählte Bild wird in den eigenen
+  Medienspeicher kopiert. ARASAAC- und Wikimedia-Bilder bekommen ihren
+  Bildnachweis (Urheber, Lizenz) als kleine Zeile am Bild; er lässt sich unter
+  „Gestalten“ ändern.
+- Kinder sehen „Eigene Bilder & Fotos“ (Hochladen, Kamera) und „Bilder suchen“
+  (ARASAAC, Schulgalerie) nur, wenn die Lehrkraft sie freischaltet; Wikimedia,
+  Platzhalter und Bildschirmfoto gibt es nur für Lehrkräfte. „Von der
+  Lehrkraft“ zeigt die freigegebenen Bilder.
+- Foto-Platzhalter: ein leerer Bildrahmen mit Hinweis (quer, quadratisch, hoch,
+  rund). Ein Tipp darauf öffnet bei Kindern Kamera und Hochladen – auch in
+  gesperrten Arbeitsblättern und ohne „Eigene Bilder“; der Server erlaubt dann
+  genau dieses Hochladen. Das Bild füllt den Rahmen, Lage und Größe bleiben.
 - Seiten löschen: Papierkorb an jeder Miniatur der Seitenübersicht (bei
   Maus beim Darüberfahren und an der aktuellen Seite, auf Tablets immer
   sichtbar) oder „Seite verwalten“ › „Seite löschen“. Ohne Rückfrage; ein
@@ -147,7 +166,10 @@ werden. Kamera und Mikrofon brauchen HTTPS und die entsprechende Gerätefreigabe
 
 ## Externe Sammlungen
 
-`GALLERY_ORIGIN` und `WOERTERBUCH_ORIGIN` stellen Links zu den Schulangeboten bereit.
+`GALLERY_ORIGIN` bindet die Bildergalerie der Schulplattform an (JSON-API v1,
+`/api/v1/images`); ist sie privat, liegt das Bearer-Token in der Datei aus
+`GALLERY_TOKEN_FILE` (gleiche Namen wie bei der Grundschultafel).
+`WOERTERBUCH_ORIGIN` stellt den Link zum Wörterbuch bereit.
 Bilder werden dort heruntergeladen und anschließend hochgeladen; Wörter werden
 in den Generator übernommen. Ein direkter Such-/Importadapter ist **noch nicht
 implementiert**, weil das Repository keinen API-Vertrag dieser beiden Dienste

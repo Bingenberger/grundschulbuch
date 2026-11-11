@@ -12,6 +12,12 @@ export const featureLabels = {
   text: 'Text',
   image: 'Bild',
   audio: 'Ton',
+  // Sources in the image dialog
+  imageUpload: 'Eigene Bilder & Fotos',
+  imageSearch: 'Bilder suchen (ARASAAC, Schulgalerie)',
+  imageWeb: 'Wikimedia Commons',
+  imagePlaceholder: 'Bild-Platzhalter',
+  imageScreenshot: 'Bildschirmfoto',
   learning: 'Lernwerkzeuge',
   insert: 'Einfügen',
   page: 'Seite',
