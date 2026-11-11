@@ -50,6 +50,11 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   Beim Verschieben rastet der Text in die nächste Zeile ein. Gedrehte,
   gerahmte, gesperrte Texte und solche außerhalb des linierten Bereichs
   bleiben frei.
+- Seiten löschen: Papierkorb an jeder Miniatur der Seitenübersicht (bei
+  Maus beim Darüberfahren und an der aktuellen Seite, auf Tablets immer
+  sichtbar) oder „Seite verwalten“ › „Seite löschen“. Ohne Rückfrage; ein
+  Hinweis bietet 15 Sekunden lang „Rückgängig“ an (die Seite wird mit ihrem
+  Inhalt an der alten Stelle neu angelegt).
 - Alle Einstellungen erscheinen als Knöpfe mit Icon und Text; es gibt keine
   Dropdown-Menüs mehr, auch nicht in den Dialogen der Lernwerkzeuge.
 - Icons: Flat Color Icons (icons8, MIT, npm `flat-color-icons`); fehlende

@@ -2815,3 +2815,72 @@ input[type='checkbox'] {
 .text-frame.frame-note {
   filter: drop-shadow(0.4mm 0.6mm 0.5mm rgba(0, 0, 0, 0.18));
 }
+
+/* Page overview: stable width (no jitter when the scrollbar appears) and a bin on each page */
+.page-thumbnails {
+  scrollbar-gutter: stable;
+}
+.page-thumbnail-item {
+  position: relative;
+}
+.page-thumbnail-delete {
+  position: absolute;
+  top: -6px;
+  right: -2px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #e3c4c4;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 5px #0002;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.page-thumbnail-item:hover .page-thumbnail-delete,
+.page-thumbnail-item.active .page-thumbnail-delete,
+.page-thumbnail-delete:focus-visible {
+  opacity: 1;
+}
+@media (hover: none) {
+  .page-thumbnail-delete {
+    opacity: 1;
+  }
+}
+.page-thumbnail-delete:hover:not(:disabled) {
+  background: #fdecea;
+  border-color: #e57373;
+}
+.undo-notice {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 8px 14px;
+  border-radius: 12px;
+  background: #263238;
+  color: #fff;
+  box-shadow: 0 6px 18px #0004;
+  font-size: 14px;
+}
+.undo-notice .knopf {
+  color: #263238;
+  background: #fff;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.undo-notice-close {
+  border: 0;
+  background: none;
+  padding: 4px;
+  display: grid;
+  filter: brightness(0) invert(1);
+}

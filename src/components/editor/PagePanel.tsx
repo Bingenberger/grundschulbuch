@@ -14,6 +14,7 @@ export default function PagePanel({
   busy,
   onChoose,
   onAdd,
+  onDelete,
   extra,
   overview = true,
 }: {
@@ -23,6 +24,8 @@ export default function PagePanel({
   busy?: boolean;
   onChoose: (id: string) => void;
   onAdd?: () => void;
+  /** Bin on each thumbnail; left out when the page may not be deleted. */
+  onDelete?: (id: string) => void;
   extra?: React.ReactNode;
   /** false: only arrows to turn pages, no thumbnails (e.g. for some children). */
   overview?: boolean;
@@ -78,18 +81,31 @@ export default function PagePanel({
               const p = pages.find((page) => page.id === id);
               if (!p) return null;
               return (
-                <button
-                  key={id}
-                  type="button"
-                  className={`page-thumbnail ${activeId === id ? 'active' : ''}`}
-                  aria-label={`Seite ${i + 1} öffnen`}
-                  aria-current={activeId === id ? 'page' : undefined}
-                  disabled={busy}
-                  onClick={() => onChoose(id)}
-                >
-                  <ScaledPage page={p} decorative />
-                  <span>{i + 1}</span>
-                </button>
+                <div key={id} className={`page-thumbnail-item ${activeId === id ? 'active' : ''}`}>
+                  <button
+                    type="button"
+                    className={`page-thumbnail ${activeId === id ? 'active' : ''}`}
+                    aria-label={`Seite ${i + 1} öffnen`}
+                    aria-current={activeId === id ? 'page' : undefined}
+                    disabled={busy}
+                    onClick={() => onChoose(id)}
+                  >
+                    <ScaledPage page={p} decorative />
+                    <span>{i + 1}</span>
+                  </button>
+                  {onDelete && (
+                    <button
+                      type="button"
+                      className="page-thumbnail-delete"
+                      aria-label={`Seite ${i + 1} löschen`}
+                      title={`Seite ${i + 1} löschen`}
+                      disabled={busy}
+                      onClick={() => onDelete(id)}
+                    >
+                      <Icon name="empty_trash" size={18} />
+                    </button>
+                  )}
+                </div>
               );
             })}
           </div>

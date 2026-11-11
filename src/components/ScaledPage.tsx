@@ -22,8 +22,11 @@ export default function ScaledPage({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const update = () =>
-      setScale(Math.min(maxScale, el.clientWidth / (size.width * px)) * zoom);
+    // Ignore tiny changes, so a scrollbar coming and going cannot make it jitter.
+    const update = () => {
+      const next = Math.min(maxScale, el.clientWidth / (size.width * px)) * zoom;
+      setScale((old) => (Math.abs(old - next) < 0.004 * next ? old : next));
+    };
     update();
     if (typeof ResizeObserver === 'undefined') {
       window.addEventListener('resize', update);

@@ -131,6 +131,7 @@ export default function Editor({
   const [templateQuery, setTemplateQuery] = useState('');
   const [board, setBoard] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [deleted, setDeleted] = useState<{ page: Page; index: number } | null>(null);
   const [multi, setMulti] = useState(false);
   const [draft, setDraft] = useState<PageElement | null>(null);
   const [preview, setPreview] = useState<PageElement[] | null>(null);
@@ -557,19 +558,56 @@ export default function Editor({
     else if (action === 'collection') setShowCollection(true);
     else setShowEmbed(true);
   }
-  function deletePage() {
-    if (!page || !window.confirm(`Seite ${pageIndex + 1} endgültig entfernen?`)) return;
+  /** Deletes a page right away; “Rückgängig” brings it back for a while. */
+  function deletePage(id = page?.id) {
+    const index = s.book?.pageIds.indexOf(id || '') ?? -1;
+    const removed = s.pages.find((p) => p.id === id);
+    if (!removed || index < 0 || s.book!.pageIds.length < 2) return;
     void run(async () => {
+      const state = useEditor.getState();
       const book = await api<Notebook>('update', {
-        id: s.book!.id,
-        revision: s.book!.revision,
-        pageIds: s.book!.pageIds.filter((id) => id !== page.id),
+        id: state.book!.id,
+        revision: state.book!.revision,
+        pageIds: state.book!.pageIds.filter((p) => p !== removed.id),
       });
+      const latest = useEditor.getState().pages.find((p) => p.id === removed.id) || removed;
       useEditor.setState({
         book,
-        pages: s.pages.filter((p) => p.id !== page.id),
+        pages: useEditor.getState().pages.filter((p) => p.id !== removed.id),
       });
-      choosePage(book.pageIds[Math.max(0, pageIndex - 1)]);
+      if (useEditor.getState().activeId === removed.id)
+        choosePage(book.pageIds[Math.max(0, index - 1)]);
+      setDeleted({ page: clone(latest), index });
+    });
+  }
+  useEffect(() => {
+    if (!deleted) return;
+    const timer = setTimeout(() => setDeleted(null), 15000);
+    return () => clearTimeout(timer);
+  }, [deleted]);
+  function restorePage() {
+    const undo = deleted;
+    if (!undo) return;
+    setDeleted(null);
+    void run(async () => {
+      const state = useEditor.getState();
+      const ids = state.book!.pageIds;
+      const result = await api<{ book: Notebook; page: Page }>('addPage', {
+        id: state.book!.id,
+        page: undo.page,
+        afterId: ids[Math.max(0, Math.min(undo.index, ids.length) - 1)],
+      });
+      let book = result.book;
+      if (undo.index === 0) {
+        book = await api<Notebook>('update', {
+          id: book.id,
+          revision: book.revision,
+          pageIds: [result.page.id, ...book.pageIds.filter((p) => p !== result.page.id)],
+        });
+      }
+      const pages = [...useEditor.getState().pages, result.page];
+      useEditor.setState({ book, pages: book.pageIds.map((p) => pages.find((x) => x.id === p)!) });
+      choosePage(result.page.id);
     });
   }
   function insertText() {
@@ -978,6 +1016,7 @@ export default function Editor({
           busy={busy}
           onChoose={choosePage}
           onAdd={() => run(() => add())}
+          onDelete={s.book.pageIds.length > 1 ? (id) => deletePage(id) : undefined}
         />
         <div className="editor-main">
         <section className="canvas-area">
@@ -1081,6 +1120,18 @@ export default function Editor({
             </div>
           </div>
           </LinkContext.Provider>
+          {deleted && (
+            <div className="undo-notice" role="status">
+              <Icon name="empty_trash" size={22} />
+              <span>Seite {deleted.index + 1} gelöscht</span>
+              <button type="button" className="knopf compact" disabled={busy} onClick={restorePage}>
+                <Icon name="undo" size={20} /> Rückgängig
+              </button>
+              <button type="button" className="undo-notice-close" aria-label="Hinweis schließen" onClick={() => setDeleted(null)}>
+                <Icon name="cancel" size={18} />
+              </button>
+            </div>
+          )}
           <div className="zoom-float" role="group" aria-label="Ansicht">
             <button type="button" aria-label="Ansicht verkleinern" onClick={() => performCommand('zoomOut')}>
               <Icon name="minus" size={22} />
@@ -1141,7 +1192,7 @@ export default function Editor({
             busy={busy}
             onDuplicate={() => run(() => add({ ...page, elements: cloneElements(page.elements, 0) }))}
             onMove={(delta) => run(() => reorder(delta))}
-            onDelete={deletePage}
+            onDelete={() => deletePage()}
             onTemplates={() => setShowTemplates(true)}
             onSaveTemplate={(name) =>
               run(async () => {
