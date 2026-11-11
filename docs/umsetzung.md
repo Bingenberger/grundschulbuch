@@ -67,8 +67,16 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   Lehrkraft“ zeigt die freigegebenen Bilder.
 - Ton hinzufügen: ein Dialog mit Reitern wie bei Bildern; „Aufnehmen“ ist
   vorausgewählt (großer Aufnahmeknopf, Zeit, Pegel, höchstens fünf Minuten,
-  vor dem Übernehmen anhören und benennen). „Hochladen“ (auch Ziehen) zeigt
-  ebenfalls erst eine Vorschau. „Platzhalter“ setzt einen leeren Ton-Knopf mit
+  danach bearbeiten und benennen). „Hochladen“ (auch Ziehen) führt ebenfalls
+  in die Bearbeitung: Zuschneiden an der Wellenform (Griffe, auch per
+  Pfeiltasten), „Stille entfernen“, Anhören des Ergebnisses und „Klang
+  verbessern“ mit Lautstärke angleichen, Stimme klarer, Rauschen in Pausen
+  leiser und Lange Pausen kürzen (`src/lib/audio-edit.mjs`, gespeichert als
+  WAV; ohne Änderung bleibt die Originaldatei). „Ton bearbeiten“ (untere
+  Leiste oder Doppelklick) öffnet dieselbe Bearbeitung für Töne auf der Seite.
+  Auf der Seite ist ein Ton ein großer runder Knopf: Antippen spielt ab, noch
+  einmal hält an, ein Ring zeigt den Fortschritt. Ausgewählt wird er an den
+  Ecken seines Rahmens. „Platzhalter“ setzt einen leeren Ton-Knopf mit
   Aufgabe, „Kassettenrekorder“ das Lernwerkzeug Aufnahmegerät, jetzt als
   Kassette mit drehenden Spulen, Aufnehmen, Zurück/Vor (5 s), Abspielen,
   Stopp und Speichern als Datei.

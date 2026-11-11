@@ -18,7 +18,7 @@ import {
 } from '@/lib/notebook-model';
 import { ElementView } from './PageView';
 import { LearningRuntime } from './learning/Runtime';
-import AudioDialog from './AudioDialog';
+import AudioDialog, { AudioEditDialog } from './AudioDialog';
 import { audioElement, audioPlaceholder, cassetteRecorder, isAudioPlaceholder, withRecording } from './editor/audio-elements';
 import ScaledPage from './ScaledPage';
 import { useShapeRecognition } from '@/lib/use-shape-recognition';
@@ -63,6 +63,8 @@ export default function ChildEditor({
   const [fillId, setFillId] = useState<string | null>(null);
   /** Picture open in the editor. */
   const [editImage, setEditImage] = useState<PageElement | null>(null);
+  /** Sound open for trimming and improving. */
+  const [editAudio, setEditAudio] = useState<PageElement | null>(null);
   const [readAloud, setReadAloud] = useState(false);
   const [showAudio, setShowAudio] = useState(false);
   const [recordTarget, setRecordTarget] = useState<string | null>(null);
@@ -598,6 +600,7 @@ export default function ChildEditor({
                 onResize: resizeSelected,
                 onRotate: rotateSelected,
                 onEditImage: setEditImage,
+                onEditAudio: setEditAudio,
               }}
             />
           ) : (
@@ -605,6 +608,20 @@ export default function ChildEditor({
           )}
         </div>
       </div>
+      {editAudio?.src && (
+        <AudioEditDialog
+          src={editAudio.src}
+          title={editAudio.alt || 'Ton'}
+          bookId={s.book.id}
+          elementId={editAudio.id}
+          onClose={() => setEditAudio(null)}
+          onSaved={(src, title) => {
+            const id = editAudio.id;
+            s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === id ? { ...el, src, alt: title } : el)) }));
+            setEditAudio(null);
+          }}
+        />
+      )}
       {showAudio && (
         <AudioDialog
           bookId={s.book.id}

@@ -14,12 +14,16 @@ async function login(page: Page) {
   await page.goto('/anmelden'); await page.getByLabel('Name', { exact: true }).fill('Frau Beispiel'); await page.getByLabel('PIN', { exact: true }).fill('483920');
   await page.getByRole('button', { name: 'Anmelden', exact: true }).click(); await expect(page).toHaveURL('/');
 }
-function wav(seconds = 1) {
-  const rate = 8000, n = rate * seconds, b = Buffer.alloc(44 + n * 2);
+/** Tone with optional silence before and after (seconds). */
+function wav(seconds = 1, before = 0, after = 0) {
+  const rate = 8000, n = rate * (before + seconds + after), b = Buffer.alloc(44 + n * 2);
   b.write('RIFF'); b.writeUInt32LE(b.length - 8, 4); b.write('WAVE', 8); b.write('fmt ', 12); b.writeUInt32LE(16, 16);
   b.writeUInt16LE(1, 20); b.writeUInt16LE(1, 22); b.writeUInt32LE(rate, 24); b.writeUInt32LE(rate * 2, 28); b.writeUInt16LE(2, 32);
   b.writeUInt16LE(16, 34); b.write('data', 36); b.writeUInt32LE(n * 2, 40);
-  for (let i = 0; i < n; i++) b.writeInt16LE(Math.round(Math.sin((i / rate) * 440 * 2 * Math.PI) * 4000), 44 + i * 2);
+  for (let i = 0; i < n; i++) {
+    const t = i / rate, on = t >= before && t < before + seconds;
+    b.writeInt16LE(on ? Math.round(Math.sin(t * 440 * 2 * Math.PI) * 4000) : 0, 44 + i * 2);
+  }
   return { name: 'ton.wav', mimeType: 'audio/wav', buffer: b };
 }
 
@@ -41,18 +45,47 @@ test('Ton: Aufnehmen ist vorausgewählt, Hochladen, Platzhalter und Kassettenrek
   await dialog.getByRole('button', { name: 'Aufnahme starten' }).click();
   await expect(dialog.getByRole('timer')).toContainText('0:01', { timeout: 5000 });
   await dialog.getByRole('button', { name: 'Aufnahme beenden' }).click();
-  await expect(dialog.getByLabel('Vorschau anhören')).toBeVisible();
+  await expect(dialog.getByRole('slider', { name: 'Anfang' })).toBeVisible();
   await dialog.getByLabel('Name').fill('Begrüßung');
   await dialog.getByRole('button', { name: 'Übernehmen' }).click();
   await expect(dialog).toHaveCount(0);
-  await expect(surface.locator('.audio-content')).toContainText('Begrüßung');
+  // One big round button that plays on tap.
+  const greeting = surface.getByRole('button', { name: 'Begrüßung abspielen' });
+  await expect(greeting).toBeVisible();
 
+  // Upload with silence around it: “Stille entfernen” shortens the saved sound.
   dialog = await open();
   await dialog.getByRole('button', { name: 'Hochladen', exact: true }).click();
-  await dialog.getByLabel('Tondatei auswählen').setInputFiles(wav());
+  await dialog.getByLabel('Tondatei auswählen').setInputFiles(wav(1, 1.5, 1));
   await expect(dialog.getByLabel('Name')).toHaveValue('ton');
+  await dialog.getByRole('button', { name: 'Stille entfernen' }).click();
+  await expect(dialog.getByRole('status')).toContainText('Stille entfernt');
+  await dialog.getByRole('button', { name: 'Lautstärke angleichen' }).click();
   await dialog.getByRole('button', { name: 'Übernehmen' }).click();
-  await expect(surface.locator('.audio-content')).toHaveCount(2);
+  await expect(surface.locator('.audio-button')).toHaveCount(2);
+  const tone = surface.getByRole('button', { name: 'ton abspielen' });
+  const toneBox = surface.locator('.page-element').filter({ has: page.getByRole('button', { name: /^ton (abspielen|anhalten)$/ }) });
+  const src = await toneBox.locator('audio').getAttribute('src');
+  const saved = await (await page.request.get(src!)).body();
+  const seconds = saved.readUInt32LE(40) / saved.readUInt32LE(28);
+  expect(seconds).toBeGreaterThan(1.1);
+  expect(seconds).toBeLessThan(1.45);
+
+  // Tapping plays; when the sound is over the button is ready again.
+  await tone.click();
+  await expect(surface.getByRole('button', { name: 'ton anhalten' })).toBeVisible();
+  await expect(tone).toBeVisible({ timeout: 5000 });
+
+  // Editing a sound on the page saves a new file.
+  // A corner of the box (outside the round button) selects the element.
+  const corner = (await toneBox.boundingBox())!;
+  await page.mouse.click(corner.x + 3, corner.y + 3);
+  await page.getByRole('region', { name: 'Element einstellen' }).getByRole('button', { name: 'Ton bearbeiten' }).click();
+  const edit = page.getByRole('dialog', { name: 'Ton bearbeiten' });
+  await edit.getByRole('button', { name: 'Stimme klarer' }).click();
+  await edit.getByRole('button', { name: 'Übernehmen' }).click();
+  await expect(edit).toHaveCount(0);
+  await expect.poll(() => toneBox.locator('audio').getAttribute('src')).not.toBe(src);
 
   dialog = await open();
   await dialog.getByRole('button', { name: 'Platzhalter', exact: true }).click();
@@ -107,7 +140,7 @@ test('Kinder sprechen in gesperrte Ton-Platzhalter und Rekorder, auch ohne Ton-E
   await expect(record.getByRole('timer')).toContainText('0:01', { timeout: 5000 });
   await record.getByRole('button', { name: 'Aufnahme beenden' }).click();
   await record.getByRole('button', { name: 'Übernehmen' }).click();
-  await expect(child.locator('.interaction-surface .audio-content')).toHaveCount(1);
+  await expect(child.locator('.interaction-surface .audio-button')).toHaveCount(1);
   // So does the recorder.
   await child.locator('.interaction-surface .cassette-recorder').getByRole('button', { name: /Aufnehmen/ }).click();
   await record.getByRole('button', { name: 'Hochladen', exact: true }).click();

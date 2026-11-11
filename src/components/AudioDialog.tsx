@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import Icon, { type IconName } from './Icon';
 import { ChoiceButton } from './ui/Choice';
 import { CassetteArt, MicGlyph } from './learning/Cassette';
+import AudioEditor from './AudioEditor';
 
 export type AudioTab = 'record' | 'upload' | 'placeholder' | 'recorder';
 
@@ -20,31 +21,6 @@ const clock = (seconds: number) =>
 
 /** Sound before it is saved: recorded or picked, can be listened to first. */
 type Take = { blob: Blob; url: string; title: string };
-
-function Preview({ take, busy, onTitle, onAgain, onSave, again }: {
-  take: Take;
-  busy: boolean;
-  onTitle: (title: string) => void;
-  onAgain: () => void;
-  onSave: () => void;
-  again: string;
-}) {
-  return (
-    <div className="audio-take">
-      <audio controls src={take.url} aria-label="Vorschau anhören" />
-      <label className="property-label">
-        Name
-        <input className="option-input" value={take.title} maxLength={120} onChange={(e) => onTitle(e.target.value)} />
-      </label>
-      <div className="audio-actions">
-        <ChoiceButton icon="undo" label={again} disabled={busy} onClick={onAgain} />
-        <button type="button" className="knopf knopf-haupt" disabled={busy} onClick={onSave}>
-          <Icon name="ok" size={20} /> {busy ? 'Wird gespeichert …' : 'Übernehmen'}
-        </button>
-      </div>
-    </div>
-  );
-}
 
 function RecordTab({ busy, onTake }: { busy: boolean; onTake: (take: Take) => void }) {
   const [state, setState] = useState<'idle' | 'starting' | 'recording'>('idle');
@@ -227,20 +203,19 @@ export default function AudioDialog({
     return () => window.removeEventListener('keydown', escape);
   }, [onClose, busy]);
 
-  async function save() {
-    if (!take) return;
+  async function save(file: Blob, name: string) {
     setBusy(true);
     setError('');
     try {
       const query = new URLSearchParams({ book: bookId, ...(elementId ? { element: elementId } : {}) });
       const response = await fetch(`/api/ton?${query}`, {
         method: 'POST',
-        headers: { 'Content-Type': take.blob.type || 'application/octet-stream' },
-        body: take.blob,
+        headers: { 'Content-Type': file.type || 'application/octet-stream' },
+        body: file,
       });
       const result = await response.json().catch(() => ({ error: 'Der Ton konnte nicht gespeichert werden.' }));
       if (!response.ok) throw new Error(result.error);
-      onAudio(result.src, take.title.trim() || 'Ton');
+      onAudio(result.src, name);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -278,13 +253,20 @@ export default function AudioDialog({
             <div className="image-tab-body">
               {(tab === 'record' || tab === 'upload') &&
                 (take ? (
-                  <Preview
-                    take={take}
+                  <AudioEditor
+                    key={take.url}
+                    source={take.blob}
+                    title={take.title}
                     busy={busy}
-                    again={tab === 'record' ? 'Neu aufnehmen' : 'Andere Datei'}
-                    onTitle={(t) => setTake({ ...take, title: t })}
-                    onAgain={() => setTake(null)}
-                    onSave={() => void save()}
+                    extra={
+                      <ChoiceButton
+                        icon="undo"
+                        label={tab === 'record' ? 'Neu aufnehmen' : 'Andere Datei'}
+                        disabled={busy}
+                        onClick={() => setTake(null)}
+                      />
+                    }
+                    onSave={(file, name) => void save(file, name)}
                   />
                 ) : tab === 'record' ? (
                   <RecordTab busy={busy} onTake={setTake} />
@@ -330,6 +312,76 @@ export default function AudioDialog({
             </div>
           </div>
         </div>
+      </section>
+    </div>
+  );
+}
+
+/** Editing a sound that is already on the page (trim, improve); saved as a new file. */
+export function AudioEditDialog({
+  src,
+  title,
+  bookId,
+  elementId,
+  onSaved,
+  onClose,
+}: {
+  src: string;
+  title: string;
+  bookId: string;
+  elementId: string;
+  onSaved: (src: string, title: string) => void;
+  onClose: () => void;
+}) {
+  const [source, setSource] = useState<Blob | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  useEffect(() => {
+    let stopped = false;
+    fetch(src)
+      .then((r) => (r.ok ? r.blob() : Promise.reject(new Error())))
+      .then(
+        (blob) => !stopped && setSource(blob),
+        () => !stopped && setError('Der Ton konnte nicht geladen werden.'),
+      );
+    return () => {
+      stopped = true;
+    };
+  }, [src]);
+  async function save(file: Blob, name: string) {
+    if (file === source) return onSaved(src, name);
+    setBusy(true);
+    setError('');
+    try {
+      const response = await fetch(`/api/ton?${new URLSearchParams({ book: bookId, element: elementId })}`, {
+        method: 'POST',
+        headers: { 'Content-Type': file.type || 'application/octet-stream' },
+        body: file,
+      });
+      const result = await response.json().catch(() => ({ error: 'Der Ton konnte nicht gespeichert werden.' }));
+      if (!response.ok) throw new Error(result.error);
+      onSaved(result.src, name);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div className="modal-backdrop">
+      <section className="modal audio-edit-dialog" role="dialog" aria-modal="true" aria-labelledby="audio-edit-title">
+        <div className="dialog-heading">
+          <h2 id="audio-edit-title">Ton bearbeiten</h2>
+          <button type="button" className="knopf" disabled={busy} onClick={onClose}>
+            Abbrechen
+          </button>
+        </div>
+        {source ? (
+          <AudioEditor source={source} title={title} busy={busy} onSave={(file, name) => void save(file, name)} />
+        ) : (
+          !error && <p className="image-tab-intro">Ton wird geladen …</p>
+        )}
+        {error && <p className="fehler" role="alert">{error}</p>}
       </section>
     </div>
   );

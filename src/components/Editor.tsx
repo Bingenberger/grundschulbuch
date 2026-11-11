@@ -23,7 +23,7 @@ import { useShapeRecognition } from '@/lib/use-shape-recognition';
 import { previousArrowShaft } from '@/lib/shape-recognition';
 import { inkPaintOrder } from '@/lib/brushes';
 import { appendSamples, eraseElements, newStroke, pointerSamples, type EraserProgress, type EraserOptions } from '@/lib/drawing';
-import AudioDialog from './AudioDialog';
+import AudioDialog, { AudioEditDialog } from './AudioDialog';
 import { audioElement, audioPlaceholder, cassetteRecorder, isAudioPlaceholder, withRecording } from './editor/audio-elements';
 import CollectionDialog from './CollectionDialog';
 import GeneratorDialog from './GeneratorDialog';
@@ -117,6 +117,8 @@ export default function Editor({
   const [fillId, setFillId] = useState<string | null>(null);
   /** Picture open in the editor. */
   const [editImage, setEditImage] = useState<PageElement | null>(null);
+  /** Sound open for trimming and improving. */
+  const [editAudio, setEditAudio] = useState<PageElement | null>(null);
   const [showAudio, setShowAudio] = useState(false);
   const [showCollection, setShowCollection] = useState(false);
   const [showGenerator, setShowGenerator] = useState(false);
@@ -1095,6 +1097,7 @@ export default function Editor({
                           else if (isPlaceholder(el) && !el.src) openFill(el);
                           else if (isAudioPlaceholder(el) && !el.src) recordInto(el.id);
                           else if (el.type === 'image' && el.src && !el.locked) setEditImage(el);
+                          else if (el.type === 'audio' && el.src && !el.locked) setEditAudio(el);
                         }}
                         style={{
                           pointerEvents:
@@ -1131,6 +1134,7 @@ export default function Editor({
                               else if (isPlaceholder(el) && !el.src) openFill(el);
                           else if (isAudioPlaceholder(el) && !el.src) recordInto(el.id);
                           else if (el.type === 'image' && el.src && !el.locked) setEditImage(el);
+                          else if (el.type === 'audio' && el.src && !el.locked) setEditAudio(el);
                             }}
                           />
                         ))}
@@ -1199,6 +1203,7 @@ export default function Editor({
               onLock: () => performCommand('lock'),
               onFill: openFill,
               onEditImage: setEditImage,
+              onEditAudio: setEditAudio,
               onCollection: () => {
                 const name = prompt('Name für die Sammlung');
                 if (name?.trim())
@@ -1293,6 +1298,20 @@ export default function Editor({
             <Icon name="cancel" size={22} /> Tafelmodus beenden
           </button>
         </div>
+      )}
+      {editAudio?.src && (
+        <AudioEditDialog
+          src={editAudio.src}
+          title={editAudio.alt || 'Ton'}
+          bookId={s.book.id}
+          elementId={editAudio.id}
+          onClose={() => setEditAudio(null)}
+          onSaved={(src, title) => {
+            const id = editAudio.id;
+            s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === id ? { ...el, src, alt: title } : el)) }));
+            setEditAudio(null);
+          }}
+        />
       )}
       {showAudio && (
         <AudioDialog

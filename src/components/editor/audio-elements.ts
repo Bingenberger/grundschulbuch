@@ -3,7 +3,7 @@ import { uuid, type PageElement } from '@/lib/notebook-model';
 import { defaultSettings } from '@/lib/learning/catalog';
 
 export function audioElement(src: string, title: string): PageElement {
-  return { id: uuid(), type: 'audio', x: 20, y: 25, width: 100, height: 28, rotation: 0, locked: false, color: '#253c42', src, alt: title };
+  return { id: uuid(), type: 'audio', x: 20, y: 25, width: 28, height: 28, rotation: 0, locked: false, color: '#253c42', src, alt: title };
 }
 
 /** Empty sound button with a task; tapping it lets children record. */

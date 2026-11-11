@@ -1,0 +1,15 @@
+export const RATE: number;
+export const MAX_SECONDS: number;
+export type Fix = 'level' | 'clear' | 'quiet' | 'pauses';
+export const FIXES: readonly Fix[];
+export type AudioEdit = { start?: number; end?: number } & Partial<Record<Fix, boolean>>;
+export function loudness(samples: Float32Array, rate: number): Float32Array;
+export function audibleRange(samples: Float32Array, rate: number): { start: number; end: number } | null;
+export function slice(samples: Float32Array, rate: number, start: number, end: number): Float32Array;
+export function level(samples: Float32Array, rate: number): Float32Array;
+export function clearVoice(samples: Float32Array, rate: number): Float32Array;
+export function quietPauses(samples: Float32Array, rate: number): Float32Array;
+export function shortenPauses(samples: Float32Array, rate: number): Float32Array;
+export function processAudio(samples: Float32Array, rate: number, edit?: AudioEdit): Float32Array;
+export function encodeWav(samples: Float32Array, rate: number): Uint8Array;
+export function peaks(samples: Float32Array, columns: number): Float32Array;

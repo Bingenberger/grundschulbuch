@@ -23,6 +23,8 @@ export type ElementActions = {
   onConfigure?: (element: PageElement) => void;
   /** Opens the picture editor (crop, turn, pixelate, effects). */
   onEditImage?: (element: PageElement) => void;
+  /** Opens trimming and “Klang verbessern” for a sound. */
+  onEditAudio?: (element: PageElement) => void;
   /** Opens the image dialog for a photo placeholder. */
   onFill?: (element: PageElement) => void;
 };
@@ -214,8 +216,13 @@ export default function ElementBar({
               />
             </OptionGroup>
           )}
+          {first.type === 'audio' && first.src && actions.onEditAudio && (
+            <OptionGroup label="Ton">
+              <ChoiceButton icon="audio_file" label="Ton bearbeiten" onClick={() => actions.onEditAudio!(first)} />
+            </OptionGroup>
+          )}
           {(first.type === 'image' || first.type === 'audio') && (
-            <OptionGroup label="Beschreibung" plain>
+            <OptionGroup label={first.type === 'audio' ? 'Name' : 'Beschreibung'} plain>
               <input
                 className="option-input"
                 aria-label="Bildbeschreibung"

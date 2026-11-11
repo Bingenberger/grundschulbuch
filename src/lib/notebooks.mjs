@@ -852,7 +852,10 @@ export async function storeAudio(owner, buffer) {
   else if (buffer.toString('ascii', 0, 4) === 'OggS') extension = 'ogg';
   else if (
     buffer.toString('ascii', 0, 4) === 'RIFF' &&
-    buffer.toString('ascii', 8, 12) === 'WAVE'
+    buffer.toString('ascii', 8, 12) === 'WAVE' &&
+    buffer.length > 44 &&
+    buffer.includes('fmt ', 12, 'ascii') &&
+    buffer.includes('data', 12, 'ascii')
   )
     extension = 'wav';
   else if (buffer.subarray(0, 4).equals(Buffer.from([26, 69, 223, 163])))

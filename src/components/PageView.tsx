@@ -5,6 +5,7 @@ import InkBrush from './InkBrush';
 import { LinkLayer } from './LinkContext';
 import TextFrame, { framePadding } from './TextFrame';
 import { MicGlyph } from './learning/Cassette';
+import AudioButton from './learning/AudioButton';
 import { eraserShapePath } from '@/lib/eraser-shapes';
 import Activity from './learning/Activity';
 import Widget from './learning/Widget';
@@ -258,19 +259,7 @@ export function ElementContent({ element: el }: { element: PageElement }) {
         <span>{el.placeholder || 'Tippe hier und nimm dich auf.'}</span>
       </div>
     );
-  if (el.type === 'audio')
-    return (
-      <div className="audio-content">
-        <span>♫ {el.alt || 'Tonaufnahme'}</span>
-        <audio
-          onPointerDown={(e) => e.stopPropagation()}
-          controls
-          preload="metadata"
-          src={el.src}
-          style={{ width: '100%' }}
-        />
-      </div>
-    );
+  if (el.type === 'audio') return <AudioButton element={el} />;
   if (el.type === 'stroke') return <Stroke element={el} />;
   return (
     <>

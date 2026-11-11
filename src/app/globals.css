@@ -3440,3 +3440,150 @@ input[type='checkbox'] {
     display: none;
   }
 }
+
+/* Sound on the page: one big round play button */
+.audio-button-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.audio-button {
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  filter: drop-shadow(0 0.6mm 0.8mm rgba(0, 0, 0, 0.25));
+}
+.audio-button svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.audio-button-face {
+  fill: #e53935;
+}
+.audio-button.playing .audio-button-face {
+  fill: #c62828;
+}
+.audio-button-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.28);
+  stroke-width: 5;
+}
+.audio-button-ring {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.25s linear;
+}
+.audio-button-symbol {
+  fill: #fff;
+  stroke: #fff;
+  stroke-width: 3;
+}
+.audio-button:focus-visible {
+  outline: 0.8mm solid #1e88e5;
+  outline-offset: 0.6mm;
+}
+.audio-button:active {
+  transform: scale(0.96);
+}
+
+/* Sound editor: waveform with handles */
+.audio-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.audio-wave {
+  position: relative;
+  height: 120px;
+  border-radius: 10px;
+  background: #f4f7fa;
+  box-shadow: inset 0 0 0 1px #d6e0e8;
+  touch-action: none;
+  cursor: ew-resize;
+  user-select: none;
+}
+.audio-wave canvas {
+  position: absolute;
+  inset: 8px 0;
+  width: 100%;
+  height: calc(100% - 16px);
+}
+.audio-shade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(55, 71, 79, 0.18);
+  pointer-events: none;
+}
+.audio-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: #e53935;
+  pointer-events: none;
+}
+.audio-handle {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 22px;
+  margin-left: -11px;
+  cursor: ew-resize;
+  touch-action: none;
+}
+.audio-handle::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 2px;
+  background: #1565c0;
+}
+.audio-handle::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: calc(50% - 14px);
+  width: 18px;
+  height: 28px;
+  border-radius: 6px;
+  background: #1e88e5;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px #0005;
+  box-sizing: border-box;
+}
+.audio-handle:focus-visible {
+  outline: 2px solid #fdd835;
+}
+.audio-times {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: #4f5d55;
+}
+.audio-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+.modal.audio-edit-dialog {
+  width: min(820px, 100%);
+}
