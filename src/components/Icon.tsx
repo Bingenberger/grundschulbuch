@@ -4,7 +4,7 @@
 // which are drawn in the same style under /icons.
 const own = [
   'textmarker', 'radierer', 'geodreieck', 'pipette', 'filzstift', 'fueller',
-  'buntstift', 'pinsel', 'farbeimer', 'seiten',
+  'buntstift', 'pinsel', 'farbeimer', 'seiten', 'schere',
 ] as const;
 export const flatIcons = [
   'about', 'add_image', 'alarm_clock', 'approval', 'audio_file', 'binoculars',
@@ -15,7 +15,7 @@ export const flatIcons = [
   'file', 'filing_cabinet', 'film_reel', 'flash_on', 'flow_chart', 'folder',
   'frame', 'gallery', 'globe', 'graduation_cap', 'grid', 'headset', 'high_priority',
   'home', 'idea', 'import', 'kindle', 'landscape', 'leave', 'left', 'library',
-  'like', 'list', 'lock', 'mind_map', 'minus', 'music', 'next', 'night_landscape',
+  'like', 'link', 'list', 'lock', 'mind_map', 'minus', 'music', 'next', 'night_landscape',
   'ok', 'old_time_camera', 'opened_folder', 'org_unit', 'overtime', 'paid',
   'panorama', 'picture', 'planner', 'plus', 'podium_with_speaker', 'positive_dynamic',
   'previous', 'print', 'puzzle', 'questions', 'radar_plot', 'reading',

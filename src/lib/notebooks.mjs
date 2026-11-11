@@ -76,6 +76,28 @@ function color(value) {
   if (!COLORS.test(value)) throw new BookError('Ungültige Farbe.');
   return value;
 }
+function elementLink(link) {
+  if (link?.kind === 'page') return { kind: 'page', pageId: id(link.pageId) };
+  if (link?.kind === 'url') {
+    try {
+      return { kind: 'url', url: safeWebUrl(link.url) };
+    } catch (e) {
+      throw new BookError(e.message);
+    }
+  }
+  throw new BookError('Ungültiger Link.');
+}
+/** Page ids change when a notebook is copied; keep links pointing inside it. */
+export function remapPageLinks(pages, ids) {
+  return pages.map((page) => ({
+    ...page,
+    elements: page.elements.map((el) =>
+      el.link?.kind === 'page' && ids.has(el.link.pageId)
+        ? { ...el, link: { kind: 'page', pageId: ids.get(el.link.pageId) } }
+        : el,
+    ),
+  }));
+}
 export function validatePage(input) {
   if (
     !input ||
@@ -118,6 +140,7 @@ export function validatePage(input) {
       color: color(el.color),
     };
     if (el.groupId !== undefined) result.groupId = id(el.groupId);
+    if (el.link !== undefined) result.link = elementLink(el.link);
     if (el.opacity !== undefined) result.opacity = num(el.opacity, 0.01, 1);
     if (el.type === 'text') {
       if (
@@ -435,11 +458,15 @@ function blankPage() {
 export async function createBook(owner, role, input) {
   const bookId = crypto.randomUUID();
   const now = new Date().toISOString();
-  const pages = input.pages
-    ? input.pages
-        .map(validatePage)
-        .map((page) => ({ ...page, id: crypto.randomUUID(), revision: 0 }))
+  const renamed = new Map();
+  let pages = input.pages
+    ? input.pages.map(validatePage).map((page, i) => {
+        const fresh = crypto.randomUUID();
+        if (typeof input.pages[i]?.id === 'string') renamed.set(input.pages[i].id, fresh);
+        return { ...page, id: fresh, revision: 0 };
+      })
     : [blankPage()];
+  pages = remapPageLinks(pages, renamed);
   if (pages.length < 1 || pages.length > 300)
     throw new BookError('Ein Heft braucht 1 bis 300 Seiten.');
   await checkMedia(owner, pages);

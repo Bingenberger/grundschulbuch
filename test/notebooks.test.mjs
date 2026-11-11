@@ -246,3 +246,19 @@ test('Smartphone-Links sind befristet und nur die Lehrkraft kann die Liste lesen
   await assert.rejects(transfers.transferUpload(token, png), status(404));
   await assert.rejects(transfers.transferStatus('../code'), status(404));
 });
+
+test('Links zeigen auf Internetseiten oder Heftseiten und wandern beim Kopieren mit', async () => {
+  const linked = (link) => ({ ...page(), elements: [{ ...text(), link }] });
+  assert.deepEqual(books.validatePage(linked({ kind: 'url', url: 'https://example.org/a b' })).elements[0].link, { kind: 'url', url: 'https://example.org/a%20b' });
+  for (const bad of [{ kind: 'url', url: 'javascript:alert(1)' }, { kind: 'url', url: 'ftp://example.org' }, { kind: 'page', pageId: '../x' }, { kind: 'mail' }, 'https://example.org'])
+    assert.throws(() => books.validatePage(linked(bad)), status(400));
+  // Copying a notebook gives pages new ids; page links must follow them.
+  const first = { ...page(), id: crypto.randomUUID() }, second = { ...page(), id: crypto.randomUUID() };
+  first.elements = [{ ...text(), link: { kind: 'page', pageId: second.id } }];
+  second.elements = [{ ...text(), link: { kind: 'page', pageId: crypto.randomUUID() } }];
+  const copy = await books.createBook(alice, 'lehrkraft', { title: 'Mit Links', pages: [first, second] });
+  assert.notEqual(copy.pages[1].id, second.id);
+  assert.deepEqual(copy.pages[0].elements[0].link, { kind: 'page', pageId: copy.pages[1].id });
+  // Links to pages outside the copied notebook stay unchanged.
+  assert.equal(copy.pages[1].elements[0].link.pageId, second.elements[0].link.pageId);
+});

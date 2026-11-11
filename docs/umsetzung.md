@@ -17,6 +17,14 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   oder auf freier Fläche einen Rahmen aufziehen, um mehrere Elemente zu wählen.
   Gesperrte Elemente und ein den Rahmen umschließender Hintergrund werden dabei
   nicht mitgewählt. Kinder können Elemente und Striche antippen.
+- Ist etwas ausgewählt, zeigt die Kopfzeile Kopieren, Ausschneiden, Einfügen,
+  Duplizieren, Link und Löschen (Einfügen auch ohne Auswahl, sobald etwas
+  kopiert ist). Kinder sehen davon nur Löschen.
+- Links: Im Link-Fenster wird eine Internetseite (nur http/https) oder eine
+  Seite des Hefts gewählt. Verlinkte Elemente tragen ein Link-Symbol, das im
+  Editor, im Kinderheft, an der Tafel und im HTML-Export zum Ziel führt; beim
+  Drucken ist es ausgeblendet. Beim Kopieren, Austeilen und Importieren eines
+  Hefts werden Seitenlinks auf die neuen Seiten umgeschrieben.
 - Alle Einstellungen erscheinen als Knöpfe mit Icon und Text; es gibt keine
   Dropdown-Menüs mehr, auch nicht in den Dialogen der Lernwerkzeuge.
 - Icons: Flat Color Icons (icons8, MIT, npm `flat-color-icons`); fehlende

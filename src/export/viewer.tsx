@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Picker } from '../components/ui/Choice';
+import { LinkContext } from '../components/LinkContext';
 import { TextGlyph } from '../components/ui/Glyphs';
 import { createRoot } from 'react-dom/client';
 import PageView from '../components/PageView';
@@ -75,7 +76,20 @@ function Viewer() {
           reportScore={score}
           onRecord={setRecordTarget}
         >
-          <ScaledPage page={page} maxScale={1} />
+          <LinkContext.Provider
+            value={{
+              openPage: (id) => {
+                const i = pages.findIndex((p) => p.id === id);
+                if (i >= 0) setIndex(i);
+              },
+              pageNumber: (id) => {
+                const i = pages.findIndex((p) => p.id === id);
+                return i < 0 ? undefined : i + 1;
+              },
+            }}
+          >
+            <ScaledPage page={page} maxScale={1} />
+          </LinkContext.Provider>
         </LearningRuntime>
       </div>
       <nav>

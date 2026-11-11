@@ -13,12 +13,9 @@ import { palette } from './DrawingBar';
 export type ElementActions = {
   onResize: (factor: number) => void;
   onRotate: (degrees: number) => void;
-  onDelete: () => void;
   onGeometry?: (key: 'width' | 'height', value: number) => void;
   onLayer?: (front: boolean) => void;
   onLock?: () => void;
-  onCopy?: () => void;
-  onPaste?: () => void;
   onCollection?: () => void;
   onGroup?: (group: boolean) => void;
   onConfigure?: (element: PageElement) => void;
@@ -327,25 +324,16 @@ export default function ElementBar({
             )}
           </OptionGroup>
         )}
-        {(has('elementClipboard') || has('elementLock') || has('collection')) && (
+        {(has('elementLock') || has('collection')) && (
           <OptionGroup label="Bearbeiten">
             {has('elementLock') && actions.onLock && (
               <ChoiceButton icon={allLocked ? 'unlock' : 'lock'} label={allLocked ? 'Entsperren' : 'Sperren'} onClick={actions.onLock} />
-            )}
-            {has('elementClipboard') && actions.onCopy && (
-              <ChoiceButton icon="file" label="Kopieren" onClick={actions.onCopy} />
-            )}
-            {has('elementClipboard') && actions.onPaste && (
-              <ChoiceButton icon="import" label="Kopie einfügen" onClick={actions.onPaste} />
             )}
             {has('collection') && actions.onCollection && (
               <ChoiceButton icon="filing_cabinet" label="In Sammlung sichern" onClick={actions.onCollection} />
             )}
           </OptionGroup>
         )}
-        <OptionGroup label="Entfernen">
-          <ChoiceButton icon="empty_trash" label="Entfernen" danger disabled={allLocked} onClick={actions.onDelete} />
-        </OptionGroup>
         {allLocked && <span className="option-hint">Gesperrte Elemente lassen sich nicht verändern.</span>}
       </>
     ),

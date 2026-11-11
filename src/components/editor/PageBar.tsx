@@ -51,7 +51,6 @@ export default function PageBar({
   onDelete,
   onSaveTemplate,
   onTemplates,
-  onPaste,
 }: {
   features: Set<Feature>;
   page: Page;
@@ -63,7 +62,6 @@ export default function PageBar({
   onDelete: () => void;
   onSaveTemplate: (name: string) => void;
   onTemplates: () => void;
-  onPaste?: () => void;
 }) {
   const s = useEditor();
   const [name, setName] = useState('');
@@ -172,7 +170,6 @@ export default function PageBar({
             <ChoiceButton icon="up" label="Nach vorn" disabled={busy || pageIndex === 0} onClick={() => onMove(-1)} />
             <ChoiceButton icon="down" label="Nach hinten" disabled={busy || pageIndex === pageCount - 1} onClick={() => onMove(1)} />
             <ChoiceButton icon="template" label="Neue Seite aus Vorlage" disabled={busy} onClick={onTemplates} />
-            {onPaste && <ChoiceButton icon="import" label="Kopie einfügen" onClick={onPaste} />}
             <ChoiceButton icon="empty_trash" label="Seite löschen" danger disabled={busy || pageCount < 2} onClick={onDelete} />
           </OptionGroup>
           <OptionGroup label="Als eigene Vorlage" plain>

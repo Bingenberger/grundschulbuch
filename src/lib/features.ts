@@ -36,6 +36,7 @@ export const featureLabels = {
   elementLock: 'Sperren',
   elementClipboard: 'Kopieren & Einfügen',
   elementGeometry: 'Maße & Position',
+  elementLink: 'Verlinken',
   // Pages and book
   pages: 'Seitenübersicht',
   addPage: 'Seite hinzufügen',

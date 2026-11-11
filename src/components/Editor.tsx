@@ -37,9 +37,11 @@ import ToolRail, { type RailItem } from './editor/ToolRail';
 import PagePanel from './editor/PagePanel';
 import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
+import ElementActions from './editor/ElementActions';
 import PageBar from './editor/PageBar';
 import { InsertBar, SelectBar, type InsertAction } from './editor/ContextBars';
 import { featuresFor } from '@/lib/features';
+import { LinkContext } from './LinkContext';
 import { elementsInFrame, rectFrom, strokeAt, tapDistance, type Rect } from '@/lib/selection';
 import { DotGlyph } from './ui/Glyphs';
 import Icon from './Icon';
@@ -134,6 +136,15 @@ export default function Editor({
   const selected =
     page?.elements.filter((el) => s.selected.includes(el.id)) || [];
   const first = selected.length === 1 ? selected[0] : undefined;
+  const links = {
+    openPage: (id: string) => {
+      if (useEditor.getState().book?.pageIds.includes(id)) choosePage(id);
+    },
+    pageNumber: (id: string) => {
+      const i = useEditor.getState().book?.pageIds.indexOf(id) ?? -1;
+      return i < 0 ? undefined : i + 1;
+    },
+  };
   const railActive: RailItem = selected.length
     ? 'select'
     : panel ?? (s.tool === 'marker' ? 'pen' : s.tool);
@@ -899,6 +910,26 @@ export default function Editor({
         onShare={() => run(async () => { setShowShare(true); })}
         onPrint={() => run(async () => { window.location.assign(`/drucken/${s.book!.id}`); })}
         onHelp={() => setShowShortcuts(true)}
+        actions={
+          <ElementActions
+            features={features}
+            count={selected.length}
+            locked={selected.length > 0 && selected.every((el) => el.locked)}
+            canPaste={clipboard.length > 0}
+            link={first?.link}
+            pages={s.pages}
+            pageIds={s.book.pageIds}
+            onCopy={() => setClipboard(clone(selected))}
+            onCut={() => {
+              setClipboard(clone(selected.filter((el) => !el.locked)));
+              performCommand('delete');
+            }}
+            onPaste={() => performCommand('paste')}
+            onDuplicate={() => performCommand('duplicate')}
+            onDelete={() => performCommand('delete')}
+            onLink={(link) => s.patchElements({ link })}
+          />
+        }
       />
       {s.error && (
         <div className="error-banner" role="alert">
@@ -949,6 +980,7 @@ export default function Editor({
         />
         <div className="editor-main">
         <section className="canvas-area">
+          <LinkContext.Provider value={links}>
           <div className="canvas-scroll">
             <div className="canvas-sheet">
               <ScaledPage
@@ -1067,6 +1099,7 @@ export default function Editor({
               </ScaledPage>
             </div>
           </div>
+          </LinkContext.Provider>
           <div className="zoom-float" role="group" aria-label="Ansicht">
             <button type="button" aria-label="Ansicht verkleinern" onClick={() => performCommand('zoomOut')}>
               <Icon name="minus" size={22} />
@@ -1101,12 +1134,9 @@ export default function Editor({
             actions={{
               onResize: (factor) => performCommand(factor > 1 ? 'bigger' : 'smaller'),
               onRotate: (degrees) => performCommand(degrees < 0 ? 'rotateLeft' : 'rotateRight'),
-              onDelete: () => performCommand('delete'),
               onGeometry: patchGeometry,
               onLayer: layer,
               onLock: () => performCommand('lock'),
-              onCopy: () => setClipboard(clone(selected)),
-              onPaste: clipboard.length ? () => performCommand('paste') : undefined,
               onCollection: () => {
                 const name = prompt('Name für die Sammlung');
                 if (name?.trim())
@@ -1140,7 +1170,6 @@ export default function Editor({
                 setShowTemplates(true);
               })
             }
-            onPaste={clipboard.length ? () => performCommand('paste') : undefined}
           />
         ) : (
           <SelectBar

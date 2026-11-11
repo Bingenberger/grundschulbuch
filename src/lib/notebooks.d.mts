@@ -12,6 +12,7 @@ export class BookError extends Error {
 }
 export function id(value: unknown): string;
 export function validatePage(value: unknown): Page;
+export function remapPageLinks(pages: Page[], ids: Map<string, string>): Page[];
 export function getBook(owner: string, bookId: string): Promise<BookData>;
 export function listBooks(owner: string): Promise<BookSummary[]>;
 export function createBook(

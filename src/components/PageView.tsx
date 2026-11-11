@@ -2,6 +2,7 @@ import { useId } from 'react';
 import { fountainOutline, pathBounds, smoothPath, strokeFillPolygon } from '@/lib/drawing';
 import { inkPaintOrder } from '@/lib/brushes';
 import InkBrush from './InkBrush';
+import { LinkBadge } from './LinkContext';
 import { eraserShapePath } from '@/lib/eraser-shapes';
 import Activity from './learning/Activity';
 import Widget from './learning/Widget';
@@ -312,6 +313,7 @@ export function ElementView({
       }}
     >
       {children || <ElementContent element={element} />}
+      {element.link && <LinkBadge element={element} />}
     </div>
   );
 }

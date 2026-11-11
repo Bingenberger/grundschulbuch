@@ -113,7 +113,12 @@ export type PageElement = {
   response?: LearningResponse;
   url?: string;
   embedKind?: 'video' | 'webpage' | 'link' | 'qr' | 'app';
+  /** Tapping the link badge opens a web page or another page of the notebook. */
+  link?: ElementLink;
 };
+export type ElementLink =
+  | { kind: 'url'; url: string }
+  | { kind: 'page'; pageId: string };
 export type Page = {
   id: string;
   revision: number;

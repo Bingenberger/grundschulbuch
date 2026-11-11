@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import Icon from '../Icon';
 import type { Feature } from '@/lib/features';
 
@@ -25,6 +25,7 @@ export default function EditorHeader({
   readAloud,
   onReadAloud,
   onDone,
+  actions,
 }: {
   features: Set<Feature>;
   backLabel: string;
@@ -46,6 +47,8 @@ export default function EditorHeader({
   readAloud?: boolean;
   onReadAloud?: (on: boolean) => void;
   onDone?: () => void;
+  /** Actions for the current selection (cut, copy, link …). */
+  actions?: ReactNode;
 }) {
   const [draft, setDraft] = useState(title);
   const has = (f: Feature) => features.has(f);
@@ -72,7 +75,8 @@ export default function EditorHeader({
       <span className={`save-status ${statusError ? 'save-error' : ''}`} role="status">
         {status}
       </span>
-      <div className="header-actions">
+      {actions}
+      <div className="header-actions header-group">
         <button type="button" className="header-button" disabled={!canUndo} onClick={onUndo}>
           <Icon name="undo" size={24} />
           <span>Zurück</span>

@@ -26,9 +26,11 @@ import ToolRail, { type RailItem } from './editor/ToolRail';
 import PagePanel from './editor/PagePanel';
 import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
+import ElementActions from './editor/ElementActions';
 import { SelectBar } from './editor/ContextBars';
 import { featuresFor } from '@/lib/features';
 import { strokeAt } from '@/lib/selection';
+import { LinkContext } from './LinkContext';
 import DrawingRuler from './learning/DrawingRuler';
 import { captureGuideEdge, projectToGuideEdge, type DrawingGuide, type GuideEdge } from '@/lib/drawing-guide';
 import { previousArrowShaft } from '@/lib/shape-recognition';
@@ -72,6 +74,15 @@ export default function ChildEditor({
   const selected = page?.elements.find((el) => s.selected.includes(el.id));
   const selectedElements = page?.elements.filter((el) => s.selected.includes(el.id)) || [];
   const features = featuresFor('child', s.book, allowed);
+  const links = {
+    openPage: (id: string) => {
+      if (s.book?.pageIds.includes(id)) choosePage(id);
+    },
+    pageNumber: (id: string) => {
+      const i = s.book?.pageIds.indexOf(id) ?? -1;
+      return i < 0 ? undefined : i + 1;
+    },
+  };
   const railActive: RailItem = selectedElements.length ? 'select' : s.tool === 'marker' ? 'pen' : s.tool;
   useEffect(() => {
     useEditor.getState().load(initial, 'child');
@@ -354,6 +365,29 @@ export default function ChildEditor({
         readAloud={readAloud}
         onReadAloud={setReadAloud}
         onDone={() => void leave('/kinder', true)}
+        actions={
+          <ElementActions
+            features={features}
+            count={selectedElements.length}
+            locked={selectedElements.length > 0 && selectedElements.every((el) => el.locked)}
+            canPaste={false}
+            pages={s.pages}
+            pageIds={s.book.pageIds}
+            onCopy={() => undefined}
+            onCut={() => undefined}
+            onPaste={() => undefined}
+            onDuplicate={() => undefined}
+            onLink={() => undefined}
+            onDelete={() => {
+              s.edit((p) => ({
+                ...p,
+                elements: p.elements.filter((el) => el.locked || !s.selected.includes(el.id)),
+              }));
+              s.select([]);
+              speak('Löschen');
+            }}
+          />
+        }
       />
       {s.error && (
         <div className="error-banner" role="alert">
@@ -375,6 +409,7 @@ export default function ChildEditor({
         />
         <div className="editor-main">
           <section className="canvas-area">
+            <LinkContext.Provider value={links}>
             <div className="canvas-scroll">
               <div className="canvas-sheet">
 
@@ -428,6 +463,7 @@ export default function ChildEditor({
         </ScaledPage>
               </div>
             </div>
+            </LinkContext.Provider>
             {features.has('readAloud') && <div className="zoom-float" role="group" aria-label="Seite">
               <button type="button" onClick={readPage}>
                 <Icon name="speaker" size={22} />
@@ -448,13 +484,6 @@ export default function ChildEditor({
               actions={{
                 onResize: resizeSelected,
                 onRotate: rotateSelected,
-                onDelete: () => {
-                  s.edit((p) => ({
-                    ...p,
-                    elements: p.elements.filter((el) => el.locked || !s.selected.includes(el.id)),
-                  }));
-                  s.select([]);
-                },
               }}
             />
           ) : (
