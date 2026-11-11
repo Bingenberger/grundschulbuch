@@ -515,8 +515,8 @@ export default function ImageDialog({
       setBusy(false);
     }
   }
-  const upload = (file: Blob, alt = '') =>
-    work(async () => onImage({ src: await uploadImage(file, uploadQuery), alt }));
+  const upload = (file: Blob, alt = '', edit = false) =>
+    work(async () => onImage({ src: await uploadImage(file, uploadQuery), alt, edit }));
 
   // Pasting a picture works in every tab.
   useEffect(() => {
@@ -562,7 +562,7 @@ export default function ImageDialog({
               <ScreenshotTab
                 busy={busy}
                 onPage={onPageScreenshot && (() => void work(onPageScreenshot))}
-                onScreen={(shot) => void upload(shot, 'Bildschirmfoto')}
+                onScreen={(shot) => void upload(shot, 'Bildschirmfoto', true)}
               />
             )}
             {(tab === 'arasaac' || tab === 'wikimedia' || tab === 'galerie') && (

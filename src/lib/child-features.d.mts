@@ -5,6 +5,7 @@ export type ChildFeature =
   | 'image'
   | 'imageUpload'
   | 'imageSearch'
+  | 'imageEdit'
   | 'pages'
   | 'readAloud'
   | 'brushFountain'

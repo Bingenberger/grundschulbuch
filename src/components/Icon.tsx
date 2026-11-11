@@ -4,21 +4,21 @@
 // which are drawn in the same style under /icons.
 const own = [
   'textmarker', 'radierer', 'geodreieck', 'pipette', 'filzstift', 'fueller',
-  'buntstift', 'pinsel', 'farbeimer', 'seiten', 'schere', 'drehen',
+  'buntstift', 'pinsel', 'farbeimer', 'seiten', 'schere', 'drehen', 'zuschneiden', 'balken',
 ] as const;
 export const flatIcons = [
   'about', 'add_image', 'alarm_clock', 'approval', 'audio_file', 'binoculars',
   'bookmark', 'businesswoman', 'calculator', 'calendar', 'camcorder_pro',
   'camera', 'cancel', 'checkmark', 'clapperboard', 'clock', 'collaboration',
   'collect', 'comments', 'conference_call', 'cursor', 'diploma_1', 'document',
-  'doughnut_chart', 'down', 'electronics', 'empty_trash', 'expand', 'faq',
-  'file', 'filing_cabinet', 'film_reel', 'flash_on', 'flow_chart', 'folder',
+  'doughnut_chart', 'down', 'edit_image', 'electronics', 'empty_trash', 'expand', 'faq',
+  'clear_filters', 'file', 'filing_cabinet', 'filled_filter', 'film_reel', 'flash_on', 'flow_chart', 'folder',
   'frame', 'gallery', 'globe', 'graduation_cap', 'grid', 'headset', 'high_priority',
   'home', 'idea', 'import', 'kindle', 'landscape', 'leave', 'left', 'library',
   'like', 'link', 'list', 'lock', 'mind_map', 'minus', 'music', 'next', 'night_landscape',
   'ok', 'old_time_camera', 'opened_folder', 'org_unit', 'overtime', 'paid',
   'panorama', 'picture', 'planner', 'plus', 'podium_with_speaker', 'positive_dynamic',
-  'previous', 'print', 'puzzle', 'questions', 'radar_plot', 'reading',
+  'previous', 'print', 'privacy', 'puzzle', 'questions', 'radar_plot', 'reading',
   'reading_ebook', 'redo', 'remove_image', 'right', 'rotate_to_landscape',
   'rotate_to_portrait', 'ruler', 'rules', 'search', 'serial_tasks', 'settings',
   'share', 'shop', 'signature', 'sound_recording_copyright', 'speaker',

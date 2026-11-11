@@ -15,6 +15,7 @@ export const featureLabels = {
   // Sources in the image dialog
   imageUpload: 'Eigene Bilder & Fotos',
   imageSearch: 'Bilder suchen (ARASAAC, Schulgalerie)',
+  imageEdit: 'Bilder bearbeiten',
   imageWeb: 'Wikimedia Commons',
   imagePlaceholder: 'Bild-Platzhalter',
   imageScreenshot: 'Bildschirmfoto',

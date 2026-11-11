@@ -3,10 +3,9 @@ import { useState } from 'react';
 import { useEditor } from '@/lib/editor-store';
 import { fonts, type PageElement } from '@/lib/notebook-model';
 import type { Feature } from '@/lib/features';
-import { imageFilters } from '../learning/Appearance';
 import RichTextDialog from '../learning/RichTextDialog';
 import { ChoiceButton, Choices, ColorChoice, OptionGroup, Stepper } from '../ui/Choice';
-import { AlignGlyph, FontGlyph, ImageFilterGlyph, OpacityGlyph, StrokeGlyph, SwatchGlyph } from '../ui/Glyphs';
+import { AlignGlyph, FontGlyph, OpacityGlyph, StrokeGlyph, SwatchGlyph } from '../ui/Glyphs';
 import OptionBar, { type OptionSection } from './OptionBar';
 import { palette } from './DrawingBar';
 import { isPlaceholder } from './image-elements';
@@ -22,6 +21,8 @@ export type ElementActions = {
   onCollection?: () => void;
   onGroup?: (group: boolean) => void;
   onConfigure?: (element: PageElement) => void;
+  /** Opens the picture editor (crop, turn, pixelate, effects). */
+  onEditImage?: (element: PageElement) => void;
   /** Opens the image dialog for a photo placeholder. */
   onFill?: (element: PageElement) => void;
 };
@@ -50,12 +51,6 @@ const lineWidths: [number, string][] = [
   [0.4, 'Dünn'],
   [0.8, 'Mittel'],
   [1.4, 'Dick'],
-];
-const filterLabels: [string, string][] = [
-  ['none', 'Original'], ['scan', 'Arbeitsblatt'], ['gray', 'Schwarzweiß'],
-  ['sepia', 'Sepia'], ['bright', 'Heller'], ['contrast', 'Kontrast'],
-  ['vivid', 'Kräftig'], ['pale', 'Blass'], ['warm', 'Warm'], ['cold', 'Kalt'],
-  ['invert', 'Umkehren'],
 ];
 const imageFrames: [string, string, Parameters<typeof ChoiceButton>[0]['icon']][] = [
   ['none', 'Ohne', 'cancel'],
@@ -230,9 +225,9 @@ export default function ElementBar({
               />
             </OptionGroup>
           )}
-          {first.type === 'image' && (
+          {first.type === 'image' && first.src && has('imageEdit') && actions.onEditImage && (
             <OptionGroup label="Bild">
-              <ChoiceButton icon="synchronize" label="Spiegeln" pressed={!!first.flip} onClick={() => patch({ flip: !first.flip })} />
+              <ChoiceButton icon="edit_image" label="Bild bearbeiten" onClick={() => actions.onEditImage!(first)} />
             </OptionGroup>
           )}
           {colorful && (
@@ -362,77 +357,20 @@ export default function ElementBar({
           ),
         },
       );
-    if (first.type === 'image')
-      sections.push(
-        {
-          id: 'filter',
-          label: 'Bildfilter',
-          icon: 'gallery',
-          content: (
-            <Choices
-              label="Bildfilter"
-              value={first.imageFilter || 'none'}
-              onChange={(imageFilter) => patch({ imageFilter })}
-              options={filterLabels.map(([value, label]) => ({
-                value,
-                label,
-                icon: <ImageFilterGlyph src={first.src} filter={imageFilters[value] || 'none'} />,
-              }))}
-            />
-          ),
-        },
-        {
-          id: 'imageframe',
-          label: 'Rahmen & Ausschnitt',
-          icon: 'frame',
-          content: (
-            <>
-              <Choices
-                label="Bildrahmen"
-                value={first.imageFrame || 'none'}
-                onChange={(imageFrame) => patch({ imageFrame })}
-                options={imageFrames.map(([value, label, icon]) => ({ value, label, icon }))}
-              />
-              <OptionGroup label="Bildausschnitt">
-                {(['x', 'y', 'width', 'height'] as const).map((key) => {
-                  const crop = first.crop || { x: 0, y: 0, width: 1, height: 1 };
-                  return (
-                    <label className="option-slider" key={key}>
-                      <span>
-                        {{ x: 'Links', y: 'Oben', width: 'Breite', height: 'Höhe' }[key]} · {Math.round(crop[key] * 100)} %
-                      </span>
-                      <input
-                        type="range"
-                        min={key === 'width' || key === 'height' ? 0.05 : 0}
-                        max="1"
-                        step=".01"
-                        value={crop[key]}
-                        onChange={(e) => {
-                          const next = { ...crop, [key]: Number(e.target.value) };
-                          if (next.x + next.width > 1) {
-                            if (key === 'x') next.width = 1 - next.x;
-                            else next.x = 1 - next.width;
-                          }
-                          if (next.y + next.height > 1) {
-                            if (key === 'y') next.height = 1 - next.y;
-                            else next.y = 1 - next.height;
-                          }
-                          next.width = Math.max(0.02, next.width);
-                          next.height = Math.max(0.02, next.height);
-                          next.x = Math.min(next.x, 1 - next.width);
-                          next.y = Math.min(next.y, 1 - next.height);
-                          patch({ crop: next });
-                        }}
-                      />
-                    </label>
-                  );
-                })}
-                <ChoiceButton icon="panorama" label="Ganzes Bild" onClick={() => patch({ crop: { x: 0, y: 0, width: 1, height: 1 } })} />
-              </OptionGroup>
-            </>
-          ),
-        },
-      );
+    if (first.type === 'image' && first.src)
+      sections.push({
+        id: 'imageframe',
+        label: 'Rahmen',
+        icon: 'frame',
+        content: (
+          <Choices
+            label="Bildrahmen"
+            value={first.imageFrame || 'none'}
+            onChange={(imageFrame) => patch({ imageFrame })}
+            options={imageFrames.map(([value, label, icon]) => ({ value, label, icon }))}
+          />
+        ),
+      });
   }
 
   sections.push({

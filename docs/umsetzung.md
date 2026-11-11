@@ -65,6 +65,18 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   (ARASAAC, Schulgalerie) nur, wenn die Lehrkraft sie freischaltet; Wikimedia,
   Platzhalter und Bildschirmfoto gibt es nur für Lehrkräfte. „Von der
   Lehrkraft“ zeigt die freigegebenen Bilder.
+- Bild bearbeiten (Doppelklick aufs Bild oder „Gestalten“ › „Bild bearbeiten“):
+  Zuschneiden mit Seitenverhältnis (frei, Quadrat, 4:3, 3:4, 16:9), links/rechts
+  drehen, spiegeln, Verpixeln mit Pinsel, schwarze Balken und Effekte, die sich
+  kombinieren lassen (Heller, Kontrast, Kräftig/Blass, Arbeitsblatt/Schwarzweiß/
+  Alt, Warm/Kalt, Umkehren), jeder mit eigenem Regler; Rückgängig für alle
+  Schritte. Der Browser zeigt nur eine Vorschau; der Server rechnet das Ergebnis
+  aus dem Original und den Schritten (`src/lib/image-edit.mjs`, gemeinsam
+  genutzt) und speichert es als neues Bild – verpixelte Stellen sind damit im
+  gespeicherten Bild wirklich unkenntlich. Bearbeiten darf nur, wer das Bild
+  verwenden darf; Kinder brauchen „Bilder bearbeiten“, aber kein Hochladen.
+  Ältere Bilder mit Filter, Ausschnitt oder Spiegelung übernehmen diese als
+  erste Schritte. Ein Bildschirmfoto eines Fensters öffnet direkt im Editor.
 - Foto-Platzhalter: ein leerer Bildrahmen mit Hinweis (quer, quadratisch, hoch,
   rund). Ein Tipp darauf öffnet bei Kindern Kamera und Hochladen – auch in
   gesperrten Arbeitsblättern und ohne „Eigene Bilder“; der Server erlaubt dann

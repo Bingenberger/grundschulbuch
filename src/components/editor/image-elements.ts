@@ -1,7 +1,8 @@
 'use client';
 import { uuid, type PageElement } from '@/lib/notebook-model';
 
-export type ChosenImage = { src: string; alt?: string; credit?: string };
+/** `edit`: open the picture editor right after inserting (e.g. to crop a screenshot). */
+export type ChosenImage = { src: string; alt?: string; credit?: string; edit?: boolean };
 export type PlaceholderShape = 'wide' | 'square' | 'tall' | 'round';
 
 const naturalSize = (src: string) =>
@@ -90,4 +91,15 @@ export function cascade(el: PageElement, others: PageElement[], page: { width: n
   }
   if (x + el.width > page.width || y + el.height > page.height) return el;
   return { ...el, x, y };
+}
+
+/** Element after editing its picture: new file, proportions follow unless the frame is fixed. */
+export function withEditedPicture(el: PageElement, image: { src: string; width: number; height: number }): PageElement {
+  const next: PageElement = { ...el, src: image.src };
+  delete next.crop;
+  delete next.imageFilter;
+  delete next.flip;
+  if (!el.locked && !isPlaceholder(el) && image.width > 0)
+    next.height = Math.max(3, Math.round(((el.width * image.height) / image.width) * 100) / 100);
+  return next;
 }

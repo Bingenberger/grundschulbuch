@@ -110,3 +110,8 @@ export function storeWebApp(
   owner: string,
   buffer: Buffer,
 ): Promise<{ src: string }>;
+export function editImage(
+  owner: string,
+  src: string,
+  input: unknown,
+): Promise<{ src: string; width: number; height: number }>;

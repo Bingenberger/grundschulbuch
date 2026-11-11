@@ -62,7 +62,8 @@ import { speakGerman } from '@/lib/speech';
 import FileDialog from './FileDialog';
 import { blueprints, blueprintPages } from '@/lib/learning/templates';
 import ImageDialog from './ImageDialog';
-import { cascade, fillPlaceholder, imageElement, isPlaceholder, placeholderElement, type ChosenImage } from './editor/image-elements';
+import ImageEditor, { editFromElement } from './ImageEditor';
+import { cascade, fillPlaceholder, imageElement, isPlaceholder, withEditedPicture, placeholderElement, type ChosenImage } from './editor/image-elements';
 import { uploadImage } from '@/lib/client-api';
 
 type Gesture = {
@@ -113,6 +114,8 @@ export default function Editor({
   const [showImages, setShowImages] = useState(false);
   /** Placeholder that gets the chosen picture (instead of a new element). */
   const [fillId, setFillId] = useState<string | null>(null);
+  /** Picture open in the editor. */
+  const [editImage, setEditImage] = useState<PageElement | null>(null);
   const [showAudio, setShowAudio] = useState(false);
   const [showCollection, setShowCollection] = useState(false);
   const [showGenerator, setShowGenerator] = useState(false);
@@ -644,8 +647,10 @@ export default function Editor({
     }
     imageElement(image, size)
       .then((element) => {
-        insert(cascade(element, page!.elements, size));
+        const placed = cascade(element, page!.elements, size);
+        insert(placed);
         closeImages();
+        if (image.edit) setEditImage(placed);
       })
       .catch((e) => useEditor.setState({ error: (e as Error).message }));
   }
@@ -1081,7 +1086,8 @@ export default function Editor({
                         onPointerDown={(e) => start(e, el)}
                         onDoubleClick={() => {
                           if (el.type === 'text' && !el.locked) writing.begin(el.id);
-                          else if (isPlaceholder(el)) openFill(el);
+                          else if (isPlaceholder(el) && !el.src) openFill(el);
+                          else if (el.type === 'image' && el.src && !el.locked) setEditImage(el);
                         }}
                         style={{
                           pointerEvents:
@@ -1115,7 +1121,8 @@ export default function Editor({
                             editing={writing.editingId === el.id}
                             onDoubleClick={() => {
                               if (el.type === 'text') writing.begin(el.id);
-                              else if (isPlaceholder(el)) openFill(el);
+                              else if (isPlaceholder(el) && !el.src) openFill(el);
+                          else if (el.type === 'image' && el.src && !el.locked) setEditImage(el);
                             }}
                           />
                         ))}
@@ -1183,6 +1190,7 @@ export default function Editor({
               onLayer: layer,
               onLock: () => performCommand('lock'),
               onFill: openFill,
+              onEditImage: setEditImage,
               onCollection: () => {
                 const name = prompt('Name für die Sammlung');
                 if (name?.trim())
@@ -1396,6 +1404,18 @@ export default function Editor({
         <FileDialog
           data={{ book: s.book, pages: s.pages }}
           onClose={() => setShowFiles(false)}
+        />
+      )}
+      {editImage?.src && (
+        <ImageEditor
+          src={editImage.src}
+          initial={editFromElement(editImage)}
+          onClose={() => setEditImage(null)}
+          onDone={(result) => {
+            const id = editImage.id;
+            s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === id ? withEditedPicture(el, result) : el)) }));
+            setEditImage(null);
+          }}
         />
       )}
       {showImages && (

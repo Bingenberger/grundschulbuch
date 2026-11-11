@@ -15,6 +15,7 @@ import {
   lockedDesign,
 } from './learning/validation.mjs';
 import { dataPath, readJson, writeJson, withLock } from './store.mjs';
+import { MAX_SIDE, cleanEdit, render } from './image-edit.mjs';
 
 export class BookError extends Error {
   constructor(message, status = 400) {
@@ -799,6 +800,46 @@ export async function accessibleOwner(teacher, bookId) {
   if (child?.teacherId !== teacher)
     throw new BookError('Heft nicht gefunden.', 404);
   return child.id;
+}
+/**
+ * Applies an edit (crop, turn, pixelate, effects …) to a picture the owner may
+ * use and stores the result as a new picture. Done here and not in the
+ * browser, so pixelated faces are really gone from the stored file.
+ */
+export async function editImage(owner, src, input) {
+  if (typeof src !== 'string' || !/^\/api\/medien\/[a-f0-9]{64}\.(png|jpg|webp)$/.test(src))
+    throw new BookError('Dieses Bild lässt sich nicht bearbeiten.');
+  await checkMedia(owner, [src]);
+  let edit;
+  try {
+    edit = cleanEdit(input);
+  } catch (e) {
+    throw new BookError(e.message);
+  }
+  const file = await fs.readFile(dataPath('medien', src.split('/').pop())).catch(() => {
+    throw new BookError('Bild nicht gefunden.', 404);
+  });
+  let output;
+  try {
+    const { data, info } = await sharp(file, { limitInputPixels: 40000000 })
+      .resize({ width: MAX_SIDE, height: MAX_SIDE, fit: 'inside', withoutEnlargement: true })
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const pixels = { width: info.width, height: info.height, data: new Uint8ClampedArray(data.buffer, data.byteOffset, data.length) };
+    const result = render(pixels, edit.steps, edit.effects);
+    output = await sharp(Buffer.from(result.data.buffer, result.data.byteOffset, result.data.length), {
+      raw: { width: result.width, height: result.height, channels: 4 },
+    })
+      // Nearly lossless, so storing it (as WebP) stays well below the size limit.
+      .webp({ quality: 96 })
+      .toBuffer();
+  } catch {
+    throw new BookError('Das Bild konnte nicht bearbeitet werden.');
+  }
+  const stored = await storeImage(owner, output);
+  const meta = await sharp(await fs.readFile(dataPath('medien', stored.src.split('/').pop()))).metadata();
+  return { ...stored, width: meta.width, height: meta.height };
 }
 export async function storeAudio(owner, buffer) {
   if (!buffer.length || buffer.length > 20 * 1024 * 1024)

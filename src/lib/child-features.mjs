@@ -7,6 +7,7 @@ export const CHILD_FEATURES = [
   'image',
   'imageUpload',
   'imageSearch',
+  'imageEdit',
   'pages',
   'readAloud',
   'brushFountain',

@@ -27,7 +27,8 @@ import PagePanel from './editor/PagePanel';
 import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
 import ImageDialog from './ImageDialog';
-import { cascade, fillPlaceholder, imageElement, isPlaceholder, type ChosenImage } from './editor/image-elements';
+import ImageEditor, { editFromElement } from './ImageEditor';
+import { cascade, fillPlaceholder, imageElement, isPlaceholder, withEditedPicture, type ChosenImage } from './editor/image-elements';
 import InlineText from './editor/InlineText';
 import { useTextEditing } from './editor/use-text-editing';
 import { fitText } from './editor/text-measure';
@@ -59,6 +60,8 @@ export default function ChildEditor({
   const [showImages, setShowImages] = useState(false);
   /** Placeholder that gets the photo (instead of a new picture). */
   const [fillId, setFillId] = useState<string | null>(null);
+  /** Picture open in the editor. */
+  const [editImage, setEditImage] = useState<PageElement | null>(null);
   const [readAloud, setReadAloud] = useState(false);
   const [showAudio, setShowAudio] = useState(false);
   const [recordTarget, setRecordTarget] = useState<string | null>(null);
@@ -373,8 +376,10 @@ export default function ChildEditor({
     }
     imageElement(image, size)
       .then((element) => {
-        insert(cascade(element, page!.elements, size));
+        const placed = cascade(element, page!.elements, size);
+        insert(placed);
         closeImages();
+        if (image.edit) setEditImage(placed);
       })
       .catch((e) => useEditor.setState({ error: (e as Error).message }));
   }
@@ -525,7 +530,8 @@ export default function ChildEditor({
                   onPointerDown={(e) => down(e, el)}
                   onDoubleClick={() => {
                     if (el.type === 'text' && !el.locked) writing.begin(el.id);
-                    else if (isPlaceholder(el)) openFill(el);
+                    else if (isPlaceholder(el) && !el.src) openFill(el);
+                    else if (el.type === 'image' && el.src && !el.locked && features.has('imageEdit')) setEditImage(el);
                   }}
                   style={{
                     pointerEvents:
@@ -555,6 +561,7 @@ export default function ChildEditor({
                   editing={writing.editingId === selected.id}
                   onDoubleClick={() => {
                     if (selected.type === 'text') writing.begin(selected.id);
+                    else if (selected.type === 'image' && selected.src && features.has('imageEdit')) setEditImage(selected);
                   }}
                 />
               )}
@@ -585,6 +592,7 @@ export default function ChildEditor({
               actions={{
                 onResize: resizeSelected,
                 onRotate: rotateSelected,
+                onEditImage: setEditImage,
               }}
             />
           ) : (
@@ -637,6 +645,18 @@ export default function ChildEditor({
               alt: 'Meine Aufnahme',
             });
             setShowAudio(false);
+          }}
+        />
+      )}
+      {editImage?.src && (
+        <ImageEditor
+          src={editImage.src}
+          initial={editFromElement(editImage)}
+          onClose={() => setEditImage(null)}
+          onDone={(result) => {
+            const id = editImage.id;
+            s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === id ? withEditedPicture(el, result) : el)) }));
+            setEditImage(null);
           }}
         />
       )}
