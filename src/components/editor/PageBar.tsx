@@ -52,6 +52,7 @@ export default function PageBar({
   onSaveTemplate,
   onTemplates,
   onChangeTemplate,
+  onTiles,
 }: {
   features: Set<Feature>;
   page: Page;
@@ -65,40 +66,35 @@ export default function PageBar({
   onTemplates: () => void;
   /** Other template for this page; the content stays. */
   onChangeTemplate?: () => void;
+  /** Opens the tile view of all pages. */
+  onTiles?: () => void;
 }) {
   const s = useEditor();
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const pagePatch = (values: Partial<Page>) => s.edit((p) => ({ ...p, ...values }));
   const sections: OptionSection[] = [];
-  if (features.has('pageDesign')) {
+  if (features.has('pageDesign'))
     sections.push(
       {
-        id: 'ruling',
-        label: 'Lineatur',
+        id: 'paper',
+        label: 'Papier',
         icon: 'rules',
         content: (
-          <OptionGroup label="Lineatur">
-            {Object.entries(rulings).map(([ruling, label]) => (
-              <ChoiceButton
-                key={ruling}
-                icon={<CornerGlyph page={{ ...page, ruling: ruling as Page['ruling'] }} />}
-                label={label}
-                pressed={page.ruling === ruling}
-                onClick={() => pagePatch({ ruling: ruling as Page['ruling'] })}
-              />
-            ))}
-          </OptionGroup>
-        ),
-      },
-      {
-        id: 'format',
-        label: 'Format & Farben',
-        icon: 'landscape',
-        content: (
           <>
+            <OptionGroup label="Lineatur">
+              {Object.entries(rulings).map(([ruling, label]) => (
+                <ChoiceButton
+                  key={ruling}
+                  icon={<CornerGlyph page={{ ...page, ruling: ruling as Page['ruling'] }} />}
+                  label={label}
+                  pressed={page.ruling === ruling}
+                  onClick={() => pagePatch({ ruling: ruling as Page['ruling'] })}
+                />
+              ))}
+            </OptionGroup>
             <OptionGroup label="Format">
-              {(['portrait', 'landscape'] as const).map((orientation) => (
+              {(['landscape', 'portrait'] as const).map((orientation) => (
                 <ChoiceButton
                   key={orientation}
                   icon={<PageGlyph page={{ ...page, orientation }} />}
@@ -108,10 +104,25 @@ export default function PageBar({
                 />
               ))}
             </OptionGroup>
+          </>
+        ),
+      },
+      {
+        id: 'colours',
+        label: 'Farben & Bild',
+        icon: 'landscape',
+        content: (
+          <>
             <OptionGroup label="Farben">
               <ColorChoice label="Papierfarbe" value={page.paperColor || '#ffffff'} onChange={(paperColor) => pagePatch({ paperColor })} />
               <ColorChoice label="Linienfarbe" value={page.lineColor || '#a0bcd3'} onChange={(lineColor) => pagePatch({ lineColor })} />
-              <ColorChoice label="Rahmenfarbe" value={page.frameColor || '#52796f'} onChange={(frameColor) => pagePatch({ frameColor })} />
+              {(page.paperColor || page.lineColor) && (
+                <ChoiceButton
+                  icon="synchronize"
+                  label="Standardfarben"
+                  onClick={() => pagePatch({ paperColor: undefined, lineColor: undefined })}
+                />
+              )}
             </OptionGroup>
             <OptionGroup label="Hintergrundbild">
               <label className="choice">
@@ -143,26 +154,30 @@ export default function PageBar({
       },
       {
         id: 'frame',
-        label: 'Seitenrahmen',
+        label: 'Rahmen',
         icon: 'frame',
         content: (
-          <OptionGroup label="Seitenrahmen">
-            {PAGE_FRAMES.map((id: string) => (
-              <ChoiceButton
-                key={id}
-                icon={<CornerGlyph page={{ ...page, ruling: 'blanko', pageFrame: id }} />}
-                label={frameLabels[id] || id}
-                pressed={(page.pageFrame || 'none') === id}
-                onClick={() => pagePatch({ pageFrame: id })}
-              />
-            ))}
-          </OptionGroup>
+          <>
+            <OptionGroup label="Seitenrahmen">
+              {PAGE_FRAMES.map((id: string) => (
+                <ChoiceButton
+                  key={id}
+                  icon={<CornerGlyph page={{ ...page, ruling: 'blanko', pageFrame: id }} />}
+                  label={frameLabels[id] || id}
+                  pressed={(page.pageFrame || 'none') === id}
+                  onClick={() => pagePatch({ pageFrame: id })}
+                />
+              ))}
+            </OptionGroup>
+            {page.pageFrame && page.pageFrame !== 'none' && (
+              <OptionGroup label="Rahmenfarbe">
+                <ColorChoice label="Rahmenfarbe" value={page.frameColor || '#52796f'} onChange={(frameColor) => pagePatch({ frameColor })} />
+              </OptionGroup>
+            )}
+          </>
         ),
       },
-    );
-  }
-  if (features.has('pageDesign')) sections.push(
-{
+      {
         id: 'template',
         label: 'Vorlage',
         icon: 'template',
@@ -173,47 +188,48 @@ export default function PageBar({
                 <ChoiceButton icon={<PageGlyph page={page} />} label="Andere Vorlage wählen" disabled={busy} onClick={onChangeTemplate} />
               </OptionGroup>
             )}
-            {features.has('pageManage') && (
-              <OptionGroup label="Neue Seite">
-                <ChoiceButton icon="template" label="Neue Seite mit Vorlage" disabled={busy} onClick={onTemplates} />
-              </OptionGroup>
-            )}
+            <OptionGroup label="Als eigene Vorlage speichern" plain>
+              <input
+                className="option-input"
+                placeholder="Name der Vorlage"
+                aria-label="Name der Vorlage"
+                maxLength={120}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <ChoiceButton
+                icon="bookmark"
+                label="Vorlage speichern"
+                disabled={busy || !name.trim()}
+                onClick={() => {
+                  onSaveTemplate(name);
+                  setName('');
+                }}
+              />
+            </OptionGroup>
             <span className="option-hint">Beim Wechsel der Vorlage bleibt alles erhalten, was schon auf der Seite ist.</span>
           </>
         ),
-      });
+      },
+    );
   if (features.has('pageManage'))
     sections.push({
       id: 'manage',
-      label: 'Seite verwalten',
-      icon: 'settings',
+      label: 'Seiten',
+      icon: 'seiten',
       content: (
         <>
+          {onTiles && (
+            <OptionGroup label="Alle Seiten">
+              <ChoiceButton icon="grid" label="Kachelansicht" disabled={busy} onClick={onTiles} />
+            </OptionGroup>
+          )}
           <OptionGroup label={`Seite ${pageIndex + 1} von ${pageCount}`}>
+            <ChoiceButton icon="plus" label="Neue Seite" disabled={busy} onClick={onTemplates} />
             <ChoiceButton icon="file" label="Duplizieren" disabled={busy} onClick={onDuplicate} />
             <ChoiceButton icon="up" label="Nach vorn" disabled={busy || pageIndex === 0} onClick={() => onMove(-1)} />
             <ChoiceButton icon="down" label="Nach hinten" disabled={busy || pageIndex === pageCount - 1} onClick={() => onMove(1)} />
-            <ChoiceButton icon="template" label="Neue Seite aus Vorlage" disabled={busy} onClick={onTemplates} />
             <ChoiceButton icon="empty_trash" label="Seite löschen" danger disabled={busy || pageCount < 2} onClick={onDelete} />
-          </OptionGroup>
-          <OptionGroup label="Als eigene Vorlage" plain>
-            <input
-              className="option-input"
-              placeholder="Name der Vorlage"
-              aria-label="Name der Vorlage"
-              maxLength={120}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <ChoiceButton
-              icon="template"
-              label="Vorlage speichern"
-              disabled={busy || !name.trim()}
-              onClick={() => {
-                onSaveTemplate(name);
-                setName('');
-              }}
-            />
           </OptionGroup>
         </>
       ),

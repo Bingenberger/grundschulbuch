@@ -46,6 +46,7 @@ import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
 import { elementCenter, resizeAtCorner, rotateTo, type Corner } from '@/lib/transform';
 import PageBar from './editor/PageBar';
 import TemplateChooser from './editor/TemplateChooser';
+import PageTiles from './editor/PageTiles';
 import { applyTemplate, templateCatalog } from './editor/page-templates';
 import { InsertBar, SelectBar, type InsertAction } from './editor/ContextBars';
 import { featuresFor } from '@/lib/features';
@@ -139,7 +140,8 @@ export default function Editor({
   const [showFiles, setShowFiles] = useState(false);
   const [board, setBoard] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [deleted, setDeleted] = useState<{ page: Page; index: number } | null>(null);
+  const [deleted, setDeleted] = useState<{ pages: Page[]; before: string[]; first: number } | null>(null);
+  const [showTiles, setShowTiles] = useState(false);
   const [multi, setMulti] = useState(false);
   const [draft, setDraft] = useState<PageElement | null>(null);
   const [preview, setPreview] = useState<PageElement[] | null>(null);
@@ -566,56 +568,82 @@ export default function Editor({
     else if (action === 'collection') setShowCollection(true);
     else setShowEmbed(true);
   }
-  /** Deletes a page right away; “Rückgängig” brings it back for a while. */
-  function deletePage(id = page?.id) {
-    const index = s.book?.pageIds.indexOf(id || '') ?? -1;
-    const removed = s.pages.find((p) => p.id === id);
-    if (!removed || index < 0 || s.book!.pageIds.length < 2) return;
+  /** Deletes pages right away; “Rückgängig” brings them back for a while. */
+  function deletePages(ids: string[]) {
+    const order = s.book?.pageIds || [];
+    const gone = ids.filter((id) => order.includes(id));
+    if (!gone.length || gone.length >= order.length) return;
     void run(async () => {
       const state = useEditor.getState();
+      const before = state.book!.pageIds;
       const book = await api<Notebook>('update', {
         id: state.book!.id,
         revision: state.book!.revision,
-        pageIds: state.book!.pageIds.filter((p) => p !== removed.id),
+        pageIds: before.filter((p) => !gone.includes(p)),
       });
-      const latest = useEditor.getState().pages.find((p) => p.id === removed.id) || removed;
-      useEditor.setState({
-        book,
-        pages: useEditor.getState().pages.filter((p) => p.id !== removed.id),
-      });
-      if (useEditor.getState().activeId === removed.id)
-        choosePage(book.pageIds[Math.max(0, index - 1)]);
-      setDeleted({ page: clone(latest), index });
+      const removed = gone.map((id) => clone(useEditor.getState().pages.find((p) => p.id === id)!)).filter(Boolean);
+      useEditor.setState({ book, pages: useEditor.getState().pages.filter((p) => !gone.includes(p.id)) });
+      if (gone.includes(useEditor.getState().activeId)) {
+        const first = Math.min(...gone.map((id) => before.indexOf(id)));
+        choosePage(book.pageIds[Math.max(0, Math.min(first, book.pageIds.length) - 1)] || book.pageIds[0]);
+      }
+      setDeleted({ pages: removed, before, first: Math.min(...gone.map((id) => before.indexOf(id))) });
     });
+  }
+  function deletePage(id = page?.id) {
+    if (id) deletePages([id]);
   }
   useEffect(() => {
     if (!deleted) return;
     const timer = setTimeout(() => setDeleted(null), 15000);
     return () => clearTimeout(timer);
   }, [deleted]);
+  /** Puts deleted pages back with their content, at their old places. */
   function restorePage() {
     const undo = deleted;
     if (!undo) return;
     setDeleted(null);
     void run(async () => {
-      const state = useEditor.getState();
-      const ids = state.book!.pageIds;
-      const result = await api<{ book: Notebook; page: Page }>('addPage', {
-        id: state.book!.id,
-        page: undo.page,
-        afterId: ids[Math.max(0, Math.min(undo.index, ids.length) - 1)],
-      });
-      let book = result.book;
-      if (undo.index === 0) {
-        book = await api<Notebook>('update', {
-          id: book.id,
-          revision: book.revision,
-          pageIds: [result.page.id, ...book.pageIds.filter((p) => p !== result.page.id)],
-        });
+      const renamed = new Map<string, string>();
+      const added: Page[] = [];
+      let book = useEditor.getState().book!;
+      for (const p of undo.pages) {
+        const result = await api<{ book: Notebook; page: Page }>('addPage', { id: book.id, page: p });
+        renamed.set(p.id, result.page.id);
+        added.push(result.page);
+        book = result.book;
       }
-      const pages = [...useEditor.getState().pages, result.page];
-      useEditor.setState({ book, pages: book.pageIds.map((p) => pages.find((x) => x.id === p)!) });
-      choosePage(result.page.id);
+      const order = undo.before.map((id) => renamed.get(id) || id).filter((id) => book.pageIds.includes(id));
+      const rest = book.pageIds.filter((id) => !order.includes(id));
+      book = await api<Notebook>('update', { id: book.id, revision: book.revision, pageIds: [...order, ...rest] });
+      const pages = [...useEditor.getState().pages, ...added];
+      useEditor.setState({ book, pages: book.pageIds.map((id) => pages.find((x) => x.id === id)!) });
+      choosePage(renamed.get(undo.pages[0].id) || book.pageIds[0]);
+    });
+  }
+  /** New order of all pages (tile view). */
+  function arrange(ids: string[]) {
+    void run(async () => {
+      const state = useEditor.getState();
+      const book = await api<Notebook>('update', { id: state.book!.id, revision: state.book!.revision, pageIds: ids });
+      useEditor.setState({ book, pages: ids.map((id) => useEditor.getState().pages.find((p) => p.id === id)!) });
+    });
+  }
+  /** Copies pages; each copy comes right after its page. */
+  function duplicatePages(ids: string[]) {
+    void run(async () => {
+      for (const id of ids) {
+        const state = useEditor.getState();
+        const source = state.pages.find((p) => p.id === id);
+        if (!source) continue;
+        const result = await api<{ book: Notebook; page: Page }>('addPage', {
+          id: state.book!.id,
+          page: { ...source, elements: cloneElements(source.elements, 0) },
+          afterId: id,
+        });
+        const pages = [...useEditor.getState().pages, result.page];
+        useEditor.setState({ book: result.book, pages: result.book.pageIds.map((p) => pages.find((x) => x.id === p)!) });
+      }
     });
   }
   function insertText() {
@@ -913,6 +941,7 @@ export default function Editor({
       if (
         showImages ||
         templateMode ||
+        showTiles ||
         showAudio ||
         showCollection ||
         showGenerator ||
@@ -1042,6 +1071,7 @@ export default function Editor({
           onChoose={choosePage}
           onAdd={() => setTemplateMode('new')}
           onDelete={s.book.pageIds.length > 1 ? (id) => deletePage(id) : undefined}
+          onTiles={() => setShowTiles(true)}
         />
         <div className="editor-main">
         <section className="canvas-area">
@@ -1157,7 +1187,7 @@ export default function Editor({
           {deleted && (
             <div className="undo-notice" role="status">
               <Icon name="empty_trash" size={22} />
-              <span>Seite {deleted.index + 1} gelöscht</span>
+              <span>{deleted.pages.length === 1 ? `Seite ${deleted.first + 1} gelöscht` : `${deleted.pages.length} Seiten gelöscht`}</span>
               <button type="button" className="knopf compact" disabled={busy} onClick={restorePage}>
                 <Icon name="undo" size={20} /> Rückgängig
               </button>
@@ -1232,6 +1262,7 @@ export default function Editor({
             onDelete={() => deletePage()}
             onTemplates={() => setTemplateMode('new')}
             onChangeTemplate={() => setTemplateMode('change')}
+            onTiles={() => setShowTiles(true)}
             onSaveTemplate={(name) =>
               run(async () => {
                 const template = await api<Template>('template', { title: name, page });
@@ -1439,6 +1470,22 @@ export default function Editor({
           }}
           onPageScreenshot={pageScreenshot}
           onClose={closeImages}
+        />
+      )}
+      {showTiles && (
+        <PageTiles
+          pages={s.pages}
+          pageIds={s.book.pageIds}
+          activeId={page.id}
+          busy={busy}
+          onClose={() => setShowTiles(false)}
+          onOpen={(id) => {
+            choosePage(id);
+            setShowTiles(false);
+          }}
+          onArrange={arrange}
+          onDuplicate={duplicatePages}
+          onDelete={deletePages}
         />
       )}
       {templateMode && (

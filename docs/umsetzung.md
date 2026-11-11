@@ -114,6 +114,15 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   Lineatur, Papierfarbe und Rahmen kommen aus der Vorlage, alles auf der Seite
   bleibt erhalten; nur eine leere Seite bekommt auch den Inhalt der Vorlage.
   Die Seite merkt sich ihre Vorlage (`page.template`), die Auswahl markiert sie.
+- „Seite“ in der Werkzeugleiste ist gegliedert in Papier (Lineatur, Format),
+  Farben & Bild, Rahmen (Seitenrahmen und -farbe), Vorlage (wechseln, als
+  eigene Vorlage speichern) und Seiten (Kachelansicht, neu, duplizieren,
+  verschieben, löschen).
+- Kachelansicht (Seitenübersicht oder „Seiten“): alle Seiten als große
+  Kacheln in einem Overlay. Antippen wählt, „Mehrere“ oder Strg/Umschalt
+  wählt dazu; Ziehen verschiebt (auch mehrere Seiten zusammen), dazu Nach
+  vorn/hinten, Duplizieren (Kopie direkt dahinter), Löschen mit Rückgängig
+  für alle gelöschten Seiten und Öffnen (auch Doppelklick).
 - Seiten löschen: Papierkorb an jeder Miniatur der Seitenübersicht (bei
   Maus beim Darüberfahren und an der aktuellen Seite, auf Tablets immer
   sichtbar) oder „Seite verwalten“ › „Seite löschen“. Ohne Rückfrage; ein

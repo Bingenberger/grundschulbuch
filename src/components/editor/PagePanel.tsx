@@ -15,6 +15,7 @@ export default function PagePanel({
   onChoose,
   onAdd,
   onDelete,
+  onTiles,
   extra,
   overview = true,
 }: {
@@ -26,6 +27,8 @@ export default function PagePanel({
   onAdd?: () => void;
   /** Bin on each thumbnail; left out when the page may not be deleted. */
   onDelete?: (id: string) => void;
+  /** Opens the tile view of all pages. */
+  onTiles?: () => void;
   extra?: React.ReactNode;
   /** false: only arrows to turn pages, no thumbnails (e.g. for some children). */
   overview?: boolean;
@@ -76,6 +79,12 @@ export default function PagePanel({
       )}
       {open && (
         <>
+          {onTiles && (
+            <button type="button" className="page-tiles-open" disabled={busy} onClick={onTiles}>
+              <Icon name="grid" size={22} />
+              <span>Kachelansicht</span>
+            </button>
+          )}
           <div className="page-thumbnails">
             {pageIds.map((id, i) => {
               const p = pages.find((page) => page.id === id);
@@ -139,6 +148,11 @@ export default function PagePanel({
           {onAdd && (
             <button type="button" aria-label="Neue Seite" disabled={busy} onClick={onAdd}>
               <Icon name="plus" size={22} />
+            </button>
+          )}
+          {onTiles && (
+            <button type="button" aria-label="Kachelansicht" disabled={busy} onClick={onTiles}>
+              <Icon name="grid" size={22} />
             </button>
           )}
         </div>
