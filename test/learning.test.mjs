@@ -76,11 +76,18 @@ test('Der Vorlagenkatalog erzeugt eigenständige gültige Seiten für alle Kateg
   for (const meta of templates.blueprints) {
     assert.equal(ids.has(meta.id), false);
     ids.add(meta.id);
-    const pages = templates.blueprintPages(meta);
-    assert.ok(pages.length);
-    for (const page of pages) {
-      assert.ok(books.validatePage(page));
-      assert.ok(page.elements.length);
+    for (const orientation of ['landscape', 'portrait']) {
+      const pages = templates.blueprintPages(meta, orientation);
+      assert.ok(pages.length);
+      const [w, h] = orientation === 'landscape' ? [297, 210] : [210, 297];
+      for (const page of pages) {
+        assert.equal(page.orientation, orientation);
+        assert.ok(books.validatePage(page));
+        assert.ok(page.elements.length);
+        // Everything lies on the page.
+        for (const el of page.elements)
+          assert.ok(el.x >= 0 && el.y >= 0 && el.x + el.width <= w + 0.5 && el.y + el.height <= h + 0.5, `${meta.title} (${orientation}): ${el.type} ${el.x},${el.y},${el.width},${el.height}`);
+      }
     }
   }
 });

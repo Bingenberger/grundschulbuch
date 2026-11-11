@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import Icon from './Icon';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useEditor, flushEditor } from '@/lib/editor-store';
 import { speakGerman } from '@/lib/speech';
 import { childApi } from '@/lib/child-api';
@@ -28,6 +28,8 @@ import ToolRail, { type RailItem } from './editor/ToolRail';
 import PagePanel from './editor/PagePanel';
 import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
+import TemplateChooser from './editor/TemplateChooser';
+import { PAPER, templateCatalog } from './editor/page-templates';
 import ImageDialog from './ImageDialog';
 import ImageEditor, { editFromElement } from './ImageEditor';
 import { cascade, fillPlaceholder, imageElement, isPlaceholder, withEditedPicture, type ChosenImage } from './editor/image-elements';
@@ -60,6 +62,9 @@ export default function ChildEditor({
   const s = useEditor();
   const recognition = useShapeRecognition(s.recognizeShapes && !['water', 'fill'].includes(s.brush), s.activeId);
   const [showImages, setShowImages] = useState(false);
+  /** Paper chooser for a new page (children get empty pages only). */
+  const [choosePaper, setChoosePaper] = useState(false);
+  const paper = useMemo(() => templateCatalog([]).filter((e) => e.category === PAPER), []);
   /** Placeholder that gets the photo (instead of a new picture). */
   const [fillId, setFillId] = useState<string | null>(null);
   /** Picture open in the editor. */
@@ -336,12 +341,12 @@ export default function ChildEditor({
     setErasePreview(null);
     useEditor.setState({ activeId: id, selected: [], past: [], future: [] });
   }
-  async function addPage() {
+  async function addPage(input: Page) {
     if (!(await flushEditor()) || !page) return;
     try {
       const result = await childApi<{ book: Notebook; page: Page }>('addPage', {
         id: s.book!.id,
-        page: newPage(page.ruling, page.orientation),
+        page: input,
       });
       useEditor.setState({
         book: result.book,
@@ -494,7 +499,7 @@ export default function ChildEditor({
           pageIds={s.book.pageIds}
           activeId={page.id}
           onChoose={choosePage}
-          onAdd={features.has('addPage') ? () => void addPage() : undefined}
+          onAdd={features.has('addPage') ? () => setChoosePaper(true) : undefined}
           overview={features.has('pages')}
         />
         <div className="editor-main">
@@ -610,6 +615,19 @@ export default function ChildEditor({
           )}
         </div>
       </div>
+      {choosePaper && page && (
+        <TemplateChooser
+          title="Neue Seite"
+          hint="Wähle das Papier für deine neue Seite."
+          entries={paper}
+          orientation={page.orientation}
+          onClose={() => setChoosePaper(false)}
+          onPick={(entry, orientation) => {
+            setChoosePaper(false);
+            void addPage({ ...entry.build(orientation)[0], template: entry.key });
+          }}
+        />
+      )}
       {editAudio?.src && (
         <AudioEditDialog
           src={editAudio.src}

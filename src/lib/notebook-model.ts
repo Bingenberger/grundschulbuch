@@ -139,6 +139,8 @@ export type Page = {
   pageFrame?: string;
   frameColor?: string;
   backgroundImage?: string;
+  /** Template the page was made from or last changed to (for marking it). */
+  template?: string;
 
   elements: PageElement[];
 };

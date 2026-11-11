@@ -103,6 +103,17 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   rund). Ein Tipp darauf öffnet bei Kindern Kamera und Hochladen – auch in
   gesperrten Arbeitsblättern und ohne „Eigene Bilder“; der Server erlaubt dann
   genau dieses Hochladen. Das Bild füllt den Rahmen, Lage und Größe bleiben.
+- Neue Seite: „+“ (Seitenübersicht), „Neue Seite mit Vorlage“ und die
+  Tastenkombination öffnen immer die Vorlagenauswahl wie in der HTML-Vorlage:
+  Kategorien links (mit Anzahl), Suche, „Zuletzt benutzt“, echte Vorschauen
+  (werden beim Hineinscrollen gezeichnet) und „Seiten aus einer Datei“.
+  Vorlagen sind standardmäßig im Querformat; alle Lernvorlagen richten sich
+  nach der Seitengröße (`blueprintPages(meta, orientation)`), gespeicherte
+  Vorlagen behalten ihr Format. Kinder wählen nur Papier und Lineatur.
+- Vorlage ändern („Seite“ › „Vorlage“ › „Andere Vorlage wählen“): Hintergrund,
+  Lineatur, Papierfarbe und Rahmen kommen aus der Vorlage, alles auf der Seite
+  bleibt erhalten; nur eine leere Seite bekommt auch den Inhalt der Vorlage.
+  Die Seite merkt sich ihre Vorlage (`page.template`), die Auswahl markiert sie.
 - Seiten löschen: Papierkorb an jeder Miniatur der Seitenübersicht (bei
   Maus beim Darüberfahren und an der aktuellen Seite, auf Tablets immer
   sichtbar) oder „Seite verwalten“ › „Seite löschen“. Ohne Rückfrage; ein

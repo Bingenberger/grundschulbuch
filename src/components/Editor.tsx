@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useEditor, flushEditor } from '@/lib/editor-store';
 import { api } from '@/lib/client-api';
 import {
@@ -45,6 +45,8 @@ import { fitText } from './editor/text-measure';
 import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
 import { elementCenter, resizeAtCorner, rotateTo, type Corner } from '@/lib/transform';
 import PageBar from './editor/PageBar';
+import TemplateChooser from './editor/TemplateChooser';
+import { applyTemplate, templateCatalog } from './editor/page-templates';
 import { InsertBar, SelectBar, type InsertAction } from './editor/ContextBars';
 import { featuresFor } from '@/lib/features';
 import { LinkContext, LinkLayer } from './LinkContext';
@@ -61,7 +63,6 @@ import {
 } from '@/lib/editor-commands';
 import { speakGerman } from '@/lib/speech';
 import FileDialog from './FileDialog';
-import { blueprints, blueprintPages } from '@/lib/learning/templates';
 import ImageDialog from './ImageDialog';
 import ImageEditor, { editFromElement } from './ImageEditor';
 import { cascade, fillPlaceholder, imageElement, isPlaceholder, withEditedPicture, placeholderElement, type ChosenImage } from './editor/image-elements';
@@ -111,7 +112,8 @@ export default function Editor({
   const cancelRecognition = recognition.cancel;
   const ready = s.book?.id === initial.book.id;
   const [templates, setTemplates] = useState(initialTemplates);
-  const [showTemplates, setShowTemplates] = useState(false);
+  /** Template chooser: for a new page or to change the current page. */
+  const [templateMode, setTemplateMode] = useState<'new' | 'change' | null>(null);
   const [showImages, setShowImages] = useState(false);
   /** Placeholder that gets the chosen picture (instead of a new element). */
   const [fillId, setFillId] = useState<string | null>(null);
@@ -134,9 +136,7 @@ export default function Editor({
   const [boardDraw, setBoardDraw] = useState(false);
   const [boardPointer, setBoardPointer] = useState<BoardPointerMode>('none');
   const [lightSize, setLightSize] = useState(0.2);
-  const [showFiles, setShowFiles] = useState(false),
-    [templateCategory, setTemplateCategory] = useState('Alle');
-  const [templateQuery, setTemplateQuery] = useState('');
+  const [showFiles, setShowFiles] = useState(false);
   const [board, setBoard] = useState(false);
   const [busy, setBusy] = useState(false);
   const [deleted, setDeleted] = useState<{ page: Page; index: number } | null>(null);
@@ -151,6 +151,7 @@ export default function Editor({
   const gesture = useRef<Gesture | null>(null);
   const [clipboard, setClipboard] = useState<PageElement[]>([]);
   const page = s.pages.find((p) => p.id === s.activeId);
+  const catalog = useMemo(() => templateCatalog(templates), [templates]);
   const writing = useTextEditing(page?.id, board);
   const selected =
     page?.elements.filter((el) => s.selected.includes(el.id)) || [];
@@ -291,7 +292,7 @@ export default function Editor({
         choosePage(s.book.pageIds[s.pages.length - 1]);
         break;
       case 'newPage':
-        void run(() => add());
+        setTemplateMode('new');
         break;
       case 'readPage':
         speakGerman(
@@ -488,7 +489,6 @@ export default function Editor({
       pages: result.book.pageIds.map((id) => pages.find((p) => p.id === id)!),
     });
     choosePage(result.page.id);
-    setShowTemplates(false);
   }
   async function reorder(delta: number) {
     const ids = [...s.book!.pageIds];
@@ -561,7 +561,7 @@ export default function Editor({
         fontSize: 21,
         bold: true,
       });
-    else if (action === 'templates') setShowTemplates(true);
+    else if (action === 'templates') setTemplateMode('new');
     else if (action === 'worksheet') setShowGenerator(true);
     else if (action === 'collection') setShowCollection(true);
     else setShowEmbed(true);
@@ -912,7 +912,7 @@ export default function Editor({
         return;
       if (
         showImages ||
-        showTemplates ||
+        templateMode ||
         showAudio ||
         showCollection ||
         showGenerator ||
@@ -1040,7 +1040,7 @@ export default function Editor({
           activeId={page.id}
           busy={busy}
           onChoose={choosePage}
-          onAdd={() => run(() => add())}
+          onAdd={() => setTemplateMode('new')}
           onDelete={s.book.pageIds.length > 1 ? (id) => deletePage(id) : undefined}
         />
         <div className="editor-main">
@@ -1230,12 +1230,12 @@ export default function Editor({
             onDuplicate={() => run(() => add({ ...page, elements: cloneElements(page.elements, 0) }))}
             onMove={(delta) => run(() => reorder(delta))}
             onDelete={() => deletePage()}
-            onTemplates={() => setShowTemplates(true)}
+            onTemplates={() => setTemplateMode('new')}
+            onChangeTemplate={() => setTemplateMode('change')}
             onSaveTemplate={(name) =>
               run(async () => {
                 const template = await api<Template>('template', { title: name, page });
                 setTemplates([...templates, template]);
-                setShowTemplates(true);
               })
             }
           />
@@ -1441,161 +1441,52 @@ export default function Editor({
           onClose={closeImages}
         />
       )}
-      {showTemplates && (
-        <div className="modal-backdrop">
-          <section
-            className="modal template-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="templates-title"
-          >
-            <div className="dialog-heading">
-              <div>
-                <h2 id="templates-title">Eine neue Seite</h2>
-                <p>Wähle eine Lineatur oder eine gespeicherte Vorlage.</p>
-              </div>
-              <button className="knopf" onClick={() => setShowTemplates(false)}>
-                Schließen
-              </button>
-            </div>
-            <label className="search">
-              <input
-                aria-label="Vorlagen suchen"
-                placeholder="Vorlagen suchen …"
-                value={templateQuery}
-                onChange={(e) => setTemplateQuery(e.target.value)}
-              />
-            </label>
-            <div className="catalog-tabs">
-              {['Alle', ...new Set(blueprints.map((t) => t.category))].map(
-                (category) => (
-                  <button
-                    key={category}
-                    aria-pressed={templateCategory === category}
-                    onClick={() => setTemplateCategory(category)}
-                  >
-                    {category}
-                  </button>
-                ),
-              )}
-            </div>
-            <div className="blueprint-list">
-              {blueprints
-                .filter(
-                  (t) =>
-                    (templateCategory === 'Alle' ||
-                      t.category === templateCategory) &&
-                    `${t.title} ${t.category}`
-                      .toLowerCase()
-                      .includes(templateQuery.toLowerCase()),
-                )
-                .map((t) => (
-                  <button
-                    key={t.id}
-                    disabled={busy}
-                    onClick={() =>
-                      run(async () => {
-                        const created = blueprintPages(t);
-                        if (
-                          s.pages.length === 1 &&
-                          !page.elements.length &&
-                          page.ruling === 'blanko'
-                        ) {
-                          s.edit(() => ({
-                            ...created[0],
-                            id: page.id,
-                            revision: page.revision,
-                          }));
-                          for (const extra of created.slice(1))
-                            await add(extra);
-                          setShowTemplates(false);
-                        } else for (const p of created) await add(p);
-                      })
-                    }
-                  >
-                    <span>{t.widget ? '◈' : t.activity ? '✓' : '▤'}</span>
-                    <strong>{t.title}</strong>
-                    <small>{t.category}</small>
-                  </button>
-                ))}
-            </div>
-            <h3>Lineaturen und gespeicherte Vorlagen</h3>
-            <div className="template-grid">
-              {Object.entries(rulings)
-                .filter(([, label]) =>
-                  label.toLowerCase().includes(templateQuery.toLowerCase()),
-                )
-                .map(([ruling, label]) => (
-                  <button
-                    key={ruling}
-                    disabled={busy}
-                    onClick={() =>
-                      run(() =>
-                        add(
-                          newPage(ruling as Page['ruling'], page.orientation),
-                        ),
-                      )
-                    }
-                  >
-                    <ScaledPage
-                      page={{
-                        ...page,
-                        ruling: ruling as Page['ruling'],
-                        elements: [],
-                      }}
-                    />
-                    <strong>{label}</strong>
-                  </button>
-                ))}
-              {templates
-                .filter((t) =>
-                  `${t.title} ${t.category || ''}`
-                    .toLowerCase()
-                    .includes(templateQuery.toLowerCase()),
-                )
-                .map((t) => (
-                  <div className="saved-template" key={t.id}>
-                    <button
-                      disabled={busy}
-                      onClick={() =>
-                        run(() =>
-                          add({
-                            ...t.page,
-                            elements: cloneElements(t.page.elements, 0),
-                          }),
-                        )
-                      }
-                    >
-                      <ScaledPage page={t.page} decorative />
-                      <strong>{t.title}</strong>
-                      <small>
-                        {t.category ||
-                          (t.school ? 'Schulvorlage' : 'Eigene Vorlage')}
-                      </small>
-                    </button>
-                    {!t.school && (
-                      <button
-                        className="sidebar-link"
-                        disabled={busy}
-                        onClick={() =>
-                          run(async () => {
-                            await api('removeTemplate', { templateId: t.id });
-                            setTemplates(
-                              templates.filter(
-                                (template) => template.id !== t.id,
-                              ),
-                            );
-                          })
-                        }
-                      >
-                        Vorlage entfernen
-                      </button>
-                    )}
-                  </div>
-                ))}
-            </div>
-          </section>
-        </div>
+      {templateMode && (
+        <TemplateChooser
+          title={templateMode === 'new' ? 'Neue Seite' : 'Vorlage für diese Seite'}
+          hint={
+            templateMode === 'new'
+              ? 'Wähle eine Vorlage für die neue Seite – oder hole Seiten aus einer Datei.'
+              : 'Leere Seiten bekommen auch den Inhalt der Vorlage. Was schon auf der Seite ist, bleibt erhalten.'
+          }
+          entries={catalog}
+          current={templateMode === 'change' ? page.template : undefined}
+          orientation={templateMode === 'change' ? page.orientation : 'landscape'}
+          lockOrientation={templateMode === 'change' && page.elements.length > 0}
+          busy={busy}
+          onClose={() => setTemplateMode(null)}
+          onImport={
+            templateMode === 'new'
+              ? () => {
+                  setTemplateMode(null);
+                  setShowFiles(true);
+                }
+              : undefined
+          }
+          onRemove={(entry) =>
+            run(async () => {
+              await api('removeTemplate', { templateId: entry.savedId });
+              setTemplates(templates.filter((t) => t.id !== entry.savedId));
+            })
+          }
+          onPick={(entry, orientation) => {
+            if (templateMode === 'change') {
+              const [model] = entry.build(page.elements.length ? page.orientation : orientation);
+              s.edit((p) => applyTemplate(p, model, entry.key));
+              setTemplateMode(null);
+              return;
+            }
+            void run(async () => {
+              const created = entry.build(orientation).map((p) => ({ ...p, template: entry.key }));
+              // A notebook with just one empty page gets the template right there.
+              if (s.pages.length === 1 && !page.elements.length) {
+                s.edit(() => ({ ...created[0], id: page.id, revision: page.revision }));
+                for (const extra of created.slice(1)) await add(extra);
+              } else for (const p of created) await add(p);
+              setTemplateMode(null);
+            });
+          }}
+        />
       )}
     </main>
   );

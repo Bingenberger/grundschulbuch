@@ -37,6 +37,8 @@ test('Heft erstellen, schreiben, zeichnen, Seiten wechseln, wiederöffnen und dr
   await page.mouse.move(surface!.x + 130, surface!.y + 180, { steps: 10 });
   await page.mouse.up();
   await page.getByRole('button', { name: 'Neue Seite', exact: true }).click();
+  await page.getByRole('dialog', { name: 'Neue Seite' }).getByRole('button', { name: 'Vorlage Blanko' }).click();
+  await expect(page.getByLabel('Seite 2 öffnen')).toBeVisible();
   await page.getByLabel('Seite 1 öffnen').click();
   await expect(page.getByRole('status')).toHaveText('✓ Gespeichert');
   await page.reload();

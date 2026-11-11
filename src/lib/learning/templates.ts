@@ -370,25 +370,32 @@ function title(page: Page, value: string) {
     24,
   );
 }
-export function blueprintPages(meta: Blueprint): Page[] {
+/**
+ * Pages of a template, laid out for the chosen format (landscape by default):
+ * all positions follow the page size, so every template fits both formats.
+ */
+export function blueprintPages(meta: Blueprint, orientation: Page['orientation'] = 'landscape'): Page[] {
   if (meta.layout === 'communication-book')
     return Object.entries(themeWords).flatMap(([name, words]) =>
-      blueprintPages({
-        id: 'part',
-        title: name,
-        category: 'Kommunikation',
-        layout: 'widget',
-        widget: 'communication',
-        words,
-      }),
+      blueprintPages(
+        {
+          id: 'part',
+          title: name,
+          category: 'Kommunikation',
+          layout: 'widget',
+          widget: 'communication',
+          words,
+        },
+        orientation,
+      ),
     );
-  const page = newPage(
-    meta.ruling || 'blanko',
-    meta.layout.startsWith('slide') || meta.widget === 'timetable'
-      ? 'landscape'
-      : 'portrait',
-  );
-  const width = page.orientation === 'landscape' ? 297 : 210;
+  const page = newPage(meta.ruling || 'blanko', orientation);
+  const width = orientation === 'landscape' ? 297 : 210;
+  const height = orientation === 'landscape' ? 210 : 297;
+  const wide = orientation === 'landscape';
+  // Content area below the title.
+  const L = 15, T = 42, R = width - 15, B = height - 12;
+  const AW = R - L, AH = B - T;
   if (meta.widget || meta.activity) {
     const kind = meta.widget || meta.activity!,
       settings = defaultSettings(kind);
@@ -411,7 +418,7 @@ export function blueprintPages(meta: Blueprint): Page[] {
       x: 12,
       y: 15,
       width: width - 24,
-      height: page.orientation === 'landscape' ? 180 : 265,
+      height: height - 30,
       rotation: 0,
       locked: false,
       color: '#253c42',
@@ -419,17 +426,17 @@ export function blueprintPages(meta: Blueprint): Page[] {
     return [page];
   }
   title(page, meta.title);
-  if (
-    ['comic', 'gallery', 'storyboard', 'slide-columns'].includes(meta.layout)
-  ) {
-    const columns = meta.columns || 2,
-      rows = meta.rows || 2,
-      w = (width - 35) / columns,
-      h = (page.orientation === 'landscape' ? 140 : 235) / rows;
+  if (['comic', 'gallery', 'storyboard', 'slide-columns'].includes(meta.layout)) {
+    // In landscape, columns and rows swap for portrait-shaped grids (e.g. comics).
+    let columns = meta.columns || 2,
+      rows = meta.rows || 2;
+    if (wide && rows > columns && meta.layout !== 'slide-columns') [columns, rows] = [rows, columns];
+    const w = (AW - (columns - 1) * 5) / columns,
+      h = (AH - (rows - 1) * 5) / rows;
     for (let row = 0; row < rows; row++)
       for (let col = 0; col < columns; col++) {
-        const x = 15 + col * (w + 5),
-          y = 42 + row * (h + 5);
+        const x = L + col * (w + 5),
+          y = T + row * (h + 5);
         placeholder(
           page,
           x,
@@ -438,37 +445,41 @@ export function blueprintPages(meta: Blueprint): Page[] {
           h - (meta.layout === 'storyboard' ? 20 : 0),
           meta.layout === 'comic' ? '' : `Bild ${row * columns + col + 1}`,
         );
-        if (meta.layout === 'storyboard')
-          text(page, 'Bild / Handlung / Ton', x, y + h - 17, w, 16, 10);
+        if (meta.layout === 'storyboard') text(page, 'Bild / Handlung / Ton', x, y + h - 17, w, 16, 10);
       }
   } else if (meta.layout === 'writing') {
-    for (let i = 0; i < 4; i++) {
-      const x = 15 + (i % 2) * 95,
-        y = 45 + Math.floor(i / 2) * 110;
-      placeholder(page, x, y, 85, 55);
-      for (let j = 0; j < 4; j++)
-        shape(page, x, y + 65 + j * 9, 85, 0.1, '#a0b299');
+    const columns = wide ? 4 : 2, rows = wide ? 1 : 2;
+    const w = (AW - (columns - 1) * 8) / columns, h = (AH - (rows - 1) * 8) / rows;
+    for (let i = 0; i < columns * rows; i++) {
+      const x = L + (i % columns) * (w + 8),
+        y = T + Math.floor(i / columns) * (h + 8);
+      const picture = h * 0.5;
+      placeholder(page, x, y, w, picture);
+      const lines = Math.max(2, Math.floor((h - picture - 8) / 10));
+      for (let j = 0; j < lines; j++) shape(page, x, y + picture + 10 + j * 10, w, 0.1, '#a0b299');
     }
   } else if (meta.layout === 'profile') {
-    placeholder(page, 135, 42, 60, 70, 'Mein Bild');
+    const pictureW = Math.min(70, AW * 0.32), top = AH * (wide ? 0.5 : 0.42);
+    placeholder(page, R - pictureW, T, pictureW, top - 5, 'Mein Bild');
     text(
       page,
       'Mein Name: __________________\n\nDas mag ich: __________________\n\nMeine Lieblingsfarbe: __________\n\nDas kann ich gut: ______________',
-      15,
-      45,
-      115,
-      110,
+      L,
+      T + 3,
+      AW - pictureW - 10,
+      top - 5,
       14,
     );
-    placeholder(page, 15, 165, 180, 110, 'Hier ist Platz für meine Welt.');
+    placeholder(page, L, T + top + 5, AW, AH - top - 5, 'Hier ist Platz für meine Welt.');
   } else if (meta.layout === 'mindmap') {
-    shape(page, 75, 120, 60, 30, '#e5eedb', 'ellipse');
-    text(page, 'Mein Thema', 80, 127, 50, 20, 14);
+    const cx = width / 2, cy = T + AH / 2;
+    shape(page, cx - 30, cy - 15, 60, 30, '#e5eedb', 'ellipse');
+    text(page, 'Mein Thema', cx - 25, cy - 8, 50, 20, 14);
     [
-      [15, 50],
-      [130, 50],
-      [15, 205],
-      [130, 205],
+      [L, T],
+      [R - 60, T],
+      [L, B - 30],
+      [R - 60, B - 30],
     ].forEach(([x, y], i) => {
       page.elements.push(
         compactStroke({
@@ -476,13 +487,13 @@ export function blueprintPages(meta: Blueprint): Page[] {
           type: 'stroke',
           x: 0,
           y: 0,
-          width: 210,
-          height: 297,
+          width,
+          height,
           rotation: 0,
           locked: false,
           color: '#89a17b',
           points: [
-            { x: 105, y: 135, pressure: 0.5 },
+            { x: cx, y: cy, pressure: 0.5 },
             { x: x + 30, y: y + 15, pressure: 0.5 },
           ],
           penWidth: 0.5,
@@ -493,137 +504,65 @@ export function blueprintPages(meta: Blueprint): Page[] {
       text(page, `Idee ${i + 1}`, x + 5, y + 6, 50, 18, 14);
     });
   } else if (meta.layout === 'newspaper') {
-    text(page, 'Die Nachrichten unserer Klasse', 15, 40, 180, 25, 19);
-    placeholder(page, 15, 75, 110, 70, 'Unser Titelbild');
-    text(
-      page,
-      'Die wichtigste Nachricht\n\nHier beginnt unser Bericht.',
-      15,
-      155,
-      110,
-      110,
-      14,
-    );
-    text(
-      page,
-      'Weitere Nachrichten\n\nWas gibt es Neues?',
-      135,
-      75,
-      60,
-      185,
-      13,
-    );
+    const main = AW * 0.6;
+    text(page, 'Die Nachrichten unserer Klasse', L, T - 2, AW, 25, 19);
+    placeholder(page, L, T + 28, main, AH * 0.42, 'Unser Titelbild');
+    text(page, 'Die wichtigste Nachricht\n\nHier beginnt unser Bericht.', L, T + 33 + AH * 0.42, main, AH * 0.58 - 35, 14);
+    text(page, 'Weitere Nachrichten\n\nWas gibt es Neues?', L + main + 10, T + 28, AW - main - 10, AH - 30, 13);
   } else if (meta.layout === 'room') {
-    shape(page, 15, 45, 180, 220, '#f5f2e9');
-    shape(page, 15, 45, 180, 220, '#f5f2e9');
-    shape(page, 25, 60, 50, 85, '#c8d7e7', 'rounded');
-    text(page, 'Bett', 32, 90, 35, 15, 12);
-    shape(page, 115, 60, 65, 35, '#dfc8ac');
-    text(page, 'Tisch', 128, 69, 42, 15, 12);
-    shape(page, 120, 110, 25, 25, '#c8d8b2', 'ellipse');
-    shape(page, 150, 110, 25, 25, '#c8d8b2', 'ellipse');
-    shape(page, 25, 185, 55, 65, '#dfc8ac');
-    text(page, 'Schrank', 30, 210, 45, 15, 12);
-    text(
-      page,
-      'Verschiebe die Möbel und gestalte deinen Raum.',
-      15,
-      275,
-      180,
-      15,
-      10,
-    );
+    shape(page, L, T, AW, AH - 18, '#f5f2e9');
+    shape(page, L + 10, T + 12, 50, 80, '#c8d7e7', 'rounded');
+    text(page, 'Bett', L + 17, T + 42, 35, 15, 12);
+    shape(page, R - 85, T + 12, 65, 35, '#dfc8ac');
+    text(page, 'Tisch', R - 72, T + 21, 42, 15, 12);
+    shape(page, R - 80, T + 55, 25, 25, '#c8d8b2', 'ellipse');
+    shape(page, R - 50, T + 55, 25, 25, '#c8d8b2', 'ellipse');
+    shape(page, wide ? L + 75 : L + 10, wide ? T + 12 : B - 95, 55, 65, '#dfc8ac');
+    text(page, 'Schrank', wide ? L + 80 : L + 15, wide ? T + 37 : B - 70, 45, 15, 12);
+    text(page, 'Verschiebe die Möbel und gestalte deinen Raum.', L, B - 14, AW, 15, 10);
   } else if (meta.layout === 'cover' || meta.layout === 'slide-title') {
     page.paperColor = '#edf2e3';
-    text(page, 'Hier steht dein Titel', 25, 65, width - 50, 50, 32);
-    text(
-      page,
-      'Name / Klasse / Thema',
-      25,
-      page.orientation === 'landscape' ? 155 : 235,
-      width - 50,
-      25,
-      16,
-    );
+    text(page, 'Hier steht dein Titel', 25, height * 0.3, width - 50, 50, 32);
+    text(page, 'Name / Klasse / Thema', 25, height * 0.72, width - 50, 25, 16);
   } else if (meta.layout === 'certificate') {
     page.pageFrame = 'certificate';
-    text(page, 'für __________________________', 30, 65, 150, 25, 20);
-    text(page, 'Du hast etwas Besonderes geschafft!', 25, 110, 160, 35, 20);
-    shape(page, 85, 170, 40, 40, '#e8c66b', 'star');
-    text(
-      page,
-      'Datum: __________  Unterschrift: __________',
-      25,
-      250,
-      160,
-      25,
-      12,
-    );
+    const cx = width / 2;
+    text(page, 'für __________________________', cx - 85, T + 15, 170, 25, 20);
+    text(page, 'Du hast etwas Besonderes geschafft!', cx - 90, T + AH * 0.28, 180, 35, 20);
+    shape(page, cx - 20, T + AH * 0.5, 40, 40, '#e8c66b', 'star');
+    text(page, 'Datum: __________  Unterschrift: __________', cx - 85, B - 30, 170, 25, 12);
   } else if (meta.layout === 'letter') {
-    text(
-      page,
-      'Liebe / Lieber __________________,\n\n\n\n\n\n\n\nViele Grüße\n__________________',
-      20,
-      55,
-      170,
-      210,
-      17,
-    );
+    text(page, 'Liebe / Lieber __________________,\n\n\n\n\n\n\n\nViele Grüße\n__________________', L + 5, T + 10, AW - 10, AH - 10, 17);
   } else if (meta.layout === 'diary') {
     text(
       page,
       'Datum: __________________\n\nDas habe ich erlebt / gelernt:\n\n\n\nDas war schwierig:\n\n\n\nDarauf freue ich mich:',
-      20,
-      45,
-      170,
-      225,
+      L + 5,
+      T + 3,
+      AW - 10,
+      AH - 3,
       15,
     );
   } else if (meta.layout === 'slide-picture') {
-    placeholder(page, 15, 45, 165, 140);
-    text(page, 'Bildunterschrift und Gedanken', 190, 50, 90, 125, 17);
+    if (wide) {
+      placeholder(page, L, T, AW * 0.6, AH - 10);
+      text(page, 'Bildunterschrift und Gedanken', L + AW * 0.6 + 10, T + 5, AW * 0.4 - 10, AH - 20, 17);
+    } else {
+      placeholder(page, L, T, AW, AH * 0.6);
+      text(page, 'Bildunterschrift und Gedanken', L, T + AH * 0.6 + 10, AW, AH * 0.4 - 10, 17);
+    }
   } else if (meta.layout === 'slide-table') {
-    for (let row = 0; row < 5; row++)
-      for (let col = 0; col < 3; col++) {
-        shape(
-          page,
-          15 + col * 89,
-          45 + row * 28,
-          89,
-          28,
-          row === 0 ? '#e0ebd3' : '#ffffff',
-        );
-        text(
-          page,
-          row === 0 ? `Spalte ${col + 1}` : '',
-          18 + col * 89,
-          50 + row * 28,
-          83,
-          20,
-          13,
-        );
+    const rows = 5, cols = 3, w = AW / cols, h = Math.min(28, AH / rows);
+    for (let row = 0; row < rows; row++)
+      for (let col = 0; col < cols; col++) {
+        shape(page, L + col * w, T + row * h, w, h, row === 0 ? '#e0ebd3' : '#ffffff');
+        text(page, row === 0 ? `Spalte ${col + 1}` : '', L + 3 + col * w, T + 5 + row * h, w - 6, Math.min(20, h - 4), 13);
       }
   } else if (meta.layout === 'music-lines') {
     page.ruling = 'noten';
-    text(
-      page,
-      'Name: __________________   Datum: __________',
-      15,
-      35,
-      180,
-      15,
-      11,
-    );
+    text(page, 'Name: __________________   Datum: __________', L, 35, AW, 15, 11);
   } else if (meta.layout === 'slide-text') {
-    text(
-      page,
-      'Deine wichtigste Aussage\n\n• Erster Gedanke\n• Zweiter Gedanke\n• Dritter Gedanke',
-      20,
-      50,
-      width - 40,
-      130,
-      21,
-    );
+    text(page, 'Deine wichtigste Aussage\n\n• Erster Gedanke\n• Zweiter Gedanke\n• Dritter Gedanke', 20, T + 8, width - 40, AH - 20, 21);
   } else {
     const sections =
       meta.layout === 'screenplay'
@@ -631,19 +570,15 @@ export function blueprintPages(meta: Blueprint): Page[] {
         : meta.title === 'Rezept'
           ? ['Zutaten', 'Zubereitung', 'Mein Tipp']
           : meta.title === 'Experiment'
-            ? [
-                'Meine Frage',
-                'Material',
-                'So gehe ich vor',
-                'Das beobachte ich',
-              ]
+            ? ['Meine Frage', 'Material', 'So gehe ich vor', 'Das beobachte ich']
             : meta.title === 'Tagesplan'
               ? ['Am Morgen', 'Am Vormittag', 'Am Nachmittag']
               : ['Erster Abschnitt', 'Zweiter Abschnitt', 'Dritter Abschnitt'];
+    const step = AH / sections.length;
     sections.forEach((name, i) => {
-      const y = 45 + i * (220 / sections.length);
-      text(page, name, 18, y, 174, 16, 17);
-      shape(page, 18, y + 20, 174, 220 / sections.length - 28, '#f8faf3');
+      const y = T + i * step;
+      text(page, name, L + 3, y, AW - 6, 16, 17);
+      shape(page, L + 3, y + 18, AW - 6, step - 24, '#f8faf3');
     });
   }
   return [page];

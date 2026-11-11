@@ -51,6 +51,7 @@ export default function PageBar({
   onDelete,
   onSaveTemplate,
   onTemplates,
+  onChangeTemplate,
 }: {
   features: Set<Feature>;
   page: Page;
@@ -62,6 +63,8 @@ export default function PageBar({
   onDelete: () => void;
   onSaveTemplate: (name: string) => void;
   onTemplates: () => void;
+  /** Other template for this page; the content stays. */
+  onChangeTemplate?: () => void;
 }) {
   const s = useEditor();
   const [name, setName] = useState('');
@@ -158,6 +161,27 @@ export default function PageBar({
       },
     );
   }
+  if (features.has('pageDesign')) sections.push(
+{
+        id: 'template',
+        label: 'Vorlage',
+        icon: 'template',
+        content: (
+          <>
+            {onChangeTemplate && (
+              <OptionGroup label="Vorlage dieser Seite">
+                <ChoiceButton icon={<PageGlyph page={page} />} label="Andere Vorlage wählen" disabled={busy} onClick={onChangeTemplate} />
+              </OptionGroup>
+            )}
+            {features.has('pageManage') && (
+              <OptionGroup label="Neue Seite">
+                <ChoiceButton icon="template" label="Neue Seite mit Vorlage" disabled={busy} onClick={onTemplates} />
+              </OptionGroup>
+            )}
+            <span className="option-hint">Beim Wechsel der Vorlage bleibt alles erhalten, was schon auf der Seite ist.</span>
+          </>
+        ),
+      });
   if (features.has('pageManage'))
     sections.push({
       id: 'manage',

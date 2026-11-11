@@ -173,9 +173,10 @@ test('Formen, Bildgestaltung, Vorlagenkategorien, Zoom und Tastatur sind verfüg
   await page.getByRole('button', { name: 'Ganze Seite', exact: true }).click();
   await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Einfügen', exact: true }).click();
   await page.getByRole('button', { name: 'Vorlagen', exact: true }).click();
-  const templates = page.getByRole('dialog', { name: 'Eine neue Seite' });
+  const templates = page.getByRole('dialog', { name: 'Neue Seite' });
   await templates
-    .getByRole('button', { name: 'Kommunikation', exact: true })
+    .getByRole('navigation', { name: 'Kategorien' })
+    .getByRole('button', { name: /^Kommunikation · \d+$/ })
     .click();
   await templates
     .getByRole('button', { name: /Kommunikation · 6 Felder/ })

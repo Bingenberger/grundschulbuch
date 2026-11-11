@@ -419,6 +419,11 @@ export function validatePage(input) {
       throw new BookError('Ungültiges Hintergrundbild.');
     result.backgroundImage = input.backgroundImage;
   }
+  if (input.template !== undefined) {
+    if (typeof input.template !== 'string' || !/^[\w.-]{1,120}$/.test(input.template))
+      throw new BookError('Ungültige Vorlage.');
+    result.template = input.template;
+  }
   return result;
 }
 const bookPath = (bookId) => dataPath('hefte', id(bookId), 'heft.json');
