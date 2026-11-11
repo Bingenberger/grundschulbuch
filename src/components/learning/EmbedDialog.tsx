@@ -1,4 +1,5 @@
 'use client';
+import { Picker } from '../ui/Choice';
 import { useState } from 'react';
 import { uuid, type PageElement } from '@/lib/notebook-model';
 export default function EmbedDialog({
@@ -73,19 +74,18 @@ export default function EmbedDialog({
             }
           }}
         >
-          <label className="property-label">
-            Art
-            <select
-              value={kind}
-              onChange={(e) => setKind(e.target.value as typeof kind)}
-            >
-              <option value="video">Video</option>
-              <option value="webpage">Webseite</option>
-              <option value="link">Verknüpfung</option>
-              <option value="qr">QR-Plakat</option>
-              <option value="app">Eigene HTML-App</option>
-            </select>
-          </label>
+          <Picker
+            label="Art"
+            value={kind}
+            onChange={setKind}
+            options={[
+              { value: 'video', label: 'Video', icon: 'camcorder_pro' },
+              { value: 'webpage', label: 'Webseite', icon: 'globe' },
+              { value: 'link', label: 'Verknüpfung', icon: 'next' },
+              { value: 'qr', label: 'QR-Plakat', icon: 'grid' },
+              { value: 'app', label: 'Eigene HTML-App', icon: 'settings' },
+            ]}
+          />
           {kind === 'app' ? (
             <label className="feld">
               <span>Eigenständige HTML-Datei (bis 2 MB)</span>

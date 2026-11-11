@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element -- School media. */
 'use client';
+import { FontPicker, Picker } from '../ui/Choice';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { LearningSettings } from '@/lib/learning/catalog';
 import { assemblyMedia, assemblyWords } from '@/lib/learning/syllable-assembly';
 import { clapWord, clapSyllables } from '@/lib/learning/clapping';
-import { fonts } from '@/lib/notebook-model';
 import WordBank from './WordBank';
 import AudioDialog from '../AudioDialog';
 export default function SyllableOptions({ settings: c, onChange, upload, busy }: {
@@ -27,9 +27,10 @@ export default function SyllableOptions({ settings: c, onChange, upload, busy }:
       const info = clapSyllables(entry), confirmed = info.confirmed || c.syllableConfirmed?.includes(info.parts.join('-'));
       return <div key={i}><p>{info.parts.join(' – ')}{!confirmed && ' · Vorschlag, bitte prüfen'}</p>{!confirmed && info.word && <button type="button" onClick={() => onChange({ words: c.words?.map((word, n) => n === i ? info.parts.join('-') : word), syllableConfirmed: [...(c.syllableConfirmed || []).filter(value => value !== info.parts.join('-')), info.parts.join('-')].slice(-30) })}>Trennung für Wort {i + 1} übernehmen</button>}</div>;
     })}</details>
-    <label className="property-label">Hinweis<select aria-label="Hinweis beim Silbenlegen" value={c.syllablePrompt || 'image'} onChange={event => onChange({ syllablePrompt: event.target.value as 'image' | 'word' | 'audio' | 'both' })}><option value="image">Wortbild</option><option value="word">Geschriebenes Wort</option><option value="audio">Wort anhören</option><option value="both">Bild und geschriebenes Wort</option></select></label>
+    <Picker label="Hinweis" name="Hinweis beim Silbenlegen" value={c.syllablePrompt || 'image'} onChange={syllablePrompt => onChange({ syllablePrompt })}
+      options={[{ value: 'image', label: 'Wortbild', icon: 'picture' }, { value: 'word', label: 'Geschriebenes Wort', icon: 'document' }, { value: 'audio', label: 'Wort anhören', icon: 'speaker' }, { value: 'both', label: 'Bild und Wort', icon: 'gallery' }]} />
     <label><input type="checkbox" checked={c.syllableColours !== false} onChange={event => onChange({ syllableColours: event.target.checked })} /> Silben abwechselnd blau und rot anzeigen</label>
-    <label className="property-label">Schrift<select aria-label="Schrift beim Silbenlegen" value={c.font || 'Andika'} onChange={event => onChange({ font: event.target.value })}>{Object.entries(fonts).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+    <FontPicker name="Schrift beim Silbenlegen" value={c.font || 'Andika'} onChange={font => onChange({ font })} />
     <details><summary>Eigene Wortbilder und Wortaufnahmen</summary>
       {Array.from(new Set(words)).map((word, i) => { const item = assemblyMedia(c, word); return <fieldset key={word}><legend>{word}</legend>
         {item?.image && <img className="alphabet-config-image" src={item.image} alt={word} />}

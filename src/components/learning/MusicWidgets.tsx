@@ -1,4 +1,6 @@
 'use client';
+import { Picker } from '../ui/Choice';
+import { TextGlyph } from '../ui/Glyphs';
 import { useEffect, useRef, useState } from 'react';
 import type { PageElement } from '@/lib/notebook-model';
 import { seeded, noteFrequency } from '@/lib/learning/algorithms';
@@ -240,30 +242,26 @@ export default function MusicWidgets({
   if (kind === 'piano')
     content = (
       <>
-        <label>
-          Melodie wählen{' '}
-          <select
-            aria-label="Melodie wählen"
-            value={String(state.melody || 'custom')}
-            disabled={!interactive}
-            onChange={(e) => {
-              const melody = e.target.value;
-              update({
-                melody,
-                events: (melodies[melody] || []).map((note, i) => ({
-                  note,
-                  at: i * 0.5,
-                  duration: i === 7 ? 0.9 : 0.4,
-                })),
-              });
-            }}
-          >
-            <option value="custom">Eigene Melodie</option>
-            {Object.keys(melodies).map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </select>
-        </label>
+        <Picker
+          compact
+          label="Melodie wählen"
+          value={String(state.melody || 'custom')}
+          disabled={!interactive}
+          onChange={(melody) =>
+            update({
+              melody,
+              events: (melodies[melody] || []).map((note, i) => ({
+                note,
+                at: i * 0.5,
+                duration: i === 7 ? 0.9 : 0.4,
+              })),
+            })
+          }
+          options={[
+            { value: 'custom', label: 'Eigene Melodie', icon: <TextGlyph text="✎" tone="green" /> },
+            ...Object.keys(melodies).map((name) => ({ value: name, label: name, icon: <TextGlyph text="♪" /> })),
+          ]}
+        />
         {keyboard}
         {recordControls}
       </>
@@ -299,14 +297,12 @@ export default function MusicWidgets({
   else if (kind === 'sequencer')
     content = (
       <>
-        <label>
-          Rhythmusvorlage{' '}
-          <select
-            aria-label="Rhythmusvorlage"
-            disabled={!interactive}
-            value={String(state.pattern || 'custom')}
-            onChange={(e) => {
-              const pattern = e.target.value;
+        <Picker
+          compact
+          label="Rhythmusvorlage"
+          disabled={!interactive}
+          value={String(state.pattern || 'custom')}
+          onChange={(pattern) => {
               const at = [
                 'rock',
                 'pop',
@@ -347,25 +343,12 @@ export default function MusicWidgets({
                   ),
                 ],
               });
-            }}
-          >
-            <option value="custom">Eigener Rhythmus</option>
-            {[
-              'rock',
-              'pop',
-              'disco',
-              'hiphop',
-              'funk',
-              'reggae',
-              'bossa',
-              'samba',
-              'march',
-              'techno',
-            ].map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </select>
-        </label>
+          }}
+          options={[
+            { value: 'custom', label: 'Eigener Rhythmus', icon: <TextGlyph text="✎" tone="green" /> },
+            ...([['rock', 'Rock'], ['pop', 'Pop'], ['disco', 'Disco'], ['hiphop', 'Hip-Hop'], ['funk', 'Funk'], ['reggae', 'Reggae'], ['bossa', 'Bossa Nova'], ['samba', 'Samba'], ['march', 'Marsch'], ['techno', 'Techno']] as const).map(([value, label]) => ({ value, label, icon: <TextGlyph text="♩" tone="orange" /> })),
+          ]}
+        />
         <div className="sequencer">
           {beats.slice(0, 4).map((row, r) => (
             <div key={r}>

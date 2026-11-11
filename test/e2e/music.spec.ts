@@ -130,8 +130,9 @@ test('Animation exportiert mehrere Objekte mit Ton; Sequencer exportiert spielba
   await page.getByLabel('Seite 2 öffnen', { exact: true }).click();
   await page
     .locator('.interaction-surface')
-    .getByLabel('Rhythmusvorlage')
-    .selectOption('rock');
+    .getByRole('group', { name: 'Rhythmusvorlage' })
+    .getByRole('button', { name: 'Rock', exact: true })
+    .click();
   const soundPending = page.waitForEvent('download');
   await page
     .locator('.interaction-surface')

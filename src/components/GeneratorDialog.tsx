@@ -1,4 +1,6 @@
 'use client';
+import { Picker } from './ui/Choice';
+import type { IconName } from './Icon';
 import {
   allGenerators,
   generatePages,
@@ -9,6 +11,24 @@ import WordBank from './learning/WordBank';
 import { useState } from 'react';
 
 import type { Page } from '@/lib/notebook-model';
+/** A fitting icon for a worksheet format, derived from its name. */
+function worksheetIcon(label: string): IconName {
+  const rules: [RegExp, IconName][] = [
+    [/uhr|zeit/i, 'clock'],
+    [/geld|euro|einkauf|preis/i, 'paid'],
+    [/note|takt|musik/i, 'music'],
+    [/suchsel/i, 'search'],
+    [/labyrinth/i, 'sports_mode'],
+    [/schwung|nachspur|abschreib|schreib/i, 'signature'],
+    [/silbe|wort|lese|buchstab/i, 'reading'],
+    [/sudoku|quadrat|tabelle|feld|raster/i, 'grid'],
+    [/stellen|zahlenstrahl|folge|nachbar/i, 'timeline'],
+    [/mauer|haus|häuser|dreieck/i, 'org_unit'],
+    [/menge|zähl/i, 'collect'],
+  ];
+  return rules.find(([re]) => re.test(label))?.[1] ?? 'calculator';
+}
+
 export default function GeneratorDialog({
   onInsert,
   onClose,
@@ -64,20 +84,16 @@ export default function GeneratorDialog({
         <button className="knopf compact" onClick={() => setShowAI(true)}>
           Wörter mit KI entwerfen
         </button>
-        <label className="property-label">
-          Übungsformat
-          <select
-            aria-label="Übungsformat"
-            value={kind}
-            onChange={(e) => setKind(e.target.value as WorksheetKind)}
-          >
-            {Object.entries(allGenerators).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <Picker
+          label="Übungsformat"
+          value={kind}
+          onChange={setKind}
+          options={(Object.entries(allGenerators) as [WorksheetKind, string][]).map(([value, label]) => ({
+            value,
+            label,
+            icon: worksheetIcon(label),
+          }))}
+        />
         <label className="feld">
           <span>Überschrift</span>
           <input

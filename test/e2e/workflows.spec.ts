@@ -110,8 +110,9 @@ test('Klasse anlegen, Kartenprüfsumme zuordnen, austeilen und als Kind arbeiten
     },
   });
   await page
-    .getByLabel('Heft zum Austeilen')
-    .selectOption({ label: 'Mein ausgeteiltes Heft' });
+    .getByRole('group', { name: 'Heft zum Austeilen' })
+    .getByRole('button', { name: 'Mein ausgeteiltes Heft', exact: true })
+    .click();
   await page
     .getByRole('button', { name: 'Heft austeilen', exact: true })
     .click();
@@ -161,8 +162,9 @@ test('Generator, Sammlung und Kollegium verwenden', async ({
     .getByRole('button', { name: 'Arbeitsblatt', exact: true })
     .click();
   await page
-    .getByLabel('Übungsformat', { exact: true })
-    .selectOption('rechnen');
+    .getByRole('group', { name: 'Übungsformat' })
+    .getByRole('button', { name: 'Rechenaufgaben', exact: true })
+    .click();
   await page.getByRole('button', { name: 'Seiten ins Heft einfügen' }).click();
   await expect(page.locator('.page-thumbnail')).toHaveCount(3);
   await page.screenshot({
@@ -186,8 +188,9 @@ test('Generator, Sammlung und Kollegium verwenden', async ({
 
   await page.getByRole('button', { name: 'Weitergeben', exact: true }).click();
   await page
-    .getByLabel('Empfangende Lehrkraft', { exact: true })
-    .selectOption({ label: 'Herr Muster' });
+    .getByRole('group', { name: 'Empfangende Lehrkraft' })
+    .getByRole('button', { name: 'Herr Muster', exact: true })
+    .click();
   await page.getByRole('button', { name: 'Kopie weitergeben' }).click();
   await expect(page.getByRole('status').last()).toContainText('Kopie liegt');
   const colleagueContext = await browser.newContext();

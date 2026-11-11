@@ -1,4 +1,6 @@
 'use client';
+import { Picker } from '../ui/Choice';
+import { themeIcons } from './pickerIcons';
 import { useState } from 'react';
 import { wordBanks } from '@/lib/learning/words';
 export default function WordBank({
@@ -10,17 +12,17 @@ export default function WordBank({
   return (
     <details className="word-bank-picker">
       <summary>Wörter aus einer Liste wählen</summary>
-      <label className="property-label">
-        Thema
-        <select
-          value={theme}
-          onChange={(e) => setTheme(e.target.value as keyof typeof wordBanks)}
-        >
-          {Object.keys(wordBanks).map((name) => (
-            <option key={name}>{name}</option>
-          ))}
-        </select>
-      </label>
+      <Picker
+        label="Thema"
+        name="Thema der Wortliste"
+        value={theme}
+        onChange={setTheme}
+        options={(Object.keys(wordBanks) as (keyof typeof wordBanks)[]).map((name) => ({
+          value: name,
+          label: name,
+          icon: themeIcons[name],
+        }))}
+      />
       <p>{wordBanks[theme].join(' · ')}</p>
       <button
         className="knopf compact"

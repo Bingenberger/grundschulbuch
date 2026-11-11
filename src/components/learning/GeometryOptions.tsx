@@ -1,4 +1,6 @@
 'use client';
+import { Picker } from '../ui/Choice';
+import { TextGlyph } from '../ui/Glyphs';
 import { useState } from 'react';
 import type { LearningSettings } from '@/lib/learning/catalog';
 import { defaultGeometryPath, geometryCustom, geometryTrace } from '@/lib/learning/geometry';
@@ -13,11 +15,14 @@ export default function GeometryOptions({ settings: c, onChange }: { settings: L
   const [path, setPath] = useState(() => (c.path?.length ? c.path : defaultGeometryPath).map(p => `${p.x},${p.y}`).join('\n'));
   const custom = geometryCustom(c), parsed = parseGeometryPath(path);
   return <fieldset className="geometry-options"><legend>Geometrie · Aufgabenablauf</legend>
-    <label className="property-label">Aufgaben<select aria-label="Geometrie-Aufgabenart" value={custom ? 'custom' : 'series'} onChange={event => onChange({ geometryMode: event.target.value as 'series' | 'custom', path: event.target.value === 'custom' ? parsed || [] : c.path, geometryHelp: c.geometryHelp || (custom ? 'trace' : 'preview') })}><option value="series">Erzeugte Aufgabenserie</option><option value="custom">Eigene Form</option></select></label>
-    {!custom && <><label className="property-label">Schwierigkeit<select aria-label="Geometrie-Schwierigkeit" value={Math.max(1, Math.min(3, c.difficulty || 1))} onChange={event => onChange({ difficulty: Number(event.target.value) })}><option value={1}>Leicht · waagerechte und senkrechte Strecken</option><option value={2}>Mittel · Dreiecke und schräge Vierecke</option><option value={3}>Schwer · mehrteilige Konturen</option></select></label>
+    <Picker label="Aufgaben" name="Geometrie-Aufgabenart" value={custom ? 'custom' : 'series'} onChange={mode => onChange({ geometryMode: mode, path: mode === 'custom' ? parsed || [] : c.path, geometryHelp: c.geometryHelp || (custom ? 'trace' : 'preview') })}
+      options={[{ value: 'series', label: 'Erzeugte Aufgabenserie', icon: 'serial_tasks' }, { value: 'custom', label: 'Eigene Form', icon: 'radar_plot' }]} />
+    {!custom && <><Picker label="Schwierigkeit" name="Geometrie-Schwierigkeit" value={Math.max(1, Math.min(3, c.difficulty || 1))} onChange={difficulty => onChange({ difficulty })}
+        options={[{ value: 1, label: 'Leicht · waagerecht und senkrecht', icon: <TextGlyph text="1" tone="green" /> }, { value: 2, label: 'Mittel · Dreiecke und schräge Vierecke', icon: <TextGlyph text="2" tone="orange" /> }, { value: 3, label: 'Schwer · mehrteilige Konturen', icon: <TextGlyph text="3" tone="violet" /> }]} />
       <label className="property-label">Aufgaben je Serie<input aria-label="Anzahl der Geometrieaufgaben" type="number" min={1} max={12} value={c.geometryCount || 5} onChange={event => onChange({ geometryCount: Math.max(1, Math.min(12, Math.round(Number(event.target.value) || 5))) })} /></label>
       <label className="property-label">Aufgabenvariante<input aria-label="Geometrie-Aufgabenvariante" type="number" min={0} max={999999} value={c.seed ?? 42} onChange={event => onChange({ seed: Math.max(0, Math.min(999999, Math.round(Number(event.target.value) || 0))) })} /></label></>}
-    <label className="property-label">Vorlage<select aria-label="Geometrie-Vorlagenhilfe" value={geometryTrace(c) ? 'trace' : 'preview'} onChange={event => onChange({ geometryHelp: event.target.value as 'preview' | 'trace' })}><option value="preview">Kurz ansehen, dann aus dem Gedächtnis zeichnen</option><option value="trace">Dauerhaft zum Nachzeichnen anzeigen</option></select></label>
+    <Picker label="Vorlage" name="Geometrie-Vorlagenhilfe" value={geometryTrace(c) ? 'trace' : 'preview'} onChange={geometryHelp => onChange({ geometryHelp })}
+      options={[{ value: 'preview', label: 'Kurz ansehen, dann aus dem Gedächtnis', icon: 'idea' }, { value: 'trace', label: 'Dauerhaft zum Nachzeichnen', icon: 'signature' }]} />
     <label className="property-label">Vorschaudauer in Sekunden<input aria-label="Geometrie-Vorschaudauer" type="number" min={1} max={15} value={c.geometryPreview || 3} onChange={event => onChange({ geometryPreview: Math.max(1, Math.min(15, Math.round(Number(event.target.value) || 3))) })} /></label>
     {custom && <><label className="property-label">Eckpunkte · X,Y je Zeile, jeweils 0 bis 100<textarea aria-label="Eigene Geometrieform" value={path} onChange={event => { const value = event.target.value; setPath(value); onChange({ path: parseGeometryPath(value) || [] }); }} /></label>
       <p>Zwischen zwei aufeinanderfolgenden Punkten liegt eine Strecke. Zum Schließen den ersten Punkt am Ende wiederholen. Zwei bis 30 Punkte; keine direkt aufeinanderfolgenden gleichen Punkte.</p>{!parsed && <p role="alert">Bitte gültige Eckpunkte eingeben, zum Beispiel 20,20 und 80,20.</p>}</>}

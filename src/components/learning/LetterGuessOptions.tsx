@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element -- School media. */
 'use client';
+import { FontPicker, Picker } from '../ui/Choice';
+import { TextGlyph } from '../ui/Glyphs';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { LearningSettings } from '@/lib/learning/catalog';
 import { guessMedia, guessWord, guessWords, validGuessWord } from '@/lib/learning/letter-guess';
-import { fonts } from '@/lib/notebook-model';
 import WordBank from './WordBank';
 import VoiceOptions from './VoiceOptions';
 import AudioDialog from '../AudioDialog';
@@ -25,10 +26,13 @@ export default function LetterGuessOptions({ settings: c, onChange, upload, busy
     {(c.words || []).some(word => word.trim() && !validGuessWord(word)) && <p role="status">Bitte nur Wörter mit den angebotenen Buchstaben verwenden.</p>}
     <WordBank onSelect={words => onChange({ words: words.slice(0, 20) })} />
     <label className="property-label">Erlaubte Fehlversuche<input type="number" min={4} max={12} aria-label="Fehlversuche beim Buchstabenraten" value={c.letterGuessLives || 8} onChange={event => onChange({ letterGuessLives: Math.max(4, Math.min(12, Math.round(Number(event.target.value) || 8))) })} /></label>
-    <label className="property-label">Buchstaben<select aria-label="Buchstaben beim Raten" value={c.letterGuessCase || 'upper'} onChange={event => onChange({ letterGuessCase: event.target.value as 'upper' | 'lower' })}><option value="upper">GROSS</option><option value="lower">klein</option></select></label>
-    <label className="property-label">Anordnung<select aria-label="Anordnung beim Buchstabenraten" value={c.letterGuessLayout || 'abc'} onChange={event => onChange({ letterGuessLayout: event.target.value as 'abc' | 'qwertz' })}><option value="abc">ABC</option><option value="qwertz">QWERTZ</option></select></label>
-    <label className="property-label">Hinweis<select aria-label="Hinweis beim Buchstabenraten" value={c.letterGuessClue || 'image'} onChange={event => onChange({ letterGuessClue: event.target.value as 'none' | 'image' | 'audio' | 'both' })}><option value="none">Ohne Hinweis</option><option value="image">Wortbild</option><option value="audio">Wort anhören</option><option value="both">Bild und Ton</option></select></label>
-    <label className="property-label">Schrift<select aria-label="Schrift beim Buchstabenraten" value={c.font || 'Andika'} onChange={event => onChange({ font: event.target.value })}>{Object.entries(fonts).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+    <Picker label="Buchstaben" name="Buchstaben beim Raten" value={c.letterGuessCase || 'upper'} onChange={letterGuessCase => onChange({ letterGuessCase })}
+      options={[{ value: 'upper', label: 'GROSS', icon: <TextGlyph text="AB" /> }, { value: 'lower', label: 'klein', icon: <TextGlyph text="ab" /> }]} />
+    <Picker label="Anordnung" name="Anordnung beim Buchstabenraten" value={c.letterGuessLayout || 'abc'} onChange={letterGuessLayout => onChange({ letterGuessLayout })}
+      options={[{ value: 'abc', label: 'ABC', icon: <TextGlyph text="ABC" tone="green" /> }, { value: 'qwertz', label: 'QWERTZ', icon: <TextGlyph text="QWE" tone="green" /> }]} />
+    <Picker label="Hinweis" name="Hinweis beim Buchstabenraten" value={c.letterGuessClue || 'image'} onChange={letterGuessClue => onChange({ letterGuessClue })}
+      options={[{ value: 'none', label: 'Ohne Hinweis', icon: 'cancel' }, { value: 'image', label: 'Wortbild', icon: 'picture' }, { value: 'audio', label: 'Wort anhören', icon: 'speaker' }, { value: 'both', label: 'Bild und Ton', icon: 'gallery' }]} />
+    <FontPicker name="Schrift beim Buchstabenraten" value={c.font || 'Andika'} onChange={font => onChange({ font })} />
     {(c.letterGuessClue === 'audio' || c.letterGuessClue === 'both') && <VoiceOptions settings={c} onChange={onChange} />}
     <details><summary>Eigene Wortbilder und Wortaufnahmen</summary>
       {Array.from(new Set(words)).map((word, i) => { const item = guessMedia(c, word); return <fieldset key={word}><legend>{word}</legend>

@@ -1,5 +1,6 @@
 'use client';
 import Icon from './Icon';
+import { Picker } from './ui/Choice';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/client-api';
@@ -287,15 +288,22 @@ export default function Shelf({
                   </p>
                 </div>
                 <div className="book-actions">
-                  <select
-                    aria-label={`Ordner für ${book.title}`}
-                    value={book.folderId || ''}
-                    onChange={async (e) => {
+                  <details className="book-folder">
+                    <summary>
+                      <Icon name="folder" size={18} />
+                      {folders.find((f) => f.id === book.folderId)?.title || 'Ohne Ordner'}
+                    </summary>
+                    <Picker
+                      compact
+                      label="In Ordner legen"
+                      name={`Ordner für ${book.title}`}
+                      value={book.folderId || ''}
+                      onChange={async (folderId) => {
                       try {
                         const saved = await api<Notebook>('update', {
                           id: book.id,
                           revision: book.revision,
-                          folderId: e.target.value || null,
+                          folderId: folderId || null,
                         });
                         setBooks(
                           books.map((b) =>
@@ -305,15 +313,13 @@ export default function Shelf({
                       } catch (e) {
                         setError((e as Error).message);
                       }
-                    }}
-                  >
-                    <option value="">Ohne Ordner</option>
-                    {folders.map((f) => (
-                      <option key={f.id} value={f.id}>
-                        {f.title}
-                      </option>
-                    ))}
-                  </select>
+                      }}
+                      options={[
+                        { value: '', label: 'Ohne Ordner', icon: 'cancel' },
+                        ...folders.map((f) => ({ value: f.id, label: f.title, icon: 'folder' as const })),
+                      ]}
+                    />
+                  </details>
                   <button
                     onClick={() => {
                       setDialog({ type: 'rename', book });

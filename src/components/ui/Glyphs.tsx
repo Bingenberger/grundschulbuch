@@ -85,3 +85,12 @@ export function ImageFilterGlyph({ src, filter }: { src?: string; filter: string
     <span className="filter-glyph" style={{ ...style, background: 'linear-gradient(135deg,#ffb74d,#4fc3f7)' }} aria-hidden="true" />
   );
 }
+
+/** Short text such as “ABC”, “3” or a letter, drawn as a small badge. */
+export function TextGlyph({ text, font, tone = 'blue' }: { text: string; font?: string; tone?: 'blue' | 'green' | 'orange' | 'violet' }) {
+  return (
+    <span className={`text-glyph text-glyph-${tone}`} style={font ? { fontFamily: `"${font}", sans-serif` } : undefined} aria-hidden="true">
+      {text}
+    </span>
+  );
+}

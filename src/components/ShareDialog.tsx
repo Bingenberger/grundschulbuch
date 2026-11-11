@@ -1,4 +1,5 @@
 'use client';
+import { Picker } from './ui/Choice';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/client-api';
 import type { PublicAccount } from '@/lib/accounts.mjs';
@@ -35,37 +36,27 @@ export default function ShareDialog({
       >
         <h2 id="share-title">Im Kollegium weitergeben</h2>
         <p>Die Lehrkraft erhält eine eigene, unabhängig bearbeitbare Kopie.</p>
-        <label className="property-label">
-          Was möchtest du weitergeben?
-          <select
-            aria-label="Inhalt zum Weitergeben"
-            value={source}
-            onChange={(e) => setSource(e.target.value)}
-          >
-            <option value="book">Dieses Heft</option>
-            {templates
+        <Picker
+          label="Was möchtest du weitergeben?"
+          name="Inhalt zum Weitergeben"
+          value={source}
+          onChange={setSource}
+          options={[
+            { value: 'book', label: 'Dieses Heft', icon: 'reading_ebook' },
+            ...templates
               .filter((t) => !t.school)
-              .map((t) => (
-                <option key={t.id} value={t.id}>
-                  Vorlage: {t.title}
-                </option>
-              ))}
-          </select>
-        </label>
-        <label className="property-label">
-          An wen?
-          <select
-            aria-label="Empfangende Lehrkraft"
+              .map((t) => ({ value: t.id, label: `Vorlage: ${t.title}`, icon: 'template' as const })),
+          ]}
+        />
+        {colleagues.length > 0 && (
+          <Picker
+            label="An wen?"
+            name="Empfangende Lehrkraft"
             value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-          >
-            {colleagues.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
+            onChange={setRecipient}
+            options={colleagues.map((c) => ({ value: c.id, label: c.name, icon: 'businesswoman' as const }))}
+          />
+        )}
         {!colleagues.length && (
           <p>
             Es gibt noch keine weitere Lehrkraft. Neue Konten legt die

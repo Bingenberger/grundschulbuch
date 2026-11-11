@@ -1,5 +1,7 @@
 'use client';
 import Icon, { type IconName } from '../Icon';
+import { Picker } from '../ui/Choice';
+import { TextGlyph } from '../ui/Glyphs';
 import AiDialog from './AiDialog';
 import VoiceOptions from './VoiceOptions';
 import AlphabetOptions from './AlphabetOptions';
@@ -389,27 +391,8 @@ export default function LearningDialog({
                 numeric('columns', 'Spalten / Rastergröße', 2, 15)}
             </div>
             {['piano', 'echo', 'notequiz', 'falling'].includes(kind) && (
-              <label className="property-label">
-                Instrument
-                <select
-                  value={settings.instrument || 'piano'}
-                  onChange={(e) => patch({ instrument: e.target.value })}
-                >
-                  {[
-                    'piano',
-                    'xylophone',
-                    'marimba',
-                    'glockenspiel',
-                    'musicbox',
-                    'organ',
-                    'synth',
-                    'flute',
-                    'tube',
-                  ].map((name) => (
-                    <option key={name}>{name}</option>
-                  ))}
-                </select>
-              </label>
+              <Picker label="Instrument" value={settings.instrument || 'piano'} onChange={(value) => patch({ instrument: value })}
+                options={[{ value: 'piano', label: 'Klavier', icon: 'music' as const }, { value: 'xylophone', label: 'Xylophon', icon: <TextGlyph text="♪" tone="orange" /> }, { value: 'marimba', label: 'Marimba', icon: <TextGlyph text="♪" tone="orange" /> }, { value: 'glockenspiel', label: 'Glockenspiel', icon: <TextGlyph text="♪" tone="violet" /> }, { value: 'musicbox', label: 'Spieluhr', icon: <TextGlyph text="♪" tone="violet" /> }, { value: 'organ', label: 'Orgel', icon: <TextGlyph text="♪" tone="green" /> }, { value: 'synth', label: 'Synthesizer', icon: 'electronics' as const }, { value: 'flute', label: 'Flöte', icon: <TextGlyph text="♪" tone="blue" /> }, { value: 'tube', label: 'Röhrenglocken', icon: <TextGlyph text="♪" tone="blue" /> }]} />
             )}
             {[
               'piano',
@@ -435,74 +418,21 @@ export default function LearningDialog({
             {kind === 'metronome' && (
               <>
                 {numeric('rows', 'Schläge je Takt', 1, 12)}
-                <label className="property-label">
-                  Klang
-                  <select
-                    value={settings.mode || 'beep'}
-                    onChange={(e) => patch({ mode: e.target.value })}
-                  >
-                    {[
-                      ['click', 'Klick'],
-                      ['wood', 'Holz'],
-                      ['bell', 'Glocke'],
-                      ['beep', 'Piep'],
-                      ['cowbell', 'Kuhglocke'],
-                    ].map(([id, label]) => (
-                      <option value={id} key={id}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <Picker label="Klang" name="Klang des Metronoms" value={settings.mode || 'beep'} onChange={(value) => patch({ mode: value })}
+                  options={[{ value: 'click', label: 'Klick', icon: <TextGlyph text="tk" tone="blue" /> }, { value: 'wood', label: 'Holz', icon: <TextGlyph text="tok" tone="orange" /> }, { value: 'bell', label: 'Glocke', icon: <TextGlyph text="♪" tone="violet" /> }, { value: 'beep', label: 'Piep', icon: <TextGlyph text="piep" tone="green" /> }, { value: 'cowbell', label: 'Kuhglocke', icon: <TextGlyph text="♪" tone="orange" /> }]} />
               </>
             )}
             {kind === 'tuner' && (
-              <label className="property-label">
-                Instrument
-                <select
-                  value={settings.mode || 'chromatic'}
-                  onChange={(e) => patch({ mode: e.target.value })}
-                >
-                  {[
-                    ['chromatic', 'Chromatisch'],
-                    ['guitar', 'Gitarre'],
-                    ['ukulele', 'Ukulele'],
-                    ['bass', 'Bass'],
-                    ['violin', 'Violine'],
-                    ['cello', 'Cello'],
-                  ].map(([id, label]) => (
-                    <option key={id} value={id}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <Picker label="Instrument" name="Instrument des Stimmgeräts" value={settings.mode || 'chromatic'} onChange={(value) => patch({ mode: value })}
+                options={[{ value: 'chromatic', label: 'Chromatisch', icon: 'electronics' as const }, { value: 'guitar', label: 'Gitarre', icon: <TextGlyph text="6" tone="blue" /> }, { value: 'ukulele', label: 'Ukulele', icon: <TextGlyph text="4" tone="blue" /> }, { value: 'bass', label: 'Bass', icon: <TextGlyph text="4" tone="orange" /> }, { value: 'violin', label: 'Violine', icon: <TextGlyph text="4" tone="violet" /> }, { value: 'cello', label: 'Cello', icon: <TextGlyph text="4" tone="green" /> }]} />
             )}
             {kind === 'slideshow' && (
               <>
                 <label><input type="checkbox" checked={settings.slideshowSound !== false} onChange={event => patch({ slideshowSound: event.target.checked })} /> Folienton automatisch mit der Folie starten</label>
                 <label><input type="checkbox" checked={settings.slideshowWaitAudio !== false} onChange={event => patch({ slideshowWaitAudio: event.target.checked })} /> Vor dem Folienwechsel auch das Tonende abwarten</label>
                 <p>Die Sekundenangabe ist die Mindestdauer einer Folie. Ohne Abwarten wird ein längerer Ton beim Wechsel beendet.</p>
-                <label className="property-label">
-                  Textposition
-                  <select
-                    value={settings.mode || 'center'}
-                    onChange={(e) => patch({ mode: e.target.value })}
-                  >
-                    {[
-                      ['bottom', 'Unterschrift'],
-                      ['top', 'Überschrift'],
-                      ['lower', 'Bauchbinde'],
-                      ['side', 'Seitlich'],
-                      ['center', 'Mitte'],
-                      ['none', 'Kein Text'],
-                    ].map(([id, label]) => (
-                      <option key={id} value={id}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <Picker label="Textposition" value={settings.mode || 'center'} onChange={(value) => patch({ mode: value })}
+                  options={[{ value: 'bottom', label: 'Unterschrift', icon: 'down' as const }, { value: 'top', label: 'Überschrift', icon: 'up' as const }, { value: 'lower', label: 'Bauchbinde', icon: 'rules' as const }, { value: 'side', label: 'Seitlich', icon: 'right' as const }, { value: 'center', label: 'Mitte', icon: 'collect' as const }, { value: 'none', label: 'Kein Text', icon: 'cancel' as const }]} />
                 <label className="property-label">
                   Hintergrundfarbe
                   <input
@@ -519,66 +449,20 @@ export default function LearningDialog({
             )}
             {kind === 'piano' && (
               <>
-                <label className="property-label">
-                  Tonleiter
-                  <select
-                    value={settings.mode || 'major'}
-                    onChange={(e) => patch({ mode: e.target.value })}
-                  >
-                    {[
-                      ['all', 'Alle Töne'],
-                      ['major', 'Dur'],
-                      ['minor', 'Moll'],
-                      ['penta', 'Pentatonik'],
-                      ['pentaMinor', 'Moll-Pentatonik'],
-                      ['blues', 'Blues'],
-                    ].map(([id, label]) => (
-                      <option key={id} value={id}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <Picker label="Tonleiter" value={settings.mode || 'major'} onChange={(value) => patch({ mode: value })}
+                  options={[{ value: 'all', label: 'Alle Töne', icon: 'music' as const }, { value: 'major', label: 'Dur', icon: <TextGlyph text="Dur" tone="green" /> }, { value: 'minor', label: 'Moll', icon: <TextGlyph text="Moll" tone="violet" /> }, { value: 'penta', label: 'Pentatonik', icon: <TextGlyph text="5" tone="green" /> }, { value: 'pentaMinor', label: 'Moll-Pentatonik', icon: <TextGlyph text="5" tone="violet" /> }, { value: 'blues', label: 'Blues', icon: <TextGlyph text="♪" tone="blue" /> }]} />
                 {numeric('octaves', 'Oktaven', 1, 2)}
               </>
             )}
             {['drums', 'sequencer'].includes(kind) && (
-              <label className="property-label">
-                Instrumentengruppe
-                <select
-                  value={settings.mode || 'drumset'}
-                  onChange={(e) => patch({ mode: e.target.value })}
-                >
-                  {[
-                    ['drumset', 'Schlagzeug'],
-                    ['cajon', 'Cajón'],
-                    ['hand', 'Bongos & Congas'],
-                    ['orff', 'Orff-Instrumente'],
-                    ['pads', 'Klang-Pads'],
-                  ].map(([id, label]) => (
-                    <option key={id} value={id}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <Picker label="Instrumentengruppe" value={settings.mode || 'drumset'} onChange={(value) => patch({ mode: value })}
+                options={[{ value: 'drumset', label: 'Schlagzeug', icon: 'speaker' as const }, { value: 'cajon', label: 'Cajón', icon: <TextGlyph text="◼" tone="orange" /> }, { value: 'hand', label: 'Bongos & Congas', icon: <TextGlyph text="◖◗" tone="orange" /> }, { value: 'orff', label: 'Orff-Instrumente', icon: 'music' as const }, { value: 'pads', label: 'Klang-Pads', icon: 'grid' as const }]} />
             )}
             {kind === 'soundstudio' && (
               <fieldset>
                 <legend>Geräusche für das Hörspiel</legend>
-                <select
-                  aria-label="Geräusch"
-                  value={effect}
-                  onChange={(e) =>
-                    setEffect(e.target.value as keyof typeof soundEffects)
-                  }
-                >
-                  {Object.entries(soundEffects).map(([id, label]) => (
-                    <option value={id} key={id}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
+                <Picker label="Geräusch" value={effect} onChange={setEffect}
+                  options={(Object.entries(soundEffects) as [keyof typeof soundEffects, string][]).map(([value, label]) => ({ value, label, icon: 'audio_file' as const }))} />
                 <button
                   type="button"
                   disabled={busy}
@@ -615,19 +499,8 @@ export default function LearningDialog({
               </fieldset>
             )}
             {kind === 'mathboard' && (
-              <label className="property-label">
-                Rechenmaterial
-                <select
-                  value={settings.mode || 'beads'}
-                  onChange={(e) => patch({ mode: e.target.value })}
-                >
-                  <option value="beads">
-                    Rechenrahmen / Zwanziger- und Hunderterfeld
-                  </option>
-                  <option value="place">Stellenwerttafel</option>
-                  <option value="numberline">Zahlenstrahl</option>
-                </select>
-              </label>
+              <Picker label="Rechenmaterial" value={settings.mode || 'beads'} onChange={(value) => patch({ mode: value })}
+                options={[{ value: 'beads', label: 'Rechenrahmen / Zwanziger- und Hunderterfeld', icon: 'calculator' as const }, { value: 'place', label: 'Stellenwerttafel', icon: 'grid' as const }, { value: 'numberline', label: 'Zahlenstrahl', icon: 'timeline' as const }]} />
             )}
             {['communication', 'timetable', 'shop'].includes(kind) && (
               <div>
@@ -779,36 +652,15 @@ export default function LearningDialog({
                   ＋ Hinzufügen
                 </button>
                 {kind === 'slideshow' && (
-                  <label className="property-label">
-                    Übergang
-                    <select
-                      value={settings.transition || 'fade'}
-                      onChange={(e) => patch({ transition: e.target.value })}
-                    >
-                      {['fade', 'slide', 'zoom', 'kenburns', 'none'].map(
-                        (t) => (
-                          <option key={t}>{t}</option>
-                        ),
-                      )}
-                    </select>
-                  </label>
+                  <Picker label="Übergang" value={settings.transition || 'fade'} onChange={(transition) => patch({ transition })}
+                    options={[{ value: 'fade', label: 'Überblenden', icon: 'stack_of_photos' as const }, { value: 'slide', label: 'Schieben', icon: 'right' as const }, { value: 'zoom', label: 'Zoomen', icon: 'expand' as const }, { value: 'kenburns', label: 'Kamerafahrt', icon: 'camcorder_pro' as const }, { value: 'none', label: 'Ohne', icon: 'cancel' as const }]} />
                 )}
               </div>
             )}
             {kind === 'animation' && (
               <>
-                <label className="property-label">
-                  Bewegung
-                  <select
-                    value={settings.mode || 'linear'}
-                    onChange={(e) => patch({ mode: e.target.value })}
-                  >
-                    <option value="linear">Gleichmäßig</option>
-                    <option value="in">Schneller werden</option>
-                    <option value="out">Langsamer werden</option>
-                    <option value="inout">Sanft an und aus</option>
-                  </select>
-                </label>
+                <Picker label="Bewegung" value={settings.mode || 'linear'} onChange={(value) => patch({ mode: value })}
+                  options={[{ value: 'linear', label: 'Gleichmäßig', icon: 'right' as const }, { value: 'in', label: 'Schneller werden', icon: 'positive_dynamic' as const }, { value: 'out', label: 'Langsamer werden', icon: 'down' as const }, { value: 'inout', label: 'Sanft an und aus', icon: 'synchronize' as const }]} />
                 {(settings.frames || []).map((frame, i) => (
                   <fieldset key={i} disabled={busy}>
                     <legend>Schlüsselbild {i + 1}</legend>

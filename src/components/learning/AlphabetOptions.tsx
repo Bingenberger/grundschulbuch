@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element -- School-owned media. */
 'use client';
+import { FontPicker, Picker } from '../ui/Choice';
+import { TextGlyph } from '../ui/Glyphs';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { LearningSettings } from '@/lib/learning/catalog';
 import { alphabetKeys, practiceWords, upperGerman } from '@/lib/learning/alphabet';
-import { fonts } from '@/lib/notebook-model';
 import AudioDialog from '../AudioDialog';
 export default function AlphabetOptions({ settings: c, onChange, upload, busy }: {
   settings: LearningSettings; onChange: (patch: Partial<LearningSettings>) => void;
@@ -32,18 +33,24 @@ export default function AlphabetOptions({ settings: c, onChange, upload, busy }:
   }
   return <fieldset className="alphabet-options" disabled={busy}>
     <fieldset><legend>Anlaut-Tastatur</legend>
-      <label className="property-label">Betriebsart<select aria-label="Betriebsart der Anlaut-Tastatur" value={c.alphabetPractice ? 'practice' : 'free'} onChange={e => onChange({ alphabetPractice: e.target.value === 'practice' })}><option value="free">Freies Schreiben</option><option value="practice">Wörter üben</option></select></label>
-      <label className="property-label">Tabelle<select aria-label="Anlauttabelle" value={c.alphabetTable || 'basic'} onChange={e => onChange({ alphabetTable: e.target.value as 'basic' | 'full' })}><option value="basic">Erste Tabelle · 35 Tasten</option><option value="full">Ganze Tabelle · 44 Tasten</option></select></label>
-      <label className="property-label">Anordnung<select aria-label="Tastenanordnung" value={c.alphabetLayout || 'abc'} onChange={e => onChange({ alphabetLayout: e.target.value as 'abc' | 'qwertz' })}><option value="abc">ABC</option><option value="qwertz">QWERTZ</option></select></label>
-      <label className="property-label">Buchstaben<select aria-label="Buchstaben der Anlaut-Tastatur" value={c.alphabetLetters || 'both'} onChange={e => onChange({ alphabetLetters: e.target.value as 'both' | 'lower' | 'upper' })}><option value="both">Groß und klein · mit Umschalttaste</option><option value="lower">Nur klein</option><option value="upper">Nur GROSS</option></select></label>
-      <label className="property-label">Schrift<select aria-label="Schrift der Anlaut-Tastatur" value={c.font || 'Andika'} onChange={e => onChange({ font: e.target.value })}>{Object.entries(fonts).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
+      <Picker label="Betriebsart" name="Betriebsart der Anlaut-Tastatur" value={c.alphabetPractice ? 'practice' : 'free'} onChange={mode => onChange({ alphabetPractice: mode === 'practice' })}
+        options={[{ value: 'free', label: 'Freies Schreiben', icon: 'signature' }, { value: 'practice', label: 'Wörter üben', icon: 'todo_list' }]} />
+      <Picker label="Tabelle" name="Anlauttabelle" value={c.alphabetTable || 'basic'} onChange={alphabetTable => onChange({ alphabetTable })}
+        options={[{ value: 'basic', label: 'Erste Tabelle · 35 Tasten', icon: <TextGlyph text="35" tone="green" /> }, { value: 'full', label: 'Ganze Tabelle · 44 Tasten', icon: <TextGlyph text="44" tone="green" /> }]} />
+      <Picker label="Anordnung" name="Tastenanordnung" value={c.alphabetLayout || 'abc'} onChange={alphabetLayout => onChange({ alphabetLayout })}
+        options={[{ value: 'abc', label: 'ABC', icon: <TextGlyph text="ABC" tone="green" /> }, { value: 'qwertz', label: 'QWERTZ', icon: <TextGlyph text="QWE" tone="green" /> }]} />
+      <Picker label="Buchstaben" name="Buchstaben der Anlaut-Tastatur" value={c.alphabetLetters || 'both'} onChange={alphabetLetters => onChange({ alphabetLetters })}
+        options={[{ value: 'both', label: 'Groß und klein', icon: <TextGlyph text="Aa" /> }, { value: 'lower', label: 'Nur klein', icon: <TextGlyph text="ab" /> }, { value: 'upper', label: 'Nur GROSS', icon: <TextGlyph text="AB" /> }]} />
+      <FontPicker name="Schrift der Anlaut-Tastatur" value={c.font || 'Andika'} onChange={font => onChange({ font })} />
       <label><input type="checkbox" checked={c.alphabetVowels !== false} onChange={e => onChange({ alphabetVowels: e.target.checked })} /> Selbstlaute rot markieren</label>
       <label><input type="checkbox" checked={c.alphabetSpeech !== false} onChange={e => onChange({ alphabetSpeech: e.target.checked })} /> Tastenklang einschalten</label>
       <p>Eigene Lautaufnahme hat Vorrang. Ohne Aufnahme wird das Bildwort von der Geräte-Stimme gesprochen. Gedrückt halten erklärt die Taste, ohne zu schreiben.</p>
-      {c.alphabetPractice && <label className="property-label">Wortvorgabe<select aria-label="Wortvorgabe" value={c.alphabetPrompt || 'word'} onChange={e => onChange({ alphabetPrompt: e.target.value as 'word' | 'image' | 'both' | 'audio' })}><option value="word">Wort</option><option value="image">Bild</option><option value="both">Wort und Bild</option><option value="audio">Nur hören</option></select></label>}
+      {c.alphabetPractice && <Picker label="Wortvorgabe" name="Wortvorgabe" value={c.alphabetPrompt || 'word'} onChange={alphabetPrompt => onChange({ alphabetPrompt })}
+        options={[{ value: 'word', label: 'Wort', icon: 'document' }, { value: 'image', label: 'Bild', icon: 'picture' }, { value: 'both', label: 'Wort und Bild', icon: 'gallery' }, { value: 'audio', label: 'Nur hören', icon: 'speaker' }]} />}
     </fieldset>
     <details><summary>Tastenbilder und Laute anpassen</summary>
-      <label className="property-label">Taste<select aria-label="Anlauttaste bearbeiten" value={selected} onChange={e => setSelected(e.target.value)}>{alphabetKeys.map(key => <option value={key.id} key={key.id}>{upperGerman(key.id)} · {key.variants.map(v => v.word).join(' / ')}</option>)}</select></label>
+      <Picker label="Taste" name="Anlauttaste bearbeiten" value={selected} onChange={setSelected}
+        options={alphabetKeys.map(key => ({ value: key.id, label: key.variants.map(v => v.word).join(' / '), icon: <TextGlyph text={upperGerman(key.id)} tone="orange" /> }))} />
       {variants.map((variant, i) => <fieldset key={`${selected}-${i}`}><legend>{upperGerman(selected)} · {variant.hint || variant.word}</legend>
         <label className="property-label">Bildwort<input aria-label={`Bildwort ${selected} ${i + 1}`} maxLength={80} required value={variant.word} onChange={e => variantChange(i, { word: e.target.value })} /></label>
         {variant.image ? <img className="alphabet-config-image" src={variant.image} alt={variant.word} /> : <span aria-hidden="true">{variant.symbol}</span>}

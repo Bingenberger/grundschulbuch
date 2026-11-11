@@ -1,12 +1,14 @@
 /* eslint-disable @next/next/no-img-element -- School-owned media. */
 'use client';
+import { FontPicker, Picker } from '../ui/Choice';
+import { OpacityGlyph, TextGlyph } from '../ui/Glyphs';
+import { themeIcons } from './pickerIcons';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { LearningSettings } from '@/lib/learning/catalog';
 import { defaultWords } from '@/lib/learning/catalog';
 import { clapMedia, clapSyllables, clapWord, spellableClapWord } from '@/lib/learning/clapping';
 import { wordBanks } from '@/lib/learning/words';
-import { fonts } from '@/lib/notebook-model';
 import AudioDialog from '../AudioDialog';
 export default function ClappingOptions({ settings: c, onChange, upload, busy }: {
   settings: LearningSettings; onChange: (patch: Partial<LearningSettings>) => void;
@@ -26,15 +28,17 @@ export default function ClappingOptions({ settings: c, onChange, upload, busy }:
     <label className="property-label">Wörter, je eines pro Zeile · bis 16 Wörter<textarea aria-label="Wörter zum Silbenklatschen" value={words.join('\n')} onChange={event => onChange({ words: event.target.value.split('\n').slice(0, 16) })} /></label>
     <p>Silben mit Bindestrichen festlegen, etwa Ba-na-ne. Bei unbekannten Wörtern wird eine Trennung vorgeschlagen; bitte prüfen und übernehmen, bevor automatisch bewertet wird.</p>
     <details><summary>Wörter aus einer Liste wählen</summary>
-      <label className="property-label">Thema<select aria-label="Wortliste zum Silbenklatschen" value={theme} onChange={event => setTheme(event.target.value as keyof typeof wordBanks)}>{Object.keys(wordBanks).map(key => <option key={key}>{key}</option>)}</select></label>
-      <label className="property-label">Silbenzahl<select aria-label="Wortliste nach Silbenzahl filtern" value={count} onChange={event => setCount(Number(event.target.value))}><option value={0}>Alle</option>{[1, 2, 3, 4, 5, 6].map(n => <option value={n} key={n}>{n}</option>)}</select></label>
+      <Picker label="Thema" name="Wortliste zum Silbenklatschen" value={theme} onChange={setTheme} options={(Object.keys(wordBanks) as (keyof typeof wordBanks)[]).map(key => ({ value: key, label: key, icon: themeIcons[key] }))} />
+      <Picker label="Silbenzahl" name="Wortliste nach Silbenzahl filtern" value={count} onChange={setCount} options={[{ value: 0, label: 'Alle', icon: 'list' }, ...[1, 2, 3, 4, 5, 6].map(n => ({ value: n, label: n === 1 ? '1 Silbe' : `${n} Silben`, icon: <TextGlyph text={String(n)} tone="orange" /> }))]} />
       <label className="property-label">Nur aus gelernten Lauten · optional, mit Leerzeichen<input aria-label="Wortliste nach gelernten Lauten filtern" value={letters} onChange={event => setLetters(event.target.value)} placeholder="m a u s sch …" /></label>
       <p>{selection.length ? selection.join(' · ') : 'Keine passenden Wörter.'}</p>
       <button type="button" className="knopf compact" disabled={!selection.length} onClick={() => onChange({ words: selection.slice(0, 16) })}>Wörter übernehmen</button>
     </details>
-    <label className="property-label">Hilfen von Anfang an<select aria-label="Silbenhilfen" value={c.clappingHelp || (c.showWords === false ? 'none' : 'word')} onChange={event => onChange({ clappingHelp: event.target.value as 'none' | 'dots' | 'word' | 'both' })}><option value="none">Ohne Hilfe</option><option value="dots">Punkte</option><option value="word">Wort in Silbenschrift mit Bögen</option><option value="both">Wort und Punkte</option></select></label>
-    <label className="property-label">Schrift<select aria-label="Schrift beim Silbenklatschen" value={c.font || 'Andika'} onChange={event => onChange({ font: event.target.value })}>{Object.entries(fonts).map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
-    <label className="property-label">Mikrofonempfindlichkeit<select aria-label="Mikrofonempfindlichkeit beim Silbenklatschen" value={c.clappingSensitivity ?? 0.06} onChange={event => onChange({ clappingSensitivity: Number(event.target.value) })}><option value={0.035}>Hoch · leises Klatschen</option><option value={0.06}>Normal</option><option value={0.1}>Niedrig · kräftiges Klatschen</option></select></label>
+    <Picker label="Hilfen von Anfang an" name="Silbenhilfen" value={c.clappingHelp || (c.showWords === false ? 'none' : 'word')} onChange={clappingHelp => onChange({ clappingHelp })}
+      options={[{ value: 'none', label: 'Ohne Hilfe', icon: 'cancel' }, { value: 'dots', label: 'Punkte', icon: <TextGlyph text="•••" tone="orange" /> }, { value: 'word', label: 'Wort mit Silbenbögen', icon: 'document' }, { value: 'both', label: 'Wort und Punkte', icon: 'todo_list' }]} />
+    <FontPicker name="Schrift beim Silbenklatschen" value={c.font || 'Andika'} onChange={font => onChange({ font })} />
+    <Picker label="Mikrofonempfindlichkeit" name="Mikrofonempfindlichkeit beim Silbenklatschen" value={c.clappingSensitivity ?? 0.06} onChange={clappingSensitivity => onChange({ clappingSensitivity })}
+      options={[{ value: 0.035, label: 'Hoch · leises Klatschen', icon: <OpacityGlyph opacity={0.35} color="#1e88e5" /> }, { value: 0.06, label: 'Normal', icon: <OpacityGlyph opacity={0.65} color="#1e88e5" /> }, { value: 0.1, label: 'Niedrig · kräftiges Klatschen', icon: <OpacityGlyph opacity={1} color="#1e88e5" /> }]} />
     <details><summary>Trennung prüfen, Wortbilder und Aufnahmen</summary>
       {words.slice(0, 16).map((entry, i) => {
         const base = clapSyllables(entry), info = { ...base, confirmed: base.confirmed || !!c.clappingConfirmed?.includes(base.parts.join('-')) }, item = clapMedia(c, info.word);

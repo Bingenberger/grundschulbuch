@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import Icon from './Icon';
+import { Picker } from './ui/Choice';
 import { uuid } from '@/lib/notebook-model';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -300,20 +301,13 @@ export default function Classroom({
               Jedes Kind erhält eine eigene Kopie. Alle vorgegebenen Elemente
               sind gesperrt.
             </p>
-            <label className="feld">
-              <span>Heft</span>
-              <select
-                aria-label="Heft zum Austeilen"
-                value={bookId}
-                onChange={(e) => setBookId(e.target.value)}
-              >
-                {books.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.title}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <Picker
+              label="Heft"
+              name="Heft zum Austeilen"
+              value={bookId}
+              onChange={setBookId}
+              options={books.map((b) => ({ value: b.id, label: b.title, icon: 'reading_ebook' as const }))}
+            />
             <label>
               <input
                 type="checkbox"

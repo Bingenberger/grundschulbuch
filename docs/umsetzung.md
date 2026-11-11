@@ -6,7 +6,21 @@ Der genaue Vergleich einschließlich verbleibender Unterschiede steht in
 [Funktionsvergleich](funktionsvergleich.md). Die Abnahme auf echten Schulgeräten
 und mit einer echten Anton-Karte steht weiterhin aus.
 
-## Lehrkräfte
+## Oberfläche (Stand 11. November 2026)
+
+- Editor für Lehrkräfte und Kinder mit demselben Aufbau: reduzierte
+  Werkzeugleiste am linken Rand (Auswahl, Stift, Radierer, Text, Bild, Ton,
+  Lernwerkzeuge, Einfügen, Seite), ausklappbare Seitenübersicht daneben und
+  eine untere Leiste mit den Einstellungen zum gewählten Werkzeug, Element oder
+  zur Seite. Lange Einstellungslisten sind dort in Bereiche gegliedert.
+- Alle Einstellungen erscheinen als Knöpfe mit Icon und Text; es gibt keine
+  Dropdown-Menüs mehr, auch nicht in den Dialogen der Lernwerkzeuge.
+- Icons: Flat Color Icons (icons8, MIT, npm `flat-color-icons`); fehlende
+  Motive sind im gleichen Stil unter `public/icons/` ergänzt.
+- Was Kinder sehen, legt die zentrale Funktionsliste in `src/lib/features.ts`
+  fest. Schalter für Lehrkräfte pro Klasse oder Kind sind vorgesehen, aber noch
+  nicht umgesetzt.
+
 
 - Regal mit Suche, farbigen Umschlägen, Seitenvorschau, Umbenennen, Kopie und Löschen.
 - Seiten in A4 hoch/quer; einfügen, duplizieren, verschieben und entfernen.

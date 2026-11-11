@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Picker } from '../components/ui/Choice';
+import { TextGlyph } from '../components/ui/Glyphs';
 import { createRoot } from 'react-dom/client';
 import PageView from '../components/PageView';
 import ScaledPage from '../components/ScaledPage';
@@ -80,17 +82,13 @@ function Viewer() {
         <button disabled={index === 0} onClick={() => setIndex(index - 1)}>
           ‹ Zurück
         </button>
-        <select
-          aria-label="Seite"
+        <Picker
+          compact
+          label="Seite"
           value={index}
-          onChange={(e) => setIndex(Number(e.target.value))}
-        >
-          {pages.map((p, i) => (
-            <option value={i} key={p.id}>
-              Seite {i + 1}
-            </option>
-          ))}
-        </select>
+          onChange={setIndex}
+          options={pages.map((p, i) => ({ value: i, label: `Seite ${i + 1}`, icon: <TextGlyph text={String(i + 1)} /> }))}
+        />
         <span>von {pages.length}</span>
         <button
           disabled={index === pages.length - 1}

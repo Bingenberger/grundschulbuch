@@ -1,4 +1,5 @@
 'use client';
+import { Picker } from './ui/Choice';
 import { useState } from 'react';
 import Link from 'next/link';
 import type { BookData } from '@/lib/notebook-model';
@@ -28,16 +29,16 @@ export default function PrintBook({ data }: { data: BookData }) {
           <label>
             Das Heft enthält Hoch- und Querformat. Für maßhaltige Ausdrucke die
             Formate getrennt drucken:{' '}
-            <select
+            <Picker
+              label="Seiten drucken"
               value={orientation}
-              onChange={(e) =>
-                setOrientation(e.target.value as typeof orientation)
-              }
-            >
-              <option value="all">Alle Seiten · Vorschau</option>
-              <option value="portrait">Nur Hochformat</option>
-              <option value="landscape">Nur Querformat</option>
-            </select>
+              onChange={setOrientation}
+              options={[
+                { value: 'all', label: 'Alle Seiten · Vorschau', icon: 'stack_of_photos' },
+                { value: 'portrait', label: 'Nur Hochformat', icon: 'rotate_to_portrait' },
+                { value: 'landscape', label: 'Nur Querformat', icon: 'rotate_to_landscape' },
+              ]}
+            />
           </label>
         )}
         <button

@@ -1,4 +1,5 @@
 'use client';
+import { Picker } from '../ui/Choice';
 import { useEffect, useState } from 'react';
 import type { LearningSettings } from '@/lib/learning/catalog';
 import { speakGerman } from '@/lib/speech';
@@ -34,18 +35,15 @@ export default function VoiceOptions({
   return (
     <fieldset>
       <legend>Vorlesen</legend>
-      <label className="property-label">
-        Stimme auf diesem Gerät
-        <select
-          value={settings.voice || ''}
-          onChange={(e) => onChange({ voice: e.target.value })}
-        >
-          <option value="">Deutsche Standardstimme</option>
-          {voices.map((name) => (
-            <option key={name}>{name}</option>
-          ))}
-        </select>
-      </label>
+      <Picker
+        label="Stimme auf diesem Gerät"
+        value={settings.voice || ''}
+        onChange={(voice) => onChange({ voice })}
+        options={[
+          { value: '', label: 'Deutsche Standardstimme', icon: 'speaker' },
+          ...voices.map((name) => ({ value: name, label: name, icon: 'voice_presentation' as const })),
+        ]}
+      />
       <label className="property-label">
         Geschwindigkeit
         <input

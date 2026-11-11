@@ -2,6 +2,8 @@
 // Every setting is a row of buttons with icon and text – no drop-down menus.
 import type { ReactNode } from 'react';
 import Icon, { type IconName } from '../Icon';
+import { FontGlyph, TextGlyph } from './Glyphs';
+import { fonts } from '@/lib/notebook-model';
 
 export type ChoiceIcon = IconName | ReactNode;
 export type ChoiceOption<T> = {
@@ -188,5 +190,82 @@ export function Stepper({
         </button>
       </div>
     </OptionGroup>
+  );
+}
+
+export type PickerOption<T> = {
+  value: T;
+  label: string;
+  icon?: ChoiceIcon;
+  title?: string;
+};
+
+/**
+ * Replacement for a drop-down in dialogs: a captioned row of buttons with icon
+ * and text. Without an icon, the first characters of the label are shown.
+ */
+export function Picker<T extends string | number>({
+  label,
+  name,
+  value,
+  onChange,
+  options,
+  disabled,
+  compact,
+}: {
+  label: string;
+  /** Small buttons with icon beside the text, e.g. inside a widget on the page. */
+  compact?: boolean;
+  /** Accessible name of the group; defaults to the visible label. */
+  name?: string;
+  value: T;
+  onChange: (value: T) => void;
+  options: PickerOption<T>[];
+  disabled?: boolean;
+}) {
+  return (
+    <div className={`picker ${compact ? 'compact' : ''}`} role="group" aria-label={name || label}>
+      <span className="picker-caption" aria-hidden="true">
+        {label}
+      </span>
+      <div className="picker-options">
+        {options.map((o) => (
+          <ChoiceButton
+            key={String(o.value)}
+            icon={o.icon ?? <TextGlyph text={o.label.replace(/[^\p{L}\p{N}]/gu, '').slice(0, 2) || '•'} />}
+            label={o.label}
+            title={o.title}
+            disabled={disabled}
+            pressed={value === o.value}
+            onClick={() => onChange(o.value)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Font choice used by several learning tools. */
+export function FontPicker({
+  name,
+  value,
+  onChange,
+}: {
+  name: string;
+  value: string;
+  onChange: (font: string) => void;
+}) {
+  return (
+    <Picker
+      label="Schrift"
+      name={name}
+      value={value}
+      onChange={onChange}
+      options={Object.entries(fonts).map(([font, label]) => ({
+        value: font,
+        label,
+        icon: <FontGlyph font={font} />,
+      }))}
+    />
   );
 }
