@@ -17,6 +17,12 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   oder auf freier Fläche einen Rahmen aufziehen, um mehrere Elemente zu wählen.
   Gesperrte Elemente und ein den Rahmen umschließender Hintergrund werden dabei
   nicht mitgewählt. Kinder können Elemente und Striche antippen.
+- Auswahlrahmen: Anfasser an allen vier Ecken zum Vergrößern (die gegenüber
+  liegende Ecke bleibt stehen, Bilder behalten ihr Seitenverhältnis, sonst mit
+  Umschalttaste), ein Dreh-Anfasser über dem Rahmen (rastet nahe an 15°-Schritten
+  ein, mit Umschalttaste immer) und die ganze Fläche zum Verschieben. Bei
+  Lernwerkzeugen, Übungen, Ton und Einbettungen bleibt stattdessen die Leiste
+  „Verschieben“, damit ihre Knöpfe bedienbar bleiben. Gilt auch für Kinder.
 - Ist etwas ausgewählt, zeigt die Kopfzeile Kopieren, Ausschneiden, Einfügen,
   Duplizieren, Link und Löschen (Einfügen auch ohne Auswahl, sobald etwas
   kopiert ist). Kinder sehen davon nur Löschen.

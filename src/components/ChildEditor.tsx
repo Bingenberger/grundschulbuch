@@ -27,10 +27,12 @@ import PagePanel from './editor/PagePanel';
 import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
 import ElementActions from './editor/ElementActions';
+import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
+import { elementCenter, resizeAtCorner, rotateTo, type Corner } from '@/lib/transform';
 import { SelectBar } from './editor/ContextBars';
 import { featuresFor } from '@/lib/features';
 import { strokeAt } from '@/lib/selection';
-import { LinkContext } from './LinkContext';
+import { LinkContext, LinkLayer } from './LinkContext';
 import DrawingRuler from './learning/DrawingRuler';
 import { captureGuideEdge, projectToGuideEdge, type DrawingGuide, type GuideEdge } from '@/lib/drawing-guide';
 import { previousArrowShaft } from '@/lib/shape-recognition';
@@ -62,6 +64,8 @@ export default function ChildEditor({
     points: Point[];
     start: Point;
     move: boolean;
+    /** Which part of the selection frame was grabbed. */
+    handle?: HandleKind;
     guideEdge?: GuideEdge;
     erase?: boolean;
     pointer?: number;
@@ -180,6 +184,14 @@ export default function ChildEditor({
     }
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   }
+  function grab(e: React.PointerEvent, el: PageElement, handle: HandleKind) {
+    if (gesture.current || e.button !== 0 || el.locked) return;
+    e.preventDefault();
+    e.stopPropagation();
+    s.select([el.id]);
+    gesture.current = { el, points: [], start: point(e), move: true, handle, pointer: e.pointerId };
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  }
   function move(e: React.PointerEvent) {
     const g = gesture.current;
     if (!g || g.pointer !== e.pointerId) return;
@@ -191,7 +203,11 @@ export default function ChildEditor({
       erase();
       return;
     }
-    if (g.move)
+    if (g.move && g.handle === 'rotate')
+      setDraft(rotateTo(g.el, elementCenter(g.el), g.start, p, e.shiftKey));
+    else if (g.move && g.handle && g.handle !== 'move')
+      setDraft(resizeAtCorner(g.el, g.handle as Corner, g.start, p, e.shiftKey || g.el.type === 'image'));
+    else if (g.move)
       setDraft({
         ...g.el,
         x: Math.max(0, Math.min(size.width - 5, g.el.x + p.x - g.start.x)),
@@ -457,6 +473,19 @@ export default function ChildEditor({
                   }}
                 />
               ))}
+              {selected && !selected.locked && (
+                <SelectionHandles
+                  element={draft?.id === selected.id ? draft : selected}
+                  locked={false}
+                  onStart={(e, handle) => grab(e, selected, handle)}
+                  onMove={move}
+                  onEnd={up}
+                  onDoubleClick={() => {
+                    if (selected.type === 'text') textArea.current?.focus();
+                  }}
+                />
+              )}
+              <LinkLayer elements={page.elements.map((el) => (draft?.id === el.id ? draft : el))} />
               {guide && <DrawingRuler guide={guide} onChange={setGuide} onClose={() => setGuide(null)} />}
             </div>
           </LearningRuntime>

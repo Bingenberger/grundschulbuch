@@ -2441,8 +2441,9 @@ input[type='checkbox'] {
 }
 .link-badge {
   position: absolute;
-  top: -3.2mm;
-  right: -1mm;
+  bottom: -6mm;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 3;
   display: inline-flex;
   align-items: center;
@@ -2599,4 +2600,109 @@ input[type='checkbox'] {
   padding-top: 10px;
   border-top: 1px solid #e1e7dc;
   font-size: 12px;
+}
+/* Auswahlrahmen: Ecken zum Vergrößern, Griff zum Drehen, Fläche zum Verschieben */
+.selection-handles {
+  outline: 0.35mm solid #1e88e5;
+  outline-offset: 0.4mm;
+}
+.selection-handles.locked {
+  outline-color: #b39464;
+}
+.move-area {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: move;
+}
+.resize-handle {
+  width: 3.6mm;
+  height: 3.6mm;
+  border: 0.45mm solid #1e88e5;
+  background: #fff;
+  border-radius: 0.6mm;
+  z-index: 2;
+}
+.resize-handle::before {
+  content: '';
+  position: absolute;
+  inset: -2.5mm;
+}
+.resize-handle.nw {
+  top: -2.2mm;
+  left: -2.2mm;
+  bottom: auto;
+  right: auto;
+  cursor: nwse-resize;
+}
+.resize-handle.ne {
+  top: -2.2mm;
+  right: -2.2mm;
+  bottom: auto;
+  left: auto;
+  cursor: nesw-resize;
+}
+.resize-handle.sw {
+  bottom: -2.2mm;
+  left: -2.2mm;
+  top: auto;
+  right: auto;
+  cursor: nesw-resize;
+}
+.resize-handle.se {
+  bottom: -2.2mm;
+  right: -2.2mm;
+  top: auto;
+  left: auto;
+  cursor: nwse-resize;
+}
+.rotate-stem {
+  position: absolute;
+  left: 50%;
+  top: -7mm;
+  width: 0;
+  height: 6.6mm;
+  border-left: 0.35mm solid #1e88e5;
+  pointer-events: none;
+}
+.rotate-handle {
+  position: absolute;
+  left: calc(50% - 3.6mm);
+  top: -12.5mm;
+  width: 7.2mm;
+  height: 7.2mm;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0.4mm solid #1e88e5;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0.5mm 1.5mm rgba(21, 101, 192, 0.25);
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+  z-index: 2;
+}
+.rotate-handle .icon {
+  width: 4.6mm;
+  height: 4.6mm;
+}
+.rotate-handle::before {
+  content: '';
+  position: absolute;
+  inset: -2mm;
+  border-radius: 50%;
+}
+.move-element-handle {
+  top: -7.5mm;
+  left: 0;
+}
+.interaction-surface .page-element.selected {
+  outline: none;
+}
+.link-layer {
+  position: absolute;
+  pointer-events: none;
+  z-index: 25;
 }

@@ -70,3 +70,31 @@ export function LinkBadge({ element }: { element: PageElement }) {
     </button>
   );
 }
+
+/**
+ * Link badges in their own layer above all elements and selection handles, so
+ * overlapping elements never cover them.
+ */
+export function LinkLayer({ elements }: { elements: PageElement[] }) {
+  return (
+    <>
+      {elements
+        .filter((el) => el.link)
+        .map((el) => (
+          <div
+            key={`link-${el.id}`}
+            className="link-layer"
+            style={{
+              left: `${el.x}mm`,
+              top: `${el.y}mm`,
+              width: `${el.width}mm`,
+              height: `${el.height}mm`,
+              transform: `rotate(${el.rotation}deg)`,
+            }}
+          >
+            <LinkBadge element={el} />
+          </div>
+        ))}
+    </>
+  );
+}

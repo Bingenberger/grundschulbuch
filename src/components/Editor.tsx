@@ -38,10 +38,12 @@ import PagePanel from './editor/PagePanel';
 import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
 import ElementActions from './editor/ElementActions';
+import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
+import { elementCenter, resizeAtCorner, rotateTo, type Corner } from '@/lib/transform';
 import PageBar from './editor/PageBar';
 import { InsertBar, SelectBar, type InsertAction } from './editor/ContextBars';
 import { featuresFor } from '@/lib/features';
-import { LinkContext } from './LinkContext';
+import { LinkContext, LinkLayer } from './LinkContext';
 import { elementsInFrame, rectFrom, strokeAt, tapDistance, type Rect } from '@/lib/selection';
 import { DotGlyph } from './ui/Glyphs';
 import Icon from './Icon';
@@ -59,7 +61,10 @@ import { blueprints, blueprintPages } from '@/lib/learning/templates';
 import ImageDialog from './ImageDialog';
 
 type Gesture = {
-  type: 'move' | 'resize' | 'draw' | 'erase' | 'frame';
+  type: 'move' | 'resize' | 'rotate' | 'draw' | 'erase' | 'frame';
+  corner?: Corner;
+  /** Centre the rotation angle is measured around (the grabbed element). */
+  pivot?: { x: number; y: number };
   start: Point;
   originals: PageElement[];
   points: Point[];
@@ -618,7 +623,7 @@ export default function Editor({
   function start(
     event: React.PointerEvent,
     element?: PageElement,
-    resize = false,
+    handle: HandleKind = 'move',
   ) {
     if (gesture.current || (board && !boardDraw) || event.button !== 0) return;
     if (s.tool !== 'select' && s.pencilOnly && event.pointerType !== 'pen')
@@ -684,7 +689,9 @@ export default function Editor({
         (el) => ids.includes(el.id) && !el.locked,
       );
       gesture.current = {
-        type: resize ? 'resize' : 'move',
+        type: handle === 'move' ? 'move' : handle === 'rotate' ? 'rotate' : 'resize',
+        corner: handle === 'move' || handle === 'rotate' ? undefined : handle,
+        pivot: handle === 'rotate' ? elementCenter(target) : undefined,
         start: point,
         originals,
         points: [],
@@ -724,31 +731,8 @@ export default function Editor({
               x: Math.max(-el.width + 5, Math.min(size.width - 5, el.x + dx)),
               y: Math.max(-el.height + 5, Math.min(size.height - 5, el.y + dy)),
             };
-          const angle = (-el.rotation * Math.PI) / 180;
-          const width = Math.max(
-            3,
-            Math.min(
-              400,
-              el.width + dx * Math.cos(angle) - dy * Math.sin(angle),
-            ),
-          );
-          const height = Math.max(
-            3,
-            Math.min(
-              400,
-              el.height + dx * Math.sin(angle) + dy * Math.cos(angle),
-            ),
-          );
-          return {
-            ...el,
-            width,
-            height,
-            points: el.points?.map((p) => ({
-              ...p,
-              x: (p.x * width) / el.width,
-              y: (p.y * height) / el.height,
-            })),
-          };
+          if (g.type === 'rotate') return rotateTo(el, g.pivot || elementCenter(el), g.start, point, event.shiftKey);
+          return resizeAtCorner(el, g.corner || 'se', g.start, point, event.shiftKey || el.type === 'image');
         }),
       );
     }
@@ -788,7 +772,7 @@ export default function Editor({
       }));
     if (!cancel && g.type === 'erase')
       s.edit(p => ({ ...p, elements: eraseElements(g.originals, g.points, g.eraserId!, g.eraserOptions!, g.eraserProgress) }));
-    if (!cancel && preview && (g.type === 'move' || g.type === 'resize'))
+    if (!cancel && preview && (g.type === 'move' || g.type === 'resize' || g.type === 'rotate'))
       s.edit((p) => ({
         ...p,
         elements: p.elements.map(
@@ -1041,57 +1025,29 @@ export default function Editor({
                         {undefined}
                       </ElementView>
                     ))}
-                    {page.elements
-                      .filter((el) => s.selected.includes(el.id))
-                      .map((el) => {
-                        const rendered =
-                          preview?.find((p) => p.id === el.id) || el;
-                        return (
-                          <div
+                    {!board &&
+                      page.elements
+                        .filter((el) => s.selected.includes(el.id))
+                        .map((el) => (
+                          <SelectionHandles
                             key={`handle-${el.id}`}
-                            className={`selection-handles ${el.locked ? 'locked' : ''}`}
-                            style={{
-                              left: `${rendered.x}mm`,
-                              top: `${rendered.y}mm`,
-                              width: `${rendered.width}mm`,
-                              height: `${rendered.height}mm`,
-                              transform: `rotate(${rendered.rotation}deg)`,
+                            element={preview?.find((p) => p.id === el.id) || el}
+                            locked={el.locked}
+                            onStart={(e, kind) => start(e, el, kind)}
+                            onMove={move}
+                            onEnd={end}
+                            onDoubleClick={() => {
+                              if (el.type === 'text') textArea.current?.focus();
                             }}
-                          >
-                            {!el.locked && !board && (
-                              <button
-                                className="move-element-handle"
-                                aria-label="Element verschieben"
-                                onPointerDown={(e) => start(e, el)}
-                                onPointerMove={move}
-                                onPointerUp={(e) => end(e)}
-                                onPointerCancel={(e) => end(e, true)}
-                              >
-                                ↔ Verschieben
-                              </button>
-                            )}
-                            {!el.locked && !board && (
-                              <button
-                                className="resize-handle"
-                                aria-label="Element vergrößern"
-                                onPointerDown={(e) => start(e, el, true)}
-                                onPointerMove={move}
-                                onPointerUp={(e) => end(e)}
-                                onPointerCancel={(e) => end(e, true)}
-                              />
-                            )}
-                            {el.locked && (
-                              <span className="lock-indicator">Gesperrt</span>
-                            )}
-                          </div>
-                        );
-                      })}
+                          />
+                        ))}
                     {frame && (
                       <div
                         className="selection-frame"
                         style={{ left: `${frame.x}mm`, top: `${frame.y}mm`, width: `${frame.width}mm`, height: `${frame.height}mm` }}
                       />
                     )}
+                    <LinkLayer elements={page.elements.map((el) => preview?.find((p) => p.id === el.id) || el)} />
                     {guide && (!board || boardPointer === 'none') && <DrawingRuler guide={guide} onChange={setGuide} onClose={() => setGuide(null)} />}
                     {board && boardPointer !== 'none' && <BoardPointer key={`${page.id}-${boardPointer}`} mode={boardPointer} width={size.width} height={size.height} size={lightSize} onClose={() => setBoardPointer('none')} />}
                   </div>
