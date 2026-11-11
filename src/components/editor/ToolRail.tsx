@@ -3,7 +3,7 @@ import Icon, { type IconName } from '../Icon';
 import type { Feature } from '@/lib/features';
 
 export type RailItem =
-  | 'select' | 'pen' | 'eraser' | 'text' | 'image' | 'audio' | 'learning'
+  | 'select' | 'pen' | 'eraser' | 'text' | 'image' | 'audio' | 'internet' | 'learning'
   | 'insert' | 'page';
 
 const items: [RailItem, IconName, string][] = [
@@ -13,8 +13,9 @@ const items: [RailItem, IconName, string][] = [
   ['text', 'document', 'Text'],
   ['image', 'picture', 'Bild'],
   ['audio', 'audio_file', 'Ton'],
+  ['internet', 'globe', 'Internet'],
   ['learning', 'puzzle', 'Lernwerkzeuge'],
-  ['insert', 'plus', 'Einfügen'],
+  ['insert', 'approval', 'Einfügen'],
 ];
 
 /** The reduced main toolbar on the left edge, shared by teachers and children. */

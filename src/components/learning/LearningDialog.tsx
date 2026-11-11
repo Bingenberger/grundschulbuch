@@ -59,10 +59,13 @@ export default function LearningDialog({
   element,
   onSave,
   onClose,
+  onWorksheet,
 }: {
   element?: PageElement;
   onSave: (el: PageElement) => void;
   onClose: () => void;
+  /** Opens the worksheet generator (task pages with solutions). */
+  onWorksheet?: () => void;
 }) {
   const [type, setType] = useState<'widget' | 'activity'>(
     element?.type === 'activity' ? 'activity' : 'widget',
@@ -180,6 +183,18 @@ export default function LearningDialog({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
+              {onWorksheet && !query && (
+                <>
+                  <h3><Icon name="survey" size={20} />Arbeitsblätter</h3>
+                  <button type="button" className="learning-worksheet" onClick={onWorksheet}>
+                    <Icon name="survey" size={22} />
+                    <span>
+                      Arbeitsblatt erzeugen
+                      <small>Rechnen, Uhr, Silben, Labyrinth … mit Lösungsseiten</small>
+                    </span>
+                  </button>
+                </>
+              )}
               <h3><Icon name="puzzle" size={20} />Interaktive Übungen</h3>
               {Object.entries(activityCatalog)
                 .filter(([, label]) =>

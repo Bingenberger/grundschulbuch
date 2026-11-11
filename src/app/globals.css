@@ -4165,3 +4165,45 @@ input[type='checkbox'] {
 .page-tile-page.portrait {
   width: 62%;
 }
+
+/* Shapes, stickers and stamps in the bottom bar */
+.shape-glyph {
+  display: block;
+  width: 30px;
+  height: 30px;
+}
+.shape-glyph > * {
+  width: 100%;
+  height: 100%;
+}
+.sticker-glyph {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  font-size: 24px;
+  line-height: 1;
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+.stamp-glyph {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2.5px solid;
+  border-radius: 6px;
+  font: 700 15px/1 Andika, sans-serif;
+  transform: rotate(-6deg);
+}
+.learning-worksheet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+}
+.learning-worksheet small {
+  display: block;
+  font-size: 11px;
+  color: #6b7a70;
+}

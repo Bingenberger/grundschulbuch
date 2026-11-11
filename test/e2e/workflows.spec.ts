@@ -159,10 +159,8 @@ test('Generator, Sammlung und Kollegium verwenden', async ({
   await page.getByRole('button', { name: 'Neues Heft' }).click();
   await page.getByLabel('Name des Hefts').fill('Meine Arbeitsblätter');
   await page.getByRole('button', { name: 'Heft anlegen', exact: true }).click();
-  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Einfügen', exact: true }).click();
-  await page
-    .getByRole('button', { name: 'Arbeitsblatt', exact: true })
-    .click();
+  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
+  await page.getByRole('button', { name: /Arbeitsblatt erzeugen/ }).click();
   await page
     .getByRole('group', { name: 'Übungsformat' })
     .getByRole('button', { name: 'Rechenaufgaben', exact: true })

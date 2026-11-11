@@ -160,8 +160,7 @@ test('Formen, Bildgestaltung, Vorlagenkategorien, Zoom und Tastatur sind verfüg
 }) => {
   await notebook(page, 'Gestalten-Test');
   await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Einfügen', exact: true }).click();
-  await page.getByRole('button', { name: 'Formen & Symbole', exact: true }).click();
-  await page.getByRole('button', { name: 'Form speech', exact: true }).click();
+  await page.getByRole('region', { name: 'Einfügen' }).getByRole('button', { name: 'Sprechblase', exact: true }).click();
   await expect(page.locator('.interaction-surface .page-element')).toHaveCount(
     1,
   );
@@ -171,8 +170,7 @@ test('Formen, Bildgestaltung, Vorlagenkategorien, Zoom und Tastatur sind verfüg
     .click();
   await expect(page.locator('.zoom-float .zoom-value')).toHaveText('110 %');
   await page.getByRole('button', { name: 'Ganze Seite', exact: true }).click();
-  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Einfügen', exact: true }).click();
-  await page.getByRole('button', { name: 'Vorlagen', exact: true }).click();
+  await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Neue Seite', exact: true }).click();
   const templates = page.getByRole('dialog', { name: 'Neue Seite' });
   await templates
     .getByRole('navigation', { name: 'Kategorien' })

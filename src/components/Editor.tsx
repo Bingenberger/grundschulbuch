@@ -30,7 +30,6 @@ import GeneratorDialog from './GeneratorDialog';
 import ShareDialog from './ShareDialog';
 import { LearningRuntime } from './learning/Runtime';
 import LearningDialog from './learning/LearningDialog';
-import ElementsDialog from './learning/ElementsDialog';
 import EmbedDialog from './learning/EmbedDialog';
 import DrawingRuler from './learning/DrawingRuler';
 import EditorHeader from './editor/EditorHeader';
@@ -48,7 +47,7 @@ import PageBar from './editor/PageBar';
 import TemplateChooser from './editor/TemplateChooser';
 import PageTiles from './editor/PageTiles';
 import { applyTemplate, templateCatalog } from './editor/page-templates';
-import { InsertBar, SelectBar, type InsertAction } from './editor/ContextBars';
+import { SelectBar, ShapesBar, findStamp } from './editor/ContextBars';
 import { featuresFor } from '@/lib/features';
 import { LinkContext, LinkLayer } from './LinkContext';
 import { elementsInFrame, rectFrom, strokeAt, tapDistance, type Rect } from '@/lib/selection';
@@ -127,8 +126,9 @@ export default function Editor({
   const [showGenerator, setShowGenerator] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [learning, setLearning] = useState<PageElement | 'new' | null>(null);
-  const [showElements, setShowElements] = useState(false),
-    [showEmbed, setShowEmbed] = useState(false);
+  /** Stamp chosen under “Einfügen”: every tap on the page places it. */
+  const [stamp, setStamp] = useState<string | null>(null);
+  const [showEmbed, setShowEmbed] = useState(false);
   const [recordTarget, setRecordTarget] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [shortcuts, setShortcuts] = useState<Shortcuts>(defaultShortcuts),
@@ -170,6 +170,15 @@ export default function Editor({
   const railActive: RailItem = selected.length
     ? 'select'
     : panel ?? (s.tool === 'marker' ? 'pen' : s.tool);
+  const stampActive = !!stamp && panel === 'insert' && !board;
+  useEffect(() => {
+    if (!stampActive) return;
+    const escape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setStamp(null);
+    };
+    window.addEventListener('keydown', escape);
+    return () => window.removeEventListener('keydown', escape);
+  }, [stampActive]);
   useEffect(() => {
     useEditor.getState().load(initial);
     return () => {
@@ -538,6 +547,9 @@ export default function Editor({
       case 'learning':
         setLearning('new');
         break;
+      case 'internet':
+        setShowEmbed(true);
+        break;
       case 'insert':
       case 'page':
         setPanel(railActive === item ? null : item);
@@ -545,28 +557,13 @@ export default function Editor({
         break;
     }
   }
-  function insertAction(action: InsertAction) {
-    if (action === 'shapes') setShowElements(true);
-    else if (action === 'stamp')
-      insert({
-        id: uuid(),
-        type: 'text',
-        x: 20,
-        y: 20,
-        width: 65,
-        height: 20,
-        rotation: -5,
-        locked: true,
-        color: '#477e4a',
-        text: '★ Gut gemacht!',
-        font: 'Andika',
-        fontSize: 21,
-        bold: true,
-      });
-    else if (action === 'templates') setTemplateMode('new');
-    else if (action === 'worksheet') setShowGenerator(true);
-    else if (action === 'collection') setShowCollection(true);
-    else setShowEmbed(true);
+  /** Puts a copy of the chosen stamp centred on the tapped point. */
+  function stampAt(point: { x: number; y: number }) {
+    const made = findStamp(stamp)?.make();
+    if (!made) return;
+    const x = Math.max(0, Math.min(size.width - made.width, point.x - made.width / 2));
+    const y = Math.max(0, Math.min(size.height - made.height, point.y - made.height / 2));
+    s.edit((p) => ({ ...p, elements: [...p.elements, { ...made, x, y }] }));
   }
   /** Deletes pages right away; “Rückgängig” brings them back for a while. */
   function deletePages(ids: string[]) {
@@ -720,6 +717,12 @@ export default function Editor({
     handle: HandleKind = 'move',
   ) {
     if (gesture.current || (board && !boardDraw) || event.button !== 0) return;
+    if (stampActive && s.tool === 'select') {
+      event.preventDefault();
+      event.stopPropagation();
+      stampAt(pointer(event));
+      return;
+    }
     if (s.tool !== 'select' && s.pencilOnly && event.pointerType !== 'pen')
       return;
     event.preventDefault();
@@ -947,7 +950,6 @@ export default function Editor({
         showGenerator ||
         showShare ||
         learning ||
-        showElements ||
         showEmbed ||
         showFiles ||
         showShortcuts
@@ -1248,7 +1250,11 @@ export default function Editor({
             }}
           />
         ) : panel === 'insert' ? (
-          <InsertBar features={features} onInsert={insertAction} />
+          <ShapesBar
+            onInsert={(element) => insert(cascade(element, page.elements, size))}
+            stamp={stamp}
+            onStamp={setStamp}
+          />
         ) : panel === 'page' ? (
           <PageBar
             key={page.id}
@@ -1406,6 +1412,10 @@ export default function Editor({
         <LearningDialog
           element={learning === 'new' ? undefined : learning}
           onClose={() => setLearning(null)}
+          onWorksheet={() => {
+            setLearning(null);
+            setShowGenerator(true);
+          }}
           onSave={(el) => {
             if (learning === 'new') insert(el);
             else
@@ -1416,12 +1426,6 @@ export default function Editor({
                 ),
               }));
           }}
-        />
-      )}
-      {showElements && (
-        <ElementsDialog
-          onClose={() => setShowElements(false)}
-          onInsert={insert}
         />
       )}
       {showEmbed && (

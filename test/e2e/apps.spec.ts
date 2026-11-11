@@ -16,8 +16,7 @@ test('Eigene HTML-Apps laufen getrennt vom angemeldeten Editor', async ({
   page.on('request', (r) => {
     if (r.url().includes('example.invalid')) leaked = true;
   });
-  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Einfügen', exact: true }).click();
-  await page.getByRole('button', { name: 'Internet', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Internet', exact: true }).click();
   const dialog = page.getByRole('dialog', {
     name: 'Video, Webseite oder QR-Code',
   });

@@ -114,6 +114,15 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   Lineatur, Papierfarbe und Rahmen kommen aus der Vorlage, alles auf der Seite
   bleibt erhalten; nur eine leere Seite bekommt auch den Inhalt der Vorlage.
   Die Seite merkt sich ihre Vorlage (`page.template`), die Auswahl markiert sie.
+- Werkzeugleiste links: Auswahl, Stift, Radierer, Text, Bild, Ton, Internet,
+  Lernwerkzeuge, Einfügen, unten Seite. „Einfügen“ öffnet die untere Leiste mit
+  Formen, Sticker (Emojis nach Themen) und Stempel: Text- und Emoji-Stempel
+  werden gewählt und dann mit jedem Tipp auf die Seite gesetzt (Escape oder
+  erneutes Antippen beendet das Stempeln; Stempel sind gesperrt, damit Kinder
+  sie nicht verschieben). „Arbeitsblatt erzeugen“ steht unter
+  „Lernwerkzeuge“, neue Seiten mit Vorlage über „+“. Die Sammlung ist im
+  Moment nur über die Tastenkombination erreichbar und bekommt später einen
+  eigenen Platz (in der HTML-Vorlage: „Regal“ › „Persönlich“).
 - „Seite“ in der Werkzeugleiste ist gegliedert in Papier (Lineatur, Format),
   Farben & Bild, Rahmen (Seitenrahmen und -farbe), Vorlage (wechseln, als
   eigene Vorlage speichern) und Seiten (Kachelansicht, neu, duplizieren,
