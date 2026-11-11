@@ -10,3 +10,6 @@ next-env.d.ts
 /playwright-report
 
 /public/runtime
+
+# Lokale Referenz, nicht Teil des Quellcodes
+/Lernsachen-Heft.html
