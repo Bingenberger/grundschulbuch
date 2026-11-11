@@ -16,5 +16,5 @@ export default async function Kinderheft({
     throw e;
   });
   if (data.book.trashed) notFound();
-  return <ChildEditor initial={data} images={child.images} />;
+  return <ChildEditor initial={data} images={child.images} allowed={child.features} />;
 }

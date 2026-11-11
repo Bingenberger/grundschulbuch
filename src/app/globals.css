@@ -2416,3 +2416,17 @@ input[type='checkbox'] {
 .book-actions .book-folder .picker {
   margin: 4px 0 6px;
 }
+.feature-switches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 12px 0;
+}
+.child-features {
+  flex-basis: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #dce2d6;
+  border-radius: 12px;
+  background: #fbfcf8;
+}

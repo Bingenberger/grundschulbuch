@@ -2,6 +2,7 @@
 // everything; children see a fixed default set for now. Later, per-class or
 // per-child switches only need to produce a different Set<Feature>.
 import type { Notebook } from './notebook-model';
+import { CHILD_DEFAULTS } from './child-features.mjs';
 
 export const featureLabels = {
   // Left toolbar
@@ -53,19 +54,17 @@ export type Feature = keyof typeof featureLabels;
 
 const allFeatures = Object.keys(featureLabels) as Feature[];
 
-/** What children see unless the teacher allows more (not configurable yet). */
-export const childDefaults: readonly Feature[] = [
-  'select', 'pen', 'eraser', 'text', 'image', 'pages', 'readAloud',
-  'brushWater', 'fill', 'eyedropper', 'guides', 'shapeRecognition',
-  'eraserOptions', 'elementStyle',
-];
-
 export function featuresFor(
   mode: 'teacher' | 'child',
   book?: Pick<Notebook, 'allowChildAudio' | 'allowChildPages'> | null,
+  /** Functions the teacher allows this child (per class or per child). */
+  childFeatures?: readonly string[],
 ): Set<Feature> {
   if (mode === 'teacher') return new Set(allFeatures.filter((f) => f !== 'readAloud'));
-  const features = new Set<Feature>(childDefaults);
+  const features = new Set<Feature>([
+    'select',
+    ...((childFeatures ?? CHILD_DEFAULTS) as Feature[]).filter((f) => f in featureLabels),
+  ]);
   if (book?.allowChildAudio) features.add('audio');
   if (book?.allowChildPages) features.add('addPage');
   return features;

@@ -1,7 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import Icon from './Icon';
-import { Picker } from './ui/Choice';
+import { Choices, Picker } from './ui/Choice';
+import FeatureSwitches from './FeatureSwitches';
+import { CHILD_DEFAULTS } from '@/lib/child-features.mjs';
 import { uuid } from '@/lib/notebook-model';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -37,6 +39,7 @@ export default function Classroom({
   const [allowPages, setAllowPages] = useState(false);
   const [allowAudio, setAllowAudio] = useState(false);
   const [selectedChildren, setSelectedChildren] = useState<string[]>([]);
+  const [featureChild, setFeatureChild] = useState('');
   const active = classes.find((c) => c.id === activeId);
   async function run(task: () => Promise<void>) {
     setBusy(true);
@@ -184,6 +187,7 @@ export default function Classroom({
                   </label>
                   <small>
                     {child.hasCard ? '✓ Karte zugeordnet' : 'Noch keine Karte'}
+                    {child.features ? ' · eigene Funktionen' : ''}
                   </small>
                   <div className="child-row-actions">
                     <button
@@ -285,7 +289,43 @@ export default function Classroom({
                     >
                       Hefte ansehen
                     </button>
+                    <button
+                      className="knopf compact"
+                      aria-expanded={featureChild === child.id}
+                      onClick={() => setFeatureChild(featureChild === child.id ? '' : child.id)}
+                    >
+                      <Icon name="settings" size={18} /> Funktionen
+                    </button>
                   </div>
+                  {featureChild === child.id && (
+                    <div className="child-features">
+                      <Choices
+                        label={`Was ${child.name} im Heft sieht`}
+                        value={child.features ? 'own' : 'class'}
+                        disabled={busy}
+                        onChange={(mode) =>
+                          run(() =>
+                            change({
+                              childId: child.id,
+                              features: mode === 'own' ? active.childFeatures ?? CHILD_DEFAULTS : null,
+                            }),
+                          )
+                        }
+                        options={[
+                          { value: 'class', label: 'Wie die Klasse', icon: 'conference_call' },
+                          { value: 'own', label: 'Eigene Auswahl', icon: 'businesswoman' },
+                        ]}
+                      />
+                      {child.features && (
+                        <FeatureSwitches
+                          label={`Funktionen für ${child.name}`}
+                          value={child.features}
+                          disabled={busy}
+                          onChange={(features) => run(() => change({ childId: child.id, features }))}
+                        />
+                      )}
+                    </div>
+                  )}
                 </article>
               ))}
             </div>
@@ -294,6 +334,27 @@ export default function Classroom({
                 Füge Kinder mit Vornamen oder Kürzel hinzu.
               </p>
             )}
+          </section>
+          <section className="karte class-section">
+            <h2>Was die Kinder im Heft sehen</h2>
+            <p>
+              Gilt für alle Kinder der Klasse, die keine eigene Auswahl haben
+              (unter „Funktionen“ beim Kind). Ton aufnehmen und Seiten
+              hinzufügen werden beim Austeilen eines Hefts erlaubt.
+            </p>
+            <FeatureSwitches
+              label="Funktionen für die Klasse"
+              value={active.childFeatures ?? CHILD_DEFAULTS}
+              disabled={busy}
+              onChange={(childFeatures) => run(() => change({ childFeatures }))}
+            />
+            <button
+              className="knopf compact"
+              disabled={busy || (active.childFeatures ?? CHILD_DEFAULTS).join() === CHILD_DEFAULTS.join()}
+              onClick={() => run(() => change({ childFeatures: CHILD_DEFAULTS }))}
+            >
+              <Icon name="synchronize" size={18} /> Standard wiederherstellen
+            </button>
           </section>
           <section className="karte class-section">
             <h2>Ein Heft austeilen</h2>
@@ -308,6 +369,9 @@ export default function Classroom({
               onChange={setBookId}
               options={books.map((b) => ({ value: b.id, label: b.title, icon: 'reading_ebook' as const }))}
             />
+            {!books.length && (
+              <p className="hinweis">Lege zuerst im Regal ein Heft an, das du austeilen möchtest.</p>
+            )}
             <label>
               <input
                 type="checkbox"

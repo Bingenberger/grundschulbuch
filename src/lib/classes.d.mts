@@ -1,9 +1,12 @@
 import type { Notebook } from './notebook-model';
+import type { ChildFeature } from './child-features.mjs';
 export type Child = {
   id: string;
   name: string;
   hasCard: boolean;
   cardVersion: number;
+  /** Own selection; null or missing means “like the class”. */
+  features?: ChildFeature[] | null;
 };
 export type SchoolClass = {
   id: string;
@@ -13,6 +16,8 @@ export type SchoolClass = {
   children: Child[];
   images: string[];
   createdAt: string;
+  /** Class default for children; missing means CHILD_DEFAULTS. */
+  childFeatures?: ChildFeature[];
 };
 export type ChildRecord = {
   id: string;
@@ -22,6 +27,8 @@ export type ChildRecord = {
   teacherId: string;
   images: string[];
   classTitle: string;
+  /** Effective functions for this child (own, class or default). */
+  features: ChildFeature[];
 };
 export function ownedClass(
   owner: string,

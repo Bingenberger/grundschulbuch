@@ -191,3 +191,23 @@ test('Archivierte Klassen sperren Kinderzugang; Löschen entfernt Kinderhefte un
   await klass.deleteClass(teacher, c.id);
   await assert.rejects(books.getBook(c.children[0].id, b.book.id), status(404));
 });
+
+test('Lehrkräfte legen fest, welche Funktionen Kinder sehen: Klasse als Vorgabe, Kind mit eigener Auswahl', async () => {
+  const { CHILD_DEFAULTS } = await import('../src/lib/child-features.mjs');
+  let c = await newClass('Funktionen');
+  const [ada, ben] = c.children;
+  assert.deepEqual((await klass.childById(ada.id)).features, [...CHILD_DEFAULTS]);
+  c = await klass.changeClass(teacher, c.id, { childFeatures: ['pen', 'text', 'pen'] });
+  assert.deepEqual(c.childFeatures, ['pen', 'text']);
+  assert.deepEqual((await klass.childById(ben.id)).features, ['pen', 'text']);
+  c = await klass.changeClass(teacher, c.id, { childId: ada.id, features: ['eraser'] });
+  assert.deepEqual(c.children.find((k) => k.id === ada.id).features, ['eraser']);
+  assert.deepEqual((await klass.childById(ada.id)).features, ['eraser']);
+  assert.deepEqual((await klass.childById(ben.id)).features, ['pen', 'text']);
+  c = await klass.changeClass(teacher, c.id, { childId: ada.id, features: null });
+  assert.deepEqual((await klass.childById(ada.id)).features, ['pen', 'text']);
+  for (const bad of [['admin'], 'pen', [1], { pen: true }])
+    await assert.rejects(klass.changeClass(teacher, c.id, { childFeatures: bad }), status(400));
+  await assert.rejects(klass.changeClass(teacher, c.id, { childId: ada.id, features: ['share'] }), status(400));
+  await assert.rejects(klass.changeClass(other, c.id, { childFeatures: ['pen'] }), status(404));
+});

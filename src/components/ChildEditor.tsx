@@ -36,9 +36,12 @@ import { appendSamples, eraseElements, newStroke, pointerSamples, type EraserPro
 export default function ChildEditor({
   initial,
   images,
+  allowed,
 }: {
   initial: BookData;
   images: string[];
+  /** Functions the teacher allows (class or child setting). */
+  allowed?: readonly string[];
 }) {
   const s = useEditor();
   const recognition = useShapeRecognition(s.recognizeShapes && !['water', 'fill'].includes(s.brush), s.activeId);
@@ -67,7 +70,7 @@ export default function ChildEditor({
   const page = s.pages.find((p) => p.id === s.activeId);
   const selected = page?.elements.find((el) => s.selected.includes(el.id));
   const selectedElements = page?.elements.filter((el) => s.selected.includes(el.id)) || [];
-  const features = featuresFor('child', s.book);
+  const features = featuresFor('child', s.book, allowed);
   const railActive: RailItem = selectedElements.length ? 'select' : s.tool === 'marker' ? 'pen' : s.tool;
   useEffect(() => {
     useEditor.getState().load(initial, 'child');
@@ -365,6 +368,7 @@ export default function ChildEditor({
           activeId={page.id}
           onChoose={choosePage}
           onAdd={features.has('addPage') ? () => void addPage() : undefined}
+          overview={features.has('pages')}
         />
         <div className="editor-main">
           <section className="canvas-area">
@@ -421,12 +425,12 @@ export default function ChildEditor({
         </ScaledPage>
               </div>
             </div>
-            <div className="zoom-float" role="group" aria-label="Seite">
+            {features.has('readAloud') && <div className="zoom-float" role="group" aria-label="Seite">
               <button type="button" onClick={readPage}>
                 <Icon name="speaker" size={22} />
                 <span>Seite vorlesen</span>
               </button>
-            </div>
+            </div>}
           </section>
           {draft?.geometry && (s.tool === 'pen' || s.tool === 'marker') && <span className="shape-hint" role="status">Form erkannt – zum Übernehmen loslassen.</span>}
           {s.tool === 'pen' || s.tool === 'marker' || s.tool === 'eraser' ? (

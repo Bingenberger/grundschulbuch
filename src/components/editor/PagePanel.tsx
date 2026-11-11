@@ -15,6 +15,7 @@ export default function PagePanel({
   onChoose,
   onAdd,
   extra,
+  overview = true,
 }: {
   pages: Page[];
   pageIds: string[];
@@ -23,8 +24,11 @@ export default function PagePanel({
   onChoose: (id: string) => void;
   onAdd?: () => void;
   extra?: React.ReactNode;
+  /** false: only arrows to turn pages, no thumbnails (e.g. for some children). */
+  overview?: boolean;
 }) {
-  const [open, setOpen] = useState(true);
+  const [remembered, setOpen] = useState(true);
+  const open = overview && remembered;
   useEffect(() => {
     // Read the remembered state after hydration (server always renders “open”).
     const frame = requestAnimationFrame(() => {
@@ -45,18 +49,28 @@ export default function PagePanel({
   const index = pageIds.indexOf(activeId);
   return (
     <aside className={`page-panel ${open ? 'open' : 'closed'}`} aria-label="Seitenübersicht">
-      <button
-        type="button"
-        className="page-panel-toggle"
-        aria-expanded={open}
-        onClick={toggle}
-      >
-        <Icon name="seiten" size={26} />
-        <span>{open ? 'Seiten einklappen' : 'Seiten'}</span>
-        <small>
-          {index + 1} / {pageIds.length}
-        </small>
-      </button>
+      {overview ? (
+        <button
+          type="button"
+          className="page-panel-toggle"
+          aria-expanded={open}
+          onClick={toggle}
+        >
+          <Icon name="seiten" size={26} />
+          <span>{open ? 'Seiten einklappen' : 'Seiten'}</span>
+          <small>
+            {index + 1} / {pageIds.length}
+          </small>
+        </button>
+      ) : (
+        <div className="page-panel-toggle" role="status">
+          <Icon name="seiten" size={26} />
+          <span>Seite</span>
+          <small>
+            {index + 1} / {pageIds.length}
+          </small>
+        </div>
+      )}
       {open && (
         <>
           <div className="page-thumbnails">

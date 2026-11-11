@@ -11,6 +11,7 @@ import {
 } from './notebooks.mjs';
 import { mediaReferences } from './learning/validation.mjs';
 import { keyedHash } from './sessions.mjs';
+import { CHILD_DEFAULTS, cleanChildFeatures } from './child-features.mjs';
 const classPath = (classId) => dataPath('klassen', `${id(classId)}.json`);
 const digestPattern = /^[a-f0-9]{64}$/;
 async function allClasses() {
@@ -44,6 +45,13 @@ export async function listClasses(owner) {
     .filter((c) => c.teacherId === owner)
     .map(publicClass);
 }
+function features(list) {
+  try {
+    return cleanChildFeatures(list);
+  } catch (e) {
+    throw new BookError(e.message);
+  }
+}
 function name(value) {
   if (typeof value !== 'string' || !value.trim() || value.trim().length > 60)
     throw new BookError('Bitte einen Namen mit höchstens 60 Zeichen eingeben.');
@@ -69,6 +77,8 @@ export async function changeClass(owner, classId, input) {
     const klass = await ownedClass(owner, classId);
     if (input.title !== undefined) klass.title = name(input.title);
     if (input.archived !== undefined) klass.archived = !!input.archived;
+    if (input.childFeatures !== undefined)
+      klass.childFeatures = features(input.childFeatures);
     if (input.addChild !== undefined) {
       if (klass.children.length >= 100)
         throw new BookError('Höchstens 100 Kinder pro Klasse.');
@@ -93,6 +103,9 @@ export async function changeClass(owner, classId, input) {
       const child = klass.children.find((c) => c.id === input.childId);
       if (!child) throw new BookError('Kind nicht gefunden.', 404);
       if (input.childName !== undefined) child.name = name(input.childName);
+      if (input.features !== undefined)
+        child.features =
+          input.features === null ? null : features(input.features);
       if (input.digest !== undefined) {
         if (input.digest !== null && !digestPattern.test(input.digest))
           throw new BookError('Ungültige Kartenprüfsumme.');
@@ -204,6 +217,9 @@ export async function childById(childId, includeArchived = false) {
         teacherId: klass.teacherId,
         images: klass.images,
         classTitle: klass.title,
+        features: [
+          ...(child.features ?? klass.childFeatures ?? CHILD_DEFAULTS),
+        ],
       };
   }
   return null;

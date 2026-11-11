@@ -17,9 +17,13 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   Dropdown-Menüs mehr, auch nicht in den Dialogen der Lernwerkzeuge.
 - Icons: Flat Color Icons (icons8, MIT, npm `flat-color-icons`); fehlende
   Motive sind im gleichen Stil unter `public/icons/` ergänzt.
-- Was Kinder sehen, legt die zentrale Funktionsliste in `src/lib/features.ts`
-  fest. Schalter für Lehrkräfte pro Klasse oder Kind sind vorgesehen, aber noch
-  nicht umgesetzt.
+- Was Kinder sehen, legen Lehrkräfte unter „Meine Klassen“ fest: als
+  Vorgabe für die Klasse („Was die Kinder im Heft sehen“) und bei Bedarf als
+  eigene Auswahl je Kind („Funktionen“). Ohne Einstellung gilt die Vorgabe aus
+  `src/lib/child-features.mjs`. Ton aufnehmen und Seiten hinzufügen werden
+  weiterhin pro Heft beim Austeilen erlaubt. Die Schalter steuern, was die
+  Oberfläche anbietet; Speichern und Medienrechte prüft der Server unabhängig
+  davon wie bisher.
 
 
 - Regal mit Suche, farbigen Umschlägen, Seitenvorschau, Umbenennen, Kopie und Löschen.
