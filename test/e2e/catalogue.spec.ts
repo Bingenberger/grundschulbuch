@@ -58,6 +58,11 @@ test('Alle Lernwerkzeuge und Übungen lassen sich im Heft öffnen', async ({
   await page.goto(`/heft/${data.book.id}`);
   for (let i = 0; i < catalogue.length; i++) {
     await page.getByLabel(`Seite ${i + 1} öffnen`, { exact: true }).click();
+    // Drawn like the reference: no header, just the picture.
+    if (['mathtool', 'receipt'].includes(catalogue[i].kind)) {
+      await expect(page.locator('.interaction-surface .page-element svg').first()).toBeVisible();
+      continue;
+    }
     await expect(
       page.locator('.interaction-surface .learning-widget > header strong'),
     ).toHaveText(catalogue[i].label);

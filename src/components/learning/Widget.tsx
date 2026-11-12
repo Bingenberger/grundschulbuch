@@ -10,8 +10,12 @@ import MathWidgets from './MathWidgets';
 import GeometryWidget from './GeometryWidget';
 import CreativeWidgets from './CreativeWidgets';
 import SlideshowWidget from './SlideshowWidget';
+import MathTool from './MathTool';
+import Receipt from './Receipt';
 export default function Widget({ element }: { element: PageElement }) {
   const kind = element.widgetKind!;
+  if (kind === 'mathtool') return <MathTool element={element} />;
+  if (kind === 'receipt') return <Receipt element={element} />;
   if (kind === 'geometry') return <GeometryWidget element={element} />;
   if (kind === 'slideshow') return <SlideshowWidget element={element} />;
   if (kind === 'karaoke') return <KaraokeWidget element={element} />;

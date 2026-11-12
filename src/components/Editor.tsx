@@ -1435,7 +1435,11 @@ export default function Editor({
           element={learning === 'new' ? undefined : learning}
           onPages={(pages) =>
             void run(async () => {
-              for (const p of pages) await add(p);
+              // A notebook with just one empty page gets the first page right there.
+              if (s.pages.length === 1 && !page.elements.length) {
+                s.edit(() => ({ ...pages[0], id: page.id, revision: page.revision }));
+                for (const extra of pages.slice(1)) await add(extra);
+              } else for (const p of pages) await add(p);
             })
           }
           onClose={() => setLearning(null)}
@@ -1448,8 +1452,12 @@ export default function Editor({
               : undefined
           }
           onSave={(el) => {
-            if (learning === 'new') insert(el);
-            else
+            if (learning === 'new') {
+              // New tools start in the middle of the page and do not cover each other.
+              const width = Math.min(el.width, size.width), height = Math.min(el.height, size.height);
+              const centred = { ...el, width, height, x: Math.max(0, (size.width - width) / 2), y: Math.max(0, (size.height - height) / 2) };
+              insert(cascade(centred, page.elements, size));
+            } else
               s.edit((p) => ({
                 ...p,
                 elements: p.elements.map((old) =>

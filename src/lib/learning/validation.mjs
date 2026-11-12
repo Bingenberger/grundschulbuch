@@ -24,6 +24,8 @@ export const WIDGET_KINDS = [
   'map',
   'calculator',
   'mathboard',
+  'mathtool',
+  'receipt',
   'shop',
   'geometry',
   'monster',
@@ -299,11 +301,12 @@ export function widgetSettings(value) {
     'voice',
   ])
     check(key, string);
-  for (const [key, values] of Object.entries({ geometryMode: ['series', 'custom'], geometryHelp: ['preview', 'trace'], alphabetTable: ['basic', 'full'], alphabetLayout: ['abc', 'qwertz'], alphabetLetters: ['both', 'lower', 'upper'], alphabetPrompt: ['word', 'image', 'both', 'audio'], synthesisMode: ['sounds', 'pairs'], synthesisCase: ['lower', 'upper', 'mixed'], clappingHelp: ['none', 'dots', 'word', 'both'], letterGuessCase: ['lower', 'upper'], letterGuessLayout: ['abc', 'qwertz'], letterGuessClue: ['none', 'image', 'audio', 'both'], syllablePrompt: ['image', 'word', 'audio', 'both'] })) check(key, value => values.includes(value));
+  for (const [key, values] of Object.entries({ geometryMode: ['series', 'custom'], geometryHelp: ['preview', 'trace'], alphabetTable: ['basic', 'full'], alphabetLayout: ['abc', 'qwertz'], alphabetLetters: ['both', 'lower', 'upper'], alphabetPrompt: ['word', 'image', 'both', 'audio'], synthesisMode: ['sounds', 'pairs'], synthesisCase: ['lower', 'upper', 'mixed'], clappingHelp: ['none', 'dots', 'word', 'both'], letterGuessCase: ['lower', 'upper'], letterGuessLayout: ['abc', 'qwertz'], letterGuessClue: ['none', 'image', 'audio', 'both'], syllablePrompt: ['image', 'word', 'audio', 'both'], mathTool: ['boat', 'abacus', 'ruler', 'calc'] })) check(key, value => values.includes(value));
   for (const key of ['repeat', 'showWords', 'autoRead', 'alphabetPractice', 'alphabetSpeech', 'alphabetVowels', 'synthesisSpeak', 'synthesisDragSound', 'mediaReadText', 'syllableColours', 'slideshowSound', 'slideshowWaitAudio'])
     check(key, (v) => typeof v === 'boolean');
   for (const [key, min, max] of [
     ['geometryCount', 1, 12],
+    ['mathSize', 0, 30],
     ['geometryPreview', 1, 15],
     ['letterGuessLives', 4, 12],
     ['clappingSensitivity', 0.02, 0.3],

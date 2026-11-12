@@ -23,6 +23,8 @@ export const widgetCatalog = {
   animation: ['Animation', 'Comic & Film'],
   map: ['Karte & Wege', 'Schule'],
   calculator: ['Taschenrechner & Kassenzettel', 'Mathe'],
+  mathtool: ['Mathe-Werkzeug', 'Mathe'],
+  receipt: ['Kassenzettel', 'Mathe'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -59,6 +61,11 @@ export type JsonValue =
   | { [key: string]: JsonValue };
 export type LearningMedia = { image?: string; audio?: string; hideText?: boolean };
 export type LearningSettings = {
+  /** Mathe-Werkzeug: boat, abacus, ruler or calc, and its size (5/10/20, 2/10, cm). */
+  mathTool?: 'boat' | 'abacus' | 'ruler' | 'calc';
+  mathSize?: number;
+  /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
+  receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';
   syllableColours?: boolean;
   syllableConfirmed?: string[];
@@ -195,6 +202,7 @@ export function defaultSettings(
     difficulty: 1,
     seed: 42,
   };
+  if (kind === 'receipt') Object.assign(settings, { receipt: { count: 5, level: 'simple', format: 'eurocent', change: false, rounds: 3 } });
   if (kind === 'geometry') Object.assign(settings, { geometryMode: 'series', geometryHelp: 'preview', geometryCount: 5, geometryPreview: 3 });
   if (kind === 'syllables') Object.assign(settings, { syllablePrompt: 'image', syllableColours: true, font: 'Andika', speechRate: 0.85, volume: 0.8 });
   if (kind === 'letterguess') Object.assign(settings, { words: ['Sonne', 'Haus', 'Apfel', 'Blume'], letterGuessLives: 8, letterGuessCase: 'upper', letterGuessLayout: 'abc', letterGuessClue: 'image', font: 'Andika', speechRate: 0.85, volume: 0.8 });

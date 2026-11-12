@@ -213,6 +213,25 @@ Umbau Stück für Stück geprüft.
   „Einstellbar“ mit den sieben einstellbaren Arbeitsblättern der HTML-Vorlage;
   sie öffnen den Arbeitsblatt-Dialog mit passendem Format und Titel.
 
+**Schritt 2a – Mathematik, Werkzeuge und Kassenzettel (erledigt):**
+
+- Neuer Baustein `mathtool` (`lib/learning/mathtool.ts`, `MathTool.tsx`) nach
+  Regal › Mathe der Vorlage: Rechenschiffchen 5/10/20 (Plättchen der Reihe nach,
+  blau → rot → weg am letzten), Rechenrahmen 20/100 (Kugel schiebt mit allen davor),
+  Lineal 10–30 cm in echter Größe (Elementbreite in mm), Taschenrechner (spricht
+  das Ergebnis). Gleiche Maße, Farben und Logik; „Alles weg“-Knopf. Der Zustand
+  wird als Antwort gespeichert (bleibt in Kinderheften erhalten).
+- Neuer Baustein `receipt` (`lib/learning/receipt.ts`, `Receipt.tsx`):
+  Kassenzettel wie „Rechnen mit dem Taschenrechner“ – drei Warenlisten
+  (Supermarkt, Kaufhaus, Kiosk), leichte oder krumme Preise, Summe mit
+  Ziffernblock oder Tastatur, Rückgeld zu einem passenden Schein, Stempel
+  „RICHTIG“, mehrere Zettel und Auswertung (Zeit, Fehler, Verbesserungen).
+- Baustein „Rechnen mit dem Taschenrechner“ setzt wie die Vorlage eine Seite mit
+  Kassenzettel und Taschenrechner ein. Neue Lernwerkzeuge erscheinen mittig und
+  versetzt.
+- Die alten Bausteine „Taschenrechner & Kassenzettel“ und „Zwanzigerfeld“ sind
+  aus dem Katalog genommen; vorhandene Elemente funktionieren weiter.
+
 **Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Musik, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).

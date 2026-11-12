@@ -33,7 +33,8 @@ import {
 } from '@/lib/learning/catalog';
 import { clone, uuid, type Page, type PageElement } from '@/lib/notebook-model';
 import { learningBlocks, SUBJECTS, type LearningBlock, type Subject } from '@/lib/learning/blocks';
-import { ChoiceButton } from '../ui/Choice';
+import { ChoiceButton, Choices } from '../ui/Choice';
+import { mathTool, pageSize } from '@/lib/learning/mathtool';
 import { uploadImage } from '@/lib/client-api';
 const activityIcons: Record<ActivityKind, IconName> = {
   quiz: 'questions', matching: 'flow_chart', cloze: 'rules', typing: 'signature',
@@ -48,7 +49,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -278,8 +279,8 @@ export default function LearningDialog({
                   id: uuid(),
                   x: 15,
                   y: 45,
-                  width: 180,
-                  height: kind === 'alphabet' ? 210 : kind === 'synthesis' || kind === 'clapping' || kind === 'letterguess' || kind === 'syllables' || kind === 'geometry' ? 180 : 140,
+                  width: kind === 'mathtool' ? pageSize(mathTool(settings)).width : kind === 'receipt' ? 120 : 180,
+                  height: kind === 'mathtool' ? pageSize(mathTool(settings)).height : kind === 'receipt' ? 126 : kind === 'alphabet' ? 210 : kind === 'synthesis' || kind === 'clapping' || kind === 'letterguess' || kind === 'syllables' || kind === 'geometry' ? 180 : 140,
                   rotation: 0,
                   locked: false,
                   color: '#253c42',
@@ -543,6 +544,82 @@ export default function LearningDialog({
                 </button>
               </fieldset>
             )}
+            {kind === 'mathtool' && (() => {
+              const t = mathTool(settings);
+              const sizes: [number, string][] =
+                t.tool === 'boat' ? [[5, '5'], [10, '10'], [20, '20']] : t.tool === 'abacus' ? [[2, 'bis 20'], [10, 'bis 100']] : t.tool === 'ruler' ? [[10, '10 cm'], [15, '15 cm'], [20, '20 cm'], [30, '30 cm']] : [];
+              return (
+                <>
+                  <Choices
+                    label="Werkzeug"
+                    value={t.tool}
+                    onChange={(tool) => patch({ mathTool: tool, mathSize: tool === 'boat' ? 10 : tool === 'abacus' ? 2 : tool === 'ruler' ? 15 : 0 })}
+                    options={[
+                      { value: 'boat', label: 'Rechenschiffchen', icon: 'calculator' },
+                      { value: 'abacus', label: 'Rechenrahmen', icon: 'org_unit' },
+                      { value: 'ruler', label: 'Lineal', icon: 'ruler' },
+                      { value: 'calc', label: 'Taschenrechner', icon: 'calculator' },
+                    ]}
+                  />
+                  {sizes.length > 0 && (
+                    <Choices
+                      label="Größe"
+                      value={t.n}
+                      onChange={(mathSize) => patch({ mathSize })}
+                      options={sizes.map(([value, label]) => ({ value, label, icon: <TextGlyph text={String(value)} /> }))}
+                    />
+                  )}
+                </>
+              );
+            })()}
+            {kind === 'receipt' && (() => {
+              const r = settings.receipt || {};
+              const set = (values: Partial<NonNullable<LearningSettings['receipt']>>) => patch({ receipt: { ...r, ...values } });
+              return (
+                <>
+                  <Choices
+                    label="Geld"
+                    value={r.format || 'eurocent'}
+                    onChange={(format) => set({ format })}
+                    options={[
+                      { value: 'eurocent', label: 'Euro und Cent (Supermarkt)', icon: <TextGlyph text="€,ct" /> },
+                      { value: 'euro', label: 'Nur Euro (Kaufhaus)', icon: <TextGlyph text="€" /> },
+                      { value: 'cent', label: 'Nur Cent (Kiosk)', icon: <TextGlyph text="ct" /> },
+                    ]}
+                  />
+                  <Choices
+                    label="Preise"
+                    value={r.level || 'simple'}
+                    onChange={(level) => set({ level })}
+                    options={[
+                      { value: 'simple', label: 'Leicht (runde Preise)', icon: <TextGlyph text="10" /> },
+                      { value: 'complex', label: 'Schwer (krumme Preise)', icon: <TextGlyph text="9,99" /> },
+                    ]}
+                  />
+                  <Choices
+                    label="Einkäufe pro Zettel"
+                    value={r.count ?? 5}
+                    onChange={(count) => set({ count })}
+                    options={[3, 4, 5, 6, 8, 10].map((n) => ({ value: n, label: String(n), icon: <TextGlyph text={String(n)} /> }))}
+                  />
+                  <Choices
+                    label="Zettel nacheinander"
+                    value={r.rounds ?? 3}
+                    onChange={(rounds) => set({ rounds })}
+                    options={[1, 3, 5, 10].map((n) => ({ value: n, label: n === 1 ? '1 Zettel' : `${n} Zettel`, icon: <TextGlyph text={String(n)} /> }))}
+                  />
+                  <Choices
+                    label="Rückgeld"
+                    value={!!r.change}
+                    onChange={(change) => set({ change })}
+                    options={[
+                      { value: false, label: 'Nur die Summe', icon: <TextGlyph text="Σ" /> },
+                      { value: true, label: 'Summe und Rückgeld', icon: <TextGlyph text="↩" /> },
+                    ]}
+                  />
+                </>
+              );
+            })()}
             {kind === 'mathboard' && (
               <Picker label="Rechenmaterial" value={settings.mode || 'beads'} onChange={(value) => patch({ mode: value })}
                 options={[{ value: 'beads', label: 'Rechenrahmen / Zwanziger- und Hunderterfeld', icon: 'calculator' as const }, { value: 'place', label: 'Stellenwerttafel', icon: 'grid' as const }, { value: 'numberline', label: 'Zahlenstrahl', icon: 'timeline' as const }]} />

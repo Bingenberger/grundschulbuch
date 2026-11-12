@@ -4528,3 +4528,17 @@ input[type='checkbox'] {
   .learning-chooser .template-categories { flex-direction: row; flex-wrap: wrap; width: 100%; }
   .learning-chooser .template-categories .choice { width: auto; }
 }
+
+/* Mathe-Werkzeuge (MathTool.tsx) */
+.math-tool { display: block; overflow: visible; user-select: none; -webkit-user-select: none; }
+.math-tool .mt-key { cursor: pointer; outline: none; }
+.math-tool .mt-key:focus-visible > :first-child { stroke: #1c7ed6; stroke-width: 6; }
+.math-tool .mt-key:active rect,
+.math-tool .mt-key:active circle:first-child { filter: brightness(0.88); }
+.math-tool .mt-bead { transition: transform 0.28s cubic-bezier(0.3, 1.3, 0.5, 1); }
+.math-tool .mt-token { transform-box: fill-box; transform-origin: center; animation: mt-pop 0.22s ease-out; }
+@keyframes mt-pop { from { transform: scale(0.4); } to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .math-tool .mt-bead { transition: none; }
+  .math-tool .mt-token { animation: none; }
+}
