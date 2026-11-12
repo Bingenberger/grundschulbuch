@@ -1,7 +1,7 @@
 /* eslint-disable */
 // @ts-nocheck
-// “Mathe-Aufgaben” – the worksheet generator of the reference (Lernsachen-Heft),
-// taken over unchanged so the sheets look and behave the same. It works in the
+// The worksheet generators of the reference (Lernsachen-Heft) – Mathe-Aufgaben,
+// Uhrzeiten üben … – taken over unchanged so the sheets look and behave the same. It works in the
 // reference's page units (1400 × 990, A4 landscape) and builds plain items:
 //   text   { type:'text', x, y, w, h, size, html, font, align, color, bold, placeholder? }
 //          – an item with `placeholder` is a box the child types the answer into
@@ -861,6 +861,133 @@ function vA(e10) {
   }
   return n10;
 }
+
+
+// ---- Uhrzeiten üben ----
+var Gse = [`zw\xF6lf`, `eins`, `zwei`, `drei`, `vier`, `f\xFCnf`, `sechs`, `sieben`, `acht`, `neun`, `zehn`, `elf`, `zw\xF6lf`], gT = (e10) => Gse[(e10 - 1) % 12 + 1];
+function _T(e10, t10) {
+  let n10 = gT(e10), r10 = gT(e10 + 1);
+  switch (t10) {
+    case 0:
+      return e10 % 12 == 1 ? `ein Uhr` : `${n10} Uhr`;
+    case 5:
+      return `f\xFCnf nach ${n10}`;
+    case 10:
+      return `zehn nach ${n10}`;
+    case 15:
+      return `Viertel nach ${n10}`;
+    case 20:
+      return `zwanzig nach ${n10}`;
+    case 25:
+      return `f\xFCnf vor halb ${r10}`;
+    case 30:
+      return `halb ${r10}`;
+    case 35:
+      return `f\xFCnf nach halb ${r10}`;
+    case 40:
+      return `zwanzig vor ${r10}`;
+    case 45:
+      return `Viertel vor ${r10}`;
+    case 50:
+      return `zehn vor ${r10}`;
+    case 55:
+      return `f\xFCnf vor ${r10}`;
+  }
+  return t10 < 30 ? t10 === 1 ? `eine Minute nach ${n10}` : `${t10} Minuten nach ${n10}` : 60 - t10 == 1 ? `eine Minute vor ${r10}` : `${60 - t10} Minuten vor ${r10}`;
+}
+function vT(e10) {
+  return e10 < 5 ? `in der Nacht` : e10 < 9 ? `am Morgen` : e10 < 12 ? `am Vormittag` : e10 < 14 ? `am Mittag` : e10 < 18 ? `am Nachmittag` : e10 < 22 ? `am Abend` : `in der Nacht`;
+}
+var q6 = [{ id: `hour`, label: `Volle Stunden`, sample: `7:00` }, { id: `half`, label: `Halbe Stunden`, sample: `7:30` }, { id: `quarter`, label: `Viertelstunden`, sample: `7:15` }, { id: `five`, label: `5 Minuten`, sample: `7:25` }, { id: `minute`, label: `Minutengenau`, sample: `7:23` }], J6 = { level: `half`, formats: [`read`, `draw`], layout: `mixed`, pages: 1, solutions: false }, Y6 = { hour: [0], half: [0, 30], quarter: [0, 15, 30, 45], five: Array.from({ length: 12 }, (e10, t10) => t10 * 5), minute: Array.from({ length: 60 }, (e10, t10) => t10) }, X6 = { hour: [60, 3], half: [30, 5], quarter: [15, 8], five: [5, 24], minute: [1, 150] }, Z6 = (e10) => String(e10).padStart(2, `0`), Q6 = (e10, t10) => `${e10}:${Z6(t10)}`;
+function hDe(e10) {
+  let t10 = Math.floor(e10 / 60), n10 = e10 % 60;
+  return t10 ? n10 ? `${t10} Std. ${n10} Min.` : `${t10} Std.` : `${n10} Min.`;
+}
+function $6(e10, t10, n10, r10, i10) {
+  e10.circle(t10, n10, r10, `#ffffff`, GB, 4);
+  for (let i11 = 0; i11 < 60; i11++) {
+    let a10 = i11 * 6 * Math.PI / 180, o10 = i11 % 5 == 0, s10 = r10 - (o10 ? r10 * 0.15 : r10 * 0.07), c10 = r10 - 5;
+    e10.line(t10 + Math.sin(a10) * s10, n10 - Math.cos(a10) * s10, t10 + Math.sin(a10) * c10, n10 - Math.cos(a10) * c10, GB, o10 ? 3 : 1.2);
+  }
+  for (let i11 = 1; i11 <= 12; i11++) {
+    let a10 = i11 * 30 * Math.PI / 180, o10 = r10 * 0.68;
+    e10.label(t10 + Math.sin(a10) * o10, n10 - Math.cos(a10) * o10 + r10 * 0.075, String(i11), Math.round(r10 * 0.21), GB);
+  }
+  if (i10) {
+    let [a10, o10] = i10, s10 = (a10 % 12 * 30 + o10 * 0.5) * Math.PI / 180, c10 = o10 * 6 * Math.PI / 180;
+    e10.line(t10, n10, t10 + Math.sin(s10) * r10 * 0.5, n10 - Math.cos(s10) * r10 * 0.5, GB, 8), e10.line(t10, n10, t10 + Math.sin(c10) * r10 * 0.8, n10 - Math.cos(c10) * r10 * 0.8, qB, 4.5);
+  }
+  e10.circle(t10, n10, 6, GB);
+}
+var e82 = 30, t8 = 52, n8 = 58;
+function r8(e10, t10, n10, r10, i10, a10, o10) {
+  return rV(e10, t10, n10, r10, i10, n8, t8, String(a10), e82), e10.num(n10 + n8, r10 + i10 + (t8 - XB(e82)) / 2, 22, `:`, e82), rV(e10, t10, n10 + n8 + 22, r10, i10, n8, t8, Z6(o10), e82), 138;
+}
+var i8 = 84, a8 = 230;
+function o8(e10) {
+  return (t10, n10, r10) => {
+    let i10 = nV(a8, 24, 5), a10 = e10 ? 36 : 0, o10 = new eV(70, VB, a10 + 168 + 16 + t8 + 2);
+    for (let s10 = 0; s10 < i10.n; s10++) {
+      let c10 = i10.x(s10), [l10, u10] = tV(t10, () => e10 ? [IB(0.65) ? K(13, 22) : PB([K(0, 4), K(5, 12), 23]), PB(Y6[t10.o.level])] : [K(1, 12), PB(Y6[t10.o.level])], (t11) => `${e10 ? `d` : `r`}${t11[0]}:${t11[1]}`);
+      e10 && n10.text(c10, r10 + (a10 - XB(22)) / 2, a8, mT(vT(l10)), 22, { bold: true, color: KB, font: `nunito` }), $6(o10, c10 + a8 / 2, a10 + i8 + 4, i8, [l10, u10]), r8(n10, o10, c10 + 46, r10, a10 + 168 + 16, l10, u10);
+    }
+    n10.graphic(o10, r10, `Uhren`);
+  };
+}
+function gDe(e10, t10, n10) {
+  let r10 = nV(a8, 24, 5), i10 = new eV(70, VB, 220), a10 = new eV(70, VB, 220), o10 = e10.o.level === `hour` || e10.o.level === `half` || e10.o.level === `quarter`;
+  for (let s10 = 0; s10 < r10.n; s10++) {
+    let c10 = r10.x(s10), [l10, u10] = tV(e10, () => [K(1, 12), PB(Y6[e10.o.level])], (e11) => `z${e11[0]}:${e11[1]}`), d10 = o10 && IB(0.5), f10 = d10 ? 24 : 30;
+    t10.text(c10, n10 + (44 - XB(f10)) / 2, a8, mT(d10 ? _T(l10, u10) : `${Q6(l10, u10)} Uhr`), f10, { bold: !d10 }), $6(i10, c10 + a8 / 2, 132, i8), $6(a10, c10 + a8 / 2, 132, i8, [l10, u10]);
+  }
+  t10.graphic(i10, n10, `Uhren`, a10);
+}
+var s8 = 70;
+function _De(e10, t10, n10) {
+  let r10 = nV(491, 80, 2), i10 = new eV(70, VB, s8);
+  for (let a10 = 0; a10 < r10.n; a10++) {
+    let o10 = r10.x(a10), [s10, c10] = tV(e10, () => [K(1, 12), PB(Y6[e10.o.level])], (e11) => `w${e11[0]}:${e11[1]}`);
+    t10.text(o10, n10 + (s8 - XB(28)) / 2, 337, mT(_T(s10, c10)), 28, { align: `right` }), r8(t10, i10, o10 + 337 + 16, n10, 9, s10, c10);
+  }
+  t10.graphic(i10, n10, `Rechenk\xE4stchen`);
+}
+function vDe(e10, t10, n10) {
+  let r10 = nV(595, 36, 2), i10 = new eV(70, VB, s8), [a10, o10] = X6[e10.o.level];
+  for (let s10 = 0; s10 < r10.n; s10++) {
+    let c10 = r10.x(s10), l10 = tV(e10, () => {
+      let t11 = K(1, o10) * a10, n11 = K(6, 17), r11 = PB(Y6[e10.o.level]), i11 = n11 * 60 + r11 + t11;
+      return i11 >= 1440 ? null : { a: Q6(n11, r11), b: Q6(Math.floor(i11 / 60), i11 % 60), d: t11 };
+    }, (e11) => `s${e11.a}-${e11.b}`), u10 = n10 + (s8 - XB(26)) / 2;
+    t10.text(c10, u10, 327, mT(`${l10.a} Uhr bis ${l10.b} Uhr`), 26, { align: `right` });
+    let d10 = c10 + 327 + 12;
+    rV(t10, i10, d10, n10, 9, n8, t8, String(Math.floor(l10.d / 60)), e82), t10.text(d10 + n8, n10 + (s8 - XB(24)) / 2, 70, `Std.`, 24, { align: `left` }), d10 += 128, rV(t10, i10, d10, n10, 9, n8, t8, String(l10.d % 60), e82), t10.text(d10 + n8, n10 + (s8 - XB(24)) / 2, 70, `Min.`, 24, { align: `left` });
+  }
+  t10.graphic(i10, n10, `Rechenk\xE4stchen`);
+}
+function yDe(e10, t10, n10) {
+  let r10 = nV(562, 60, 2), i10 = new eV(70, VB, s8), [a10, o10] = X6[e10.o.level];
+  for (let s10 = 0; s10 < r10.n; s10++) {
+    let c10 = r10.x(s10), l10 = tV(e10, () => {
+      let t11 = K(1, Math.min(o10, Math.floor(150 / a10))) * a10, n11 = K(6, 18) * 60 + PB(Y6[e10.o.level]), r11 = IB(0.65), i11 = r11 ? n11 + t11 : n11 - t11;
+      return i11 < 0 || i11 >= 1440 ? null : { text: `${Q6(Math.floor(n11 / 60), n11 % 60)} Uhr ${r11 ? `+` : `\u2212`} ${hDe(t11)} =`, h: Math.floor(i11 / 60), m: i11 % 60 };
+    }, (e11) => e11.text);
+    t10.text(c10, n10 + (s8 - XB(28)) / 2, 410, mT(l10.text), 28, { align: `right` }), r8(t10, i10, c10 + 410 + 14, n10, 9, l10.h, l10.m);
+  }
+  t10.graphic(i10, n10, `Rechenk\xE4stchen`);
+}
+var c8 = [{ id: `read`, label: `Uhrzeit ablesen`, title: `Uhrzeiten ablesen`, sample: `Uhr \u2192 7:30`, instruction: () => `Wie sp\xE4t ist es? Schreibe die Uhrzeit auf.`, rowH: () => 240, row: o8(false) }, { id: `draw`, label: `Zeiger einzeichnen`, title: `Zeiger einzeichnen`, sample: `7:30 \u2192 Zeiger malen`, instruction: () => `Zeichne die Zeiger ein: den kleinen f\xFCr die Stunden, den gro\xDFen f\xFCr die Minuten.`, rowH: () => 222, row: gDe }, { id: `words`, label: `Uhrzeit in Worten`, title: `Uhrzeiten in Worten`, sample: `Viertel nach drei \u2192 3:15`, instruction: () => `Schreibe die Uhrzeit mit Ziffern.`, rowH: () => s8, row: _De, mixRows: 2 }, { id: `day`, label: `Tageszeit (24 Stunden)`, title: `Uhrzeiten mit 24 Stunden`, sample: `am Nachmittag \u2192 15:30`, instruction: () => `Achte auf die Tageszeit: Schreibe die Uhrzeit mit 24 Stunden.`, rowH: () => 276, row: o8(true) }, { id: `span`, label: `Zeitspannen`, title: `Zeitspannen`, sample: `8:15 bis 9:00 \u2192 45 Min.`, instruction: () => `Wie lange dauert es?`, rowH: () => s8, row: vDe, mixRows: 2 }, { id: `later`, label: `Fr\xFCher und sp\xE4ter`, title: `Fr\xFCher und sp\xE4ter`, sample: `7:20 + 25 Min. \u2192 7:45`, instruction: () => `Wie sp\xE4t ist es dann?`, rowH: () => s8, row: yDe, mixRows: 2 }], l8 = (e10) => c8.find((t10) => t10.id === e10);
+function u8(e10, t10) {
+  return bV(e10.formats.map(l8).filter((e11) => !!e11), e10, () => ({ o: e10, seen: /* @__PURE__ */ new Set() }), (e11) => e11 ? e11.title : `Uhrzeiten`, `clock`, t10);
+}
+function bDe() {
+  return u8({ ...J6, formats: [`read`, `words`, `draw`] })[0];
+}
+
+export const CLOCK_LEVELS = q6;
+export const CLOCK_DEFAULTS = J6;
+export const CLOCK_FORMATS = c8;
+export const findClockFormat = l8;
+export const makeClockPages = u8;
 
 export const MATH_RANGES = MB;
 export const MATH_DEFAULTS = NB;

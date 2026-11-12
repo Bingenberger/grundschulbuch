@@ -2,11 +2,10 @@
 // “Mathe-Aufgaben” – the settings dialog of the reference: number range,
 // exercises in five groups, settings, pages, preview.
 import { useMemo, useState } from 'react';
-import { MATH_DEFAULTS, MATH_FORMATS, MATH_RANGES, findFormat, makeMathPages, rangeText } from '@/lib/sheets/math-reference';
-import { materialize, toPages, type RefPage } from '@/lib/sheets/convert';
-import { uploadImage } from '@/lib/client-api';
+import { MATH_DEFAULTS, MATH_FORMATS, MATH_RANGES, findFormat, makeMathPages, rangeText } from '@/lib/sheets/reference-sheets';
+import { toPages, type RefPage } from '@/lib/sheets/convert';
 import type { Page } from '@/lib/notebook-model';
-import { Chips, FormatCard, PagesSection, Preview, Section, SheetDialog, Toggle, cleanLayout, loadSettings, saveSettings, type SheetLayout } from './SheetParts';
+import { Chips, FormatCard, PagesSection, Preview, Section, SheetDialog, Toggle, cleanLayout, loadSettings, saveSettings, useSheetInsert, type SheetLayout } from './SheetParts';
 
 type Op = '+' | '-' | '*' | ':';
 type MathSettings = SheetLayout & { range: number; formats: string[]; mixOps: Op[]; gaps: boolean; carry: 'any' | 'with' | 'without'; remainder: boolean };
@@ -29,8 +28,7 @@ const clean = (v: MathSettings): MathSettings => ({
 export default function MathSheetDialog({ onClose, onInsert }: { onClose: () => void; onInsert: (pages: Page[]) => Promise<void> }) {
   const [o, setO] = useState<MathSettings>(() => loadSettings(KEY, MATH_DEFAULTS as MathSettings, clean));
   const [roll, setRoll] = useState(0);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
+  const { busy, error, insert } = useSheetInsert(onInsert, onClose);
   const set = (v: Partial<MathSettings>) => setO((old) => ({ ...old, ...v }));
   const chosen = o.formats.filter((f) => findFormat(f)?.available(o.range));
   const has = (...ids: string[]) => ids.some((id) => chosen.includes(id));
@@ -38,7 +36,7 @@ export default function MathSheetDialog({ onClose, onInsert }: { onClose: () => 
   const [pages, missing] = useMemo(() => {
     const placed = { placed: new Set<string>() };
     const ref: RefPage[] = chosen.length ? makeMathPages(o, placed) : [];
-    return [toPages(ref, 'Mathe-Aufgaben'), chosen.filter((f) => !placed.placed.has(f)).length] as const;
+    return [toPages(ref, 'sheet-rechnen'), chosen.filter((f) => !placed.placed.has(f)).length] as const;
     // `roll` makes new tasks.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [o, roll]);
@@ -59,19 +57,7 @@ export default function MathSheetDialog({ onClose, onInsert }: { onClose: () => 
       error={error}
       reroll={() => setRoll((r) => r + 1)}
       onCancel={onClose}
-      onInsert={async () => {
-        setBusy(true);
-        setError('');
-        try {
-          saveSettings(KEY, o);
-          await onInsert(await materialize(pages, uploadImage));
-          onClose();
-        } catch (e) {
-          setError((e as Error).message);
-        } finally {
-          setBusy(false);
-        }
-      }}
+      onInsert={() => insert(pages, () => saveSettings(KEY, o))}
     >
       <div className="sheet-opts">
         <Section title="1. Zahlenraum">

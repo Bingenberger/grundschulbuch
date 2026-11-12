@@ -173,3 +173,42 @@ export function SheetDialog({ title, icon, children, pages, busy, error, reroll,
     </div>
   );
 }
+
+/** Stores the drawn parts on the server and hands the pages to the notebook. */
+export function useSheetInsert(onInsert: (pages: Page[]) => Promise<void>, onClose: () => void) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  return {
+    busy,
+    error,
+    async insert(pages: Page[], remember: () => void) {
+      setBusy(true);
+      setError('');
+      try {
+        remember();
+        const { materialize } = await import('@/lib/sheets/convert');
+        const { uploadImage } = await import('@/lib/client-api');
+        await onInsert(await materialize(pages, uploadImage));
+        onClose();
+      } catch (e) {
+        setError((e as Error).message);
+      } finally {
+        setBusy(false);
+      }
+    },
+  };
+}
+
+/** Chip with a label and a small example below (“Halbe Stunden · 7:30”). */
+export function LevelChips<T extends string>({ label, value, options, onChange }: { label: string; value: T; options: { id: T; label: string; sample: string }[]; onChange: (v: T) => void }) {
+  return (
+    <div className="sheet-chips" role="radiogroup" aria-label={label}>
+      {options.map((o) => (
+        <button key={o.id} type="button" role="radio" aria-checked={value === o.id} className={`sheet-chip sheet-level${value === o.id ? ' is-active' : ''}`} onClick={() => onChange(o.id)}>
+          <span>{o.label}</span>
+          <small>{o.sample}</small>
+        </button>
+      ))}
+    </div>
+  );
+}

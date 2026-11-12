@@ -52,9 +52,16 @@ test('Lernwerkzeuge nach Fächern, Vorlagen nur gestalterisch, einstellbare Arbe
   await categories.getByRole('button', { name: /^Einstellbar · 7$/ }).click();
   await page.screenshot({ path: test.info().outputPath('einstellbar.png') });
   await templates.getByRole('button', { name: 'Vorlage Uhrzeiten üben' }).click();
-  const generator = page.getByRole('dialog', { name: 'Ein Arbeitsblatt erstellen' });
-  await expect(generator.getByLabel('Überschrift')).toHaveValue('Uhrzeiten üben');
-  await expect(generator.getByRole('button', { name: /KI/ })).toHaveCount(0);
-  await generator.getByRole('button', { name: 'Seiten ins Heft einfügen' }).click();
-  await expect(page.locator('.page-thumbnail')).toHaveCount(13);
+  // The settings dialog of the reference.
+  const clock = page.getByRole('dialog', { name: 'Uhrzeiten üben' });
+  await expect(clock.getByRole('radio', { name: /Halbe Stunden/ })).toHaveAttribute('aria-checked', 'true');
+  await expect(clock.getByRole('button', { name: /^Uhrzeit ablesen/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(clock.getByRole('button', { name: /^Zeiger einzeichnen/ })).toHaveAttribute('aria-pressed', 'true');
+  await clock.getByRole('radio', { name: /Viertelstunden/ }).click();
+  await clock.getByRole('button', { name: /^Uhrzeit in Worten/ }).click();
+  await page.screenshot({ path: test.info().outputPath('uhrzeiten-dialog.png') });
+  await clock.getByRole('button', { name: '1 Seite einfügen' }).click();
+  await expect(clock).toHaveCount(0, { timeout: 20000 });
+  await expect(page.locator('.page-thumbnail')).toHaveCount(12);
+  await page.screenshot({ path: test.info().outputPath('uhrzeiten-seite.png') });
 });
