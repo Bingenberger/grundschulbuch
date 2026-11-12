@@ -58,6 +58,8 @@ export type LearningBlock = {
   pages?: (orientation: Page['orientation']) => Page[];
   /** Search words. */
   words: string;
+  /** Fully set up by its preset: inserted right away, without the settings step. */
+  direct?: boolean;
 };
 
 /** Duplicates of a variant with the same default (e.g. “Klavier” = “Klavier & Klanginstrumente”). */
@@ -115,6 +117,7 @@ const toolBlocks: LearningBlock[] = mathTools.map(([title, tool, n, hint]) => ({
   type: 'widget',
   kind: 'mathtool',
   preset: { ...defaultSettings('mathtool'), title, mathTool: tool, mathSize: n },
+  direct: true,
   words: `${title} ${hint} mathematik zwanzigerfeld hunderterfeld`,
 }));
 

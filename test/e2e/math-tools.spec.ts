@@ -9,7 +9,9 @@ async function insert(page: Page, title: string) {
   const dialog = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
   await dialog.getByRole('navigation', { name: 'Fächer' }).getByRole('button', { name: /^Mathematik · / }).click();
   await dialog.getByRole('button', { name: title, exact: true }).click();
-  if (await dialog.count()) await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  // The ready-made tools go straight onto the page, without the settings step.
+  const direct = /^(Rechenschiffchen|Rechenrahmen|Lineal|Taschenrechner$)/.test(title);
+  if (!direct && await dialog.count()) await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
   await expect(dialog).toHaveCount(0);
 }
 

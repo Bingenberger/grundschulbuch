@@ -62,6 +62,15 @@ const subjectIcons: Record<Subject, IconName> = {
 const blockIcon = (b: LearningBlock): IconName =>
   b.type === 'widget' ? widgetIcons[b.kind as WidgetKind] : activityIcons[b.kind as ActivityKind];
 
+/** Size of a newly inserted learning element in mm. */
+function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) {
+  if (kind === 'mathtool') return pageSize(mathTool(settings));
+  return {
+    width: kind === 'receipt' ? 120 : 180,
+    height: kind === 'receipt' ? 126 : kind === 'alphabet' ? 210 : kind === 'synthesis' || kind === 'clapping' || kind === 'letterguess' || kind === 'syllables' || kind === 'geometry' ? 180 : 140,
+  };
+}
+
 export default function LearningDialog({
   element,
   onSave,
@@ -101,6 +110,18 @@ export default function LearningDialog({
     if (busy) return;
     if (block.pages) {
       onPages?.(block.pages('landscape'));
+      onClose();
+      return;
+    }
+    if (block.direct && block.preset) {
+      const preset = clone(block.preset);
+      onSave({
+        id: uuid(), x: 15, y: 45, ...startSize(block.kind, preset), rotation: 0, locked: false, color: '#253c42',
+        type: block.type,
+        widgetKind: block.type === 'widget' ? (block.kind as WidgetKind) : undefined,
+        activityKind: block.type === 'activity' ? (block.kind as ActivityKind) : undefined,
+        settings: preset,
+      });
       onClose();
       return;
     }
@@ -280,8 +301,7 @@ export default function LearningDialog({
                   id: uuid(),
                   x: 15,
                   y: 45,
-                  width: kind === 'mathtool' ? pageSize(mathTool(settings)).width : kind === 'receipt' ? 120 : 180,
-                  height: kind === 'mathtool' ? pageSize(mathTool(settings)).height : kind === 'receipt' ? 126 : kind === 'alphabet' ? 210 : kind === 'synthesis' || kind === 'clapping' || kind === 'letterguess' || kind === 'syllables' || kind === 'geometry' ? 180 : 140,
+                  ...startSize(kind, settings),
                   rotation: 0,
                   locked: false,
                   color: '#253c42',
