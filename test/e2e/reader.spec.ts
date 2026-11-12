@@ -119,3 +119,43 @@ test('Kinder haben den Lesemodus ebenfalls', async ({ page, browser }) => {
     await context.close();
   }
 });
+
+test('Umblättern: Blättern, Schieben oder ohne Effekt – die Wahl bleibt gespeichert', async ({ page }) => {
+  await login(page);
+  const data = await create(page);
+  await page.goto(`/heft/${data.book.id}`);
+  await page.getByRole('button', { name: 'Lesemodus', exact: true }).click();
+  const reader = page.getByRole('dialog', { name: 'Lesemodus' });
+  const count = reader.locator('.reader-count');
+  const effect = reader.getByRole('button', { name: /^Umblättern:/ });
+  await expect(effect).toHaveText('Umblättern: Blättern');
+
+  // The old page turns over the new one, then disappears.
+  await reader.getByRole('button', { name: 'Nächste Seite' }).click();
+  await expect(reader.locator('.reader-turning.flip.forward .turn-out')).toHaveCount(1);
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: test.info().outputPath('blaettern.png') });
+  await expect(reader.locator('.reader-turning')).toHaveCount(0);
+  await expect(count).toHaveText('Seite 2 von 3');
+
+  // Back: the previous page turns in on top.
+  await reader.getByRole('button', { name: 'Vorherige Seite' }).click();
+  await expect(reader.locator('.reader-page.turn-in.flip.back')).toHaveCount(1);
+  await expect(reader.locator('.reader-turning')).toHaveCount(0);
+
+  await effect.click();
+  await expect(effect).toHaveText('Umblättern: Schieben');
+  await page.keyboard.press('ArrowRight');
+  await expect(reader.locator('.reader-turning.slide.forward')).toHaveCount(1);
+  await expect(reader.locator('.reader-turning')).toHaveCount(0);
+
+  await effect.click();
+  await expect(effect).toHaveText('Umblättern: Ohne Effekt');
+  await page.keyboard.press('ArrowRight');
+  await expect(count).toHaveText('Seite 3 von 3');
+  await expect(reader.locator('.reader-turning')).toHaveCount(0);
+
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Lesemodus', exact: true }).click();
+  await expect(effect).toHaveText('Umblättern: Ohne Effekt');
+});

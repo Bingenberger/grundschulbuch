@@ -4277,6 +4277,7 @@ input[type='checkbox'] {
   position: relative;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
 }
 .reader-scroll {
   position: absolute;
@@ -4348,3 +4349,94 @@ input[type='checkbox'] {
   .reader-close span { display: inline; }
   .reader-turn { width: 48px; height: 48px; background: rgba(255, 255, 255, 0.75); }
 }
+
+/* Umblättern im Lesemodus: the old page (.turn-out) and the new one (.turn-in). */
+.reader-page { position: relative; }
+.reader-scroll { z-index: 1; }
+.reader-scroll.turning { overflow: hidden; perspective: 6000px; }
+.reader-turning {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  padding: 10px 0;
+  pointer-events: none;
+  perspective: 6000px;
+}
+.reader-turning.flip.back { z-index: 0; }
+.reader-turn { z-index: 3; }
+.turn-out::after,
+.turn-in::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+/* Blättern: the page lifts at the right edge and turns over its left edge (the spine). */
+.reader-turning.flip.forward .turn-out {
+  transform-origin: left center;
+  animation: reader-turn-flip-out 650ms cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+}
+.reader-turning.flip.forward .turn-out::after {
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.08) 70%);
+  animation: reader-shade-in 650ms ease-in forwards;
+}
+.turn-in.flip.forward::after {
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.35), transparent 55%);
+  animation: reader-shade-out 650ms ease-in forwards;
+}
+.turn-in.flip.back {
+  transform-origin: left center;
+  animation: reader-turn-flip-in 650ms cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+}
+.turn-in.flip.back::after {
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.08) 70%);
+  opacity: 1;
+  animation: reader-shade-out 650ms ease-out forwards;
+}
+.reader-turning.flip.back .turn-out::after {
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.35), transparent 55%);
+  animation: reader-shade-in 650ms ease-out forwards;
+}
+/* Schieben */
+.reader-turning.slide.forward .turn-out { animation: reader-turn-slide-to-left 450ms ease-in-out forwards; }
+.turn-in.slide.forward { animation: reader-turn-slide-from-right 450ms ease-in-out both; }
+.reader-turning.slide.back .turn-out { animation: reader-turn-slide-to-right 450ms ease-in-out forwards; }
+.turn-in.slide.back { animation: reader-turn-slide-from-left 450ms ease-in-out both; }
+
+@keyframes reader-turn-flip-out {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(-92deg); }
+}
+@keyframes reader-turn-flip-in {
+  from { transform: rotateY(-92deg); }
+  to { transform: rotateY(0deg); }
+}
+@keyframes reader-shade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes reader-shade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes reader-turn-slide-to-left { to { transform: translateX(-100vw); } }
+@keyframes reader-turn-slide-to-right { to { transform: translateX(100vw); } }
+@keyframes reader-turn-slide-from-right { from { transform: translateX(100vw); } }
+@keyframes reader-turn-slide-from-left { from { transform: translateX(-100vw); } }
+
+/* Small symbol on the “Umblättern” button. */
+.turn-glyph {
+  position: relative;
+  width: 16px;
+  height: 21px;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+}
+.turn-glyph.flip { border-top-right-radius: 0; clip-path: polygon(0 0, 60% 0, 100% 30%, 100% 100%, 0 100%); }
+.turn-glyph.flip::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(225deg, transparent 50%, currentColor 50%);
+}
+.turn-glyph.slide { box-shadow: 6px 0 0 -2px #2c3a35, 6px 0 0 0 currentColor; margin-right: 6px; }
+.turn-glyph.none { opacity: 0.7; }
