@@ -5,7 +5,7 @@ async function login(page: Page) {
   await page.getByRole('button', { name: 'Anmelden', exact: true }).click(); await expect(page).toHaveURL('/');
 }
 
-test('Einfügen: Formen, Sticker und Stempel (auch Emojis) direkt über die untere Leiste; Internet und Arbeitsblatt haben eigene Wege', async ({ page }) => {
+test('Einfügen: Formen, Sticker und Stempel (auch Emojis) direkt über die untere Leiste; Internet hat einen eigenen Weg, Arbeitsblatt und KI sind pausiert', async ({ page }) => {
   await login(page);
   const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Einfügeprobe' } })).json();
   await page.goto(`/heft/${created.book.id}`);
@@ -54,7 +54,9 @@ test('Einfügen: Formen, Sticker und Stempel (auch Emojis) direkt über die unte
   await expect(page.getByRole('dialog', { name: 'Video, Webseite oder QR-Code' })).toBeVisible();
   await page.keyboard.press('Escape');
   await page.getByRole('dialog', { name: 'Video, Webseite oder QR-Code' }).getByRole('button', { name: /Schließen|Abbrechen/ }).first().click().catch(() => undefined);
+  // Worksheet generator and AI design are paused for now (src/lib/paused.ts).
   await rail.getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
-  await page.getByRole('button', { name: /Arbeitsblatt erzeugen/ }).click();
-  await expect(page.getByRole('group', { name: 'Übungsformat' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Arbeitsblatt erzeugen/ })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Mit KI entwerfen' })).toHaveCount(0);
 });

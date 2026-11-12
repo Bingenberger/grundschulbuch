@@ -3,6 +3,7 @@ import Icon, { type IconName } from '../Icon';
 import { Picker } from '../ui/Choice';
 import { TextGlyph } from '../ui/Glyphs';
 import AiDialog from './AiDialog';
+import { ENABLED } from '@/lib/paused';
 import VoiceOptions from './VoiceOptions';
 import AlphabetOptions from './AlphabetOptions';
 import SynthesisOptions from './SynthesisOptions';
@@ -273,13 +274,15 @@ export default function LearningDialog({
               onClose();
             }}
           >
-            <button
-              type="button"
-              className="knopf compact"
-              onClick={() => setShowAI(true)}
-            >
-              Mit KI entwerfen
-            </button>
+            {ENABLED.aiDesign && (
+              <button
+                type="button"
+                className="knopf compact"
+                onClick={() => setShowAI(true)}
+              >
+                Mit KI entwerfen
+              </button>
+            )}
             <h3>
               {type === 'widget'
                 ? widgetCatalog[kind as WidgetKind][0]

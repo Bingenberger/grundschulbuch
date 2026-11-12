@@ -27,6 +27,7 @@ import AudioDialog, { AudioEditDialog } from './AudioDialog';
 import { audioElement, audioPlaceholder, cassetteRecorder, isAudioPlaceholder, withRecording } from './editor/audio-elements';
 import CollectionDialog from './CollectionDialog';
 import GeneratorDialog from './GeneratorDialog';
+import { ENABLED } from '@/lib/paused';
 import ShareDialog from './ShareDialog';
 import { LearningRuntime } from './learning/Runtime';
 import LearningDialog from './learning/LearningDialog';
@@ -1431,10 +1432,14 @@ export default function Editor({
         <LearningDialog
           element={learning === 'new' ? undefined : learning}
           onClose={() => setLearning(null)}
-          onWorksheet={() => {
-            setLearning(null);
-            setShowGenerator(true);
-          }}
+          onWorksheet={
+            ENABLED.worksheetGenerator
+              ? () => {
+                  setLearning(null);
+                  setShowGenerator(true);
+                }
+              : undefined
+          }
           onSave={(el) => {
             if (learning === 'new') insert(el);
             else

@@ -151,7 +151,7 @@ test('Klasse anlegen, Kartenprüfsumme zuordnen, austeilen und als Kind arbeiten
   await context.close();
 });
 
-test('Generator, Sammlung und Kollegium verwenden', async ({
+test('Sammlung und Kollegium verwenden', async ({
   page,
   browser,
 }) => {
@@ -159,14 +159,6 @@ test('Generator, Sammlung und Kollegium verwenden', async ({
   await page.getByRole('button', { name: 'Neues Heft' }).click();
   await page.getByLabel('Name des Hefts').fill('Meine Arbeitsblätter');
   await page.getByRole('button', { name: 'Heft anlegen', exact: true }).click();
-  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
-  await page.getByRole('button', { name: /Arbeitsblatt erzeugen/ }).click();
-  await page
-    .getByRole('group', { name: 'Übungsformat' })
-    .getByRole('button', { name: 'Rechenaufgaben', exact: true })
-    .click();
-  await page.getByRole('button', { name: 'Seiten ins Heft einfügen' }).click();
-  await expect(page.locator('.page-thumbnail')).toHaveCount(3);
   await page.screenshot({
     path: '/tmp/grundschulbuch-editor-final.png',
     fullPage: true,
