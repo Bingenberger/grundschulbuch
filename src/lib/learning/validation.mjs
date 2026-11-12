@@ -459,6 +459,12 @@ export function lockedDesign(element) {
     for (const key of ['src', 'alt', 'credit', 'crop', 'fit']) delete design[key];
     return design;
   }
+  // Children type their answer into a locked answer box.
+  if (element?.type === 'text' && typeof element.placeholder === 'string') {
+    const design = { ...element };
+    for (const key of ['text', 'runs']) delete design[key];
+    return design;
+  }
   if (!['activity', 'widget'].includes(element.type)) return element;
   const design = { ...element };
   delete design.response;

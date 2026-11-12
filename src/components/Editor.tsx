@@ -27,6 +27,7 @@ import AudioDialog, { AudioEditDialog } from './AudioDialog';
 import { audioElement, audioPlaceholder, cassetteRecorder, isAudioPlaceholder, withRecording } from './editor/audio-elements';
 import CollectionDialog from './CollectionDialog';
 import GeneratorDialog from './GeneratorDialog';
+import MathSheetDialog from './sheets/MathSheetDialog';
 import { ENABLED } from '@/lib/paused';
 import type { WorksheetKind } from '@/lib/learning/worksheets';
 import ShareDialog from './ShareDialog';
@@ -42,6 +43,7 @@ import ElementBar from './editor/ElementBar';
 import ElementActions from './editor/ElementActions';
 import InlineText from './editor/InlineText';
 import { settleText, useTextEditing } from './editor/use-text-editing';
+import AnswerField, { isAnswerField } from './editor/AnswerField';
 import { fitText } from './editor/text-measure';
 import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
 import { elementCenter, resizeAtCorner, rotateTo, type Corner } from '@/lib/transform';
@@ -127,6 +129,8 @@ export default function Editor({
   const [editAudio, setEditAudio] = useState<PageElement | null>(null);
   const [showAudio, setShowAudio] = useState(false);
   const [showCollection, setShowCollection] = useState(false);
+  /** Worksheet dialogs taken over from the reference. */
+  const [sheetDialog, setSheetDialog] = useState<'math' | null>(null);
   const [showGenerator, setShowGenerator] = useState<boolean | { kind: WorksheetKind; title: string; words?: string }>(false);
   const [showShare, setShowShare] = useState(false);
   const [learning, setLearning] = useState<PageElement | 'new' | null>(null);
@@ -1159,6 +1163,8 @@ export default function Editor({
                             onHeight={writing.height}
                             onDone={writing.done}
                           />
+                        ) : isAnswerField(el) ? (
+                          <AnswerField element={el} onAnswer={(text) => s.edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === el.id ? { ...e, text } : e)) }))} />
                         ) : undefined}
                       </ElementView>
                     ))}
@@ -1421,6 +1427,19 @@ export default function Editor({
           }}
         />
       )}
+      {sheetDialog === 'math' && (
+        <MathSheetDialog
+          onClose={() => setSheetDialog(null)}
+          onInsert={async (pages) => {
+            if (!(await flushEditor())) throw new Error('Bitte erst die aktuelle Seite speichern.');
+            // A notebook with just one empty page gets the first page right there.
+            if (s.pages.length === 1 && !page.elements.length) {
+              s.edit(() => ({ ...pages[0], id: page.id, revision: page.revision }));
+              for (const extra of pages.slice(1)) await add(extra);
+            } else for (const p of pages) await add(p);
+          }}
+        />
+      )}
       {showGenerator && (
         <GeneratorDialog
           dictionaryOrigin={dictionaryOrigin}
@@ -1572,7 +1591,8 @@ export default function Editor({
           onPick={(entry, orientation) => {
             if (entry.configure) {
               setTemplateMode(null);
-              setShowGenerator({ ...entry.configure, title: entry.title });
+              if (entry.configure.kind === 'rechnen') setSheetDialog('math');
+              else setShowGenerator({ ...entry.configure, title: entry.title });
               return;
             }
             if (templateMode === 'change') {

@@ -36,6 +36,7 @@ import ImageEditor, { editFromElement } from './ImageEditor';
 import { cascade, fillPlaceholder, imageElement, isPlaceholder, withEditedPicture, type ChosenImage } from './editor/image-elements';
 import InlineText from './editor/InlineText';
 import { useTextEditing } from './editor/use-text-editing';
+import AnswerField, { isAnswerField } from './editor/AnswerField';
 import { clampZoom, fitZoom, usePinchZoom } from './editor/use-pinch-zoom';
 import { fitText } from './editor/text-measure';
 import { tapDistance } from '@/lib/selection';
@@ -633,6 +634,8 @@ export default function ChildEditor({
                       onHeight={writing.height}
                       onDone={writing.done}
                     />
+                  ) : isAnswerField(el) ? (
+                    <AnswerField element={el} onAnswer={(text) => s.edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === el.id ? { ...e, text } : e)) }))} />
                   ) : undefined}
                 </ElementView>
               ))}

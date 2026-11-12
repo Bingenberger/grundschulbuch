@@ -1,4 +1,6 @@
 'use client';
+import { MATH_DEFAULTS, makeMathPages } from '@/lib/sheets/math-reference';
+import { toPages } from '@/lib/sheets/convert';
 import { clone, newPage, rulings, uuid, type Page, type Ruling, type Template } from '@/lib/notebook-model';
 import { blueprintPages, blueprints } from '@/lib/learning/templates';
 import { isInteractiveBlueprint } from '@/lib/learning/blocks';
@@ -55,6 +57,10 @@ const configurable: [string, WorksheetKind, string?][] = [
   ['Labyrinth', 'mazes'],
   ['Noten lernen', 'notenames'],
 ];
+/** Preview of “Mathe-Aufgaben” like in the reference: plus, Rechenmauern, Zahlenstrahl. */
+function mathSample() {
+  return toPages(makeMathPages({ ...MATH_DEFAULTS, range: 20, formats: ['plus', 'wall', 'line'], layout: 'mixed', pages: 1 }, undefined).slice(0, 1), 'Mathe-Aufgaben');
+}
 export const categoryIcon = (category: string): IconName => categoryIcons[category] || 'template';
 
 /** Fresh ids, so a template can be used again and again. */
@@ -107,8 +113,8 @@ export function templateCatalog(saved: Template[]): TemplateEntry[] {
     title,
     category: CONFIGURABLE,
     // A fixed seed keeps the preview calm.
-    build: () => generatePages({ kind, title, words: words || '', maximum: 20, seed: 7, showSolutions: false }).slice(0, 1),
-    orientation: 'portrait',
+    build: () => (kind === 'rechnen' ? mathSample() : generatePages({ kind, title, words: words || '', maximum: 20, seed: 7, showSolutions: false }).slice(0, 1)),
+    orientation: kind === 'rechnen' ? 'landscape' : 'portrait',
     configure: { kind, words },
     words: `${title} ${CONFIGURABLE} arbeitsblatt einstellbar`,
   }));

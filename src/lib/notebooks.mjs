@@ -156,6 +156,12 @@ export function validatePage(input) {
         fontSize: num(el.fontSize, 6, 150),
         bold: !!el.bold,
       });
+      // Answer box of a worksheet: the child types into it even when it is locked.
+      if (el.placeholder !== undefined) {
+        if (typeof el.placeholder !== 'string') throw new BookError('Ungültiger Platzhalter.');
+        result.placeholder = el.placeholder.slice(0, 200);
+        if (el.text.length > 200) throw new BookError('Die Antwort ist zu lang.');
+      }
       if (el.italic !== undefined) result.italic = !!el.italic;
       if (el.underline !== undefined) result.underline = !!el.underline;
       if (el.align !== undefined) {
