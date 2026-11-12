@@ -103,11 +103,28 @@ export async function materialize(pages: Page[], upload: (png: Blob) => Promise<
     if (!done.has(key)) done.set(key, svgToPng(el.src!, el.width, el.height).then(upload));
     return done.get(key)!;
   };
+  // Pictures shipped with the app (coins, notes) are copied to the school server.
+  const copy = (src: string) => {
+    if (!done.has(src))
+      done.set(
+        src,
+        fetch(src)
+          .then((r) => (r.ok ? r.blob() : Promise.reject(new Error('Ein Bild konnte nicht geladen werden.'))))
+          .then(upload),
+      );
+    return done.get(src)!;
+  };
   return Promise.all(
     pages.map(async (page) => ({
       ...page,
       elements: await Promise.all(
-        page.elements.map(async (el) => (el.type === 'image' && el.src?.startsWith('data:image/svg+xml') ? { ...el, src: await store(el) } : el)),
+        page.elements.map(async (el) =>
+          el.type === 'image' && el.src?.startsWith('data:image/svg+xml')
+            ? { ...el, src: await store(el) }
+            : el.type === 'image' && el.src && /^\/kasse\/[a-z0-9-]+\.webp$/.test(el.src)
+              ? { ...el, src: await copy(el.src) }
+              : el,
+        ),
       ),
     })),
   );

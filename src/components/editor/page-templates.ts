@@ -1,5 +1,5 @@
 'use client';
-import { CLOCK_DEFAULTS, MATH_DEFAULTS, makeClockPages, makeMathPages } from '@/lib/sheets/reference-sheets';
+import { CLOCK_DEFAULTS, MATH_DEFAULTS, MONEY_DEFAULTS, makeClockPages, makeMathPages, makeMoneyPages } from '@/lib/sheets/reference-sheets';
 import { toPages } from '@/lib/sheets/convert';
 import { clone, newPage, rulings, uuid, type Page, type Ruling, type Template } from '@/lib/notebook-model';
 import { blueprintPages, blueprints } from '@/lib/learning/templates';
@@ -65,6 +65,10 @@ function mathSample() {
 function clockSample() {
   return toPages(makeClockPages({ ...CLOCK_DEFAULTS, formats: ['read', 'words', 'draw'] }, undefined).slice(0, 1), 'sheet-uhr');
 }
+/** Preview of “Rechnen mit Geld” like in the reference (drawn coins). */
+function moneySample() {
+  return toPages(makeMoneyPages({ ...MONEY_DEFAULTS, pics: 'own', formats: ['count', 'change', 'calc'] }, undefined, undefined).slice(0, 1), 'sheet-geld');
+}
 export const categoryIcon = (category: string): IconName => categoryIcons[category] || 'template';
 
 /** Fresh ids, so a template can be used again and again. */
@@ -117,8 +121,8 @@ export function templateCatalog(saved: Template[]): TemplateEntry[] {
     title,
     category: CONFIGURABLE,
     // A fixed seed keeps the preview calm.
-    build: () => (kind === 'rechnen' ? mathSample() : kind === 'uhr' ? clockSample() : generatePages({ kind, title, words: words || '', maximum: 20, seed: 7, showSolutions: false }).slice(0, 1)),
-    orientation: kind === 'rechnen' || kind === 'uhr' ? 'landscape' : 'portrait',
+    build: () => (kind === 'rechnen' ? mathSample() : kind === 'uhr' ? clockSample() : kind === 'moneycalc' ? moneySample() : generatePages({ kind, title, words: words || '', maximum: 20, seed: 7, showSolutions: false }).slice(0, 1)),
+    orientation: ['rechnen', 'uhr', 'moneycalc'].includes(kind) ? 'landscape' : 'portrait',
     configure: { kind, words },
     words: `${title} ${CONFIGURABLE} arbeitsblatt einstellbar`,
   }));

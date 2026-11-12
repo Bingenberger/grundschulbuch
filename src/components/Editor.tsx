@@ -27,7 +27,7 @@ import AudioDialog, { AudioEditDialog } from './AudioDialog';
 import { audioElement, audioPlaceholder, cassetteRecorder, isAudioPlaceholder, withRecording } from './editor/audio-elements';
 import CollectionDialog from './CollectionDialog';
 import GeneratorDialog from './GeneratorDialog';
-import SheetDialogFor from './sheets/SheetDialogFor';
+import SheetDialogFor, { type SheetKind } from './sheets/SheetDialogFor';
 import { ENABLED } from '@/lib/paused';
 import type { WorksheetKind } from '@/lib/learning/worksheets';
 import ShareDialog from './ShareDialog';
@@ -130,7 +130,7 @@ export default function Editor({
   const [showAudio, setShowAudio] = useState(false);
   const [showCollection, setShowCollection] = useState(false);
   /** Worksheet dialogs taken over from the reference. */
-  const [sheetDialog, setSheetDialog] = useState<'math' | 'clock' | null>(null);
+  const [sheetDialog, setSheetDialog] = useState<SheetKind | null>(null);
   const [showGenerator, setShowGenerator] = useState<boolean | { kind: WorksheetKind; title: string; words?: string }>(false);
   const [showShare, setShowShare] = useState(false);
   const [learning, setLearning] = useState<PageElement | 'new' | null>(null);
@@ -1594,6 +1594,7 @@ export default function Editor({
               setTemplateMode(null);
               if (entry.configure.kind === 'rechnen') setSheetDialog('math');
               else if (entry.configure.kind === 'uhr') setSheetDialog('clock');
+              else if (entry.configure.kind === 'moneycalc') setSheetDialog('money');
               else setShowGenerator({ ...entry.configure, title: entry.title });
               return;
             }

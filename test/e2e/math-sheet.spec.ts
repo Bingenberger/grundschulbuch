@@ -51,3 +51,34 @@ test('Mathe-Aufgaben: Dialog wie in der Vorlage, Seiten mit Eintippkästchen und
   await expect(page.locator('.interaction-surface').getByText(/^Lösung: /)).toBeVisible();
   await page.screenshot({ path: test.info().outputPath('mathe-loesung.png') });
 });
+
+test('Rechnen mit Geld: Dialog wie in der Vorlage, Münzen und Scheine als Bilder', async ({ page }) => {
+  test.setTimeout(90000);
+  await login(page);
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Geld', pages: [newPage('blanko', 'landscape')] } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  await page.evaluate(() => localStorage.removeItem('grundschulbuch-rechnen-mit-geld'));
+  await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Neue Seite', exact: true }).click();
+  const templates = page.getByRole('dialog', { name: 'Neue Seite' });
+  await templates.getByRole('navigation', { name: 'Kategorien' }).getByRole('button', { name: /^Einstellbar · / }).click();
+  await templates.getByRole('button', { name: 'Vorlage Rechnen mit Geld' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Rechnen mit Geld' });
+  await expect(dialog.getByRole('radio', { name: 'Euro und Cent' })).toHaveAttribute('aria-checked', 'true');
+  await expect(dialog.getByRole('radio', { name: '20 €' })).toHaveAttribute('aria-checked', 'true');
+  await expect(dialog.getByRole('button', { name: /^Beträge bestimmen/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(dialog.getByRole('button', { name: /^Wechselgeld/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(dialog.locator('.sheet-thumb img[src^="/kasse/geld-"]').first()).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath('geld-dialog.png') });
+  // With only euro coins there is no change to give: the exercise is set aside.
+  await dialog.getByRole('radio', { name: 'Nur Euro' }).click();
+  await dialog.getByRole('radio', { name: 'Nur Münzen' }).click();
+  await expect(dialog.getByText(/keine Aufgaben bilden für: Wechselgeld/)).toBeVisible();
+  await dialog.getByRole('radio', { name: 'Euro und Cent' }).click();
+  await dialog.getByRole('radio', { name: 'Münzen und Scheine' }).click();
+  await dialog.getByRole('button', { name: '1 Seite einfügen' }).click();
+  await expect(dialog).toHaveCount(0, { timeout: 20000 });
+  const surface = page.locator('.interaction-surface');
+  await expect(surface.locator('img').first()).toHaveAttribute('src', /^\/api\/medien\//);
+  await expect(surface.locator('img[src^="/kasse/"]')).toHaveCount(0);
+  await page.screenshot({ path: test.info().outputPath('geld-seite.png') });
+});

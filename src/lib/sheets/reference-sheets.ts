@@ -989,6 +989,201 @@ export const CLOCK_FORMATS = c8;
 export const findClockFormat = l8;
 export const makeClockPages = u8;
 
+
+// ---- Rechnen mit Geld ----
+// Pictures of coins and notes: `asset` is the picture's path (ARASAAC, in the app).
+const xk = (e) => ({ id: YO('im'), type: 'image', fit: 'contain', ...e, src: e.asset, rot: e.rot ?? 0 });
+var SV = { formats: [`count`, `change`], money: `both`, amounts: `mixed`, notation: `comma`, max: 20, pics: `arasaac`, layout: `mixed`, pages: 1, solutions: false }, Rve = `#15803d`, CV = [1, 2, 5, 10, 20, 50], wV = [100, 200], zve = [500, 1e3, 2e3, 5e3, 1e4, 2e4], Bve = (e10) => String(e10).padStart(2, `0`), TV = (e10) => e10.amounts === `cent` ? 99 : e10.max * 100;
+function EV(e10) {
+  if (e10.amounts === `cent`) return CV;
+  let t10 = [];
+  return e10.money !== `notes` && t10.push(...e10.amounts === `euro` ? wV : [...CV, ...wV]), e10.money !== `coins` && t10.push(...zve), t10.filter((t11) => t11 <= TV(e10));
+}
+var DV = (e10) => e10.amounts === `cent` ? 1 : e10.money === `notes` ? 500 : e10.amounts === `euro` ? 100 : 1;
+function OV(e10, t10) {
+  let n10 = Math.floor(e10 / 100), r10 = e10 % 100;
+  return t10.amounts === `cent` ? `${e10} ct` : t10.amounts === `euro` || t10.money === `notes` ? `${n10} \u20AC` : t10.notation === `comma` ? `${n10},${Bve(r10)} \u20AC` : n10 ? r10 ? `${n10} \u20AC ${r10} ct` : `${n10} \u20AC` : `${r10} ct`;
+}
+function kV(e10, t10, n10) {
+  let r10 = DV(e10), i10 = Math.max(r10, Math.ceil(t10 / r10) * r10), a10 = Math.floor(n10 / r10) * r10, o10 = K(i10 / r10, Math.max(i10 / r10, a10 / r10)) * r10;
+  return e10.amounts === `mixed` && e10.money !== `notes` && IB(0.6) ? Math.max(r10, Math.round(o10 / 5) * 5) : o10;
+}
+function AV(e10, t10) {
+  let n10 = [], r10 = [...t10].sort((e11, t11) => t11 - e11);
+  for (let t11 of r10) for (; e10 >= t11; ) n10.push(t11), e10 -= t11;
+  return e10 === 0 ? n10 : [];
+}
+var jV = { 1: 4775, 2: 4777, 5: 4779, 10: 4781, 20: 4783, 50: 4785, 100: 4776, 200: 10279, 500: 4780, 1e3: 4782, 2e3: 4784, 5e3: 4786, 1e4: 4787, 2e4: 4788 }, MV = (e10) => e10 < 100 ? `${e10} Cent` : e10 < 500 ? `${e10 / 100} Euro` : `${e10 / 100}-Euro-Schein`;
+function Vve(e10) {
+  return e10.pics === `arasaac` ? EV(e10).map((e11) => ({ value: e11, id: jV[e11], word: MV(e11), crop: true, size: 320 })) : [];
+}
+var NV = { 1: 22, 2: 25.5, 5: 28.5, 10: 26.5, 20: 30, 50: 32.5, 100: 31, 200: 34.5 }, PV = { 500: [120, 62, `#8f99a5`, `#e5e8ec`], 1e3: [125, 65, `#e0645c`, `#fbdcd9`], 2e3: [130, 68, `#4f7fd1`, `#dbe6fa`], 5e3: [135, 70, `#f0943c`, `#fde6cf`], 1e4: [140, 73, `#4da56f`, `#d6efdf`], 2e4: [146, 73, `#d6ad2e`, `#f8eec8`] }, FV = (e10) => e10 >= 500 ? [PV[e10][0], PV[e10][1]] : [2 * NV[e10], 2 * NV[e10]];
+function Hve(e10, t10, n10, r10) {
+  if (t10 >= 500) {
+    let [i11, a11, o11, s10] = PV[t10];
+    e10.rect(n10, r10, i11, a11, s10, o11, 2.5, 6), e10.rect(n10 + 6, r10 + 6, i11 - 12, a11 - 12, `none`, o11, 1.2, 4), e10.circle(n10 + i11 - 20, r10 + a11 / 2, 10, o11), e10.label(n10 + i11 / 2 - 10, r10 + a11 / 2 + 9, `${t10 / 100} \u20AC`, 22, o11);
+    return;
+  }
+  let i10 = NV[t10], a10 = n10 + i10, o10 = r10 + i10;
+  if (t10 === 100 || t10 === 200) {
+    let [n11, r11] = t10 === 100 ? [`#e0b42c`, `#cfd4da`] : [`#cfd4da`, `#e0b42c`];
+    e10.circle(a10, o10, i10, n11, `#8a6d1c`, 1.5), e10.circle(a10, o10, i10 * 0.68, r11, `#8a8f96`, 1), e10.label(a10, o10 + i10 * 0.24, `${t10 / 100} \u20AC`, Math.round(i10 * 0.62), GB);
+  } else {
+    let n11 = t10 < 10;
+    e10.circle(a10, o10, i10, n11 ? `#c97a3d` : `#e0b42c`, n11 ? `#8a4a1c` : `#8a6d1c`, 1.5), e10.circle(a10, o10, i10 * 0.82, `none`, n11 ? `#a35e2a` : `#b8901f`, 1), e10.label(a10, o10 + i10 * 0.22, `${t10} ct`, Math.round(i10 * 0.55), GB);
+  }
+}
+function IV(e10, t10, n10, r10) {
+  let i10 = [], a10 = [], o10 = t10, s10 = n10, c10 = 0, l10 = () => {
+    for (let e11 of a10) e11.y += (c10 - e11.h) / 2;
+    a10 = [];
+  };
+  for (let n11 of e10) {
+    let [e11, u10] = FV(n11);
+    o10 + e11 > t10 + r10 && o10 > t10 && (l10(), o10 = t10, s10 += c10 + 6, c10 = 0);
+    let d10 = { x: o10, y: s10, w: e11, h: u10 };
+    i10.push(d10), a10.push(d10), o10 += e11 + 6, c10 = Math.max(c10, u10);
+  }
+  return l10(), i10;
+}
+var LV = (e10) => Math.round(e10 * 10) / 10;
+function RV(e10, t10, n10, r10, i10, a10) {
+  i10.forEach((i11, o10) => {
+    let s10 = a10[o10], c10 = e10.pics?.get(i11);
+    if (c10) t10.items.push(xk({ x: LV(s10.x), y: LV(r10 + s10.y), w: s10.w, h: s10.h, asset: c10.id, fit: `contain`, alt: MV(i11), locked: true }));
+    else for (let e11 of n10) Hve(e11, i11, s10.x, s10.y);
+  });
+}
+function zV(e10, t10, n10, r10, i10, a10, o10, s10) {
+  let c10 = IV(i10, a10, o10, s10);
+  return RV(e10, t10, n10, r10, i10, c10), c10;
+}
+function BV(e10, t10) {
+  return Math.max(0, ...IV(e10, 0, 0, t10).map((e11) => e11.y + e11.h));
+}
+function VV(e10, t10, n10, r10, i10) {
+  let a10 = EV(e10.o);
+  for (let o10 = 0; o10 < 400; o10++) {
+    let o11 = K(2, e10.o.amounts === `cent` ? 6 : 7), s10 = Array.from({ length: o11 }, () => PB(a10)).sort((e11, t11) => t11 - e11), c10 = s10.reduce((e11, t11) => e11 + t11, 0);
+    if (c10 >= t10 && c10 <= n10 && BV(s10, r10) <= i10) return s10;
+  }
+  return AV(kV(e10.o, t10, n10), a10);
+}
+var HV = 590, UV = 400, WV = 170;
+function Uve(e10, t10, n10) {
+  let r10 = e10.o, i10 = new eV(70, VB, WV), a10 = nV(HV, 60, 2);
+  for (let o10 = 0; o10 < a10.n; o10++) {
+    let s10 = a10.x(o10), c10 = tV(e10, () => VV(e10, DV(r10), TV(r10), UV, 148), (e11) => `c${e11.join(`,`)}`), l10 = c10.reduce((e11, t11) => e11 + t11, 0);
+    i10.rect(s10, 0, 420, 164, `#f8fafc`, `#dbe4f0`, 2, 12);
+    let u10 = BV(c10, UV);
+    zV(e10, t10, [i10], n10, c10, s10 + 10, Math.max(8, (164 - u10) / 2), UV);
+    let d10 = ZB(OV(TV(r10), r10).length, 26);
+    rV(t10, i10, s10 + HV - d10, n10, 57, d10, 56, OV(l10, r10), 26);
+  }
+  t10.graphic(i10, n10, `Geld`);
+}
+var GV = 160;
+function Wve(e10, t10, n10) {
+  let r10 = e10.o, i10 = new eV(70, VB, GV), a10 = new eV(70, VB, GV), o10 = nV(HV, 60, 2), s10 = EV(r10);
+  for (let c10 = 0; c10 < o10.n; c10++) {
+    let l10 = o10.x(c10), u10 = ZB(OV(TV(r10), r10).length, 26) + 20, d10 = tV(e10, () => {
+      let e11 = kV(r10, DV(r10) * 2, Math.min(TV(r10), r10.amounts === `cent` ? 99 : TV(r10) * 0.6)), t11 = AV(e11, s10);
+      if (!t11.length || t11.length > 6) return null;
+      let n11 = Array.from({ length: K(2, 3) }, () => PB(s10)), i11 = LB([...t11.map((e12, t12) => ({ v: e12, need: true, i: t12 })), ...n11.map((e12, t12) => ({ v: e12, need: false, i: 100 + t12 }))]).sort((e12, t12) => t12.v - e12.v);
+      return BV(i11.map((e12) => e12.v), HV - u10 - 16) > 150 ? null : { target: e11, need: t11, all: i11 };
+    }, (e11) => `p${e11.target}`);
+    for (let e11 of [i10, a10]) e11.rect(l10, 4, u10, 52, `#fff9db`, `#f08c00`, 2.5, 10);
+    t10.num(l10, n10 + 4 + (52 - XB(26)) / 2, u10, OV(d10.target, r10), 26);
+    let f10 = zV(e10, t10, [i10, a10], n10, d10.all.map((e11) => e11.v), l10 + u10 + 16, 4, HV - u10 - 16);
+    d10.all.forEach((e11, t11) => {
+      if (!e11.need) return;
+      let n11 = f10[t11];
+      a10.rect(n11.x - 4, n11.y - 4, n11.w + 8, n11.h + 8, `none`, Rve, 3, n11.w === n11.h ? n11.w / 2 + 4 : 8);
+    });
+  }
+  t10.graphic(i10, n10, `Geld legen`, a10);
+}
+var KV = 96;
+function Gve(e10, t10, n10) {
+  let r10 = e10.o, i10 = new eV(70, VB, KV), a10 = nV(HV, 60, 2), o10 = EV(r10).filter((e11) => e11 >= (r10.amounts === `cent` ? 10 : 100));
+  for (let s10 = 0; s10 < a10.n; s10++) {
+    let c10 = a10.x(s10), l10 = tV(e10, () => {
+      let e11 = r10.amounts === `cent` ? 100 : PB(o10.filter((e12) => e12 > DV(r10) * 2));
+      if (!e11) return null;
+      let t11 = kV(r10, Math.max(DV(r10), e11 * 0.2), e11 - DV(r10));
+      return t11 > 0 && t11 < e11 ? { paid: e11, price: t11 } : null;
+    }, (e11) => `ch${e11.paid},${e11.price}`), u10 = ZB(OV(TV(r10), r10).length, 24) + 30;
+    i10.poly([[c10, 20], [c10 + u10 - 18, 20], [c10 + u10, 46], [c10 + u10 - 18, 72], [c10, 72]], `#fff9db`, `#f08c00`, 2.5), t10.num(c10, n10 + 46 - XB(24) / 2, u10 - 14, OV(l10.price, r10), 24), t10.text(c10 + u10 + 4, n10 + 46 - XB(18) / 2, 92, `bezahlt:`, 18, { align: `center`, color: `#475569` });
+    let d10 = l10.paid, [f10, p10] = FV(d10);
+    RV(e10, t10, [i10], n10, [d10], [{ x: c10 + u10 + 98, y: 46 - p10 / 2, w: f10, h: p10 }]);
+    let m10 = ZB(OV(TV(r10), r10).length, 24);
+    t10.text(c10 + HV - m10 - 92, n10 + 46 - XB(18) / 2, 88, `zur\xFCck:`, 18, { align: `right`, color: `#475569` }), rV(t10, i10, c10 + HV - m10, n10, 20, m10, 52, OV(l10.paid - l10.price, r10), 24);
+  }
+  t10.graphic(i10, n10, `Wechselgeld`);
+}
+var Kve = [`Brot`, `Milch`, `\xC4pfel`, `Butter`, `K\xE4se`, `Eier`, `Saft`, `Nudeln`, `Bananen`, `Joghurt`, `M\xFCsli`, `Tomaten`, `Honig`, `Kekse`, `Wasser`, `Reis`, `M\xF6hren`, `Gurke`], qV = 380, JV = 36;
+function YV() {
+  return 254;
+}
+function qve(e10, t10, n10) {
+  let r10 = e10.o, i10 = YV(), a10 = new eV(70, VB, i10), o10 = nV(qV, 40, 3);
+  for (let s10 = 0; s10 < o10.n; s10++) {
+    let c10 = o10.x(s10), l10 = K(3, 4), u10 = tV(e10, () => {
+      let e11 = LB([...Kve]).slice(0, l10), t11 = TV(r10), n11 = Math.max(DV(r10), Math.floor(t11 / (l10 + 1))), i11 = e11.map(() => kV(r10, DV(r10), n11)), a11 = i11.reduce((e12, t12) => e12 + t12, 0);
+      return a11 <= t11 ? { names: e11, prices: i11, sum: a11 } : null;
+    }, (e11) => `l${e11.names.join(`,`)}${e11.prices.join(`,`)}`);
+    a10.rect(c10, 0, qV, i10 - 4, `#fffef5`, `#d9c58a`, 2, 6);
+    for (let e11 = 1; e11 <= 4; e11++) a10.line(c10 + 14, 44 + e11 * JV, c10 + qV - 14, 44 + e11 * JV, `#e9dfb9`, 1.5);
+    t10.text(c10 + 14, n10 + 8, 352, `Einkaufszettel`, 22, { align: `left`, bold: true, color: `#8a6d1c` }), u10.names.forEach((e11, i11) => {
+      let a11 = n10 + 44 + (i11 + 1) * JV - XB(22) + 6;
+      t10.text(c10 + 14, a11, qV / 2, mT(e11), 22, { align: `left` }), t10.text(c10 + qV / 2, a11, qV / 2 - 14, mT(OV(u10.prices[i11], r10)), 22, { align: `right` });
+    });
+    let d10 = ZB(OV(TV(r10), r10).length, 24);
+    t10.text(c10 + 14, n10 + i10 - 4 - 56 + (52 - XB(22)) / 2, qV - d10 - 40, `Zusammen:`, 22, { align: `left`, bold: true }), rV(t10, a10, c10 + qV - d10 - 12, n10, i10 - 4 - 56, d10, 50, OV(u10.sum, r10), 24);
+  }
+  t10.graphic(a10, n10, `Einkaufszettel`);
+}
+var XV = 74;
+function Jve(e10, t10, n10) {
+  let r10 = e10.o, i10 = new eV(70, VB, XV), a10 = nV(HV, 60, 2);
+  for (let o10 = 0; o10 < a10.n; o10++) {
+    let s10 = a10.x(o10), c10 = tV(e10, () => kV(r10, 101, TV(r10)), (e11) => `cv${e11}`), l10 = IB(0.5), u10 = l10 ? OV(c10, r10) : `${c10} ct`, d10 = l10 ? `${c10} ct` : OV(c10, r10), f10 = ZB(Math.max(u10.length, 8), 28);
+    t10.num(s10, n10 + (XV - XB(28)) / 2, f10, u10, 28, `right`), t10.num(s10 + f10, n10 + (XV - XB(28)) / 2, 40, `=`, 28), rV(t10, i10, s10 + f10 + 44, n10, 11, ZB(Math.max(d10.length, 6), 28), 52, d10, 28);
+  }
+  t10.graphic(i10, n10, `Rechenk\xE4stchen`);
+}
+var ZV = 170;
+function Yve(e10, t10, n10) {
+  let r10 = e10.o, i10 = new eV(70, VB, ZV), a10 = (VB - 80) / 2, o10 = VV(e10, DV(r10), TV(r10), a10 - 20, 148), s10 = IB(0.25) ? AV(o10.reduce((e11, t11) => e11 + t11, 0), EV(r10).filter((e11) => e11 < Math.max(...o10))) : [], c10 = s10.length && BV(s10, a10 - 20) <= 148 ? s10 : VV(e10, DV(r10), TV(r10), a10 - 20, 148), l10 = o10.reduce((e11, t11) => e11 + t11, 0), u10 = c10.reduce((e11, t11) => e11 + t11, 0);
+  for (let [r11, s11] of [[o10, 70], [c10, 70 + a10 + 80]]) i10.rect(s11, 0, a10, 164, `#f8fafc`, `#dbe4f0`, 2, 12), zV(e10, t10, [i10], n10, r11, s11 + 10, Math.max(8, (164 - BV(r11, a10 - 20)) / 2), a10 - 20);
+  rV(t10, i10, 70 + a10 + 12, n10, 57, 56, 56, l10 > u10 ? `>` : l10 < u10 ? `<` : `=`, 30), t10.graphic(i10, n10, `Geld vergleichen`);
+}
+function Xve(e10, t10, n10) {
+  let r10 = e10.o, i10 = new eV(70, VB, XV), a10 = nV(HV, 60, 2);
+  for (let o10 = 0; o10 < a10.n; o10++) {
+    let s10 = a10.x(o10), c10 = IB(0.55), l10 = tV(e10, () => {
+      let e11 = kV(r10, DV(r10), TV(r10) - DV(r10)), t11 = kV(r10, DV(r10), c10 ? TV(r10) - e11 : e11 - DV(r10));
+      return t11 <= 0 || (c10 ? e11 + t11 > TV(r10) : t11 >= e11) ? null : { a: e11, b: t11, r: c10 ? e11 + t11 : e11 - t11 };
+    }, (e11) => `k${c10 ? `+` : `-`}${e11.a},${e11.b}`), u10 = ZB(OV(TV(r10), r10).length, 28), d10 = n10 + (XV - XB(28)) / 2;
+    t10.num(s10, d10, u10, OV(l10.a, r10), 28, `right`), t10.num(s10 + u10, d10, 34, c10 ? `+` : `\u2212`, 28), t10.num(s10 + u10 + 34, d10, u10, OV(l10.b, r10), 28, `right`), t10.num(s10 + 2 * u10 + 34, d10, 34, `=`, 28), rV(t10, i10, s10 + 2 * u10 + 68, n10, 11, u10, 52, OV(l10.r, r10), 28);
+  }
+  t10.graphic(i10, n10, `Rechenk\xE4stchen`);
+}
+var QV = [{ id: `count`, label: `Betr\xE4ge bestimmen`, title: `Wie viel Geld ist es?`, sample: `M\xFCnzen \u2192 3,50 \u20AC`, instruction: () => `Wie viel Geld ist es? Schreibe den Betrag auf.`, rowH: () => WV, row: Uve }, { id: `pay`, label: `Geld legen`, title: `Geld legen`, sample: `2,70 \u20AC \u2192 einkreisen`, instruction: () => `Kreise so viel Geld ein, wie auf dem Schild steht.`, rowH: () => GV, row: Wve }, { id: `change`, label: `Wechselgeld`, title: `Wechselgeld`, sample: `3,20 \u20AC mit 5 \u20AC bezahlt`, instruction: () => `Wie viel Geld bekommst du zur\xFCck?`, rowH: () => KV, row: Gve, mixRows: 2 }, { id: `list`, label: `Einkaufszettel`, title: `Einkaufszettel`, sample: `Brot + Milch + \u2026 = \u25A2`, instruction: () => `Rechne aus, wie viel der Einkauf zusammen kostet.`, rowH: () => YV(), row: qve }, { id: `convert`, label: `Euro und Cent umrechnen`, title: `Euro und Cent`, sample: `3,50 \u20AC = \u25A2 ct`, available: (e10) => e10.amounts === `mixed` && e10.money !== `notes`, hint: `nur bei Euro und Cent`, instruction: () => `Rechne um: 1 \u20AC = 100 ct.`, rowH: () => XV, row: Jve, mixRows: 2 }, { id: `compare`, label: `Vergleichen`, title: `Wer hat mehr Geld?`, sample: `Geld \u25A2 Geld  (<, >, =)`, instruction: () => `Wo ist mehr Geld? Setze <, > oder = ein.`, rowH: () => ZV, row: Yve }, { id: `calc`, label: `Rechnen mit Geld`, title: `Rechnen mit Geld`, sample: `3,50 \u20AC + 1,20 \u20AC = \u25A2`, instruction: () => `Rechne mit den Geldbetr\xE4gen.`, rowH: () => XV, row: Xve, mixRows: 2 }], $V = (e10) => QV.find((t10) => t10.id === e10);
+function eH(e10, t10, n10) {
+  let r10 = e10.formats.map($V).filter((t11) => !!t11 && (!t11.available || t11.available(e10))), i10 = e10.amounts === `cent` ? `bis 1 \u20AC` : `bis ${e10.max} \u20AC`, a10 = e10.pics === `arasaac` ? n10 : void 0;
+  return bV(r10, e10, () => ({ o: e10, seen: /* @__PURE__ */ new Set(), pics: a10 }), (e11) => `${e11 ? e11.title : `Rechnen mit Geld`} ${i10}`, `money`, t10);
+}
+function Zve() {
+  return eH({ ...SV, pics: `own`, formats: [`count`, `change`, `calc`] })[0];
+}
+
+export const MONEY_DEFAULTS = SV;
+export const MONEY_FORMATS = QV;
+export const findMoneyFormat = $V;
+export const moneyValues = EV;
+export const makeMoneyPages = eH;
+
 export const MATH_RANGES = MB;
 export const MATH_DEFAULTS = NB;
 export const MATH_FORMATS = hV;
