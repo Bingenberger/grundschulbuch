@@ -27,7 +27,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', syllablejoin: 'Deutsch', anlaut: 'Deutsch', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -80,6 +80,8 @@ const SKIP = new Set([
   'widget-syllablejoin',
   'widget-alphabet',
   'widget-anlaut',
+  'widget-clapping',
+  'widget-clapsyllables',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -239,6 +241,15 @@ toolBlocks.push({
   kind: 'anlaut',
   preset: { ...defaultSettings('anlaut'), title: 'Anlaut-Tastatur' },
   words: 'Anlaut-Tastatur Anlauttabelle Anlautbilder Laute schreiben Wörter üben Buchstaben Fibel',
+});
+toolBlocks.push({
+  id: 'clapsyllables',
+  title: 'Silben klatschen',
+  subject: 'Deutsch',
+  type: 'widget',
+  kind: 'clapsyllables',
+  preset: { ...defaultSettings('clapsyllables'), title: 'Silben klatschen' },
+  words: 'Silben klatschen Silbenbögen Silben schwingen Mikrofon Bilder Wörter',
 });
 toolBlocks.push({
   id: 'checkout',

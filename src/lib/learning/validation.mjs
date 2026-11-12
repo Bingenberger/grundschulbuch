@@ -31,6 +31,7 @@ export const WIDGET_KINDS = [
   'monsternames',
   'syllablejoin',
   'anlaut',
+  'clapsyllables',
   'shop',
   'geometry',
   'monster',

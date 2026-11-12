@@ -4753,3 +4753,12 @@ input[type='checkbox'] {
 .anlaut-keypic { width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; border: 2px dashed #c5cfc0; border-radius: 10px; cursor: pointer; }
 .anlaut-keypic img { max-width: 64px; max-height: 64px; object-fit: contain; }
 .anlaut-keytile input { width: 100%; border: 1px solid #c5cfc0; border-radius: 8px; padding: 4px 8px; font: inherit; text-align: center; }
+.reference-widget > div[role='group'] { width: 100%; height: 100%; }
+.clap-list { list-style: none; padding: 0; margin: 8px 0; display: flex; flex-direction: column; gap: 6px; }
+.clap-list li { display: flex; align-items: center; gap: 8px; padding: 6px; border: 1px solid #dfe6da; border-radius: 10px; background: #fff; }
+.clap-list li.is-bad { border-color: #e03131; }
+.clap-word { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.clap-word input, .clap-add input { border: 1px solid #c5cfc0; border-radius: 8px; padding: 6px 10px; font: inherit; }
+.clap-syl { font-size: 20px; }
+.clap-add { display: flex; gap: 8px; }
+.clap-add input { flex: 1; }

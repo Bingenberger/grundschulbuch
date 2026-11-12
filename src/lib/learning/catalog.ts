@@ -4,6 +4,7 @@ import { makeSynth } from '../reference/synth';
 import { withRecordings } from '../reference/recordings';
 import { defaultAnlaut } from '../reference/anlaut-defaults';
 import { encodeMaps } from '../reference/keys';
+import { defaultClap } from '../reference/clap-defaults';
 export const widgetCatalog = {
   timer: ['Timer', 'Schule'],
   multitimer: ['Mehrere Timer', 'Schule'],
@@ -36,6 +37,7 @@ export const widgetCatalog = {
   monsternames: ['Monsternamen lesen', 'Lesen & Schreiben'],
   syllablejoin: ['Silben verbinden', 'Lesen & Schreiben'],
   anlaut: ['Anlaut-Tastatur', 'Lesen & Schreiben'],
+  clapsyllables: ['Silben klatschen', 'Lesen & Schreiben'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -85,6 +87,8 @@ export type LearningSettings = {
   synth?: JsonValue;
   /** Anlaut-Tastatur (see reference/anlaut.ts). */
   anlaut?: JsonValue;
+  /** Silben klatschen (see reference/clap.ts). */
+  clap?: JsonValue;
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';
@@ -223,6 +227,7 @@ export function defaultSettings(
     difficulty: 1,
     seed: 42,
   };
+  if (kind === 'clapsyllables') Object.assign(settings, { clap: defaultClap() as unknown as JsonValue });
   if (kind === 'anlaut') Object.assign(settings, { anlaut: encodeMaps(defaultAnlaut(), ['keys', 'sounds']) as unknown as JsonValue });
   if (kind === 'syllablejoin') Object.assign(settings, { synth: encodeMaps(withRecordings(makeSynth()), ['sounds', 'voice']) as unknown as JsonValue });
   if (kind === 'monsternames') Object.assign(settings, { monster: makeMonster() as unknown as JsonValue });

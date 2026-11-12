@@ -38,6 +38,7 @@ import { checkoutPage, fullPageWidget } from '@/lib/learning/blocks';
 import MonsterOptions from './MonsterOptions';
 import SynthOptions from './SynthOptions';
 import AnlautOptions from './AnlautOptions';
+import ClapOptions from './ClapOptions';
 import { cleanMonster } from '@/lib/reference/monster';
 import { clone, uuid, type Page, type PageElement } from '@/lib/notebook-model';
 import { learningBlocks, SUBJECTS, type LearningBlock, type Subject } from '@/lib/learning/blocks';
@@ -58,7 +59,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', syllablejoin: 'workflow', anlaut: 'kindle', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -73,7 +74,7 @@ const blockIcon = (b: LearningBlock): IconName =>
 /** Size of a newly inserted learning element in mm. */
 function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) {
   if (kind === 'mathtool') return pageSize(mathTool(settings));
-  if (kind === 'checkout' || kind === 'monsternames' || kind === 'syllablejoin' || kind === 'anlaut') return { width: 297, height: 210 };
+  if (kind === 'checkout' || kind === 'monsternames' || kind === 'syllablejoin' || kind === 'anlaut' || kind === 'clapsyllables') return { width: 297, height: 210 };
   return {
     width: kind === 'receipt' ? 120 : 180,
     height: kind === 'receipt' ? 126 : kind === 'alphabet' ? 210 : kind === 'synthesis' || kind === 'clapping' || kind === 'letterguess' || kind === 'syllables' || kind === 'geometry' ? 180 : 140,
@@ -315,8 +316,8 @@ export default function LearningDialog({
                   return;
                 }
               }
-              if (kind === 'anlaut' && !element && onPages) {
-                onPages(fullPageWidget('anlaut', settings));
+              if ((kind === 'anlaut' || kind === 'clapsyllables') && !element && onPages) {
+                onPages(fullPageWidget(kind, settings));
                 onClose();
                 return;
               }
@@ -635,6 +636,7 @@ export default function LearningDialog({
                 </>
               );
             })()}
+            {kind === 'clapsyllables' && <ClapOptions value={settings.clap} onChange={(clap) => patch({ clap: clap as unknown as JsonValue })} />}
             {kind === 'anlaut' && <AnlautOptions value={settings.anlaut} onChange={(anlaut) => patch({ anlaut: anlaut as unknown as JsonValue })} />}
             {kind === 'syllablejoin' && <SynthOptions value={settings.synth} onChange={(synth) => patch({ synth: synth as unknown as JsonValue })} />}
             {kind === 'monsternames' && <MonsterOptions value={settings.monster} onChange={(monster) => patch({ monster: monster as unknown as JsonValue })} />}

@@ -17,6 +17,7 @@ import Checkout from './Checkout';
 import MonsterReader from './MonsterReader';
 import SyllableJoin from './SyllableJoin';
 import AnlautKeyboard from './AnlautKeyboard';
+import ClapSyllables from './ClapSyllables';
 export default function Widget({ element }: { element: PageElement }) {
   const kind = element.widgetKind!;
   if (kind === 'mathtool') return <MathTool element={element} />;
@@ -26,6 +27,7 @@ export default function Widget({ element }: { element: PageElement }) {
   if (kind === 'monsternames') return <MonsterReader element={element} />;
   if (kind === 'syllablejoin') return <SyllableJoin element={element} />;
   if (kind === 'anlaut') return <AnlautKeyboard element={element} />;
+  if (kind === 'clapsyllables') return <ClapSyllables element={element} />;
   if (kind === 'geometry') return <GeometryWidget element={element} />;
   if (kind === 'slideshow') return <SlideshowWidget element={element} />;
   if (kind === 'karaoke') return <KaraokeWidget element={element} />;

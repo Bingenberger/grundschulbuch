@@ -19,7 +19,12 @@ export default function ReferenceWidget({ element, kind, field, value, render, o
     // The widget adds its own state classes; ours are set here, not by React.
     el.classList.add('reference-widget', `lh-wg-${kind}`);
     el.classList.toggle('is-live', interactive);
-    render(el, { id: element.id, w: el.clientWidth || 1400, h: el.clientHeight || 990, locked: interactive, [field]: value }, interactive, options);
+    const draw = () => render(el, { id: element.id, w: el.clientWidth || 1400, h: el.clientHeight || 990, locked: interactive, [field]: value }, interactive, options);
+    draw();
+    // Some widgets place pictures in pixels: draw again when the size changes.
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(draw);
+    observer?.observe(el);
+    return () => observer?.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, interactive, element.id]);
   useEffect(

@@ -93,3 +93,23 @@ test('Anlaut-Tastatur wie in der Vorlage: Bildtasten schreiben, Zurück, Alles n
   await expect(widget.locator('.lh-al-top')).toContainText('mam');
   await expect(widget.locator('.lh-al-top')).not.toContainText('mama');
 });
+
+test('Silben klatschen wie in der Vorlage: Bild, Silben zeigen, Weiter', async ({ page }) => {
+  test.setTimeout(60000);
+  await login(page);
+  const dialog = await openBlock(page, 'Silben klatschen');
+  await expect(dialog.getByLabel('Wort, Silben mit Bindestrich')).toHaveCount(4);
+  await dialog.getByRole('group', { name: 'Hilfe' }).getByRole('button', { name: 'Wort in Silbenschrift' }).click();
+  await page.screenshot({ path: test.info().outputPath('klatschen-dialog.png') });
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  const widget = page.locator('.interaction-surface .lh-wg-clap.is-live');
+  await expect(widget.locator('img.lh-cl-pic').first()).toHaveAttribute('src', /^\/(bilder|kasse)\//);
+  await widget.locator('[data-a="show"]').click();
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: test.info().outputPath('klatschen-seite.png') });
+  const before = await widget.locator('img.lh-cl-pic').first().getAttribute('src');
+  await expect.poll(async () => widget.locator('[data-a="next"]').count(), { timeout: 15000 }).toBeGreaterThan(0);
+  await widget.locator('[data-a="next"]').first().click();
+  await expect.poll(async () => widget.locator('img.lh-cl-pic').first().getAttribute('src'), { timeout: 10000 }).not.toBe(before);
+});
