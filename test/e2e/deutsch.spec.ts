@@ -42,3 +42,35 @@ test('Monsternamen lesen wie in der Vorlage: Silben hören, Gelesen!, Urkunde', 
   await page.reload();
   await expect(page.locator('.interaction-surface .lh-wg-monster').getByText('1 / 2')).toBeVisible();
 });
+
+test('Silben verbinden wie in der Vorlage: Buchstaben ziehen, Silbe fährt davon', async ({ page }) => {
+  test.setTimeout(60000);
+  await login(page);
+  const dialog = await openBlock(page, 'Silben verbinden');
+  await expect(dialog.getByRole('button', { name: 'Laute verbinden', exact: true })).toHaveCount(0);
+  await expect(dialog.getByLabel('Gelernte Buchstaben')).toHaveValue('m l s f r n a o i e u');
+  await dialog.getByRole('group', { name: 'Wie viele Silben?' }).getByRole('button', { name: '2 Silben', exact: true }).click();
+  await expect(dialog.locator('.monster-listen')).toHaveCount(2);
+  await page.screenshot({ path: test.info().outputPath('silben-dialog.png') });
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  const widget = page.locator('.interaction-surface .lh-wg-synth.is-live');
+  const task = async () => /Zieh das (\S+) zum (\S+?)!/.exec((await widget.locator('svg').first().textContent()) || '')?.slice(1).join('+');
+  const before = await task();
+  expect(before).toBeTruthy();
+  await page.screenshot({ path: test.info().outputPath('silben-seite.png') });
+  // Pull the first letter to the second.
+  const pull = widget.locator('.lh-sy-pull').first();
+  const box = (await pull.boundingBox())!;
+  const svg = (await widget.locator('svg').first().boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width / 2 + (340 * svg.width) / 1400, box.y + box.height / 2, { steps: 15 });
+  await page.mouse.up();
+  // The syllable rides away, then the next pair is waiting.
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: test.info().outputPath('silben-gezogen.png') });
+  await expect.poll(task, { timeout: 20000 }).not.toBe(before);
+  await expect(page.locator('.interaction-surface .selection-frame')).toHaveCount(0);
+  await page.screenshot({ path: test.info().outputPath('silben-weiter.png') });
+});

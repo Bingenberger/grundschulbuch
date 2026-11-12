@@ -4738,3 +4738,11 @@ input[type='checkbox'] {
 .monster-name { flex: 1; text-align: left; font-size: 26px; }
 .monster-say { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
 .monster-say input { flex: 1; min-width: 0; border: 1px solid #c5cfc0; border-radius: 8px; padding: 6px 10px; font: inherit; }
+.reference-widget .lh-key.is-down .lh-kdown { opacity: .14; }
+.monster-letters .synth-stretch { box-shadow: inset 0 0 0 2px #2f9e44; }
+.synth-stretch-note { color: #2f9e44; font-weight: 700; }
+.synth-parts { font-size: 22px; white-space: nowrap; }
+.synth-a { color: #e8590c; }
+.synth-b { color: #1c7ed6; }
+.reference-widget .lh-key:focus, .reference-widget [tabindex]:focus { outline: none; }
+.reference-widget .lh-key:focus-visible { outline: 3px solid #1c7ed6; outline-offset: 2px; }

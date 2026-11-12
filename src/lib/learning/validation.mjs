@@ -29,6 +29,7 @@ export const WIDGET_KINDS = [
   'geodraw',
   'checkout',
   'monsternames',
+  'syllablejoin',
   'shop',
   'geometry',
   'monster',

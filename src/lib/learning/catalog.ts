@@ -1,5 +1,7 @@
 import { defaultShop } from './checkout';
 import { makeMonster } from '../reference/monster';
+import { makeSynth } from '../reference/synth';
+import { withRecordings } from '../reference/recordings';
 export const widgetCatalog = {
   timer: ['Timer', 'Schule'],
   multitimer: ['Mehrere Timer', 'Schule'],
@@ -30,6 +32,7 @@ export const widgetCatalog = {
   geodraw: ['Geometrie: Formen zeichnen', 'Mathe'],
   checkout: ['Einkaufen an der Kasse', 'Mathe'],
   monsternames: ['Monsternamen lesen', 'Lesen & Schreiben'],
+  syllablejoin: ['Silben verbinden', 'Lesen & Schreiben'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -75,6 +78,8 @@ export type LearningSettings = {
   checkout?: JsonValue;
   /** Monsternamen lesen (see reference/monster.ts). */
   monster?: JsonValue;
+  /** Silben verbinden (see reference/synth.ts). */
+  synth?: JsonValue;
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';
@@ -213,6 +218,7 @@ export function defaultSettings(
     difficulty: 1,
     seed: 42,
   };
+  if (kind === 'syllablejoin') Object.assign(settings, { synth: withRecordings(makeSynth()) as unknown as JsonValue });
   if (kind === 'monsternames') Object.assign(settings, { monster: makeMonster() as unknown as JsonValue });
   if (kind === 'checkout') Object.assign(settings, { checkout: defaultShop() as unknown as JsonValue });
   if (kind === 'receipt') Object.assign(settings, { receipt: { count: 5, level: 'simple', format: 'eurocent', change: false, rounds: 3 } });

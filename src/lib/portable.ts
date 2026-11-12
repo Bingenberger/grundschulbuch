@@ -41,7 +41,7 @@ export async function portableBook(data: BookData): Promise<PortableBook> {
   // Pictures shipped with the app (shop goods, coins and notes) travel along.
   const shipped = new Set<string>();
   JSON.stringify(data.pages, (_, v) => {
-    if (typeof v === 'string' && /^\/kasse\/[a-z0-9-]+\.webp$/.test(v)) shipped.add(v);
+    if (typeof v === 'string' && /^\/(kasse|bilder)\/[a-z0-9-]+\.webp$|^\/laute\/[a-z0-9-]+\.m4a$/.test(v)) shipped.add(v);
     return v;
   });
   for (const src of [...mediaReferences(data.pages), ...shipped]) {

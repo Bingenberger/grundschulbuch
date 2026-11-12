@@ -15,6 +15,7 @@ import Receipt from './Receipt';
 import GeoDraw from './GeoDraw';
 import Checkout from './Checkout';
 import MonsterReader from './MonsterReader';
+import SyllableJoin from './SyllableJoin';
 export default function Widget({ element }: { element: PageElement }) {
   const kind = element.widgetKind!;
   if (kind === 'mathtool') return <MathTool element={element} />;
@@ -22,6 +23,7 @@ export default function Widget({ element }: { element: PageElement }) {
   if (kind === 'geodraw') return <GeoDraw element={element} />;
   if (kind === 'checkout') return <Checkout element={element} />;
   if (kind === 'monsternames') return <MonsterReader element={element} />;
+  if (kind === 'syllablejoin') return <SyllableJoin element={element} />;
   if (kind === 'geometry') return <GeometryWidget element={element} />;
   if (kind === 'slideshow') return <SlideshowWidget element={element} />;
   if (kind === 'karaoke') return <KaraokeWidget element={element} />;
