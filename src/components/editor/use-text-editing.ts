@@ -26,7 +26,7 @@ export function useTextEditing(pageId: string | undefined, blocked = false) {
     const s = useEditor.getState();
     const page = s.pages.find((p) => p.id === s.activeId);
     const el = page?.elements.find((e) => e.id === id);
-    if (el?.type === 'text' && !(el.text || '').trim() && !el.runs?.length) {
+    if (el?.type === 'text' && typeof el.placeholder !== 'string' && !(el.text || '').trim() && !el.runs?.length) {
       s.edit((p) => ({ ...p, elements: p.elements.filter((e) => e.id !== id) }), saved.current);
       s.select(s.selected.filter((x) => x !== id));
     }

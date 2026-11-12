@@ -40,8 +40,15 @@ test('Mathe-Aufgaben: Dialog wie in der Vorlage, Seiten mit Eintippkästchen und
   await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Seite 1 öffnen' }).click();
   const surface = page.locator('.interaction-surface');
   await expect(surface.locator('img').first()).toHaveAttribute('src', /^\/api\/medien\//);
+  // Nothing is locked: the heading can be selected and changed afterwards.
+  await expect(surface.locator('.page-element.locked')).toHaveCount(0);
+  await surface.getByText('Mathe bis 20', { exact: true }).click();
+  await expect(surface.locator('.page-element.selected')).toHaveCount(1);
   const box = surface.getByRole('textbox', { name: 'Antwort' }).first();
-  await box.fill('17');
+  await box.click();
+  await expect(box).toBeFocused();
+  await box.pressSequentially('17');
+  await expect(box).toHaveValue('17');
   await page.screenshot({ path: test.info().outputPath('mathe-seite.png') });
   await expect(page.getByText('Gespeichert')).toBeVisible({ timeout: 10000 });
   await page.reload();

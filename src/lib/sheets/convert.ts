@@ -59,7 +59,7 @@ function runs(html: string): PageElement['runs'] | undefined {
 export const svgData = (svg: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 
 function element(item: RefItem): PageElement {
-  const base = { id: uuid(), x: r2(item.x * UNIT), y: r2(item.y * UNIT), width: r2(item.w * UNIT), height: r2(item.h * UNIT), rotation: 0, locked: true };
+  const base = { id: uuid(), x: r2(item.x * UNIT), y: r2(item.y * UNIT), width: r2(item.w * UNIT), height: r2(item.h * UNIT), rotation: 0, locked: false };
   if (item.type === 'text') {
     const size = item.size ?? 32;
     // One line fills the box like in the reference (text centred in its line).
@@ -80,7 +80,7 @@ function element(item: RefItem): PageElement {
   }
   // A picture that is still missing: a placeholder to tap on later.
   if (item.type === 'image' && !item.src && item.placeholder)
-    return { ...base, locked: false, type: 'image', color: '#253c42', placeholder: item.placeholder, alt: item.alt || item.name || '' };
+    return { ...base, type: 'image', color: '#253c42', placeholder: item.placeholder, alt: item.alt || item.name || '' };
   return {
     ...base,
     type: 'image',

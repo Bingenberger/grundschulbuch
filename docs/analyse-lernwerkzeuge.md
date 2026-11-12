@@ -287,9 +287,10 @@ Umbau Stück für Stück geprüft.
   Rechnen mit Geld, Labyrinth, Noten lernen, Buchstaben/Ziffern üben) und werden
   von `lib/sheets/convert.ts` in unsere Seiten umgerechnet (1400 × 990 → mm).
   Gezeichnete Teile werden beim Einfügen als Bild auf dem Schulserver gespeichert.
-- Neu: Eintippkästchen. Ein gesperrter Text mit Platzhalter ist ein Antwortfeld,
+- Neu: Eintippkästchen. Ein Text mit Platzhalter ist ein Antwortfeld,
   in das Kinder und Lehrkräfte direkt tippen (`editor/AnswerField.tsx`); der
-  Server erlaubt Kindern nur die Antwort zu ändern (`lockedDesign`).
+  Server erlaubt Kindern bei gesperrten Kästchen nur die Antwort (`lockedDesign`).
+  Eingefügte Seiten sind nicht gesperrt und lassen sich nachträglich bearbeiten.
 - Bilder: ARASAAC-Münzen/Scheine (`public/kasse/geld-*`), Anlaut- und Mengenbilder
   (`public/bilder/`), eigene Zeichnungen aus der Stickerbibliothek der Vorlage
   (`lib/sheets/letter-pictures.json`).
