@@ -42,7 +42,9 @@ import { tapDistance } from '@/lib/selection';
 import ElementActions from './editor/ElementActions';
 import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
 import { elementCenter, resizeAtCorner, rotateTo, type Corner } from '@/lib/transform';
-import { SelectBar } from './editor/ContextBars';
+import { SelectBar, ShapesBar, findStamp } from './editor/ContextBars';
+import PageBar from './editor/PageBar';
+import EmbedDialog from './learning/EmbedDialog';
 import { featuresFor } from '@/lib/features';
 import { strokeAt } from '@/lib/selection';
 import { LinkContext, LinkLayer } from './LinkContext';
@@ -83,6 +85,9 @@ export default function ChildEditor({
   const scroller = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1);
   const [reader, setReader] = useState(false);
+  const [panel, setPanel] = useState<'insert' | 'page' | null>(null);
+  const [stamp, setStamp] = useState<string | null>(null);
+  const [showEmbed, setShowEmbed] = useState(false);
   const gesture = useRef<{
     el: PageElement;
     points: Point[];
@@ -114,7 +119,16 @@ export default function ChildEditor({
       return i < 0 ? undefined : i + 1;
     },
   };
-  const railActive: RailItem = selectedElements.length ? 'select' : s.tool === 'marker' ? 'pen' : s.tool;
+  const railActive: RailItem = selectedElements.length ? 'select' : panel ?? (s.tool === 'marker' ? 'pen' : s.tool);
+  const stampActive = !!stamp && panel === 'insert';
+  useEffect(() => {
+    if (!stampActive) return;
+    const escape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setStamp(null);
+    };
+    window.addEventListener('keydown', escape);
+    return () => window.removeEventListener('keydown', escape);
+  }, [stampActive]);
   useEffect(() => {
     useEditor.getState().load(initial, 'child');
   }, [initial]);
@@ -182,6 +196,10 @@ export default function ChildEditor({
     e.stopPropagation();
     if (s.tool === 'pen' && s.brush === 'fill') return;
     const p = point(e);
+    if (stampActive && s.tool === 'select') {
+      stampAt(p);
+      return;
+    }
     if (s.tool === 'select') {
       // Strokes do not catch pointer events themselves; find one near the tap.
       element ??= strokeAt(page!.elements, p, e.pointerType === 'touch' ? 4 : 2.5);
@@ -415,8 +433,27 @@ export default function ChildEditor({
       })
       .catch((e) => useEditor.setState({ error: (e as Error).message }));
   }
+  /** Children's stamps stay movable (the server keeps locked elements for teachers). */
+  function stampAt(point: Point) {
+    const made = findStamp(stamp)?.make();
+    if (!made) return;
+    const x = Math.max(0, Math.min(size.width - made.width, point.x - made.width / 2));
+    const y = Math.max(0, Math.min(size.height - made.height, point.y - made.height / 2));
+    s.edit((p) => ({ ...p, elements: [...p.elements, { ...made, locked: false, x, y }] }));
+  }
   function chooseRail(item: RailItem) {
+    if (item !== 'insert' && item !== 'page') setPanel(null);
     switch (item) {
+      case 'insert':
+      case 'page':
+        setPanel(railActive === item ? null : item);
+        useEditor.setState({ tool: 'select', selected: [] });
+        speak(item === 'insert' ? 'Einfügen' : 'Seite');
+        break;
+      case 'internet':
+        setShowEmbed(true);
+        speak('Internet');
+        break;
       case 'select':
         tool('select', 'Auswahl');
         break;
@@ -535,6 +572,7 @@ export default function ChildEditor({
           <LearningRuntime
                   uploadAudio={(id, file) => uploadAudio(file, s.book!.id, id)}
             interactive={s.tool === 'select'}
+            allowExternal={features.has('internet')}
             onResponse={(id, response) =>
               s.edit((p) => ({
                 ...p,
@@ -646,17 +684,47 @@ export default function ChildEditor({
                 onEditAudio: setEditAudio,
               }}
             />
+          ) : panel === 'insert' ? (
+            <ShapesBar
+              onInsert={(element) => insert(cascade({ ...element, locked: false }, page.elements, size))}
+              stamp={stamp}
+              onStamp={setStamp}
+            />
+          ) : panel === 'page' ? (
+            <PageBar
+              key={page.id}
+              features={features}
+              page={page}
+              pageIndex={s.book.pageIds.indexOf(page.id)}
+              pageCount={s.pages.length}
+              templates={false}
+              onDuplicate={() => undefined}
+              onMove={() => undefined}
+              onDelete={() => undefined}
+              onSaveTemplate={() => undefined}
+              onTemplates={() => setChoosePaper(true)}
+            />
           ) : (
             <SelectBar features={features} multi={false} onMulti={() => undefined} />
           )}
         </div>
       </div>
+      {showEmbed && (
+        <EmbedDialog
+          child
+          onClose={() => setShowEmbed(false)}
+          onInsert={(el) => {
+            insert(el);
+            setShowEmbed(false);
+          }}
+        />
+      )}
       {choosePaper && page && (
         <TemplateChooser
           title="Neue Seite"
           hint="Wähle das Papier für deine neue Seite."
           entries={paper}
-          orientation={page.orientation}
+          orientation="landscape"
           onClose={() => setChoosePaper(false)}
           onPick={(entry, orientation) => {
             setChoosePaper(false);
@@ -684,6 +752,7 @@ export default function ChildEditor({
           pages={s.book.pageIds.map((id) => s.pages.find((p) => p.id === id)).filter((p): p is Page => !!p)}
           pageId={page.id}
           onPage={choosePage}
+          allowExternal={features.has('internet')}
           uploadAudio={(id, file) => uploadAudio(file, s.book!.id, id)}
           onResponse={(id, response) =>
             s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === id ? { ...el, response } : el)) }))

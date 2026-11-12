@@ -28,7 +28,7 @@ export async function POST(request: Request) {
                 (el.type === 'widget' && ['recorder', 'soundstudio', 'karaoke'].includes(el.widgetKind || ''))),
           ),
         );
-      if ((!data.book.allowChildAudio && !invited) || data.book.trashed)
+      if ((!data.book.allowChildAudio && !child.features.includes('audio') && !invited) || data.book.trashed)
         return jsonError('Aufnahmen sind hier nicht erlaubt.', 403);
     }
     const result = await storeAudio(

@@ -53,6 +53,7 @@ export default function PageBar({
   onTemplates,
   onChangeTemplate,
   onTiles,
+  templates = true,
 }: {
   features: Set<Feature>;
   page: Page;
@@ -68,6 +69,8 @@ export default function PageBar({
   onChangeTemplate?: () => void;
   /** Opens the tile view of all pages. */
   onTiles?: () => void;
+  /** Section “Vorlage” (not for children). */
+  templates?: boolean;
 }) {
   const s = useEditor();
   const [name, setName] = useState('');
@@ -177,6 +180,9 @@ export default function PageBar({
           </>
         ),
       },
+    );
+  if (features.has('pageDesign') && templates)
+    sections.push(
       {
         id: 'template',
         label: 'Vorlage',

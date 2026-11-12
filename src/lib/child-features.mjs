@@ -5,6 +5,10 @@ export const CHILD_FEATURES = [
   'eraser',
   'text',
   'image',
+  'audio',
+  'insert',
+  'internet',
+  'page',
   'imageUpload',
   'imageSearch',
   'imageEdit',
@@ -22,7 +26,8 @@ export const CHILD_FEATURES = [
 ];
 
 /** Used while a class has no own setting. */
-export const CHILD_DEFAULTS = CHILD_FEATURES.filter((f) => f !== 'brushFountain');
+// Sound recordings and web pages are opt-in (privacy, supervision).
+export const CHILD_DEFAULTS = CHILD_FEATURES.filter((f) => !['brushFountain', 'audio', 'internet'].includes(f));
 
 /** Returns a clean list or throws a German message for invalid input. */
 export function cleanChildFeatures(list) {

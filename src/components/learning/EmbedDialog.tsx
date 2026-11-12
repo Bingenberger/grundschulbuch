@@ -5,9 +5,12 @@ import { uuid, type PageElement } from '@/lib/notebook-model';
 export default function EmbedDialog({
   onInsert,
   onClose,
+  child = false,
 }: {
   onInsert: (el: PageElement) => void;
   onClose: () => void;
+  /** Children embed videos, web pages, links and QR posters, but no own HTML apps. */
+  child?: boolean;
 }) {
   const [url, setUrl] = useState(''),
     [title, setTitle] = useState(''),
@@ -83,7 +86,7 @@ export default function EmbedDialog({
               { value: 'webpage', label: 'Webseite', icon: 'globe' },
               { value: 'link', label: 'Verknüpfung', icon: 'next' },
               { value: 'qr', label: 'QR-Plakat', icon: 'grid' },
-              { value: 'app', label: 'Eigene HTML-App', icon: 'settings' },
+              ...(child ? [] : [{ value: 'app' as const, label: 'Eigene HTML-App', icon: 'settings' as const }]),
             ]}
           />
           {kind === 'app' ? (
@@ -126,7 +129,7 @@ export default function EmbedDialog({
           </label>
           <p>
             Externe Inhalte werden erst nach Antippen geladen. In Kinderheften
-            bleiben externe Einbettungen deaktiviert.
+            nur, wenn die Lehrkraft dem Kind „Internet“ erlaubt.
           </p>
           {error && (
             <p className="fehler" role="alert">

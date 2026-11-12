@@ -465,11 +465,11 @@ export async function listBooks(owner) {
   }
   return result.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
-function blankPage() {
+function blankPage(orientation = 'portrait') {
   return {
     id: crypto.randomUUID(),
     revision: 0,
-    orientation: 'portrait',
+    orientation,
     ruling: 'blanko',
     elements: [],
   };
@@ -484,7 +484,7 @@ export async function createBook(owner, role, input) {
         if (typeof input.pages[i]?.id === 'string') renamed.set(input.pages[i].id, fresh);
         return { ...page, id: fresh, revision: 0 };
       })
-    : [blankPage()];
+    : [blankPage(input.orientation === 'landscape' ? 'landscape' : 'portrait')];
   pages = remapPageLinks(pages, renamed);
   if (pages.length < 1 || pages.length > 300)
     throw new BookError('Ein Heft braucht 1 bis 300 Seiten.');
@@ -583,7 +583,9 @@ export async function savePage(
       throw new BookError('Seite nicht gefunden.', 404);
     const previous = await readJson(pagePath(bookId, page.id));
     if (childMode) {
-      for (const key of [
+      // Functions the teacher allows this child, e.g. { features: ['page', 'audio'] }.
+      const allowed = new Set(Array.isArray(childMode.features) ? childMode.features : []);
+      if (!allowed.has('page')) for (const key of [
         'paperColor',
         'lineColor',
         'frameColor',
@@ -596,6 +598,8 @@ export async function savePage(
         ['widget', 'activity', 'embed'].includes(el.type),
       )) {
         const old = previous.elements.find((p) => p.id === el.id);
+        // Children with “Internet” may embed web pages and videos themselves.
+        if (!old && el.type === 'embed' && el.embedKind !== 'app' && allowed.has('internet')) continue;
         if (
           !old ||
           JSON.stringify(lockedDesign(el)) !== JSON.stringify(lockedDesign(old))
@@ -608,6 +612,7 @@ export async function savePage(
 
       if (
         !book.allowChildAudio &&
+        !allowed.has('audio') &&
         page.elements.some(
           (el) =>
             el.type === 'audio' &&
@@ -620,8 +625,8 @@ export async function savePage(
         );
       if (
         book.trashed ||
-        page.ruling !== previous.ruling ||
-        page.orientation !== previous.orientation
+        (!allowed.has('page') &&
+          (page.ruling !== previous.ruling || page.orientation !== previous.orientation))
       )
         throw new BookError('Diese Seiteneinstellungen sind vorgegeben.', 403);
       const locked = previous.elements.filter((el) => el.locked);

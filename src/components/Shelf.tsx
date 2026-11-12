@@ -61,7 +61,7 @@ export default function Shelf({
     setError('');
     try {
       if (dialog?.type === 'new') {
-        const data = await api<BookData>('create', { title, color });
+        const data = await api<BookData>('create', { title, color, orientation: 'landscape' });
         window.location.assign(`/heft/${data.book.id}`);
         return;
       }

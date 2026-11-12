@@ -75,6 +75,8 @@ export function featuresFor(
     ...((childFeatures ?? CHILD_DEFAULTS) as Feature[]).filter((f) => f in featureLabels),
   ]);
   if (book?.allowChildAudio) features.add('audio');
+  // “Seite” lets children set paper, colours and frame of their pages.
+  if (features.has('page')) features.add('pageDesign');
   if (book?.allowChildPages) features.add('addPage');
   return features;
 }

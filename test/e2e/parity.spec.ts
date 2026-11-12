@@ -132,7 +132,9 @@ test('Heftdatei, HTML, PDF, ePub und SCORM lassen sich exportieren und die Heftd
   const pdf = await download(/PDF herunterladen/);
   const document = await PDFDocument.load(pdf.bytes);
   expect(document.getPageCount()).toBe(1);
-  expect(document.getPage(0).getWidth()).toBeCloseTo(595.276, 2);
+  // New notebooks start in landscape A4.
+  expect(document.getPage(0).getWidth()).toBeCloseTo(841.89, 2);
+  expect(document.getPage(0).getHeight()).toBeCloseTo(595.276, 2);
   const epub = await download(/^ePub/);
   const efiles = unzipSync(epub.bytes);
   expect(strFromU8(efiles.mimetype)).toBe('application/epub+zip');

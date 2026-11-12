@@ -18,7 +18,7 @@ export function listBooks(owner: string): Promise<BookSummary[]>;
 export function createBook(
   owner: string,
   role: string,
-  input: { title: string; color?: string; pages?: Page[]; sourceId?: string },
+  input: { title: string; color?: string; pages?: Page[]; sourceId?: string; orientation?: 'portrait' | 'landscape' },
 ): Promise<BookData>;
 export function updateBook(
   owner: string,
@@ -41,7 +41,7 @@ export function savePage(
   owner: string,
   bookId: string,
   input: Page,
-  childMode?: boolean,
+  childMode?: boolean | { features?: readonly string[] },
   actor?: string,
 ): Promise<Page>;
 export function deleteBook(owner: string, bookId: string): Promise<void>;

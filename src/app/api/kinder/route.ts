@@ -67,11 +67,12 @@ export async function POST(request: Request) {
         break;
       }
       case 'page':
-        result = await books.savePage(child.id, body.id, body.page, true);
+        result = await books.savePage(child.id, body.id, body.page, { features: child.features });
         break;
       case 'create':
         result = await books.createBook(child.id, 'kind', {
           title: body.title,
+          orientation: 'landscape',
         });
         break;
       case 'addPage': {

@@ -224,6 +224,15 @@ startet. Nach einem Netzwechsel genügt ein Neustart des Skripts.
 Unter „Meine Klassen“ Klassen und Kinder anlegen, umbenennen, archivieren und
 löschen. Ein Kind benötigt nur einen Vornamen oder ein Kürzel.
 
+Schaltbare Funktionen für Kinder (Klasse oder einzelnes Kind) umfassen auch
+„Ton aufnehmen“, „Einfügen“ (Formen, Sticker, Stempel – bei Kindern nicht
+gesperrt), „Internet“ (Videos, Webseiten, Links, QR-Plakate; keine eigenen
+HTML-Apps) und „Seite einstellen“ (Papier, Farben & Hintergrundbild, Rahmen;
+ohne Vorlagen und Seitenverwaltung). Ton und Internet sind anfangs aus. Der
+Server prüft dieselben Schalter (`savePage(…, { features })`, `/api/ton`); die
+Heft-Einstellung „Tonaufnahmen erlauben“ gilt weiterhin zusätzlich. Neue Hefte –
+von Kindern wie aus dem Regal der Lehrkraft – beginnen im Querformat.
+
 „Karte scannen“ ordnet einen fremden QR-Code zu. „Klasse einscannen“ ermöglicht
 mehrere Zuordnungen nacheinander. Der Scanner nutzt jsQR auch in Safari. Rohinhalte
 werden weder an den Server geschickt noch gespeichert: SHA-256 im Browser,
