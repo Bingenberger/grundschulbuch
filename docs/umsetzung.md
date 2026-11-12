@@ -196,6 +196,29 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   HTML-Kopien können ihre Antworten und Aufnahmen erneut als Datei speichern.
 
 
+## App auf dem iPad (PWA) und Test im lokalen Netz
+
+- Installierbar als Web-App („Zum Home-Bildschirm“): `public/manifest.webmanifest`
+  mit `start_url: /`, `display: standalone` (Android/Chrome zusätzlich
+  `fullscreen`). Die Startseite leitet angemeldete Kinder zu `/kinder`, sonst zur
+  Anmeldung. Installiert läuft die App ohne Browserleisten.
+- `InstallHint.tsx`: Auf iPad/iPhone eine Anleitung (Teilen → „Zum
+  Home-Bildschirm“), in Chrome/Edge ein Knopf „Installieren“. Nicht in Heften,
+  Druck und Upload; „Nicht mehr zeigen“ wird pro Gerät gemerkt.
+- Höhen mit `100dvh`, damit die Oberfläche genau in den sichtbaren Bereich passt.
+- Kein Service Worker, also kein Offline-Betrieb: Die Hefte liegen auf dem Server.
+- Die installierte App hat auf iOS eigene Cookies; man meldet sich dort einmal neu an.
+
+**Ausprobieren im Netz:** `npm run build && npm run lan`. Das Skript
+(`scripts/lan.mjs`) findet die IP, legt einmalig eine Test-Zertifizierungsstelle
+in `.private/lan/` an, stellt für die aktuelle IP ein Zertifikat aus und startet
+die App hinter einem HTTPS-Weiterleiter auf Port 3443 (`BASE_URL` passend).
+Auf dem iPad einmal `https://<IP>:3443/lan-zertifikat` öffnen, das Profil unter
+Einstellungen → Allgemein → VPN & Geräteverwaltung installieren und unter
+Allgemein → Info → Zertifikatsvertrauenseinstellungen vertrauen. Danach gibt es
+keine Warnung mehr, Kamera und Mikrofon funktionieren und die installierte App
+startet. Nach einem Netzwechsel genügt ein Neustart des Skripts.
+
 ## Klassen und Kinder
 
 Unter „Meine Klassen“ Klassen und Kinder anlegen, umbenennen, archivieren und

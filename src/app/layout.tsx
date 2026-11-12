@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import InstallHint from '@/components/InstallHint';
 
 export const metadata: Metadata = {
   title: 'Grundschulbuch',
@@ -19,7 +20,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="de">
-      <body>{children}</body>
+      <body>
+        {children}
+        <InstallHint />
+      </body>
     </html>
   );
 }

@@ -570,7 +570,7 @@ button:disabled {
 .modal {
   width: 480px;
   max-width: 100%;
-  max-height: calc(100vh - 44px);
+  max-height: calc(100dvh - 44px);
   overflow: auto;
   background: #fcfcf8;
   padding: 28px;
@@ -639,7 +639,7 @@ button:disabled {
   -webkit-user-select: none;
 }
 .editor {
-  height: 100vh;
+  height: 100dvh;
   min-height: 480px;
   display: flex;
   flex-direction: column;
@@ -974,7 +974,7 @@ input[type='checkbox'] {
   inset: 0;
   z-index: 30;
   background: #333d36;
-  height: 100vh;
+  height: 100dvh;
   min-height: 0;
 }
 .board-mode .editor-header {
@@ -2940,7 +2940,7 @@ input[type='checkbox'] {
 /* Image dialog with sources as tabs */
 .modal.image-dialog {
   width: min(980px, 100%);
-  height: min(720px, calc(100vh - 44px));
+  height: min(720px, calc(100dvh - 44px));
   display: flex;
   flex-direction: column;
   padding: 22px 24px;
@@ -3107,7 +3107,7 @@ input[type='checkbox'] {
 /* Image editor */
 .modal.image-editor {
   width: min(1100px, 100%);
-  height: min(860px, calc(100vh - 32px));
+  height: min(860px, calc(100dvh - 32px));
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -3202,7 +3202,7 @@ input[type='checkbox'] {
 .editor-stage canvas {
   display: block;
   max-width: 100%;
-  max-height: calc(min(860px, 100vh - 32px) - 332px);
+  max-height: calc(min(860px, 100dvh - 32px) - 332px);
   box-shadow: 0 4px 16px #0003;
 }
 .editor-stage.tool-pixel,
@@ -3815,7 +3815,7 @@ input[type='checkbox'] {
 /* Template chooser */
 .modal.template-chooser {
   width: min(1180px, 100%);
-  height: min(860px, calc(100vh - 32px));
+  height: min(860px, calc(100dvh - 32px));
   display: flex;
   flex-direction: column;
   padding: 20px 24px;
@@ -4016,7 +4016,7 @@ input[type='checkbox'] {
 }
 .modal.page-tiles {
   width: min(1240px, 100%);
-  height: min(900px, calc(100vh - 32px));
+  height: min(900px, calc(100dvh - 32px));
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -4440,3 +4440,30 @@ input[type='checkbox'] {
 }
 .turn-glyph.slide { box-shadow: 6px 0 0 -2px #2c3a35, 6px 0 0 0 currentColor; margin-right: 6px; }
 .turn-glyph.none { opacity: 0.7; }
+
+/* Hint to install the app (InstallHint.tsx). */
+.install-hint {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 30;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid #d9dfd5;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(36, 62, 41, 0.18);
+}
+.install-hint img { border-radius: 10px; flex-shrink: 0; }
+.install-hint p { margin: 2px 0 0; font-size: 14px; line-height: 1.4; }
+.install-hint .share-glyph { vertical-align: -3px; color: #1e88e5; }
+.install-hint-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+@media (max-width: 560px) {
+  .install-hint { flex-wrap: wrap; }
+  .install-hint-actions { flex-direction: row; width: 100%; justify-content: flex-end; }
+}
