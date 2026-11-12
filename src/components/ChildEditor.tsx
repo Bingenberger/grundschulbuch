@@ -18,7 +18,7 @@ import {
   type Point,
 } from '@/lib/notebook-model';
 import { ElementView } from './PageView';
-import { LearningRuntime } from './learning/Runtime';
+import { LearningRuntime, pageDrawing } from './learning/Runtime';
 import { uploadAudio } from '@/lib/client-api';
 import AudioDialog, { AudioEditDialog } from './AudioDialog';
 import { audioElement, audioPlaceholder, cassetteRecorder, isAudioPlaceholder, withRecording } from './editor/audio-elements';
@@ -163,6 +163,15 @@ export default function ChildEditor({
   if (!page || s.book?.id !== initial.book.id)
     return <p>Dein Heft wird geöffnet …</p>;
   const size = dimensions(page);
+  const drawing = pageDrawing(
+    s.edit,
+    () => useEditor.getState().pages.find((p) => p.id === useEditor.getState().activeId),
+    (setSquare) => {
+      s.chooseBrush('pen');
+      useEditor.setState({ selected: [] });
+      setGuide({ kind: setSquare ? 'triangle' : 'ruler', x: size.width / 2, y: size.height * 0.72, angle: 0 });
+    },
+  );
   async function leave(url: string, logout = false) {
     if (!(await flushEditor())) return;
     if (logout) await childApi('logout');
@@ -570,6 +579,7 @@ export default function ChildEditor({
 
         <ScaledPage page={page} zoom={zoom}>
           <LearningRuntime
+                  drawing={drawing}
                   uploadAudio={(id, file) => uploadAudio(file, s.book!.id, id)}
             interactive={s.tool === 'select'}
             allowExternal={features.has('internet')}

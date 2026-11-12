@@ -30,7 +30,7 @@ import GeneratorDialog from './GeneratorDialog';
 import { ENABLED } from '@/lib/paused';
 import type { WorksheetKind } from '@/lib/learning/worksheets';
 import ShareDialog from './ShareDialog';
-import { LearningRuntime } from './learning/Runtime';
+import { LearningRuntime, pageDrawing } from './learning/Runtime';
 import LearningDialog from './learning/LearningDialog';
 import EmbedDialog from './learning/EmbedDialog';
 import DrawingRuler from './learning/DrawingRuler';
@@ -239,6 +239,15 @@ export default function Editor({
   }, []);
 
   const size = dimensions(page || initial.pages[0]);
+  const drawing = pageDrawing(
+    s.edit,
+    () => useEditor.getState().pages.find((p) => p.id === useEditor.getState().activeId),
+    (setSquare) => {
+      s.chooseBrush('pen');
+      useEditor.setState({ selected: [] });
+      setGuide({ kind: setSquare ? 'triangle' : 'ruler', x: size.width / 2, y: size.height * 0.72, angle: 0 });
+    },
+  );
   const pageIndex = s.book?.pageIds.indexOf(page?.id || '') ?? -1;
   async function run(task: () => Promise<void>, save = true) {
     setBusy(true);
@@ -1088,6 +1097,7 @@ export default function Editor({
                 zoom={board ? 1 : zoom}
               >
                 <LearningRuntime
+                  drawing={drawing}
                   uploadAudio={(id, file) => uploadAudio(file, s.book!.id, id)}
                   interactive={boardPointer === 'none' && (s.tool === 'select' || (board && !boardDraw))}
                   allowExternal

@@ -33,7 +33,8 @@ import {
 } from '@/lib/learning/catalog';
 import { clone, uuid, type Page, type PageElement } from '@/lib/notebook-model';
 import { learningBlocks, SUBJECTS, type LearningBlock, type Subject } from '@/lib/learning/blocks';
-import { ChoiceButton, Choices } from '../ui/Choice';
+import { ChoiceButton, Choices, OptionGroup } from '../ui/Choice';
+import { GROUPS, LEVELS, TOLERANCES, geoConfig, makeTasks, taskText, type GeoConfig } from '@/lib/learning/geodraw';
 import { mathTool, pageSize } from '@/lib/learning/mathtool';
 import { uploadImage } from '@/lib/client-api';
 const activityIcons: Record<ActivityKind, IconName> = {
@@ -49,7 +50,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -569,6 +570,42 @@ export default function LearningDialog({
                       options={sizes.map(([value, label]) => ({ value, label, icon: <TextGlyph text={String(value)} /> }))}
                     />
                   )}
+                </>
+              );
+            })()}
+            {kind === 'geodraw' && (() => {
+              const g = geoConfig(settings.geo);
+              // Every change of the settings makes a new series of tasks.
+              const set = (values: Partial<GeoConfig>) => {
+                const next = { ...g, ...values };
+                patch({ geo: { ...next, tasks: makeTasks(next) } });
+              };
+              return (
+                <>
+                  <Choices label="Schwierigkeit" value={g.level} onChange={(level) => set({ level })} options={LEVELS.map((l) => ({ value: l.value, label: l.label, icon: <TextGlyph text={l.label[0]} /> }))} />
+                  <p className="option-hint">{LEVELS.find((l) => l.value === g.level)?.hint}</p>
+                  <Choices label="Aufgaben nacheinander" value={g.count} onChange={(count) => set({ count })} options={[1, 3, 5, 8, 10].map((n) => ({ value: n, label: String(n), icon: <TextGlyph text={String(n)} /> }))} />
+                  <OptionGroup label="Formen (keine = alle)">
+                    {GROUPS.map((x) => (
+                      <ChoiceButton
+                        key={x.value}
+                        icon={<TextGlyph text={x.label[0]} />}
+                        label={x.label}
+                        pressed={g.groups.includes(x.value)}
+                        onClick={() => set({ groups: g.groups.includes(x.value) ? g.groups.filter((v) => v !== x.value) : [...g.groups, x.value] })}
+                      />
+                    ))}
+                  </OptionGroup>
+                  <Choices label="Genauigkeit" value={g.tol} onChange={(tol) => set({ tol })} options={TOLERANCES.map((t) => ({ value: t.value, label: t.label, icon: <TextGlyph text={t.label[0]} /> }))} />
+                  <p className="option-hint">{TOLERANCES.find((t) => t.value === g.tol)?.hint}</p>
+                  <Choices label="Vorschau" value={g.flash} onChange={(flash) => set({ flash })} options={[[0, 'Aus'], [1, '1 Sek.'], [2, '2 Sek.'], [3, '3 Sek.']].map(([value, label]) => ({ value: value as number, label: label as string, icon: <TextGlyph text={String(value)} /> }))} />
+                  <OptionGroup label={`Aufgaben (${g.tasks.length})`}>
+                    {g.tasks.map((t, i) => (
+                      <span key={i} className="option-hint">{i + 1}. {taskText(t)}</span>
+                    ))}
+                    <ChoiceButton icon="synchronize" label="Andere Aufgaben" onClick={() => set({})} />
+                  </OptionGroup>
+                  <p className="option-hint">Gezeichnet wird mit dem Stift am Lineal oder Geodreieck. „Start“ auf der Seite schaltet den Stift ein und legt das passende Werkzeug hin.</p>
                 </>
               );
             })()}

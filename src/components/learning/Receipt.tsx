@@ -18,7 +18,7 @@ import {
   type ReceiptConfig,
   type ReceiptState,
 } from '@/lib/learning/receipt';
-import { tone } from '@/lib/learning/audio';
+import { feedback } from '@/lib/learning/feedback';
 import { useLearning } from './Runtime';
 
 const W = 820, H = 860;
@@ -32,14 +32,6 @@ function hash(text: string) {
 }
 const configKey = (c: ReceiptConfig) => `${c.count}|${c.level}|${c.format}|${c.change}|${c.rounds}`;
 
-function feedback(right: boolean) {
-  try {
-    if (right) {
-      tone(659, 0.15, 0.25);
-      setTimeout(() => tone(880, 0.3, 0.25), 130);
-    } else tone(196, 0.35, 0.25);
-  } catch {}
-}
 
 /** Zigzag top and bottom edge of the paper. */
 function paperPath(top: number, bottom: number) {

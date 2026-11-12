@@ -25,6 +25,7 @@ export const widgetCatalog = {
   calculator: ['Taschenrechner & Kassenzettel', 'Mathe'],
   mathtool: ['Mathe-Werkzeug', 'Mathe'],
   receipt: ['Kassenzettel', 'Mathe'],
+  geodraw: ['Geometrie: Formen zeichnen', 'Mathe'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -64,6 +65,8 @@ export type LearningSettings = {
   /** Mathe-Werkzeug: boat, abacus, ruler or calc, and its size (5/10/20, 2/10, cm). */
   mathTool?: 'boat' | 'abacus' | 'ruler' | 'calc';
   mathSize?: number;
+  /** Geometrie: Formen zeichnen (see learning/geodraw.ts). */
+  geo?: { level?: string; count?: number; groups?: string[]; tol?: string; flash?: number; tasks?: { k: string; a: number; b?: number; d?: number; n?: number }[] };
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';

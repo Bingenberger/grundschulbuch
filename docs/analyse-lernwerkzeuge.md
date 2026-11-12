@@ -232,6 +232,24 @@ Umbau Stück für Stück geprüft.
 - Die alten Bausteine „Taschenrechner & Kassenzettel“ und „Zwanzigerfeld“ sind
   aus dem Katalog genommen; vorhandene Elemente funktionieren weiter.
 
+**Schritt 2b – Geometrie: Formen zeichnen (erledigt):**
+
+- Neuer Baustein `geodraw` (`lib/learning/geodraw.ts`, `GeoDraw.tsx`) wie die
+  Vorlage: eine ganze Karoseite (5 mm), Aufgabenkasten mit Vorlesen, Vorschau und
+  Überprüfen. Gezeichnet wird mit dem normalen Stift auf der Seite; „Start“ nimmt
+  den Stift und legt Lineal oder (bei Winkeln) Geodreieck hin.
+- Aufgaben nach Schwierigkeit (leicht, mittel, schwer, ansteigend) und Formen
+  (Strecken, Vierecke, Dreiecke, weitere: Treppe, Haus …), Genauigkeit
+  großzügig/normal/genau (3,5/2/1 mm, 5/3/2°), Vorschau 0–3 Sekunden.
+- Prüfung wie in der Vorlage: Striche vereinfachen (Douglas–Peucker), Stücke auf
+  einer Linie zusammenfassen, Strecken zuordnen; genaue Rückmeldung („Die linke
+  Seite ist 3 mm zu kurz.“, „… ist schief“, „Eine Linie ist zu viel.“), farbige
+  Markierung, „Lösung zeigen“ nach zwei Versuchen, Auswertung mit Mini-Zeichnungen.
+- Die Editoren geben den Lernwerkzeugen dafür `drawing` (Striche lesen, Stift und
+  Hilfe einschalten, Striche im Aufgabenbereich löschen; `Runtime.tsx`).
+- Der alte Baustein „Geometrie mit Prüfen“ ist aus dem Katalog genommen; vorhandene
+  Elemente funktionieren weiter.
+
 **Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Musik, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).

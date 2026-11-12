@@ -7,6 +7,7 @@ import { activityCatalog, widgetCatalog, type ActivityKind, type LearningSetting
 import { blueprintPages, blueprints, type Blueprint } from './templates';
 import { defaultSettings } from './catalog';
 import type { MathToolKind } from './mathtool';
+import { geoConfig } from './geodraw';
 
 export const SUBJECTS = [
   'Deutsch',
@@ -26,7 +27,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -67,6 +68,8 @@ const SKIP = new Set([
   'math-beads',
   'widget-mathtool',
   'widget-calculator',
+  'widget-geometry',
+  'widget-geodraw',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -146,6 +149,36 @@ function fromBlueprint(meta: Blueprint): LearningBlock | null {
   };
 }
 
+/** Reference template “Geometrie: Formen zeichnen”: a whole squared page. */
+export function geodrawPage(): Page[] {
+  const page = newPage('karo5', 'landscape');
+  page.lineColor = '#a5c3ec';
+  const geo = geoConfig({ level: 'easy', count: 5, groups: [], tol: 'normal', flash: 2 });
+  page.elements.push({
+    id: uuid(),
+    type: 'widget',
+    widgetKind: 'geodraw',
+    settings: { ...defaultSettings('geodraw'), title: 'Geometrie: Formen zeichnen', geo },
+    x: 0,
+    y: 0,
+    width: 297,
+    height: 210,
+    rotation: 0,
+    locked: true,
+    color: '#253c42',
+  } as PageElement);
+  return [page];
+}
+
+toolBlocks.push({
+  id: 'geodraw-page',
+  title: 'Geometrie: Formen zeichnen',
+  subject: 'Mathematik',
+  type: 'widget',
+  kind: 'geodraw',
+  pages: geodrawPage,
+  words: 'Geometrie Formen zeichnen Lineal Geodreieck Strecke Quadrat Rechteck Dreieck Seite',
+});
 toolBlocks.push({
   id: 'receipt-page',
   title: 'Rechnen mit dem Taschenrechner',

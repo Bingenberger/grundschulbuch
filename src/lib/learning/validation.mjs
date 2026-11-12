@@ -26,6 +26,7 @@ export const WIDGET_KINDS = [
   'mathboard',
   'mathtool',
   'receipt',
+  'geodraw',
   'shop',
   'geometry',
   'monster',

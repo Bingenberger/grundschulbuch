@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useCallback } from 'react';
-import type { PageElement } from '@/lib/notebook-model';
+import type { Page, PageElement } from '@/lib/notebook-model';
 import type { LearningResponse } from '@/lib/learning/catalog';
 type Runtime = {
   interactive: boolean;
@@ -10,6 +10,16 @@ type Runtime = {
   /** Saves a recording made right in a learning tool; returns its address. */
   uploadAudio?: (id: string, file: Blob) => Promise<string>;
   reportScore?: (score: number) => void;
+  /** Drawing on the page itself (“Geometrie: Formen zeichnen”); only in the editors. */
+  drawing?: PageDrawing;
+};
+export type PageDrawing = {
+  /** All pen strokes of the current page as point lists in page millimetres. */
+  strokes: () => { x: number; y: number }[][];
+  /** Takes the pen and puts the ruler (or the set square) on the page. */
+  begin: (setSquare: boolean) => void;
+  /** Removes the strokes inside this part of the page (millimetres). */
+  clear: (area: { x: number; y: number; width: number; height: number }) => void;
 };
 const EMPTY: LearningResponse = {};
 const Context = createContext<Runtime>({ interactive: false });
@@ -32,4 +42,28 @@ export function useLearning(element: PageElement) {
     [runtime, element.id, state],
   );
   return { ...runtime, state, update };
+}
+
+/** Lets “Geometrie: Formen zeichnen” read and clear pen strokes and pick up the pen. */
+export function pageDrawing(
+  edit: (change: (page: Page) => Page) => void,
+  current: () => Page | undefined,
+  start: (setSquare: boolean) => void,
+): PageDrawing {
+  return {
+    strokes: () =>
+      (current()?.elements || [])
+        .filter((el) => el.type === 'stroke' && el.points?.length)
+        .map((el) => el.points!.map((p) => ({ x: el.x + p.x, y: el.y + p.y }))),
+    begin: start,
+    clear: (a) =>
+      edit((p) => ({
+        ...p,
+        elements: p.elements.filter((el) => {
+          if (el.type !== 'stroke') return true;
+          const cx = el.x + el.width / 2, cy = el.y + el.height / 2;
+          return !(cx >= a.x && cx <= a.x + a.width && cy >= a.y && cy <= a.y + a.height);
+        }),
+      })),
+  };
 }

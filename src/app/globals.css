@@ -4542,3 +4542,13 @@ input[type='checkbox'] {
   .math-tool .mt-bead { transition: none; }
   .math-tool .mt-token { animation: none; }
 }
+
+/* Geometrie: Formen zeichnen (GeoDraw.tsx): the pen draws through it, only the buttons react. */
+.geodraw { display: block; pointer-events: none; user-select: none; -webkit-user-select: none; }
+.geodraw .gd-key { pointer-events: auto; cursor: pointer; outline: none; }
+.geodraw .gd-key:focus-visible rect { stroke: #1c7ed6; stroke-width: 5; }
+.geodraw .gd-key:active rect { filter: brightness(0.9); }
+.geodraw .gd-fade { animation: gd-fade 2s ease-in forwards; }
+.geodraw .gd-marks { animation: gd-marks 5s ease-in forwards; }
+@keyframes gd-fade { 0%, 70% { opacity: 1; } to { opacity: 0; } }
+@keyframes gd-marks { 0%, 75% { opacity: 1; } to { opacity: 0; } }
