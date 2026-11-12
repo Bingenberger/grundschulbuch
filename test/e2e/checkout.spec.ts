@@ -65,13 +65,20 @@ test('Einkaufen an der Kasse: Kunde bestellt, Summe, bezahlen, Wechselgeld, Ausw
 
   // Pay with the customer's money from the drawer.
   const name = (v: number) => (v < 100 ? `${v} Cent` : v < 500 ? `${v / 100} Euro` : `${v / 100}-Euro-Schein`);
-  for (const v of changeCoins(paid)) await shop.locator('.ck-drawer').getByRole('button', { name: name(v), exact: true }).click();
+  // One euro too much first: the customer answers to the money that lies there.
+  const drawer = shop.locator('.ck-drawer');
+  for (const v of changeCoins(paid)) await drawer.getByRole('button', { name: name(v), exact: true }).click();
+  await drawer.getByRole('button', { name: '1 Euro', exact: true }).click();
+  await shop.getByRole('button', { name: 'Prüfen' }).click();
+  await expect(talk).toContainText(`Ich habe dir ${paid / 100} € gegeben, nicht ${paid / 100 + 1} €.`, { timeout: 10000 });
+  await expect(shop.getByText('Das Wechselgeld')).toHaveCount(0);
+  await shop.locator('.ck-zone').first().getByRole('button', { name: '1 Euro', exact: true }).click();
   await expect(shop.locator('.ck-zone').first()).toContainText(`${paid / 100} €`);
   await page.screenshot({ path: test.info().outputPath('kasse-bezahlen.png') });
   await shop.getByRole('button', { name: 'Prüfen' }).click();
   await expect(shop.getByText('Geschafft!')).toBeVisible({ timeout: 15000 });
   await expect(shop.getByText('Der Kunde ist bedient.')).toBeVisible();
-  await expect(shop.locator('.ck-tile').nth(2)).toContainText('Waren 1 · Bezahlen 0');
-  await expect(shop.locator('.ck-tile', { hasText: 'Verbessert' })).toContainText('1 Mal');
+  await expect(shop.locator('.ck-tile').nth(2)).toContainText('Waren 1 · Bezahlen 1');
+  await expect(shop.locator('.ck-tile', { hasText: 'Verbessert' })).toContainText('2 Mal');
   await page.screenshot({ path: test.info().outputPath('kasse-auswertung.png') });
 });

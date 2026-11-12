@@ -32,7 +32,8 @@ import {
   summary,
   total,
   without,
-  wrongMoneyTalk,
+  wrongChangeTalk,
+  wrongPaymentTalk,
   type Mood,
   type ShopConfig,
   type ShopItem,
@@ -482,20 +483,24 @@ export default function Checkout({ element }: { element: PageElement }) {
     stopSpeech.current?.();
     stopSpeech.current = null;
   };
+  /** Ends the sentence still being spoken (its step goes on at once). */
+  const cutOff = useRef<(() => void) | null>(null);
   const say = (text: string, who: Who) =>
     new Promise<void>((resolve) => {
+      cutOff.current?.();
       const s = current.current;
       const person = CUSTOMERS[s.custs[s.round] ?? 0];
       let finished = false;
       const end = () => {
-        if (!finished) {
-          finished = true;
-          resolve();
-        }
+        if (finished) return;
+        finished = true;
+        if (cutOff.current === end) cutOff.current = null;
+        resolve();
       };
+      cutOff.current = end;
       stopSpeech.current = startGermanSpeech(text, { ...(who === 'cust' ? { pitch: person.pitch, rate: person.rate } : {}), onEnd: end, onError: end });
-      // Without a voice (or when speech is cut off) the shop goes on anyway.
-      setTimeout(end, stopSpeech.current ? 1500 + text.length * 90 : 350);
+      // Like the reference: if the voice never reports its end, go on after a generous time.
+      setTimeout(end, stopSpeech.current ? 4000 + text.length * 160 : 350);
     });
   const hint = (text: string) => {
     if (clock() - lastHint.current < 3500) return;
@@ -618,6 +623,11 @@ export default function Checkout({ element }: { element: PageElement }) {
     if (a === 'open' || a === 'again') {
       cancel();
       silence();
+      cutOff.current?.();
+      // iPad: speech only works after a sentence started by a tap.
+      try {
+        window.speechSynthesis?.speak(new SpeechSynthesisUtterance(''));
+      } catch {}
       set({ ...freshShop(), custs: customerOrder(cfg.customers, CUSTOMERS.length) });
       void run(enter());
       return;
@@ -679,27 +689,28 @@ export default function Checkout({ element }: { element: PageElement }) {
       if (s.phase !== 'pay') return;
       const paid = sum(s.payIn), cost = total(cfg, s.cart);
       if (!paid) return hint('Lege das Geld des Kunden aus der Schublade in das Feld „Kunde zahlt“.');
-      const wrong = talkStep(wrongMoneyTalk(cfg, s), 'sad', (x) => fix({ ...x, phase: 'pay', chgShown: false, chgIn: [] }, 'errPay'));
       const busy = (x: ShopState): ShopState => ({ ...x, phase: 'busy' });
-      if (paid < cost) {
-        void run([{ do: busy, say: [`Es fehlen noch ${spokenPrice(cost - paid)}.`, 'cash'], wait: 250 }, wrong]);
+      // The customer answers to the money that lies there – no change is worked out from a wrong amount.
+      if (paid !== s.paid) {
+        const wrong = talkStep(wrongPaymentTalk(cfg, s, paid), 'sad', (x) => fix({ ...x, phase: 'pay', chgShown: false, chgIn: [] }, 'errPay'));
+        void run([{ do: busy, wait: 150 }, wrong]);
         return;
       }
       if (cfg.give) {
-        if (paid !== s.paid) void run([{ do: busy, wait: 150 }, wrong]);
-        else if (paid === cost) void run([{ do: busy, say: ['Stimmt genau.', 'cash'], wait: 250 }, ...leave()]);
+        if (paid === cost) void run([{ do: busy, say: ['Stimmt genau.', 'cash'], wait: 250 }, ...leave()]);
         else void run([{ do: (x) => ({ ...x, phase: 'change', chgShown: true, chgIn: [] }), say: ['Gib dem Kunden das Rückgeld.', 'cash'] }]);
         return;
       }
       const diff = paid - cost;
       const change: Step = { do: (x) => ({ ...x, phase: 'busy', chgShown: true, chgIn: changeCoins(diff) }), say: [diff ? `Das Wechselgeld beträgt ${spokenPrice(diff)}.` : 'Stimmt genau.', 'cash'], wait: 250 };
-      void run(paid === s.paid ? [change, ...leave()] : [change, wrong]);
+      void run([change, ...leave()]);
       return;
     }
     if (a === 'give') {
       if (s.phase !== 'change') return;
-      if (sum(s.chgIn) === s.paid - total(cfg, s.cart)) void run(leave());
-      else void run([talkStep(wrongMoneyTalk(cfg, s), 'sad', (x) => fix(x, 'errChg'))]);
+      const given = sum(s.chgIn);
+      if (given === s.paid - total(cfg, s.cart)) void run(leave());
+      else void run([talkStep(wrongChangeTalk(cfg, s, given), 'sad', (x) => fix(x, 'errChg'))]);
     }
   };
 

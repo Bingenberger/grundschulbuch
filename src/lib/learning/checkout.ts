@@ -347,11 +347,19 @@ export function orderTalk(c: ShopConfig, s: ShopState, greet: string, again: boo
     ? { text: `Das stimmt aber nicht. Ich möchte: ${w}.`, said: `Das stimmt aber nicht. Ich möchte ${sp}.`, order: s.order }
     : { text: `${greet} Ich möchte hier einkaufen: ${w}.`, said: `${greet} Ich möchte hier einkaufen: ${sp}.`, order: s.order };
 }
-export function wrongMoneyTalk(c: ShopConfig, s: ShopState): Talk {
-  const cost = total(c, s.order);
+/** The money laid out is not what the customer handed over. */
+export function wrongPaymentTalk(c: ShopConfig, s: ShopState, laid: number): Talk {
   return {
-    text: `Das ist aber nicht richtig. Es kostet ${priceText(cost, c.level)} und ich habe dir ${priceText(s.paid, c.level)} gegeben.`,
-    said: `Das ist aber nicht richtig. Es kostet ${spokenPrice(cost)} und ich habe dir ${spokenPrice(s.paid)} gegeben.`,
+    text: `Das ist aber nicht richtig. Ich habe dir ${priceText(s.paid, c.level)} gegeben, nicht ${priceText(laid, c.level)}.`,
+    said: `Das ist aber nicht richtig. Ich habe dir ${spokenPrice(s.paid)} gegeben, nicht ${spokenPrice(laid)}.`,
+  };
+}
+/** The change handed back is wrong. */
+export function wrongChangeTalk(c: ShopConfig, s: ShopState, given: number): Talk {
+  const due = s.paid - total(c, s.cart);
+  return {
+    text: `Das ist aber nicht richtig. Ich bekomme ${priceText(due, c.level)} zurück, du gibst mir ${priceText(given, c.level)}.`,
+    said: `Das ist aber nicht richtig. Ich bekomme ${spokenPrice(due)} zurück, du gibst mir ${spokenPrice(given)}.`,
   };
 }
 export function sumTalk(c: ShopConfig, s: ShopState): Talk {

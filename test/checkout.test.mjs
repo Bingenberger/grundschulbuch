@@ -124,3 +124,11 @@ test('Ablauf an der Kasse: Waren, Fehler, Korrekturen, Auswertung', () => {
   assert.equal(k.duration(30000), '30 Sek.');
   assert.equal(k.duration(95000), '1:35 Min.');
 });
+
+test('Rückmeldung passt zum gelegten Geld und zum Rückgeld', () => {
+  const c = k.shopConfig({ level: 'euro', items: [{ name: 'Ball', price: 300, g: 'm' }] });
+  const s = { ...k.freshShop(), paid: 1000, order: [{ i: 0, n: 1 }], cart: [{ i: 0, n: 1 }] };
+  assert.equal(k.wrongPaymentTalk(c, s, 1100).text, 'Das ist aber nicht richtig. Ich habe dir 10 € gegeben, nicht 11 €.');
+  assert.equal(k.wrongPaymentTalk(c, s, 1100).said, 'Das ist aber nicht richtig. Ich habe dir 10 Euro gegeben, nicht 11 Euro.');
+  assert.equal(k.wrongChangeTalk(c, s, 500).text, 'Das ist aber nicht richtig. Ich bekomme 7 € zurück, du gibst mir 5 €.');
+});
