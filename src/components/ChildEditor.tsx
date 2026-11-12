@@ -35,6 +35,7 @@ import ImageEditor, { editFromElement } from './ImageEditor';
 import { cascade, fillPlaceholder, imageElement, isPlaceholder, withEditedPicture, type ChosenImage } from './editor/image-elements';
 import InlineText from './editor/InlineText';
 import { useTextEditing } from './editor/use-text-editing';
+import { clampZoom, fitZoom, usePinchZoom } from './editor/use-pinch-zoom';
 import { fitText } from './editor/text-measure';
 import { tapDistance } from '@/lib/selection';
 import ElementActions from './editor/ElementActions';
@@ -78,6 +79,8 @@ export default function ChildEditor({
   const [guide, setGuide] = useState<DrawingGuide | null>(null);
   const [erasePreview, setErasePreview] = useState<PageElement[] | null>(null);
   const surface = useRef<HTMLDivElement>(null);
+  const scroller = useRef<HTMLDivElement>(null);
+  const [zoom, setZoom] = useState(1);
   const gesture = useRef<{
     el: PageElement;
     points: Point[];
@@ -130,6 +133,17 @@ export default function ChildEditor({
     window.addEventListener('beforeunload', unload);
     return () => window.removeEventListener('beforeunload', unload);
   }, []);
+  const ready = !!page && s.book?.id === initial.book.id;
+  function cancelGesture() {
+    const g = gesture.current;
+    gesture.current = null;
+    if (g?.pointer !== undefined && surface.current?.hasPointerCapture(g.pointer)) surface.current.releasePointerCapture(g.pointer);
+    recognition.cancel();
+    setDraft(null);
+    setErasePreview(null);
+  }
+  const fitPage = () => setZoom((z) => fitZoom(scroller.current, z));
+  usePinchZoom(scroller, zoom, setZoom, { enabled: ready, onStart: cancelGesture, onFit: fitPage });
   if (!page || s.book?.id !== initial.book.id)
     return <p>Dein Heft wird geöffnet …</p>;
   const size = dimensions(page);
@@ -505,10 +519,10 @@ export default function ChildEditor({
         <div className="editor-main">
           <section className="canvas-area">
             <LinkContext.Provider value={links}>
-            <div className="canvas-scroll">
+            <div className="canvas-scroll" ref={scroller}>
               <div className="canvas-sheet">
 
-        <ScaledPage page={page}>
+        <ScaledPage page={page} zoom={zoom}>
           <LearningRuntime
                   uploadAudio={(id, file) => uploadAudio(file, s.book!.id, id)}
             interactive={s.tool === 'select'}
@@ -587,12 +601,25 @@ export default function ChildEditor({
               </div>
             </div>
             </LinkContext.Provider>
-            {features.has('readAloud') && <div className="zoom-float" role="group" aria-label="Seite">
-              <button type="button" onClick={readPage}>
-                <Icon name="speaker" size={22} />
-                <span>Seite vorlesen</span>
+            <div className="zoom-float" role="group" aria-label="Seite">
+              {features.has('readAloud') && (
+                <button type="button" onClick={readPage}>
+                  <Icon name="speaker" size={22} />
+                  <span>Seite vorlesen</span>
+                </button>
+              )}
+              <button type="button" aria-label="Seite kleiner" onClick={() => setZoom((z) => clampZoom(z - 0.1))}>
+                <Icon name="minus" size={22} />
               </button>
-            </div>}
+              <span className="zoom-value">{Math.round(zoom * 100)} %</span>
+              <button type="button" aria-label="Seite größer" onClick={() => setZoom((z) => clampZoom(z + 0.1))}>
+                <Icon name="plus" size={22} />
+              </button>
+              <button type="button" onClick={fitPage}>
+                <Icon name="expand" size={22} />
+                <span>Ganze Seite</span>
+              </button>
+            </div>
           </section>
           {draft?.geometry && (s.tool === 'pen' || s.tool === 'marker') && <span className="shape-hint" role="status">Form erkannt – zum Übernehmen loslassen.</span>}
           {s.tool === 'pen' || s.tool === 'marker' || s.tool === 'eraser' ? (

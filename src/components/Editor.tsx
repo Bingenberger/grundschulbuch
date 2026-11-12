@@ -67,6 +67,7 @@ import ImageDialog from './ImageDialog';
 import ImageEditor, { editFromElement } from './ImageEditor';
 import { cascade, fillPlaceholder, imageElement, isPlaceholder, withEditedPicture, placeholderElement, type ChosenImage } from './editor/image-elements';
 import { uploadAudio, uploadImage } from '@/lib/client-api';
+import { clampZoom, fitZoom, usePinchZoom } from './editor/use-pinch-zoom';
 
 type Gesture = {
   type: 'move' | 'resize' | 'rotate' | 'draw' | 'erase' | 'frame';
@@ -151,6 +152,7 @@ export default function Editor({
   const features = featuresFor('teacher');
   const surface = useRef<HTMLDivElement>(null);
   const gesture = useRef<Gesture | null>(null);
+  const scroller = useRef<HTMLDivElement>(null);
   const [clipboard, setClipboard] = useState<PageElement[]>([]);
   const page = s.pages.find((p) => p.id === s.activeId);
   const catalog = useMemo(() => templateCatalog(templates), [templates]);
@@ -431,30 +433,14 @@ export default function Editor({
         break;
       }
       case 'zoomIn':
-        setZoom((z) => Math.min(3, z + 0.1));
+        setZoom((z) => clampZoom(z + 0.1));
         break;
       case 'zoomOut':
-        setZoom((z) => Math.max(0.2, z - 0.1));
+        setZoom((z) => clampZoom(z - 0.1));
         break;
-      case 'zoomFit': {
-        const paper = surface.current?.getBoundingClientRect(),
-          area = surface.current?.closest('.canvas-scroll');
-        if (paper && area)
-          setZoom((z) =>
-            Math.max(
-              0.2,
-              Math.min(
-                3,
-                z *
-                  Math.min(
-                    (area.clientHeight - 30) / paper.height,
-                    (area.clientWidth - 40) / paper.width,
-                  ),
-              ),
-            ),
-          );
+      case 'zoomFit':
+        setZoom((z) => fitZoom(scroller.current, z));
         break;
-      }
       case 'board':
       case 'boardNow':
         cancelDrawingGesture(); setBoardPointer('none');
@@ -967,6 +953,11 @@ export default function Editor({
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
   });
+  usePinchZoom(scroller, zoom, setZoom, {
+    enabled: ready && !!page && !!s.book && !board,
+    onStart: cancelDrawingGesture,
+    onFit: () => performCommand('zoomFit'),
+  });
   if (!ready || !page || !s.book)
     return (
       <main className="seite">
@@ -1078,7 +1069,7 @@ export default function Editor({
         <div className="editor-main">
         <section className="canvas-area">
           <LinkContext.Provider value={links}>
-          <div className="canvas-scroll">
+          <div className="canvas-scroll" ref={scroller}>
             <div className="canvas-sheet">
               <ScaledPage
                 page={page}

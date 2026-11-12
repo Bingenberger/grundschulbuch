@@ -173,6 +173,14 @@ und mit einer echten Anton-Karte steht weiterhin aus.
 - Regalordner, ZIP-Sicherungen einschließlich eigener Vorlagen, Sammlungen und
   Medien; Wiederherstellen erzeugt eigene Kopien im angemeldeten Konto.
 - Tafelmodus einschließlich Zeichnen, Zoom und frei belegbaren Tastaturkürzeln.
+- Seitenzoom mit Gesten (Lehrkräfte und Kinder, `use-pinch-zoom.ts`): zwei
+  Finger ziehen auseinander/zusammen und zoomen um den Punkt zwischen den
+  Fingern, mit zwei Fingern ziehen verschiebt, Doppeltipp mit zwei Fingern
+  zeigt die ganze Seite. Kommt während eines Strichs ein zweiter Finger dazu,
+  wird der Strich verworfen. Am Rechner Strg/Cmd + Mausrad bzw. Trackpad-Pinch
+  (Chrome: Strg + Rad, Safari: Gesture-Events). Die Browser-Zoomgeste ist im
+  Seitenbereich abgeschaltet, damit nicht die ganze Oberfläche vergrößert wird.
+  Kinder haben dazu unten rechts „kleiner“, „größer“ und „Ganze Seite“.
 - Eigene Heftdatei, eigenständiges interaktives HTML, ePub mit festem Layout,
   SCORM 1.2 und direkter PDF-Download; PDF-Import als gesperrte Bildhintergründe.
   HTML-Kopien können ihre Antworten und Aufnahmen erneut als Datei speichern.

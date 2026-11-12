@@ -16,7 +16,9 @@ export default function ScaledPage({
   children?: React.ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.5);
+  // Fit to the width; the zoom applies right away (gestures anchor on the new size).
+  const [fit, setFit] = useState(0.5);
+  const scale = fit * zoom;
   const size = dimensions(page);
   const px = 96 / 25.4;
   useEffect(() => {
@@ -24,8 +26,8 @@ export default function ScaledPage({
     if (!el) return;
     // Ignore tiny changes, so a scrollbar coming and going cannot make it jitter.
     const update = () => {
-      const next = Math.min(maxScale, el.clientWidth / (size.width * px)) * zoom;
-      setScale((old) => (Math.abs(old - next) < 0.004 * next ? old : next));
+      const next = Math.min(maxScale, el.clientWidth / (size.width * px));
+      setFit((old) => (Math.abs(old - next) < 0.004 * next ? old : next));
     };
     update();
     if (typeof ResizeObserver === 'undefined') {
@@ -35,7 +37,7 @@ export default function ScaledPage({
     const observer = new ResizeObserver(update);
     observer.observe(el);
     return () => observer.disconnect();
-  }, [size.width, maxScale, px, zoom]);
+  }, [size.width, maxScale, px]);
   return (
     <div
       ref={ref}
