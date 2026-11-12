@@ -34,7 +34,9 @@ import {
 } from '@/lib/learning/catalog';
 import CheckoutOptions from './CheckoutOptions';
 import { shopConfig } from '@/lib/learning/checkout';
-import { checkoutPage } from '@/lib/learning/blocks';
+import { checkoutPage, fullPageWidget } from '@/lib/learning/blocks';
+import MonsterOptions from './MonsterOptions';
+import { cleanMonster } from '@/lib/reference/monster';
 import { clone, uuid, type Page, type PageElement } from '@/lib/notebook-model';
 import { learningBlocks, SUBJECTS, type LearningBlock, type Subject } from '@/lib/learning/blocks';
 import { ChoiceButton, Choices, OptionGroup } from '../ui/Choice';
@@ -54,7 +56,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -69,7 +71,7 @@ const blockIcon = (b: LearningBlock): IconName =>
 /** Size of a newly inserted learning element in mm. */
 function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) {
   if (kind === 'mathtool') return pageSize(mathTool(settings));
-  if (kind === 'checkout') return { width: 297, height: 210 };
+  if (kind === 'checkout' || kind === 'monsternames') return { width: 297, height: 210 };
   return {
     width: kind === 'receipt' ? 120 : 180,
     height: kind === 'receipt' ? 126 : kind === 'alphabet' ? 210 : kind === 'synthesis' || kind === 'clapping' || kind === 'letterguess' || kind === 'syllables' || kind === 'geometry' ? 180 : 140,
@@ -307,6 +309,15 @@ export default function LearningDialog({
                 const ready = { ...settings, checkout: shopConfig(settings.checkout) as unknown as JsonValue };
                 if (!element && onPages) {
                   onPages(checkoutPage(ready));
+                  onClose();
+                  return;
+                }
+              }
+              if (kind === 'monsternames') {
+                const m = cleanMonster(settings.monster) as { words: string[][] };
+                if (!m.words.length) { setError('Mit diesen Buchstaben lassen sich keine Namen bilden.'); return; }
+                if (!element && onPages) {
+                  onPages(fullPageWidget('monsternames', { ...settings, monster: m as unknown as JsonValue }));
                   onClose();
                   return;
                 }
@@ -608,6 +619,7 @@ export default function LearningDialog({
                 </>
               );
             })()}
+            {kind === 'monsternames' && <MonsterOptions value={settings.monster} onChange={(monster) => patch({ monster: monster as unknown as JsonValue })} />}
             {kind === 'checkout' && <CheckoutOptions value={settings.checkout} onChange={(shop) => patch({ checkout: shop as unknown as JsonValue })} />}
             {kind === 'geodraw' && (() => {
               const g = geoConfig(settings.geo);

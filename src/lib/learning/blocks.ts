@@ -27,7 +27,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -74,6 +74,8 @@ const SKIP = new Set([
   'widget-geodraw',
   'widget-shop',
   'widget-checkout',
+  'widget-monster',
+  'widget-monsternames',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -186,11 +188,15 @@ toolBlocks.push({
 });
 /** Reference template “Einkaufen an der Kasse”: the shop fills a whole page. */
 export function checkoutPage(settings: LearningSettings): Page[] {
+  return fullPageWidget('checkout', settings);
+}
+/** A reference widget that fills a whole landscape page. */
+export function fullPageWidget(kind: WidgetKind, settings: LearningSettings): Page[] {
   const page = newPage('blanko', 'landscape');
   page.elements.push({
     id: uuid(),
     type: 'widget',
-    widgetKind: 'checkout',
+    widgetKind: kind,
     settings,
     x: 0,
     y: 0,
@@ -203,6 +209,15 @@ export function checkoutPage(settings: LearningSettings): Page[] {
   return [page];
 }
 
+toolBlocks.push({
+  id: 'monsternames',
+  title: 'Monsternamen lesen',
+  subject: 'Deutsch',
+  type: 'widget',
+  kind: 'monsternames',
+  preset: { ...defaultSettings('monsternames'), title: 'Monsternamen lesen' },
+  words: 'Monsternamen lesen Fantasienamen Silben lesen Pseudowörter Monster Urkunde',
+});
 toolBlocks.push({
   id: 'checkout',
   title: 'Einkaufen an der Kasse',

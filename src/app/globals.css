@@ -4720,3 +4720,21 @@ input[type='checkbox'] {
 .sheet-link { border: 0; background: none; font: inherit; font-weight: 600; color: #1c63c7; cursor: pointer; padding: 4px; }
 .sheet-indent { margin-left: 52px; display: flex; flex-direction: column; gap: 6px; }
 .sheet-scripts .sheet-level { min-width: 180px; }
+
+/* Widgets taken over from the reference (SVG with tap targets) */
+.reference-widget { width: 100%; height: 100%; user-select: none; -webkit-user-select: none; }
+.reference-widget .lh-wg-pic, .reference-widget .lh-wg-pic svg { display: block; width: 100%; height: 100%; }
+.reference-widget.is-live .lh-key { cursor: pointer; }
+.reference-widget.is-live .lh-key:active .lh-kdown { opacity: .12; }
+.monster-options section { margin: 6px 0 14px; }
+.monster-options h3 { font-size: 16px; margin: 8px 0 4px; }
+.monster-options h4 { font-size: 13px; color: #5b6b57; margin: 8px 0 4px; }
+.monster-letters { display: flex; flex-wrap: wrap; gap: 6px; }
+.monster-letters .sheet-chip { min-width: 46px; font-size: 18px; }
+.monster-preview { list-style: none; padding: 0; margin: 8px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.monster-preview.is-long { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.monster-listen { display: flex; align-items: center; gap: 10px; width: 100%; padding: 6px 10px; border: 2px solid #dfe6da; border-radius: 12px; background: #fff; font: inherit; cursor: pointer; }
+.monster-pic svg { display: block; }
+.monster-name { flex: 1; text-align: left; font-size: 26px; }
+.monster-say { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+.monster-say input { flex: 1; min-width: 0; border: 1px solid #c5cfc0; border-radius: 8px; padding: 6px 10px; font: inherit; }

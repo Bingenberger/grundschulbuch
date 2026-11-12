@@ -28,6 +28,7 @@ export const WIDGET_KINDS = [
   'receipt',
   'geodraw',
   'checkout',
+  'monsternames',
   'shop',
   'geometry',
   'monster',

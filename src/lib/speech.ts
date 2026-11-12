@@ -26,3 +26,30 @@ export function startGermanSpeech(text: string, options: SpeechOptions = {}): ((
 export function speakGerman(text: string, options: SpeechOptions = {}): boolean {
   return startGermanSpeech(text, options) !== null;
 }
+
+let cutOff: (() => void) | null = null;
+/**
+ * Speaks and resolves when the sentence is over – also when it is cut off by
+ * the next one, or (if the voice never reports its end) after a generous time,
+ * like the reference does.
+ */
+export function speakAndWait(text: string, options: Omit<SpeechOptions, 'onEnd' | 'onError'> = {}): Promise<void> {
+  return new Promise((resolve) => {
+    cutOff?.();
+    let finished = false;
+    const end = () => {
+      if (finished) return;
+      finished = true;
+      if (cutOff === end) cutOff = null;
+      resolve();
+    };
+    cutOff = end;
+    const started = startGermanSpeech(text, { ...options, onEnd: end, onError: end });
+    setTimeout(end, started ? 4000 + text.length * 160 : 350);
+  });
+}
+/** Stops speaking; waiting sentences go on at once. */
+export function stopSpeaking() {
+  cutOff?.();
+  if (typeof window !== 'undefined') window.speechSynthesis?.cancel();
+}
