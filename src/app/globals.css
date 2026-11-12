@@ -4746,3 +4746,10 @@ input[type='checkbox'] {
 .synth-b { color: #1c7ed6; }
 .reference-widget .lh-key:focus, .reference-widget [tabindex]:focus { outline: none; }
 .reference-widget .lh-key:focus-visible { outline: 3px solid #1c7ed6; outline-offset: 2px; }
+.anlaut-tabs { display: flex; gap: 8px; margin-bottom: 10px; }
+.anlaut-keygrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.anlaut-keytile { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px; border: 1px solid #dfe6da; border-radius: 10px; background: #fff; }
+.anlaut-keytile.is-second { background: #fff5f5; }
+.anlaut-keypic { width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; border: 2px dashed #c5cfc0; border-radius: 10px; cursor: pointer; }
+.anlaut-keypic img { max-width: 64px; max-height: 64px; object-fit: contain; }
+.anlaut-keytile input { width: 100%; border: 1px solid #c5cfc0; border-radius: 8px; padding: 4px 8px; font: inherit; text-align: center; }

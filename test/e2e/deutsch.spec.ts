@@ -74,3 +74,22 @@ test('Silben verbinden wie in der Vorlage: Buchstaben ziehen, Silbe fährt davon
   await expect(page.locator('.interaction-surface .selection-frame')).toHaveCount(0);
   await page.screenshot({ path: test.info().outputPath('silben-weiter.png') });
 });
+
+test('Anlaut-Tastatur wie in der Vorlage: Bildtasten schreiben, Zurück, Alles neu', async ({ page }) => {
+  await login(page);
+  const dialog = await openBlock(page, 'Anlaut-Tastatur');
+  await expect(dialog.getByRole('tab', { name: 'Tastatur' })).toBeVisible();
+  await dialog.getByRole('tab', { name: 'Bilder' }).click();
+  await expect(dialog.getByLabel('Wort für M m')).toHaveValue('Maus');
+  await page.screenshot({ path: test.info().outputPath('anlaut-dialog.png') });
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  const widget = page.locator('.interaction-surface .lh-wg-anlaut.is-live');
+  await expect(widget.locator('img').first()).toHaveAttribute('src', /^\/anlaut\//);
+  for (const key of ['m', 'a', 'm', 'a']) await widget.locator(`[data-a="k:${key}:1"]`).first().click();
+  await expect(widget.locator('.lh-al-top')).toContainText('mama');
+  await page.screenshot({ path: test.info().outputPath('anlaut-seite.png') });
+  await widget.locator('[data-a="del"]').click();
+  await expect(widget.locator('.lh-al-top')).toContainText('mam');
+  await expect(widget.locator('.lh-al-top')).not.toContainText('mama');
+});

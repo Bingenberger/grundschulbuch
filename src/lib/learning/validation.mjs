@@ -30,6 +30,7 @@ export const WIDGET_KINDS = [
   'checkout',
   'monsternames',
   'syllablejoin',
+  'anlaut',
   'shop',
   'geometry',
   'monster',

@@ -56,11 +56,14 @@ export function qr() {
 /** A widget works when it is live (Tafel, Kinderheft, protected page). */
 export const Ti = (el: Element) => el.classList.contains('is-live');
 
-type TapOptions = { hit: (key: Element) => unknown; slide?: boolean; silent?: boolean; begin?: () => void };
+type Release = { release?: () => void } | null | undefined | unknown;
+type TapOptions = { hit: (key: Element) => Release; slide?: boolean; silent?: boolean; begin?: () => void };
 const taps = new WeakMap<Element, TapOptions>();
+const releaseOf = (r: Release) => (r && typeof r === 'object' && 'release' in r && typeof (r as { release?: unknown }).release === 'function' ? (r as { release: () => void }).release : null);
 /**
- * Taps on the widget's keys (`.lh-key[data-a]`): pointer and keyboard. The
- * editor does not move the element when a key is pressed.
+ * Keys of the widget (`.lh-key[data-a]`), like the reference: a key acts when
+ * it is pressed; a widget may also want to know when it is let go (long press).
+ * The editor does not move the element when a key is pressed.
  */
 export function Si(el: HTMLElement, options: TapOptions) {
   const known = taps.has(el);
@@ -74,33 +77,33 @@ export function Si(el: HTMLElement, options: TapOptions) {
     }
   });
   if (known) return;
-  let down: Element | null = null;
+  const pressed = new Map<number, { key: Element; release: (() => void) | null }>();
   el.addEventListener('pointerdown', (e) => {
     if (e.button > 0 || !Ti(el)) return;
     const key = (e.target as Element).closest?.('.lh-key[data-a]');
     if (!key || !el.contains(key)) return;
     e.stopPropagation();
-    if (!taps.get(el)?.silent) Vr();
-    down = key;
+    const options = taps.get(el);
+    if (!options?.silent) Vr();
     key.classList.add('is-down');
+    options?.begin?.();
+    pressed.set(e.pointerId, { key, release: releaseOf(options?.hit(key)) });
   });
-  const release = (e: PointerEvent) => {
-    const key = down;
-    down = null;
-    if (!key) return;
-    key.classList.remove('is-down');
-    if (e.type !== 'pointerup') return;
-    const over = document.elementFromPoint(e.clientX, e.clientY)?.closest('.lh-key[data-a]');
-    if (over === key) taps.get(el)?.hit(key);
+  const up = (e: PointerEvent) => {
+    const p = pressed.get(e.pointerId);
+    if (!p) return;
+    pressed.delete(e.pointerId);
+    p.key.classList.remove('is-down');
+    p.release?.();
   };
-  el.addEventListener('pointerup', release);
-  el.addEventListener('pointercancel', release);
+  window.addEventListener('pointerup', up);
+  window.addEventListener('pointercancel', up);
   el.addEventListener('keydown', (e) => {
     if ((e.key !== 'Enter' && e.key !== ' ') || e.metaKey || e.ctrlKey || e.altKey || !Ti(el)) return;
     const key = (e.target as Element).closest?.('.lh-key[data-a]');
     if (!key || !el.contains(key)) return;
     e.preventDefault();
     e.stopPropagation();
-    if (!e.repeat) taps.get(el)?.hit(key);
+    if (!e.repeat) releaseOf(taps.get(el)?.hit(key))?.();
   });
 }

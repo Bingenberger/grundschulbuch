@@ -27,7 +27,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', syllablejoin: 'Deutsch', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', syllablejoin: 'Deutsch', anlaut: 'Deutsch', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -78,6 +78,8 @@ const SKIP = new Set([
   'widget-monsternames',
   'widget-synthesis',
   'widget-syllablejoin',
+  'widget-alphabet',
+  'widget-anlaut',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -228,6 +230,15 @@ toolBlocks.push({
   kind: 'syllablejoin',
   preset: { ...defaultSettings('syllablejoin'), title: 'Silben verbinden' },
   words: 'Silben verbinden Laute verbinden Synthese ziehen Buchstaben zusammenschleifen lesen',
+});
+toolBlocks.push({
+  id: 'anlaut',
+  title: 'Anlaut-Tastatur',
+  subject: 'Deutsch',
+  type: 'widget',
+  kind: 'anlaut',
+  preset: { ...defaultSettings('anlaut'), title: 'Anlaut-Tastatur' },
+  words: 'Anlaut-Tastatur Anlauttabelle Anlautbilder Laute schreiben Wörter üben Buchstaben Fibel',
 });
 toolBlocks.push({
   id: 'checkout',

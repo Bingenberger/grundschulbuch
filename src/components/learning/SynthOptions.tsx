@@ -9,6 +9,7 @@ import { casing, cleanSynth, pickSyllables, sayPart, splitLetters, stretchable, 
 import { MONSTER_CASES, letterProblem } from '@/lib/reference/monster';
 import { safeRecording, shippedSound, shippedSyllable, withRecordings } from '@/lib/reference/recordings';
 import { lc, dc } from '@/lib/reference/runtime';
+import { decodeMaps, encodeMaps } from '@/lib/reference/keys';
 
 type Synth = { letters: string; case: 'lower' | 'upper' | 'mixed'; font: 'andika' | 'druck' | 'grund'; syls: [string, string][]; sound: boolean; read: boolean; tts?: boolean; say?: [string, string][] };
 const VOWELS = ['a', 'e', 'i', 'o', 'u', 'ä', 'ö', 'ü', 'ei', 'au', 'eu', 'ie'];
@@ -24,13 +25,13 @@ const yesNo = [
 ];
 
 export default function SynthOptions({ value, onChange }: { value: unknown; onChange: (s: Synth) => void }) {
-  const s = cleanSynth(value, (v: unknown) => (safeRecording(v) ? v : undefined)) as Synth;
+  const s = cleanSynth(decodeMaps(value, ['sounds', 'voice']), (v: unknown) => (safeRecording(v) ? v : undefined)) as Synth;
   const [say, setSay] = useState<[string, string][]>(s.say ?? []);
   const letters = splitLetters(s.letters) as string[];
   const problem = letterProblem(letters) as string;
   const possible = problem ? 0 : (syllablePairs(letters) as unknown[]).length;
   const most = Math.min(12, possible);
-  const save = (next: Synth) => onChange(withRecordings(next));
+  const save = (next: Synth) => onChange(encodeMaps(withRecordings(next), ['sounds', 'voice']));
   const remake = (next: Partial<Synth>) => {
     const o = { ...s, ...next };
     const ls = splitLetters(o.letters) as string[];

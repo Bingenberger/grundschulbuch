@@ -33,3 +33,6 @@ export function withRecordings<T extends { syls: [string, string][]; sound?: boo
   if (Object.keys(voice).length) out.voice = voice;
   return out;
 }
+
+/** All shipped sound recordings, by key of the Anlaut-Tastatur (a, a2, sch …). */
+export const shippedSounds = (): Record<string, string> => ({ ...sounds });
