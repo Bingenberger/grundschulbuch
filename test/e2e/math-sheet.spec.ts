@@ -130,3 +130,42 @@ test('Noten lernen: Schlüssel, Tonraum und Übungen wie in der Vorlage', async 
   await expect(page.locator('.interaction-surface').getByRole('textbox', { name: 'Antwort' }).first()).toBeVisible();
   await page.screenshot({ path: test.info().outputPath('noten-seite.png') });
 });
+
+test('Buchstaben üben und Ziffern üben: Schrift, Schwungübungen, Anlautbild wie in der Vorlage', async ({ page }) => {
+  test.setTimeout(120000);
+  await login(page);
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Schreiben', pages: [newPage('blanko', 'landscape')] } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  await page.evaluate(() => { localStorage.removeItem('grundschulbuch-buchstaben'); localStorage.removeItem('grundschulbuch-ziffern'); });
+  const open = async (name: string) => {
+    await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Neue Seite', exact: true }).click();
+    const templates = page.getByRole('dialog', { name: 'Neue Seite' });
+    await templates.getByRole('navigation', { name: 'Kategorien' }).getByRole('button', { name: /^Einstellbar · / }).click();
+    await templates.getByRole('button', { name: `Vorlage ${name}` }).click();
+    return page.getByRole('dialog', { name });
+  };
+  const letters = await open('Buchstaben üben');
+  await expect(letters.getByRole('radio', { name: /Grundschrift/ })).toHaveAttribute('aria-checked', 'true');
+  await expect(letters.getByRole('button', { name: 'Aa', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await letters.getByRole('button', { name: 'Mm', exact: true }).click();
+  await letters.getByRole('button', { name: /Wellen/ }).click();
+  await expect(letters.getByText('Seite 1 von 3')).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath('buchstaben-dialog.png') });
+  await letters.getByRole('button', { name: '3 Seiten einfügen' }).click();
+  await expect(letters).toHaveCount(0, { timeout: 30000 });
+  await expect(page.locator('.page-thumbnail')).toHaveCount(3);
+  await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Seite 2 öffnen' }).click();
+  await expect(page.locator('.interaction-surface img[alt="Apfel"]')).toHaveAttribute('src', /^\/api\/medien\//);
+  await page.screenshot({ path: test.info().outputPath('buchstaben-seite.png') });
+
+  const digits = await open('Ziffern üben');
+  await expect(digits.getByText('Seite 1 von 3')).toBeVisible();
+  await digits.getByRole('button', { name: 'Keine' }).click();
+  await digits.getByRole('button', { name: '7', exact: true }).click();
+  await expect(digits.getByText('Seite 1 von 1')).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath('ziffern-dialog.png') });
+  await digits.getByRole('button', { name: '1 Seite einfügen' }).click();
+  await expect(digits).toHaveCount(0, { timeout: 30000 });
+  await expect(page.locator('.page-thumbnail')).toHaveCount(4);
+  await page.screenshot({ path: test.info().outputPath('ziffern-seite.png') });
+});

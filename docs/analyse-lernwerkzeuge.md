@@ -276,6 +276,28 @@ Umbau Stück für Stück geprüft.
   (Rechenschiffchen, Rechenrahmen, Lineal, Taschenrechner) kommen ohne
   Einstellungsschritt direkt auf die Seite.
 
+**Schritt 2d – Einstellbare Vorlagen mit den Dialogen der Vorlage (erledigt):**
+
+- Die sieben einstellbaren Vorlagen öffnen jetzt die Einstellungsdialoge der
+  Vorlage (`components/sheets/*SheetDialog.tsx`, gemeinsame Teile in
+  `SheetParts.tsx`): nummerierte Abschnitte, Vorschau mit „Seite 1 von N“,
+  „Andere Aufgaben“, „N Seiten einfügen“; Einstellungen bleiben im Browser.
+- Die Generatoren der Vorlage sind unverändert übernommen
+  (`lib/sheets/reference-sheets.ts`: Mathe-Aufgaben mit 27 Übungen, Uhrzeiten,
+  Rechnen mit Geld, Labyrinth, Noten lernen, Buchstaben/Ziffern üben) und werden
+  von `lib/sheets/convert.ts` in unsere Seiten umgerechnet (1400 × 990 → mm).
+  Gezeichnete Teile werden beim Einfügen als Bild auf dem Schulserver gespeichert.
+- Neu: Eintippkästchen. Ein gesperrter Text mit Platzhalter ist ein Antwortfeld,
+  in das Kinder und Lehrkräfte direkt tippen (`editor/AnswerField.tsx`); der
+  Server erlaubt Kindern nur die Antwort zu ändern (`lockedDesign`).
+- Bilder: ARASAAC-Münzen/Scheine (`public/kasse/geld-*`), Anlaut- und Mengenbilder
+  (`public/bilder/`), eigene Zeichnungen aus der Stickerbibliothek der Vorlage
+  (`lib/sheets/letter-pictures.json`).
+- Abweichungen: Druckschrift (Gruschudru) ist noch nicht in der App – Andika steht
+  dafür ein (wie der Ersatz der Vorlage). Geld-Kombinationen, mit denen die
+  Vorlage keine Aufgabe bilden kann (z. B. Nur Euro + Nur Münzen bei Wechselgeld),
+  werden mit Hinweis weggelassen statt abzustürzen.
+
 **Schritt 2 – Fach für Fach (offen):** Mathematik (fertig), Deutsch, Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Musik, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).

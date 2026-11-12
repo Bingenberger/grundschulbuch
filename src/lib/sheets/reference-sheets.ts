@@ -1,5 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
+import LETTER_PICTURES from './letter-pictures.json';
 // The worksheet generators of the reference (Lernsachen-Heft) – Mathe-Aufgaben,
 // Uhrzeiten üben … – taken over unchanged so the sheets look and behave the same. It works in the
 // reference's page units (1400 × 990, A4 landscape) and builds plain items:
@@ -1459,6 +1460,271 @@ export const NOTE_DEFAULTS = r5;
 export const NOTE_FORMATS = WOe;
 export const findNoteFormat = GOe;
 export const makeNotePages = KOe;
+
+
+// ---- Buchstaben üben / Ziffern üben ----
+// Fonts of the reference mapped to ours (Druckschrift: Gruschudru is not part of
+// the app yet, so Andika stands in – like the reference's own fallback).
+const Ve = (s) => ({ andika: '"Andika", Verdana, sans-serif', grund: '"Playwrite DE Grund", Andika, sans-serif', schreib: '"Playwrite DE VA", cursive', sas: '"Playwrite DE SAS", cursive', druck: '"Andika", Verdana, sans-serif', nunito: '"Nunito", system-ui, sans-serif' })[s] ?? '"Andika", sans-serif';
+const CI = (viewBox, body) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}">${body}</svg>`, wI = `#1f2937`;
+// The own drawings of the reference's sticker library that the letters use.
+const nL = [{ entries: Object.entries(LETTER_PICTURES).map(([id, e]) => ({ id, kind: 'svg', ...e })) }];
+var SL = new Map(), CL;
+function wL(e10) {
+  let t10 = SL.get(e10);
+  if (t10) return t10;
+  if (typeof document === 'undefined') return { ascent: 0.95, descent: 0.25, xHeight: 0.5 };
+  CL ??= document.createElement(`canvas`).getContext(`2d`);
+  let n10 = { ascent: 0.95, descent: 0.25, xHeight: 0.5 };
+  if (CL) {
+    CL.font = `100px ${Ve(e10)}`;
+    let t11 = CL.measureText(`Hxgjy`), r10 = CL.measureText(`x`), i10 = t11.fontBoundingBoxAscent, a10 = t11.fontBoundingBoxDescent;
+    n10 = { ascent: Number.isFinite(i10) && i10 > 0 ? i10 / 100 : 0.95, descent: Number.isFinite(a10) && a10 > 0 ? a10 / 100 : 0.25, xHeight: r10.actualBoundingBoxAscent > 0 ? r10.actualBoundingBoxAscent / 100 : 0.5 };
+  }
+  return SL.set(e10, n10), n10;
+}
+var y8 = `stroke="${wI}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"`, b8 = `stroke="${wI}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`, x8 = (e10 = 0, t10 = 0, n10 = 1) => `<g transform="translate(${e10} ${t10}) scale(${n10})"><path d="M50 30c-8-7-30-8-32 16-2 20 12 40 24 40 4 0 6-2 8-2s4 2 8 2c12 0 26-20 24-40-2-24-24-23-32-16z" fill="#fa5252" ${y8}/><path d="M50 30c0-8 2-14 6-18" fill="none" ${y8}/><path d="M54 20c6-8 16-8 20-4-4 6-14 8-20 4z" fill="#51cf66" ${b8}/><path d="M30 44c0-6 4-10 8-11" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/></g>`, wDe = { apfel: CI(`0 0 100 100`, x8()), aepfel: CI(`0 0 100 100`, x8(-14, 6, 0.75) + x8(36, 10, 0.72)), computer: CI(`0 0 100 100`, `<rect x="14" y="14" width="72" height="50" rx="5" fill="#495057" ${y8}/><rect x="21" y="21" width="58" height="36" rx="2" fill="#74c0fc"/><path d="M44 64l-3 12h18l-3-12z" fill="#adb5bd" ${b8}/><rect x="16" y="78" width="68" height="10" rx="3" fill="#dee2e6" ${b8}/><path d="M28 30h26M28 38h36M28 46h18" stroke="#fff" stroke-width="4" stroke-linecap="round"/>`), dose: CI(`0 0 100 100`, `<path d="M24 22v58c0 6 52 6 52 0V22" fill="#e9ecef" ${y8}/><ellipse cx="50" cy="22" rx="26" ry="7" fill="#ced4da" ${y8}/><path d="M24 38c0 6 52 6 52 0v28c0 6-52 6-52 0z" fill="#ff922b" ${b8}/><circle cx="50" cy="52" r="8" fill="#fff" ${b8}/>`), igel: CI(`0 0 100 100`, `<path d="M14 70c0-30 18-44 38-44 18 0 30 12 34 26l4 6-6 4c-2 6-8 8-14 8H20c-4 0-6-0-6 0z" fill="#8d5524" ${y8}/><path d="M20 50l-8-6 12-2-6-10 12 2-2-12 10 6 2-12 8 10 6-10 4 12 8-8 0 12 10-4-4 10" fill="#5c3412" ${b8}/><path d="M66 56c8 0 18 4 22 10l2 4-8 2c-4 2-10 0-14-2" fill="#e9c49a" ${b8}/><circle cx="90" cy="68" r="3.5" fill="${wI}"/><circle cx="74" cy="60" r="3" fill="${wI}"/><path d="M28 72v10M48 72v10" ${y8}/>`), jojo: CI(`0 0 100 100`, `<path d="M50 6v38" fill="none" ${b8}/><circle cx="50" cy="8" r="5" fill="#fff" ${b8}/><circle cx="50" cy="66" r="28" fill="#4dabf7" ${y8}/><circle cx="50" cy="66" r="18" fill="#1c7ed6" ${b8}/><circle cx="50" cy="66" r="5" fill="#fff" ${b8}/>`), loeffel: CI(`0 0 100 100`, `<path d="M30 70L78 16c3-3 8 2 5 5L35 75z" fill="#ced4da" ${y8}/><ellipse cx="24" cy="78" rx="16" ry="11" transform="rotate(-45 24 78)" fill="#dee2e6" ${y8}/><path d="M18 78c2-4 6-8 10-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`), orange: CI(`0 0 100 100`, `<circle cx="50" cy="56" r="34" fill="#ff922b" ${y8}/><path d="M50 22c-2-6-1-10 2-14" fill="none" ${b8}/><path d="M52 18c8-8 20-6 22 0-8 6-16 6-22 0z" fill="#51cf66" ${b8}/>` + [[38, 44], [58, 40], [66, 60], [44, 66], [54, 54], [32, 58]].map(([e10, t10]) => `<circle cx="${e10}" cy="${t10}" r="1.8" fill="#e8590c"/>`).join(``)), qualle: CI(`0 0 100 100`, `<path d="M16 48c0-22 16-34 34-34s34 12 34 34c-6 4-10 0-14 4-4-4-10 0-14-2-4 2-8-2-12 0-4-2-10 2-14-2-4 2-8-2-14 0z" fill="#da77f2" ${y8}/><path d="M28 52c-4 10 4 16 0 26s4 12 2 16M42 54c-2 10 4 14 0 24M58 54c2 10-4 14 0 24M72 52c4 10-4 16 0 26s-4 12-2 16" fill="none" stroke="#be4bdb" stroke-width="4" stroke-linecap="round"/><circle cx="40" cy="34" r="3.5" fill="${wI}"/><circle cx="60" cy="34" r="3.5" fill="${wI}"/><path d="M44 42q6 5 12 0" fill="none" ${b8}/>`), xylofon: CI(`0 0 100 100`, `<path d="M10 40L90 30M10 74L90 70" ${y8}/>` + [`#fa5252`, `#ff922b`, `#fcc419`, `#51cf66`, `#339af0`, `#845ef7`].map((e10, t10) => `<rect x="${14 + t10 * 12.5}" y="${30 + t10 * 1.2}" width="10" height="${50 - t10 * 5}" rx="2" fill="${e10}" ${b8}/>`).join(``) + `<path d="M52 14l20 8M62 6l14 14" stroke="#8d5524" stroke-width="4" stroke-linecap="round"/><circle cx="74" cy="23" r="5" fill="#ced4da" ${b8}/><circle cx="78" cy="22" r="5" fill="#ced4da" ${b8}/>`), yacht: CI(`0 0 100 100`, `<path d="M50 10v62" ${y8}/><path d="M52 14l30 48H52z" fill="#fff" ${y8}/><path d="M48 22L22 60h26z" fill="#ffd43b" ${y8}/><path d="M12 72h76l-10 14H24z" fill="#1c7ed6" ${y8}/><path d="M6 92q8-5 16 0t16 0 16 0 16 0 16 0" fill="none" stroke="#339af0" stroke-width="3" stroke-linecap="round"/>`), oel: CI(`0 0 100 100`, `<path d="M42 8h16v14l8 10v54c0 4-4 6-8 6H42c-4 0-8-2-8-6V32l8-10z" fill="#ffe066" ${y8}/><rect x="40" y="4" width="20" height="8" rx="2" fill="#2f9e44" ${b8}/><rect x="34" y="46" width="32" height="26" fill="#fff" ${b8}/><path d="M50 52c-5 7-7 10-7 13a7 7 0 0 0 14 0c0-3-2-6-7-13z" fill="#fab005" ${b8}/>`), auto: CI(`0 0 100 100`, `<path d="M8 64v-12l10-4 10-14h36l14 14 12 4v12z" fill="#fa5252" ${y8}/><path d="M32 38h12v12H24zM50 38h12l10 12H50z" fill="#d0ebff" ${b8}/><circle cx="28" cy="66" r="10" fill="#495057" ${y8}/><circle cx="74" cy="66" r="10" fill="#495057" ${y8}/><circle cx="28" cy="66" r="3" fill="#dee2e6"/><circle cx="74" cy="66" r="3" fill="#dee2e6"/>`), eule: CI(`0 0 100 100`, `<path d="M24 30l4-18 12 12h20l12-12 4 18c6 10 6 50-26 60-32-10-32-50-26-60z" fill="#a9744f" ${y8}/><ellipse cx="50" cy="66" rx="16" ry="18" fill="#e9c49a" ${b8}/><circle cx="38" cy="40" r="11" fill="#fff" ${b8}/><circle cx="62" cy="40" r="11" fill="#fff" ${b8}/><circle cx="38" cy="40" r="5" fill="${wI}"/><circle cx="62" cy="40" r="5" fill="${wI}"/><path d="M46 50l4 7 4-7z" fill="#fab005" ${b8}/>`) }, S8 = { A: { word: `Apfel`, pic: `draw:apfel`, arasaac: 2462 }, B: { word: `Banane`, pic: `in-banana`, arasaac: 2530 }, C: { word: `Computer`, pic: `draw:computer`, arasaac: 7190 }, D: { word: `Dose`, pic: `draw:dose`, arasaac: 6544 }, E: { word: `Erdbeere`, pic: `in-strawberry`, arasaac: 2400 }, F: { word: `Fisch`, pic: `an-fish`, arasaac: 2520 }, G: { word: `Gurke`, pic: `in-cucumber`, arasaac: 2847 }, H: { word: `Hund`, pic: `an-dog`, arasaac: 7202 }, I: { word: `Igel`, pic: `draw:igel`, arasaac: 26829 }, J: { word: `Jojo`, pic: `draw:jojo`, arasaac: 8734 }, K: { word: `K\xE4se`, pic: `in-cheese`, arasaac: 2541 }, L: { word: `L\xF6ffel`, pic: `draw:loeffel`, arasaac: 2362 }, M: { word: `Maus`, pic: `an-mouse`, arasaac: 2546 }, N: { word: `Nudeln`, pic: `in-pasta`, arasaac: 8652 }, O: { word: `Orange`, pic: `draw:orange`, arasaac: 2483 }, P: { word: `Paprika`, pic: `in-pepper`, arasaac: 2839 }, Q: { word: `Qualle`, pic: `draw:qualle`, arasaac: 2920 }, R: { word: `Regenschirm`, pic: `we-umbrella`, arasaac: 2500 }, S: { word: `Sonne`, pic: `we-sun`, arasaac: 7252 }, T: { word: `Tomate`, pic: `in-tomato`, arasaac: 2594 }, U: { word: `Uhr`, pic: `ti-clock`, arasaac: 7229 }, V: { word: `Vogel`, pic: `an-bird`, arasaac: 2490 }, W: { word: `Wecker`, pic: `ti-alarm`, arasaac: 5560 }, X: { word: `Xylofon`, pic: `draw:xylofon`, arasaac: 38096 }, Y: { word: `Yacht`, pic: `draw:yacht`, arasaac: 3172 }, Z: { word: `Zitrone`, pic: `in-lemon`, arasaac: 3022 }, \u00C4: { word: `\xC4pfel`, pic: `draw:aepfel`, arasaac: 2462 }, \u00D6: { word: `\xD6l`, pic: `draw:oel`, arasaac: 2246 }, \u00DC: { word: `\xDCberraschung`, arasaac: 8517 }, \u00DF: { word: `Fu\xDF`, arasaac: 2841 }, Au: { word: `Auto`, pic: `draw:auto`, arasaac: 2339 }, Ei: { word: `Ei`, pic: `in-egg`, arasaac: 2427 }, Eu: { word: `Eule`, pic: `draw:eule`, arasaac: 2671 }, Sch: { word: `Schmetterling`, pic: `an-butterfly`, arasaac: 26200 }, Ch: { word: `Cham\xE4leon`, arasaac: 3003 }, Pf: { word: `Pfanne`, pic: `ki-pan`, arasaac: 2558 }, Qu: { word: `Qualle`, pic: `draw:qualle`, arasaac: 2920 }, Sp: { word: `Spiegel`, pic: `li-mirror`, arasaac: 8573 }, St: { word: `Stuhl`, pic: `li-chair`, arasaac: 3155 }, 0: { word: `null`, pic: `dots:0`, arasaac: 16857 }, 1: { word: `eins`, pic: `dots:1`, arasaac: 7252 }, 2: { word: `zwei`, pic: `dots:2`, arasaac: 2876 }, 3: { word: `drei`, pic: `dots:3`, arasaac: 2567 }, 4: { word: `vier`, pic: `dots:4`, arasaac: 2294 }, 5: { word: `f\xFCnf`, pic: `dots:5`, arasaac: 6979 }, 6: { word: `sechs`, pic: `dots:6`, arasaac: 4894 }, 7: { word: `sieben`, pic: `dots:7`, arasaac: 5450, times: 7, picName: `die sieben Zwerge` }, 8: { word: `acht`, pic: `dots:8`, arasaac: 3379 }, 9: { word: `neun`, pic: `dots:9`, arasaac: 4897 } }, C8 = null;
+function TDe(e10) {
+  let t10 = (e11, t11) => `<circle cx="${e11}" cy="${t11}" r="9" fill="#2160c4"/>`;
+  if (e10 <= 6) return CI(`0 0 100 100`, `<rect x="8" y="8" width="84" height="84" rx="16" fill="#fff" ${y8}/>` + { 0: [], 1: [[50, 50]], 2: [[30, 30], [70, 70]], 3: [[28, 28], [50, 50], [72, 72]], 4: [[30, 30], [70, 30], [30, 70], [70, 70]], 5: [[28, 28], [72, 28], [50, 50], [28, 72], [72, 72]], 6: [[30, 26], [70, 26], [30, 50], [70, 50], [30, 74], [70, 74]] }[e10].map(([e11, n11]) => t10(e11, n11)).join(``));
+  let n10 = ``;
+  for (let t11 = 0; t11 < 10; t11++) {
+    let r10 = 12 + t11 % 5 * 16, i10 = 34 + Math.floor(t11 / 5) * 16;
+    n10 += `<rect x="${r10}" y="${i10}" width="16" height="16" fill="#fff" stroke="${wI}" stroke-width="1.5"/>` + (t11 < e10 ? `<circle cx="${r10 + 8}" cy="${i10 + 8}" r="5.5" fill="#2160c4"/>` : ``);
+  }
+  return CI(`0 0 100 100`, n10);
+}
+function EDe(e10) {
+  if (!e10) return null;
+  if (e10.startsWith(`dots:`)) return TDe(Number(e10.slice(5)) || 0);
+  if (e10.startsWith(`draw:`)) return wDe[e10.slice(5)] ?? null;
+  C8 ??= new Map(nL.flatMap((e11) => e11.entries).filter((e11) => e11.kind === `svg`).map((e11) => [e11.id, e11]));
+  let t10 = C8.get(e10);
+  return t10 ? t10.svg.replace(/\$C/g, t10.color ?? `#2160c4`) : null;
+}
+async function DDe(e10, t10) {
+  let n10 = await c6(e10, t10), r10 = /* @__PURE__ */ new Map();
+  for (let t11 of e10) {
+    let e11 = n10.get(o6(t11));
+    e11 && r10.set(t11.id, e11);
+  }
+  return r10;
+}
+var w8 = [`grund`, `druck`, `schreib`, `sas`], T8 = [{ id: `strokes`, label: `Striche` }, { id: `diagonals`, label: `Diagonalen` }, { id: `zigzag`, label: `Zickzack` }, { id: `triangles`, label: `Dreiecke` }, { id: `castle`, label: `Zinnen` }, { id: `waves`, label: `Wellen` }, { id: `garlands`, label: `Girlanden` }, { id: `arcades`, label: `Arkaden` }, { id: `circles`, label: `Kreise` }, { id: `ovals`, label: `Ovale` }, { id: `eights`, label: `Achten` }, { id: `loops`, label: `Schleifen` }, { id: `spirals`, label: `Schnecken` }], E8 = `ABCDEFGHIJKLMNOPQRSTUVWXYZ`.split(``), D8 = [`\xC4`, `\xD6`, `\xDC`, `\xDF`], O8 = [`Au`, `Ei`, `Eu`, `Sch`, `Ch`, `Pf`, `Qu`, `Sp`, `St`], ODe = [`A`, `E`, `I`, `O`, `U`], k8 = [`0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`], kDe = [...E8, ...D8, ...O8, ...k8], A8 = (e10) => /^\d$/.test(e10), j8 = { script: `grund`, swings: [], letters: [`A`], case: `both`, picture: true, word: true, pics: `arasaac` }, M8 = { ...j8, letters: [`1`, `2`, `3`] }, N8 = 70, P8 = 1400 - 70, F8 = `#1f2937`, ADe = `#334155`, jDe = `#b4bfcc`, MDe = `#c3ccd7`, I8 = `#7da2d6`, NDe = `#4c7cc9`, L8 = (e10) => Math.round(e10 * 10) / 10, R8 = { grund: { asc: 0.918, xh: 0.502, desc: 0.42 }, druck: { asc: 0.725, xh: 0.498, desc: 0.239 }, schreib: { asc: 0.98, xh: 0.5, desc: 0.475 }, sas: { asc: 0.891, xh: 0.503, desc: 0.391 } }, PDe = /* @__PURE__ */ new Map(), z8 = null, B8 = (e10) => /^"[^"]+"/.exec(Ve(e10))?.[0] ?? Ve(e10);
+function FDe(e10) {
+  let t10 = PDe.get(e10);
+  if (t10) return t10;
+  try {
+    if (typeof document > `u` || !document.fonts?.check(`100px ${B8(e10)}`) || (z8 ??= document.createElement(`canvas`).getContext(`2d`), !z8)) return R8[e10];
+    z8.font = `100px ${B8(e10)}`;
+    let t11 = (e11, t12) => {
+      let n11 = [...e11].map((e12) => t12(z8.measureText(e12))).sort((e12, t13) => e12 - t13);
+      return n11[Math.floor(n11.length / 2)] / 100;
+    }, n10 = e10 === `druck`, r10 = t11(n10 ? `xzmn` : `xuamn`, (e11) => e11.actualBoundingBoxDescent), i10 = { xh: t11(n10 ? `xvwz` : `xvwuamnoec`, (e11) => e11.actualBoundingBoxAscent) - r10, asc: t11(`bdhkl`, (e11) => e11.actualBoundingBoxAscent) - r10, desc: t11(`gpqy`, (e11) => e11.actualBoundingBoxDescent) - r10 };
+    return i10.xh > 0.3 && i10.asc > i10.xh + 0.2 && i10.desc > 0.2 ? (PDe.set(e10, i10), i10) : R8[e10];
+  } catch {
+    return R8[e10];
+  }
+}
+async function IDe() {
+  try {
+    await Promise.all(w8.map((e10) => document.fonts.load(`100px ${B8(e10)}`, `Aa\xC4\xE4\xDFbgx`)));
+  } catch {
+  }
+}
+function V8(e10, t10) {
+  let n10 = FDe(e10), r10 = t10 / (n10.asc + n10.desc);
+  return { U: (n10.asc - n10.xh) * r10, M: n10.xh * r10, D: n10.desc * r10, size: r10 };
+}
+function H8(e10, t10, n10) {
+  try {
+    if (z8 ??= document.createElement(`canvas`).getContext(`2d`), z8) return z8.font = `${n10}px ${Ve(e10)}`, z8.measureText(t10).width;
+  } catch {
+  }
+  return t10.length * n10 * 0.6;
+}
+function U8(e10, t10, n10, r10, i10, a10, o10 = mT(t10)) {
+  let s10 = wL(e10), c10 = 1.3 * i10, l10 = 4 + (c10 - (s10.ascent + s10.descent) * i10) / 2 + s10.ascent * i10;
+  return j({ x: L8(n10 - 6), y: L8(r10 - l10), w: L8(H8(e10, t10, i10) + 12 + i10 * 0.2), h: Math.round(c10 + 8), size: L8(i10), font: e10, color: a10, align: `left`, html: o10, locked: true });
+}
+function LDe(e10, t10, n10, r10 = ``) {
+  let i10 = n10, a10 = n10 + t10.U, o10 = a10 + t10.M, s10 = o10 + t10.D, c10 = s10 + n10, l10 = (t11, n11, r11) => `<line x1="0" y1="${L8(t11)}" x2="${L8(e10)}" y2="${L8(t11)}" stroke="${n11}" stroke-width="${r11}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${L8(e10)} ${L8(c10)}" width="${L8(e10)}" height="${L8(c10)}"><rect x="0" y="${L8(a10)}" width="${L8(e10)}" height="${L8(t10.M)}" fill="#5b8fd6" fill-opacity="0.1"/>` + l10(i10, I8, 1.6) + l10(a10, I8, 1.6) + l10(o10, NDe, 2.6) + l10(s10, I8, 1.6) + r10 + `</svg>`;
+}
+function W8(e10, t10, n10, r10, i10 = ``, a10 = `Lineatur`) {
+  return Ck({ x: L8(e10), y: L8(t10 - 4), w: L8(n10), h: L8(r10.U + r10.M + r10.D + 8), svg: LDe(n10, r10, 4, i10), name: a10, locked: true });
+}
+function RDe(e10, t10) {
+  let n10 = e10.toLowerCase();
+  return e10 === `\xDF` || A8(e10) || t10 === `upper` ? [e10] : t10 === `lower` ? [n10] : [e10, n10];
+}
+function zDe(e10) {
+  return j({ x: 64, y: 22, w: 900, h: 46, size: 30, font: `andika`, color: `#64748b`, html: mT(e10), locked: true });
+}
+function BDe(e10, t10, n10, r10, i10, a10, o10, s10) {
+  let c10 = o10 * 0.55, l10 = r10;
+  for (let r11 = 0; ; r11++) {
+    let u10 = n10[r11 % n10.length], d10 = H8(t10, u10, o10);
+    if (l10 + d10 > i10) break;
+    e10.push(U8(t10, u10, l10, a10, o10, s10)), l10 += d10 + c10;
+  }
+}
+function G8(e10, t10, n10) {
+  let r10 = t10.script, i10 = A8(e10), a10 = RDe(e10, t10.case), o10 = S8[e10], s10 = [];
+  s10.push(zDe(`${i10 ? `Ziffer` : `Buchstabe`} ${a10.join(` `)}`));
+  let c10 = t10.picture && !!o10, l10 = V8(r10, 250), u10 = c10 ? 960 : P8;
+  s10.push(W8(N8, 86, u10 - N8, l10));
+  let d10 = 86 + l10.U + l10.M, f10 = 100;
+  for (let e11 of a10) s10.push(U8(r10, e11, f10, d10, l10.size, MDe)), f10 += H8(r10, e11, l10.size) + l10.size * 0.35;
+  if (c10) {
+    let a11 = i10 ? { x: 1030, y: 58, w: 210, h: 142 } : { x: 1010, y: 70, w: 250, h: 220 }, c11 = t10.pics === `arasaac` && o10.arasaac ? n10?.get(o10.arasaac) : void 0, l11 = EDe(o10.pic);
+    c11 ? s10.push(xk({ ...a11, asset: c11.id, fit: `contain`, alt: o10.picName ?? o10.word })) : l11 ? s10.push(Ck({ ...a11, svg: l11, name: o10.word, alt: o10.word })) : s10.push(xk({ ...a11, placeholder: `Bild: ${o10.word}`, alt: o10.word })), i10 && s10.push(Ck({ x: 1023, y: 204, w: 224, h: 84, svg: VDe(Number(e10)), name: `Zehnerfeld ${e10}`, alt: `${e10} Punkte`, locked: true }));
+    let u11 = o10.word.toLowerCase().indexOf(e10.toLowerCase());
+    u11 < 0 && (u11 = 0);
+    let d11 = o10.word, f11 = i10 ? mT(d11) : `${mT(d11.slice(0, u11))}<span style="color:#d6336c">${mT(d11.slice(u11, u11 + e10.length))}</span>${mT(d11.slice(u11 + e10.length))}`;
+    s10.push(j({ x: 990, y: 292, w: 290, h: 56, size: 38, font: r10, align: `center`, color: F8, html: f11, locked: true }));
+  }
+  let p10 = V8(r10, 140);
+  s10.push(W8(N8, 380, P8 - N8, p10)), BDe(s10, r10, a10, 94, P8 - 10, 380 + p10.U + p10.M, p10.size, jDe);
+  let m10 = a10.map((e11) => ({ text: e11 }));
+  a10.length === 1 && m10.push({ text: a10[0] }), t10.word && o10 && m10.push({ text: o10.word });
+  let h10 = Math.min(3, m10.length), g10 = V8(r10, 92), _10 = 556;
+  for (let e11 of m10.slice(0, h10)) s10.push(W8(N8, _10, P8 - N8, g10)), s10.push(U8(r10, e11.text, 94, _10 + g10.U + g10.M, g10.size, F8)), _10 += 148;
+  return { ...ZO(`blank`, `#ffffff`), items: s10 };
+}
+function VDe(e10) {
+  let t10 = ``;
+  for (let n10 = 0; n10 < 10; n10++) {
+    let r10 = 4 + n10 % 5 * 24 + (n10 % 5 >= 5 ? 4 : 0), i10 = 4 + Math.floor(n10 / 5) * 24;
+    t10 += `<rect x="${r10}" y="${i10}" width="24" height="24" fill="#fff" stroke="#7da2d6" stroke-width="2"/>`, n10 < e10 && (t10 += `<circle cx="${r10 + 12}" cy="${i10 + 12}" r="7.92" fill="#2160c4"/>`);
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 56">${t10}</svg>`;
+}
+function HDe(e10, t10, n10, r10, i10) {
+  let a10 = i10 - r10, o10 = (r10 + i10) / 2, s10 = [], c10 = (e11) => L8(e11), l10 = (e11, t11) => Array.from({ length: t11 + 1 }, (n11, r11) => e11(r11 / t11)).map(([e12, t12], n11) => `${n11 ? `L` : `M`}${c10(e12)} ${c10(t12)}`).join(``), u10 = t10, d10 = (e11, t11) => u10 + e11 > n10 ? false : (s10.push({ d: t11, x: u10 }), u10 += e11, true);
+  for (let t11 = 0; t11 < 200; t11++) {
+    let t12 = true;
+    switch (e10) {
+      case `strokes`:
+        t12 = d10(a10 * 0.45, `M${c10(u10 + a10 * 0.1)} ${c10(r10)}V${c10(i10)}`);
+        break;
+      case `diagonals`:
+        t12 = d10(a10 * 0.45, `M${c10(u10)} ${c10(i10)}L${c10(u10 + a10 * 0.4)} ${c10(r10)}`);
+        break;
+      case `zigzag`:
+        t12 = d10(a10 * 0.6, `M${c10(u10)} ${c10(i10)}L${c10(u10 + a10 * 0.3)} ${c10(r10)}L${c10(u10 + a10 * 0.6)} ${c10(i10)}`);
+        break;
+      case `triangles`:
+        t12 = d10(a10 * 0.95, `M${c10(u10)} ${c10(i10)}L${c10(u10 + a10 * 0.35)} ${c10(r10)}L${c10(u10 + a10 * 0.7)} ${c10(i10)}Z`);
+        break;
+      case `castle`: {
+        let e11 = a10 * 0.4;
+        t12 = d10(2 * e11, `M${c10(u10)} ${c10(i10)}V${c10(r10)}H${c10(u10 + e11)}V${c10(i10)}H${c10(u10 + 2 * e11)}`);
+        break;
+      }
+      case `waves`: {
+        let e11 = a10 * 1.1, n11 = u10;
+        t12 = d10(e11, l10((t13) => [n11 + t13 * e11, o10 - a10 / 2 * Math.sin(t13 * 2 * Math.PI)], 40));
+        break;
+      }
+      case `garlands`: {
+        let e11 = a10 * 0.7;
+        t12 = d10(e11, `M${c10(u10)} ${c10(r10)}A${c10(e11 / 2)} ${c10(a10)} 0 0 0 ${c10(u10 + e11)} ${c10(r10)}`);
+        break;
+      }
+      case `arcades`: {
+        let e11 = a10 * 0.7;
+        t12 = d10(e11, `M${c10(u10)} ${c10(i10)}A${c10(e11 / 2)} ${c10(a10)} 0 0 1 ${c10(u10 + e11)} ${c10(i10)}`);
+        break;
+      }
+      case `circles`: {
+        let e11 = a10 / 2;
+        t12 = d10(a10 * 1.3, `M${c10(u10)} ${c10(o10)}a${c10(e11)} ${c10(e11)} 0 1 0 ${c10(2 * e11)} 0a${c10(e11)} ${c10(e11)} 0 1 0 ${c10(-2 * e11)} 0`);
+        break;
+      }
+      case `ovals`: {
+        let e11 = a10 * 0.28, n11 = a10 / 2;
+        t12 = d10(a10 * 0.8, `M${c10(u10)} ${c10(o10)}a${c10(e11)} ${c10(n11)} 0 1 0 ${c10(2 * e11)} 0a${c10(e11)} ${c10(n11)} 0 1 0 ${c10(-2 * e11)} 0`);
+        break;
+      }
+      case `eights`: {
+        let e11 = a10 * 0.85, n11 = u10 + e11;
+        t12 = d10(a10 * 2, l10((t13) => {
+          let r11 = t13 * 2 * Math.PI, i11 = 1 + Math.sin(r11) ** 2;
+          return [n11 + e11 * Math.cos(r11) / i11, o10 + e11 * 1.15 * Math.sin(r11) * Math.cos(r11) / i11];
+        }, 72));
+        break;
+      }
+      case `loops`: {
+        let e11 = a10 / 2, n11 = e11 / 2.4, i11 = 2 * Math.PI * n11, o11 = u10;
+        t12 = d10(i11, l10((t13) => {
+          let i12 = Math.PI + t13 * 2 * Math.PI;
+          return [o11 + n11 * (i12 - Math.PI) - e11 * Math.sin(i12), r10 + e11 * (1 - Math.cos(i12))];
+        }, 48));
+        break;
+      }
+      case `spirals`: {
+        let e11 = a10 / 2, n11 = u10 + e11;
+        t12 = d10(a10 * 1.25, l10((t13) => {
+          let r11 = t13 * 2.5 * 2 * Math.PI, i11 = e11 * (1 - t13 * 0.92);
+          return [n11 + i11 * Math.cos(r11 + Math.PI), o10 + i11 * Math.sin(r11 + Math.PI)];
+        }, 90));
+        break;
+      }
+    }
+    if (!t12) break;
+  }
+  return s10;
+}
+function UDe(e10, t10, n10) {
+  let r10 = V8(t10, 140), i10 = P8 - N8, a10 = 4 + r10.U + r10.M, o10 = HDe(e10, 24, i10 - 10, 4, a10), s10 = i10 * 0.68, c10 = ``;
+  o10.forEach((e11, t11) => {
+    t11 === 0 ? c10 += `<path d="${e11.d}" fill="none" stroke="${ADe}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>` : e11.x < s10 && (c10 += `<path d="${e11.d}" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0.1 9"/>`);
+  });
+  let l10 = /^M([\d.-]+) ([\d.-]+)/.exec(o10[0]?.d ?? ``);
+  return l10 && (c10 += `<circle cx="${l10[1]}" cy="${l10[2]}" r="6" fill="#2f9e44"/>`), W8(N8, n10, i10, r10, c10, `Schwung\xFCbung: ${T8.find((t11) => t11.id === e10)?.label ?? e10}`);
+}
+function WDe(e10, t10) {
+  let n10 = [zDe(`Schwung\xFCbungen`)];
+  return e10.forEach((e11, r10) => n10.push(UDe(e11, t10, 96 + r10 * 176))), { ...ZO(`blank`, `#ffffff`), items: n10 };
+}
+function GDe(e10) {
+  return e10.pics !== `arasaac` || !e10.picture ? [] : e10.letters.map((e11) => S8[e11]).filter((e11) => !!e11?.arasaac).map((e11) => ({ id: e11.arasaac, word: e11.picName ?? e11.word, ...e11.times ? { times: e11.times } : {} }));
+}
+function KDe(e10, t10) {
+  let n10 = [];
+  if (e10.swings.length) {
+    let t11 = T8.map((e11) => e11.id).filter((t12) => e10.swings.includes(t12)), r10 = Math.ceil(t11.length / 5);
+    for (let i10 = 0; i10 < r10; i10++) n10.push(WDe(Array.from({ length: 5 }, (e11, n11) => t11[(i10 * 5 + n11) % t11.length]), e10.script));
+  }
+  for (let r10 of kDe) e10.letters.includes(r10) && n10.push(G8(r10, e10, t10));
+  return n10;
+}
+function qDe() {
+  return { ...G8(`A`, { ...j8, pics: `own` }), template: `abc` };
+}
+function JDe() {
+  return { ...G8(`5`, { ...M8, pics: `own` }), template: `digits` };
+}
+var YDe = { letters: `lernheft-letters-v1`, digits: `lernheft-digits-v1` }, XDe = [...E8, ...D8, ...O8, ...k8], ZDe = (e10) => (t10) => {
+  let n10 = e10 === `digits` ? M8 : j8, r10 = e10 === `digits` ? k8 : XDe.filter((e11) => !k8.includes(e11));
+  return { script: w8.includes(t10.script) ? t10.script : `grund`, swings: e10 === `letters` && Array.isArray(t10.swings) ? t10.swings.filter((e11) => T8.some((t11) => t11.id === e11)) : [], letters: Array.isArray(t10.letters) ? t10.letters.filter((e11) => r10.includes(e11)) : n10.letters, case: t10.case === `upper` || t10.case === `lower` ? t10.case : `both`, picture: t10.picture !== false, word: t10.word !== false, pics: t10.pics === `own` ? `own` : `arasaac` };
+}, QDe = { strokes: `M4 4v20M12 4v20M20 4v20`, diagonals: `M2 24L10 4M10 24L18 4M18 24L26 4`, zigzag: `M2 24L8 4l6 20 6-20 6 20`, triangles: `M2 24l6-20 6 20zM16 24l6-20 6 20z`, castle: `M2 24V6h6v18h6V6h6v18h6`, waves: `M2 14q6-14 12 0t12 0`, garlands: `M2 6q4 20 8 0t8 0 8 0`, arcades: `M2 24q4-20 8 0t8 0 8 0`, circles: `M2 14a6 6 0 1 0 12 0a6 6 0 1 0-12 0M16 14a6 6 0 1 0 12 0a6 6 0 1 0-12 0`, ovals: `M4 14a4 9 0 1 0 8 0a4 9 0 1 0-8 0M16 14a4 9 0 1 0 8 0a4 9 0 1 0-8 0`, eights: `M14 14c-4-8-11-8-11 0s7 8 11 0 11-8 11 0-7 8-11 0z`, loops: `M2 24c6 0 8-6 8-12s-4-6-4 0 4 12 10 12 6-6 6-12-4-6-4 0 4 12 8 12`, spirals: `M14 14a2 2 0 1 1 3 2 5 5 0 1 1-8-5 8 8 0 1 1 13 9` };
+
+export const LETTER_DEFAULTS = j8;
+export const DIGIT_DEFAULTS = M8;
+export const SWINGS = T8;
+export const SWING_PATHS = QDe;
+export const LETTERS_AZ = E8;
+export const LETTERS_UMLAUT = D8;
+export const LETTERS_SOUNDS = O8;
+export const LETTERS_VOWELS = ODe;
+export const DIGITS = k8;
+export const SCRIPTS = w8;
+export const LETTER_WORDS = S8;
+export const letterPictureList = GDe;
+export const makeLetterPages = KDe;
+export const loadScriptFonts = IDe;
 
 export const MATH_RANGES = MB;
 export const MATH_DEFAULTS = NB;

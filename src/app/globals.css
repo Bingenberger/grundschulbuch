@@ -4712,3 +4712,11 @@ input[type='checkbox'] {
 .sheet-level small { font-weight: 400; opacity: .85; }
 .sheet-note { color: #5b6b57; margin: 8px 0 0; font-size: 14px; }
 .sheet-shape { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; min-width: 100px; }
+.sheet-swings { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.sheet-swing { display: flex; align-items: center; gap: 8px; text-align: left; }
+.sheet-letters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.sheet-letter { min-width: 52px; font-size: 24px; font-weight: 400; padding: 4px 10px; }
+.sheet-quick { display: flex; gap: 12px; margin-bottom: 8px; }
+.sheet-link { border: 0; background: none; font: inherit; font-weight: 600; color: #1c63c7; cursor: pointer; padding: 4px; }
+.sheet-indent { margin-left: 52px; display: flex; flex-direction: column; gap: 6px; }
+.sheet-scripts .sheet-level { min-width: 180px; }
