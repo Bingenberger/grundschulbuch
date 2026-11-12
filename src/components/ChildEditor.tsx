@@ -4,6 +4,7 @@ import Icon from './Icon';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useEditor, flushEditor } from '@/lib/editor-store';
 import { speakGerman } from '@/lib/speech';
+import ReaderMode from './ReaderMode';
 import { childApi } from '@/lib/child-api';
 import {
   uuid,
@@ -81,6 +82,7 @@ export default function ChildEditor({
   const surface = useRef<HTMLDivElement>(null);
   const scroller = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1);
+  const [reader, setReader] = useState(false);
   const gesture = useRef<{
     el: PageElement;
     points: Point[];
@@ -143,7 +145,7 @@ export default function ChildEditor({
     setErasePreview(null);
   }
   const fitPage = () => setZoom((z) => fitZoom(scroller.current, z));
-  usePinchZoom(scroller, zoom, setZoom, { enabled: ready, onStart: cancelGesture, onFit: fitPage });
+  usePinchZoom(scroller, zoom, setZoom, { enabled: ready && !reader, onStart: cancelGesture, onFit: fitPage });
   if (!page || s.book?.id !== initial.book.id)
     return <p>Dein Heft wird geöffnet …</p>;
   const size = dimensions(page);
@@ -473,6 +475,13 @@ export default function ChildEditor({
         onRedo={() => undefined}
         readAloud={readAloud}
         onReadAloud={setReadAloud}
+        onReader={() => {
+          cancelGesture();
+          writing.done();
+          useEditor.setState({ tool: 'select', selected: [] });
+          setReader(true);
+          speak('Lesemodus');
+        }}
         onDone={() => void leave('/kinder', true)}
         actions={
           <ElementActions
@@ -667,6 +676,24 @@ export default function ChildEditor({
             s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === id ? { ...el, src, alt: title } : el)) }));
             setEditAudio(null);
           }}
+        />
+      )}
+      {reader && (
+        <ReaderMode
+          title={s.book.title}
+          pages={s.book.pageIds.map((id) => s.pages.find((p) => p.id === id)).filter((p): p is Page => !!p)}
+          pageId={page.id}
+          onPage={choosePage}
+          uploadAudio={(id, file) => uploadAudio(file, s.book!.id, id)}
+          onResponse={(id, response) =>
+            s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === id ? { ...el, response } : el)) }))
+          }
+          onRecord={(id) => {
+            setRecordTarget(id);
+            setShowAudio(true);
+          }}
+          onSpeak={features.has('readAloud') ? readPage : undefined}
+          onClose={() => setReader(false)}
         />
       )}
       {showAudio && (

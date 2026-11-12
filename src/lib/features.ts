@@ -53,6 +53,7 @@ export const featureLabels = {
   redo: 'Wiederholen',
   files: 'Dateien',
   board: 'Tafelmodus',
+  reader: 'Lesemodus',
   share: 'Weitergeben',
   print: 'Drucken',
   help: 'Hilfe',

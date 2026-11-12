@@ -10,6 +10,7 @@ export const CHILD_FEATURES = [
   'imageEdit',
   'pages',
   'readAloud',
+  'reader',
   'brushFountain',
   'brushWater',
   'fill',

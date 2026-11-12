@@ -62,6 +62,7 @@ import {
   type Shortcuts,
 } from '@/lib/editor-commands';
 import { speakGerman } from '@/lib/speech';
+import ReaderMode from './ReaderMode';
 import FileDialog from './FileDialog';
 import ImageDialog from './ImageDialog';
 import ImageEditor, { editFromElement } from './ImageEditor';
@@ -140,6 +141,7 @@ export default function Editor({
   const [lightSize, setLightSize] = useState(0.2);
   const [showFiles, setShowFiles] = useState(false);
   const [board, setBoard] = useState(false);
+  const [reader, setReader] = useState(false);
   const [busy, setBusy] = useState(false);
   const [deleted, setDeleted] = useState<{ pages: Page[]; before: string[]; first: number } | null>(null);
   const [showTiles, setShowTiles] = useState(false);
@@ -954,7 +956,7 @@ export default function Editor({
     return () => window.removeEventListener('keydown', key);
   });
   usePinchZoom(scroller, zoom, setZoom, {
-    enabled: ready && !!page && !!s.book && !board,
+    enabled: ready && !!page && !!s.book && !board && !reader,
     onStart: cancelDrawingGesture,
     onFit: () => performCommand('zoomFit'),
   });
@@ -992,6 +994,13 @@ export default function Editor({
           setBoardDraw(false);
           useEditor.setState({ tool: 'select', selected: [] });
           document.documentElement.requestFullscreen?.().catch(() => undefined);
+        }}
+        onReader={() => {
+          cancelDrawingGesture();
+          writing.done();
+          setStamp(null);
+          useEditor.setState({ tool: 'select', selected: [] });
+          setReader(true);
         }}
         onShare={() => run(async () => { setShowShare(true); })}
         onPrint={() => run(async () => { window.location.assign(`/drucken/${s.book!.id}`); })}
@@ -1327,6 +1336,25 @@ export default function Editor({
             <Icon name="cancel" size={22} /> Tafelmodus beenden
           </button>
         </div>
+      )}
+      {reader && (
+        <ReaderMode
+          title={s.book.title}
+          pages={s.book.pageIds.map((id) => s.pages.find((p) => p.id === id)).filter((p): p is Page => !!p)}
+          pageId={page.id}
+          onPage={choosePage}
+          allowExternal
+          uploadAudio={(id, file) => uploadAudio(file, s.book!.id, id)}
+          onResponse={(id, response) =>
+            s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === id ? { ...el, response } : el)) }))
+          }
+          onRecord={(id) => {
+            setRecordTarget(id);
+            setShowAudio(true);
+          }}
+          onSpeak={(p) => speakGerman(p.elements.filter((el) => el.type === 'text').map((el) => el.text).join('. '))}
+          onClose={() => setReader(false)}
+        />
       )}
       {editAudio?.src && (
         <AudioEditDialog

@@ -173,6 +173,13 @@ und mit einer echten Anton-Karte steht weiterhin aus.
 - Regalordner, ZIP-Sicherungen einschließlich eigener Vorlagen, Sammlungen und
   Medien; Wiederherstellen erzeugt eigene Kopien im angemeldeten Konto.
 - Tafelmodus einschließlich Zeichnen, Zoom und frei belegbaren Tastaturkürzeln.
+- Lesemodus (`ReaderMode.tsx`, für Lehrkräfte und Kinder, Funktion „Lesemodus“
+  in den Kinder-Einstellungen): das Heft bildschirmfüllend wie ein E-Book, ohne
+  Bearbeiten. Übungen, Lernwerkzeuge, Töne, Videos und Seitenlinks funktionieren,
+  Antworten werden wie im Editor gespeichert. Blättern mit großen Pfeilen,
+  Pfeil-/Bild-Tasten, Pos1/Ende und Wischen; „Alle Seiten“ zeigt eine Leiste mit
+  Miniaturen; Vorlesen, Vollbild, Zoom mit zwei Fingern (vergrößert verschiebt
+  ein Finger die Seite). Beim Beenden bleibt der Editor auf der zuletzt gelesenen Seite.
 - Seitenzoom mit Gesten (Lehrkräfte und Kinder, `use-pinch-zoom.ts`): zwei
   Finger ziehen auseinander/zusammen und zoomen um den Punkt zwischen den
   Fingern, mit zwei Fingern ziehen verschiebt, Doppeltipp mit zwei Fingern

@@ -19,6 +19,7 @@ export default function EditorHeader({
   busy,
   onFiles,
   onBoard,
+  onReader,
   onShare,
   onPrint,
   onHelp,
@@ -41,6 +42,7 @@ export default function EditorHeader({
   busy?: boolean;
   onFiles?: () => void;
   onBoard?: () => void;
+  onReader?: () => void;
   onShare?: () => void;
   onPrint?: () => void;
   onHelp?: () => void;
@@ -102,6 +104,12 @@ export default function EditorHeader({
           <button type="button" className="header-button" onClick={onFiles}>
             <Icon name="opened_folder" size={24} />
             <span>Dateien</span>
+          </button>
+        )}
+        {has('reader') && onReader && (
+          <button type="button" className="header-button" onClick={onReader}>
+            <Icon name="reading_ebook" size={24} />
+            <span>Lesemodus</span>
           </button>
         )}
         {has('board') && onBoard && (
