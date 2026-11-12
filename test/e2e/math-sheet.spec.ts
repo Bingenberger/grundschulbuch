@@ -82,3 +82,27 @@ test('Rechnen mit Geld: Dialog wie in der Vorlage, Münzen und Scheine als Bilde
   await expect(surface.locator('img[src^="/kasse/"]')).toHaveCount(0);
   await page.screenshot({ path: test.info().outputPath('geld-seite.png') });
 });
+
+test('Labyrinth: Form, Schwierigkeit, Katzen und Lösung wie in der Vorlage', async ({ page }) => {
+  test.setTimeout(90000);
+  await login(page);
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Labyrinth', pages: [newPage('blanko', 'landscape')] } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  await page.evaluate(() => localStorage.removeItem('grundschulbuch-labyrinth'));
+  await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Neue Seite', exact: true }).click();
+  const templates = page.getByRole('dialog', { name: 'Neue Seite' });
+  await templates.getByRole('navigation', { name: 'Kategorien' }).getByRole('button', { name: /^Einstellbar · / }).click();
+  await templates.getByRole('button', { name: 'Vorlage Labyrinth' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Labyrinth' });
+  await expect(dialog.getByRole('radio', { name: /Eckig/ })).toHaveAttribute('aria-checked', 'true');
+  await expect(dialog.getByRole('radio', { name: /Leicht 9 × 7 Felder/ })).toHaveAttribute('aria-checked', 'true');
+  await dialog.getByRole('radio', { name: /Rund/ }).click();
+  await expect(dialog.getByRole('radio', { name: /Leicht 5 Ringe/ })).toBeVisible();
+  await dialog.getByText('Lösungsseiten anhängen', { exact: true }).click();
+  await expect(dialog.getByText('Seite 1 von 2')).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath('labyrinth-dialog.png') });
+  await dialog.getByRole('button', { name: '2 Seiten einfügen' }).click();
+  await expect(dialog).toHaveCount(0, { timeout: 20000 });
+  await expect(page.locator('.page-thumbnail')).toHaveCount(2);
+  await page.screenshot({ path: test.info().outputPath('labyrinth-seite.png') });
+});

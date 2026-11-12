@@ -4711,3 +4711,4 @@ input[type='checkbox'] {
 .sheet-level { display: inline-flex; flex-direction: column; align-items: center; line-height: 1.2; }
 .sheet-level small { font-weight: 400; opacity: .85; }
 .sheet-note { color: #5b6b57; margin: 8px 0 0; font-size: 14px; }
+.sheet-shape { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; min-width: 100px; }

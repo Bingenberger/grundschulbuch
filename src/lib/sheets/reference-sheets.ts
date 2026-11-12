@@ -1184,6 +1184,183 @@ export const findMoneyFormat = $V;
 export const moneyValues = EV;
 export const makeMoneyPages = eH;
 
+
+// ---- Labyrinth ----
+var K8 = [{ label: `Sehr leicht`, cols: 6, rows: 5, rings: 3 }, { label: `Leicht`, cols: 9, rows: 7, rings: 5 }, { label: `Mittel`, cols: 13, rows: 10, rings: 7 }, { label: `Schwer`, cols: 18, rows: 14, rings: 10 }, { label: `Knifflig`, cols: 25, rows: 20, rings: 13 }], pOe = { shape: `square`, level: 1, cats: 2, layout: `mixed`, pages: 1, solutions: false }, mOe = (e10, t10) => {
+  let n10 = K8[t10];
+  return e10 === `round` ? `${n10.rings} Ringe` : `${n10.cols} \xD7 ${n10.rows} Felder`;
+}, hOe = `#2b3a55`, q8 = `#334155`, gOe = `#16a34a`, J8 = { x: 70, y: 166, w: 1260, h: 792 }, Y8 = 118, X8 = (e10) => Math.round(e10 * 10) / 10, Z8 = (e10, t10) => e10 < t10 ? e10 * 65536 + t10 : t10 * 65536 + e10, Q8 = (e10, t10, n10) => e10.open.has(Z8(t10, n10));
+function _Oe(e10, t10) {
+  let n10 = new Uint8Array(e10.n), r10 = [t10];
+  for (n10[t10] = 1; r10.length; ) {
+    let t11 = r10[r10.length - 1], i10 = e10.nb[t11].filter((e11) => !n10[e11]);
+    if (!i10.length) {
+      r10.pop();
+      continue;
+    }
+    let a10 = PB(i10);
+    e10.open.add(Z8(t11, a10)), n10[a10] = 1, r10.push(a10);
+  }
+}
+function $8(e10, t10, n10, r10) {
+  let i10 = new Int32Array(e10.n).fill(-1);
+  i10[t10] = t10;
+  let a10 = [t10];
+  for (let t11 = 0; t11 < a10.length && i10[n10] < 0; t11++) {
+    let n11 = a10[t11];
+    for (let t12 of e10.nb[n11]) i10[t12] < 0 && !r10.has(t12) && Q8(e10, n11, t12) && (i10[t12] = n11, a10.push(t12));
+  }
+  if (i10[n10] < 0) return null;
+  let o10 = [n10];
+  for (let e11 = n10; e11 !== t10; ) e11 = i10[e11], o10.push(e11);
+  return o10.reverse();
+}
+function vOe(e10, t10, n10, r10, i10) {
+  let a10 = /* @__PURE__ */ new Set(), o10 = (t11) => [...a10].some((n11) => n11 === t11 || e10.nb[n11].includes(t11)), s10 = (r11) => {
+    for (let i11 of LB(r11)) {
+      if (a10.add(i11), $8(e10, t10, n10, a10)) return true;
+      a10.delete(i11);
+    }
+    return false;
+  };
+  for (let c10 = 0; c10 < r10; c10++) {
+    let r11 = false;
+    for (let c11 = 0; c11 < 40 && !r11; c11++) {
+      let c12 = $8(e10, t10, n10, a10);
+      if (!c12 || (r11 = s10(c12.slice(2, -2).filter((e11) => !o10(e11))) || s10(c12.slice(1, -1).filter((e11) => !a10.has(e11))), !r11 && !i10(c12))) break;
+    }
+    if (!r11) {
+      let r12 = new Set($8(e10, t10, n10, a10) ?? []), i11 = Array.from({ length: e10.n }, (e11, t11) => t11).filter((i12) => !r12.has(i12) && !o10(i12) && i12 !== t10 && i12 !== n10 && !e10.nb[t10].includes(i12) && !e10.nb[n10].includes(i12));
+      i11.length && a10.add(PB(i11));
+    }
+  }
+  return [...a10];
+}
+var yOe = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80"><path d="M18 54C6 55 3 66 9 72c5 4 12 2 14 6" fill="none" stroke="${q8}" stroke-width="3" stroke-linecap="round"/><ellipse cx="36" cy="69" rx="7" ry="4" fill="#f4a6c0" stroke="${q8}" stroke-width="2.5"/><ellipse cx="61" cy="68" rx="7" ry="4" fill="#f4a6c0" stroke="${q8}" stroke-width="2.5"/><path d="M16 54c0-20 18-30 36-30 14 0 22 6 28 14l15 9c3 2 2 6-2 7l-13 3c-8 9-20 13-34 13-18 0-30-4-30-16z" fill="#c9cfd8" stroke="${q8}" stroke-width="3" stroke-linejoin="round"/><circle cx="63" cy="24" r="11" fill="#c9cfd8" stroke="${q8}" stroke-width="3"/><circle cx="63" cy="24" r="6" fill="#f4a6c0"/><circle cx="77" cy="40" r="3.4" fill="${q8}"/><circle cx="78" cy="39" r="1.1" fill="#fff"/><circle cx="95" cy="50" r="3.6" fill="#f06595"/><path d="M86 52l13-5M86 54l14 2M85 56l12 6" stroke="${q8}" stroke-width="1.6" stroke-linecap="round"/></svg>`, bOe = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80"><path d="M6 46L84 14l10 32z" fill="#ffe066" stroke="${q8}" stroke-width="3" stroke-linejoin="round"/><path d="M6 46h88v26H6z" fill="#fcc419" stroke="${q8}" stroke-width="3" stroke-linejoin="round"/><ellipse cx="27" cy="60" rx="6" ry="5" fill="#f59f00"/><ellipse cx="60" cy="56" rx="4.5" ry="4" fill="#f59f00"/><ellipse cx="79" cy="64" rx="5" ry="4" fill="#f59f00"/><ellipse cx="57" cy="34" rx="5" ry="3" fill="#fab005"/><ellipse cx="76" cy="26" rx="3.5" ry="2.2" fill="#fab005"/></svg>`, xOe = [{ fur: `#ffa94d`, light: `#ffe8cc`, stripes: `#e8590c`, eyes: `#c0eb75` }, { fur: `#adb5bd`, light: `#f1f3f5`, stripes: `#6c757d`, eyes: `#c0eb75` }, { fur: `#495057`, light: `#dee2e6`, eyes: `#ffd43b` }, { fur: `#c08552`, light: `#f3d9c4`, stripes: `#8d5524`, eyes: `#c0eb75` }];
+function SOe(e10) {
+  let t10 = `stroke="${q8}" stroke-width="3" stroke-linejoin="round"`, n10 = e10.stripes ? `<path d="M44 22l2 8M50 20v10M56 22l-2 8M27 72l9 2M26 80l9 0M73 72l-9 2M74 80l-9 0" stroke="${e10.stripes}" stroke-width="3" stroke-linecap="round"/>` : ``, r10 = (t11) => `<ellipse cx="${t11}" cy="40" rx="6" ry="6.5" fill="${e10.eyes}" stroke="${q8}" stroke-width="2"/><ellipse cx="${t11}" cy="40" rx="1.8" ry="5" fill="${q8}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M68 88c22 2 28-18 18-30" fill="none" stroke="${q8}" stroke-width="11" stroke-linecap="round"/><path d="M68 88c22 2 28-18 18-30" fill="none" stroke="${e10.fur}" stroke-width="5" stroke-linecap="round"/><path d="M26 94c-6-20 4-36 24-36s30 16 24 36z" fill="${e10.fur}" ${t10}/><path d="M40 94c-2-14 2-24 10-24s12 10 10 24z" fill="${e10.light}"/><ellipse cx="41" cy="93" rx="8" ry="5" fill="${e10.light}" stroke="${q8}" stroke-width="2.5"/><ellipse cx="59" cy="93" rx="8" ry="5" fill="${e10.light}" stroke="${q8}" stroke-width="2.5"/><path d="M24 44c0-12 2-22 4-38l16 13c4-1 8-1 12 0L72 6c2 16 4 26 4 38 0 14-12 22-26 22S24 58 24 44z" fill="${e10.fur}" ${t10}/><path d="M31 13l10 8-9 4zM69 13l-10 8 9 4z" fill="#f4a6c0"/>` + n10 + `<ellipse cx="50" cy="53" rx="11" ry="8" fill="${e10.light}"/>` + r10(39) + r10(61) + `<path d="M46 48h8l-4 5z" fill="#f06595"/><path d="M50 53q-3 5-7 3M50 53q3 5 7 3" fill="none" stroke="${q8}" stroke-width="2" stroke-linecap="round"/><path d="M38 52l-20-4M38 55l-20 2M62 52l20-4M62 55l20 2" stroke="${q8}" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+}
+var e52 = (e10, t10, n10, r10) => `A${X8(e10)} ${X8(e10)} 0 0 ${r10} ${X8(t10)} ${X8(n10)}`;
+function COe(e10, t10) {
+  let { cols: n10, rows: r10 } = K8[e10], i10 = Math.min((J8.w - 264) / n10, J8.h / r10), a10 = n10 * i10, o10 = r10 * i10, s10 = J8.x + (J8.w - a10) / 2, c10 = J8.y + (J8.h - o10) / 2, l10 = (e11, t11) => t11 * n10 + e11, u10 = { n: n10 * r10, nb: [], open: /* @__PURE__ */ new Set() };
+  for (let e11 = 0; e11 < r10; e11++) for (let t11 = 0; t11 < n10; t11++) {
+    let i11 = [];
+    t11 > 0 && i11.push(l10(t11 - 1, e11)), t11 < n10 - 1 && i11.push(l10(t11 + 1, e11)), e11 > 0 && i11.push(l10(t11, e11 - 1)), e11 < r10 - 1 && i11.push(l10(t11, e11 + 1)), u10.nb.push(i11);
+  }
+  let d10 = K(0, Math.floor((r10 - 1) / 2)), f10 = K(Math.ceil((r10 - 1) / 2), r10 - 1), p10 = l10(0, d10), m10 = l10(n10 - 1, f10);
+  _Oe(u10, p10);
+  let h10 = (e11, t11) => e11 >= 0 && t11 >= 0 && e11 < n10 - 1 && t11 < r10 - 1 && Q8(u10, l10(e11, t11), l10(e11 + 1, t11)) && Q8(u10, l10(e11, t11 + 1), l10(e11 + 1, t11 + 1)) && Q8(u10, l10(e11, t11), l10(e11, t11 + 1)) && Q8(u10, l10(e11 + 1, t11), l10(e11 + 1, t11 + 1)), g10 = (e11) => {
+    for (let t11 = 0; t11 < 80; t11++) {
+      let t12 = e11.length && Math.random() < 0.7 ? PB(e11) : K(0, u10.n - 1), r11 = PB(u10.nb[t12]);
+      if (Q8(u10, t12, r11)) continue;
+      u10.open.add(Z8(t12, r11));
+      let i11 = Math.min(t12 % n10, r11 % n10), a11 = Math.min(Math.floor(t12 / n10), Math.floor(r11 / n10));
+      if (h10(i11 - 1, a11 - 1) || h10(i11, a11 - 1) || h10(i11 - 1, a11) || h10(i11, a11)) u10.open.delete(Z8(t12, r11));
+      else return true;
+    }
+    return false;
+  };
+  for (let e11 = 0; e11 < t10; e11++) g10([]);
+  let _10 = vOe(u10, p10, m10, t10, g10), v10 = $8(u10, p10, m10, new Set(_10)) ?? [], y10 = FB(i10 * 0.085, 4, 11), b10 = y10, x10 = (e11) => X8(b10 + e11 * i10), S10 = (e11) => X8(b10 + e11 * i10), C10 = ``;
+  for (let e11 = 0; e11 < r10; e11++) for (let t11 = 0; t11 < n10; t11++) t11 < n10 - 1 && !Q8(u10, l10(t11, e11), l10(t11 + 1, e11)) && (C10 += `M${x10(t11 + 1)} ${S10(e11)}V${S10(e11 + 1)}`), e11 < r10 - 1 && !Q8(u10, l10(t11, e11), l10(t11, e11 + 1)) && (C10 += `M${x10(t11)} ${S10(e11 + 1)}H${x10(t11 + 1)}`);
+  C10 += `M${x10(0)} ${S10(0)}H${x10(n10)}V${S10(f10)}M${x10(n10)} ${S10(f10 + 1)}V${S10(r10)}H${x10(0)}V${S10(d10 + 1)}M${x10(0)} ${S10(d10)}V${S10(0)}`;
+  let w10 = `<path d="${C10}" fill="none" stroke="${hOe}" stroke-width="${X8(y10)}" stroke-linecap="round" stroke-linejoin="round"/>`, T10 = v10.length ? `<path d="M${x10(0)} ${S10(d10 + 0.5)}L${v10.map((e11) => `${x10(e11 % n10 + 0.5)} ${S10(Math.floor(e11 / n10) + 0.5)}`).join(`L`)}L${x10(n10)} ${S10(f10 + 0.5)}" fill="none" stroke="${gOe}" stroke-width="${X8(FB(i10 * 0.24, 6, 28))}" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>` : ``, E10 = `<rect x="${x10(0)}" y="${S10(0)}" width="${X8(a10)}" height="${X8(o10)}" fill="#ffffff"/>`, D10 = Y8 * 0.8, O10 = FB(c10 + (d10 + 0.5) * i10 - D10 * 0.62, J8.y - 20, J8.y + J8.h - D10), ee2 = Y8 * 0.9, te2 = ee2 * 0.8, ne2 = FB(c10 + (f10 + 0.5) * i10 - te2 * 0.6, J8.y - 20, J8.y + J8.h - te2), re2 = i10 * 0.9;
+  return { box: { x: s10 - b10, y: c10 - b10, w: a10 + 2 * b10, h: o10 + 2 * b10 }, draw: (e11) => E10 + (e11 ? T10 : ``) + w10, mouse: { x: s10 - 10 - Y8, y: O10, w: Y8, h: D10 }, cheese: { x: s10 + a10 + 12, y: ne2, w: ee2, h: te2 }, cats: _10.map((e11) => ({ x: s10 + (e11 % n10 + 0.5) * i10 - re2 / 2, y: c10 + (Math.floor(e11 / n10) + 0.5) * i10 - re2 / 2, w: re2, h: re2 })), alt: `Labyrinth mit ${n10} \xD7 ${r10} Feldern` };
+}
+function wOe(e10, t10) {
+  let n10 = K8[e10].rings, r10 = J8.h / 2 - 6, i10 = J8.x + J8.w / 2, a10 = J8.y + J8.h / 2, o10 = r10 / (n10 + 1.3), s10 = 1.3 * o10;
+  s10 < 60 && (s10 = 60, o10 = (r10 - s10) / n10);
+  let c10 = (e11) => s10 + (e11 - 1) * o10, l10 = (e11) => e11 === 0 ? 0 : s10 + (e11 - 0.5) * o10, u10 = [1, Math.max(6, Math.round(2 * Math.PI * l10(1) / o10))];
+  for (let e11 = 2; e11 <= n10; e11++) {
+    let t11 = 2 * Math.PI * l10(e11) / u10[e11 - 1];
+    u10.push(u10[e11 - 1] * (t11 > 1.7 * o10 ? 2 : 1));
+  }
+  let d10 = [0, 1];
+  for (let e11 = 2; e11 <= n10; e11++) d10.push(d10[e11 - 1] + u10[e11 - 1]);
+  let f10 = d10[n10] + u10[n10], p10 = (e11) => {
+    let t11 = 0;
+    for (; t11 < n10 && e11 >= d10[t11 + 1]; ) t11++;
+    return t11;
+  }, m10 = (e11, t11) => e11 === 0 ? 0 : d10[e11] + (t11 % u10[e11] + u10[e11]) % u10[e11], h10 = { n: f10, nb: Array.from({ length: f10 }, () => []), open: /* @__PURE__ */ new Set() }, g10 = (e11, t11) => {
+    h10.nb[e11].push(t11), h10.nb[t11].push(e11);
+  };
+  for (let e11 = 1; e11 <= n10; e11++) for (let t11 = 0; t11 < u10[e11]; t11++) g10(m10(e11, t11), m10(e11, t11 + 1)), g10(m10(e11, t11), e11 === 1 ? 0 : m10(e11 - 1, Math.floor(t11 / (u10[e11] / u10[e11 - 1]))));
+  let _10 = Math.PI - Math.PI / u10[n10], v10 = (e11, t11) => _10 + 2 * Math.PI * t11 / u10[e11], y10 = (e11) => {
+    let t11 = p10(e11);
+    return t11 === 0 ? 0 : v10(t11, e11 - d10[t11] + 0.5);
+  }, b10 = m10(n10, 0);
+  _Oe(h10, b10);
+  let x10 = (e11) => {
+    for (let t11 = 0; t11 < 80; t11++) {
+      let t12 = e11.length && Math.random() < 0.7 ? PB(e11) : K(1, f10 - 1), n11 = PB(h10.nb[t12]);
+      if (!(n11 === 0 || t12 === 0 || Q8(h10, t12, n11))) return h10.open.add(Z8(t12, n11)), true;
+    }
+    return false;
+  };
+  for (let e11 = 0; e11 < t10; e11++) x10([]);
+  let S10 = vOe(h10, b10, 0, t10, x10), C10 = $8(h10, b10, 0, new Set(S10)) ?? [], w10 = FB(o10 * 0.085, 4, 10), T10 = r10 + w10, E10 = (e11, t11) => [T10 + e11 * Math.cos(t11), T10 + e11 * Math.sin(t11)], D10 = (e11, t11) => {
+    let [n11, r11] = E10(e11, t11);
+    return `${X8(n11)} ${X8(r11)}`;
+  }, O10 = ``;
+  for (let e11 = 1; e11 <= n10; e11++) for (let t11 = 0; t11 < u10[e11]; t11++) {
+    let i11 = m10(e11, t11), a11 = v10(e11, t11), s11 = v10(e11, t11 + 1);
+    if (!Q8(h10, i11, e11 === 1 ? 0 : m10(e11 - 1, Math.floor(t11 / (u10[e11] / u10[e11 - 1]))))) {
+      let [t12, n11] = E10(c10(e11), s11);
+      O10 += `M${D10(c10(e11), a11)}${e52(c10(e11), t12, n11, 1)}`;
+    }
+    if (Q8(h10, i11, m10(e11, t11 + 1)) || (O10 += `M${D10(c10(e11), s11)}L${D10(c10(e11) + o10, s11)}`), e11 === n10 && t11 !== 0) {
+      let [e12, t12] = E10(r10, s11);
+      O10 += `M${D10(r10, a11)}${e52(r10, e12, t12, 1)}`;
+    }
+  }
+  let ee2 = `<path d="${O10}" fill="none" stroke="${hOe}" stroke-width="${X8(w10)}" stroke-linecap="round" stroke-linejoin="round"/>`, te2 = `M${D10(r10, Math.PI)}L${D10(l10(n10), Math.PI)}`, ne2 = (e11, t11, n11) => {
+    let r11 = n11 - t11;
+    for (; r11 > Math.PI; ) r11 -= 2 * Math.PI;
+    for (; r11 <= -Math.PI; ) r11 += 2 * Math.PI;
+    if (Math.abs(r11) < 1e-6) return ``;
+    let [i11, a11] = E10(e11, t11 + r11);
+    return e52(e11, i11, a11, +(r11 > 0));
+  };
+  for (let e11 = 1; e11 < C10.length; e11++) {
+    let t11 = C10[e11 - 1], n11 = C10[e11], r11 = p10(t11), i11 = p10(n11), a11 = y10(t11), o11 = y10(n11);
+    te2 += i11 === 0 ? `L${X8(T10)} ${X8(T10)}` : r11 === i11 ? ne2(l10(r11), a11, o11) : i11 < r11 ? `L${D10(l10(i11), a11)}${ne2(l10(i11), a11, o11)}` : `${ne2(l10(r11), a11, o11)}L${D10(l10(i11), o11)}`;
+  }
+  let re2 = C10.length ? `<path d="${te2}" fill="none" stroke="${gOe}" stroke-width="${X8(FB(o10 * 0.26, 6, 26))}" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>` : ``, ie2 = `<circle cx="${X8(T10)}" cy="${X8(T10)}" r="${X8(r10)}" fill="#ffffff"/>`, ae2 = Y8 * 0.8, oe2 = Math.min(Y8, s10 * 1.5);
+  return { box: { x: i10 - T10, y: a10 - T10, w: 2 * T10, h: 2 * T10 }, draw: (e11) => ie2 + (e11 ? re2 : ``) + ee2, mouse: { x: i10 - r10 - 10 - Y8, y: a10 - ae2 * 0.62, w: Y8, h: ae2 }, cheese: { x: i10 - oe2 / 2, y: a10 - oe2 * 0.4, w: oe2, h: oe2 * 0.8 }, cats: S10.map((e11) => {
+    let t11 = p10(e11), n11 = Math.min(o10, 2 * Math.PI * l10(t11) / u10[t11]) * 0.96, [r11, s11] = E10(l10(t11), y10(e11));
+    return { x: i10 - T10 + r11 - n11 / 2, y: a10 - T10 + s11 - n11 / 2, w: n11, h: n11 };
+  }), alt: `Rundes Labyrinth mit ${n10} Ringen` };
+}
+var TOe = (e10) => ({ x: X8(e10.x), y: X8(e10.y), w: X8(e10.w), h: X8(e10.h) });
+function t5(e10, t10, n10, r10) {
+  return Ck({ ...TOe(e10), svg: t10, name: n10, alt: r10, locked: true });
+}
+function EOe(e10, t10) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${X8(e10.box.w)} ${X8(e10.box.h)}">${e10.draw(t10)}</svg>`;
+}
+function n5(e10) {
+  return j({ x: 70, y: 34, w: VB, h: XB(44), size: 44, html: e10, font: `nunito`, align: `left`, bold: true, color: qB, locked: true });
+}
+function DOe(e10) {
+  let t10 = FB(Math.round(e10.level), 0, K8.length - 1), n10 = FB(Math.round(e10.cats), 0, 4), r10 = e10.shape === `round` ? wOe(t10, n10) : COe(t10, n10), i10 = LB(xOe.slice()), a10 = [...r10.cats.map((e11, t11) => t5(e11, SOe(i10[t11 % i10.length]), `Katze`, `Katze \u2013 hier kommt die Maus nicht vorbei`)), t5(r10.mouse, yOe, `Maus`, `Maus \u2013 hier geht es los`), t5(r10.cheese, bOe, `K\xE4se`, `K\xE4se \u2013 das Ziel`), j({ x: 70, y: 104, w: VB, h: XB(26), size: 26, html: n10 ? `Zeichne den Weg der Maus zum K\xE4se. An den Katzen kommt sie nicht vorbei!` : `Zeichne mit dem Stift den Weg der Maus zum K\xE4se.`, font: `nunito`, align: `left`, bold: true, color: KB, locked: true })], o10 = ZO(`maze`);
+  o10.items = [t5(r10.box, EOe(r10, false), `Labyrinth`, r10.alt), n5(`Labyrinth`), ...a10];
+  let s10 = ZO(`maze`);
+  return s10.items = [t5(r10.box, EOe(r10, true), `Labyrinth`, `${r10.alt}, mit dem Weg zum K\xE4se`), n5(`L\xF6sung: Labyrinth`), ...a10.map((e11) => ({ ...e11, id: YO(e11.type.slice(0, 2)) }))], [o10, s10];
+}
+function OOe(e10) {
+  let t10 = Array.from({ length: FB(e10.pages, 1, 20) }, () => DOe(e10));
+  return [...t10.map((e11) => e11[0]), ...e10.solutions ? t10.map((e11) => e11[1]) : []];
+}
+function kOe() {
+  return OOe({ ...pOe, level: 1, cats: 2, pages: 1, solutions: false })[0];
+}
+
+export const MAZE_LEVELS = K8;
+export const MAZE_DEFAULTS = pOe;
+export const mazeSizeLabel = mOe;
+export const makeMazePages = OOe;
+
 export const MATH_RANGES = MB;
 export const MATH_DEFAULTS = NB;
 export const MATH_FORMATS = hV;
