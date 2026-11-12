@@ -1,0 +1,102 @@
+// The catalogue of “Lernwerkzeuge”: every interactive building block for a page,
+// grouped by subject. Presets (instrument, drum kit, communication board …) come
+// from the former interactive templates, so nothing changes for existing books.
+// Design-only templates stay in the template chooser (page-templates.ts).
+import type { Page } from '../notebook-model';
+import { activityCatalog, widgetCatalog, type ActivityKind, type LearningSettings, type WidgetKind } from './catalog';
+import { blueprintPages, blueprints, type Blueprint } from './templates';
+
+export const SUBJECTS = [
+  'Deutsch',
+  'Mathematik',
+  'Sachunterricht',
+  'Musik',
+  'Medien & Präsentation',
+  'Klassenführung',
+  'Unterstützte Kommunikation',
+  'Für alle Fächer',
+] as const;
+export type Subject = (typeof SUBJECTS)[number];
+
+const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
+  // Deutsch
+  alphabet: 'Deutsch', clapping: 'Deutsch', synthesis: 'Deutsch', syllables: 'Deutsch', monster: 'Deutsch',
+  letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
+  wordsearch: 'Deutsch', wordle: 'Deutsch',
+  // Mathematik
+  calculator: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  // Sachunterricht
+  map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
+  // Musik
+  piano: 'Musik', drums: 'Musik', sequencer: 'Musik', metronome: 'Musik', tuner: 'Musik', echo: 'Musik',
+  notequiz: 'Musik', falling: 'Musik', playlist: 'Musik', soundstudio: 'Musik', karaoke: 'Musik',
+  // Medien & Präsentation
+  slideshow: 'Medien & Präsentation', pitch: 'Medien & Präsentation', animation: 'Medien & Präsentation',
+  recorder: 'Medien & Präsentation',
+  // Klassenführung
+  timer: 'Klassenführung', multitimer: 'Klassenführung', noise: 'Klassenführung', applause: 'Klassenführung',
+  timetable: 'Klassenführung',
+  // Unterstützte Kommunikation
+  communication: 'Unterstützte Kommunikation',
+  // Für alle Fächer
+  quiz: 'Für alle Fächer', matching: 'Für alle Fächer', memory: 'Für alle Fächer', maze: 'Für alle Fächer',
+  connect4: 'Für alle Fächer',
+};
+
+export type LearningBlock = {
+  id: string;
+  title: string;
+  subject: Subject;
+  type: 'widget' | 'activity';
+  kind: WidgetKind | ActivityKind;
+  /** Settings the block starts with (instrument, fields …). */
+  preset?: LearningSettings;
+  /** Several pages at once (the communication book); inserted without settings. */
+  pages?: (orientation: Page['orientation']) => Page[];
+  /** Search words. */
+  words: string;
+};
+
+/** Duplicates of a variant with the same default (e.g. “Klavier” = “Klavier & Klanginstrumente”). */
+const SKIP = new Set(['instrument-piano', 'widget-mathboard']);
+
+function title(meta: Blueprint) {
+  return meta.title.replace(/^Kommunikation · /, '');
+}
+
+function fromBlueprint(meta: Blueprint): LearningBlock | null {
+  if (SKIP.has(meta.id)) return null;
+  if (meta.layout === 'communication-book')
+    return {
+      id: meta.id,
+      title: meta.title,
+      subject: 'Unterstützte Kommunikation',
+      type: 'widget',
+      kind: 'communication',
+      pages: (o) => blueprintPages(meta, o),
+      words: `${meta.title} kommunikation tafel uk`,
+    };
+  const kind = meta.widget || meta.activity;
+  if (!kind) return null;
+  const element = blueprintPages(meta, 'landscape')[0].elements[0];
+  const label = meta.widget ? widgetCatalog[meta.widget][0] : activityCatalog[meta.activity!];
+  return {
+    id: meta.id,
+    title: title(meta),
+    subject: subjectOf[kind],
+    type: meta.widget ? 'widget' : 'activity',
+    kind,
+    preset: element.settings,
+    words: `${meta.title} ${label} ${subjectOf[kind]} ${meta.category}`,
+  };
+}
+
+export const learningBlocks: LearningBlock[] = blueprints
+  .map(fromBlueprint)
+  .filter((b): b is LearningBlock => !!b)
+  .sort((a, b) => SUBJECTS.indexOf(a.subject) - SUBJECTS.indexOf(b.subject));
+
+/** Interactive templates (widgets, activities, the communication book) are building blocks now. */
+export function isInteractiveBlueprint(meta: Blueprint) {
+  return !!(meta.widget || meta.activity || meta.layout === 'communication-book');
+}

@@ -1,0 +1,60 @@
+import { test, expect, type Page } from '@playwright/test';
+const origin = { Origin: 'http://localhost:3100' };
+async function login(page: Page) {
+  await page.goto('/anmelden'); await page.getByLabel('Name', { exact: true }).fill('Frau Beispiel'); await page.getByLabel('PIN', { exact: true }).fill('483920');
+  await page.getByRole('button', { name: 'Anmelden', exact: true }).click(); await expect(page).toHaveURL('/');
+}
+
+test('Lernwerkzeuge nach Fächern, Vorlagen nur gestalterisch, einstellbare Arbeitsblätter bei den Vorlagen', async ({ page }) => {
+  await login(page);
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Bausteinprobe', orientation: 'landscape' } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  const rail = page.getByRole('navigation', { name: 'Werkzeuge' });
+
+  await rail.getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
+  const subjects = dialog.getByRole('navigation', { name: 'Fächer' });
+  for (const subject of ['Deutsch', 'Mathematik', 'Sachunterricht', 'Musik', 'Medien & Präsentation', 'Klassenführung', 'Unterstützte Kommunikation', 'Für alle Fächer'])
+    await expect(subjects.getByRole('button', { name: new RegExp(`^${subject} · \\d+$`) })).toBeEnabled();
+  await page.screenshot({ path: test.info().outputPath('lernwerkzeuge.png') });
+
+  // Only one subject; then the search looks through all of them.
+  await subjects.getByRole('button', { name: /^Musik · / }).click();
+  await expect(dialog.getByRole('button', { name: 'Xylophon', exact: true })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Quiz', exact: true })).toHaveCount(0);
+  await dialog.getByLabel('Lernwerkzeug suchen').fill('silben');
+  await expect(dialog.getByRole('button', { name: 'Silben klatschen', exact: true })).toBeVisible();
+  await dialog.getByLabel('Lernwerkzeug suchen').fill('');
+
+  // A preset (Xylophon) is kept when setting it up; “Andere Auswahl” goes back.
+  await dialog.getByRole('button', { name: 'Xylophon', exact: true }).click();
+  await expect(dialog.getByRole('heading', { name: 'Xylophon' })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Mit KI entwerfen' })).toHaveCount(0);
+  await dialog.getByRole('button', { name: 'Andere Auswahl' }).click();
+  await expect(subjects).toBeVisible();
+  await dialog.getByRole('button', { name: 'Xylophon', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(page.locator('.interaction-surface .learning-widget')).toHaveCount(1);
+
+  // The communication book comes as whole pages.
+  await rail.getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
+  await subjects.getByRole('button', { name: /^Unterstützte Kommunikation · / }).click();
+  await dialog.getByRole('button', { name: 'Kommunikationsbuch mit allen Tafeln', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(page.locator('.page-thumbnail')).toHaveCount(11);
+
+  // Templates: design only, plus the settable worksheets.
+  await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Neue Seite', exact: true }).click();
+  const templates = page.getByRole('dialog', { name: 'Neue Seite' });
+  const categories = templates.getByRole('navigation', { name: 'Kategorien' });
+  for (const gone of ['Kommunikation', 'Interaktive Übungen', 'Mathe', 'Schule', 'Lesen & Schreiben'])
+    await expect(categories.getByRole('button', { name: new RegExp(`^${gone} · [1-9]`) })).toHaveCount(0);
+  await categories.getByRole('button', { name: /^Einstellbar · 7$/ }).click();
+  await page.screenshot({ path: test.info().outputPath('einstellbar.png') });
+  await templates.getByRole('button', { name: 'Vorlage Uhrzeiten üben' }).click();
+  const generator = page.getByRole('dialog', { name: 'Ein Arbeitsblatt erstellen' });
+  await expect(generator.getByLabel('Überschrift')).toHaveValue('Uhrzeiten üben');
+  await expect(generator.getByRole('button', { name: /KI/ })).toHaveCount(0);
+  await generator.getByRole('button', { name: 'Seiten ins Heft einfügen' }).click();
+  await expect(page.locator('.page-thumbnail')).toHaveCount(13);
+});

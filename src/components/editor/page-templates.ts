@@ -1,6 +1,8 @@
 'use client';
 import { clone, newPage, rulings, uuid, type Page, type Ruling, type Template } from '@/lib/notebook-model';
 import { blueprintPages, blueprints } from '@/lib/learning/templates';
+import { isInteractiveBlueprint } from '@/lib/learning/blocks';
+import { generatePages, type WorksheetKind } from '@/lib/learning/worksheets';
 import type { IconName } from '../Icon';
 
 export type Orientation = Page['orientation'];
@@ -14,10 +16,13 @@ export type TemplateEntry = {
   orientation?: Orientation;
   /** Own saved template (can be removed). */
   savedId?: string;
+  /** “Einstellbar”: opens the worksheet settings instead of inserting right away. */
+  configure?: { kind: WorksheetKind; words?: string };
   words: string;
 };
 
 export const PAPER = 'Papier & Lineatur';
+export const CONFIGURABLE = 'Einstellbar';
 const categoryIcons: Record<string, IconName> = {
   [PAPER]: 'rules',
   Schreiben: 'signature',
@@ -37,7 +42,19 @@ const categoryIcons: Record<string, IconName> = {
   Deutsch: 'reading_ebook',
   Organisation: 'todo_list',
   'Eigene Vorlagen': 'bookmark',
+  [CONFIGURABLE]: 'settings',
 };
+
+/** The settable worksheets of the reference: a dialog, then a static page. */
+const configurable: [string, WorksheetKind, string?][] = [
+  ['Buchstaben üben', 'nachspuren', 'A, a, B, b, C, c, D, d'],
+  ['Ziffern üben', 'nachspuren', '0, 1, 2, 3, 4, 5, 6, 7, 8, 9'],
+  ['Mathe-Aufgaben', 'rechnen'],
+  ['Uhrzeiten üben', 'uhr'],
+  ['Rechnen mit Geld', 'moneycalc'],
+  ['Labyrinth', 'mazes'],
+  ['Noten lernen', 'notenames'],
+];
 export const categoryIcon = (category: string): IconName => categoryIcons[category] || 'template';
 
 /** Fresh ids, so a template can be used again and again. */
@@ -65,7 +82,8 @@ export function templateCatalog(saved: Template[]): TemplateEntry[] {
     build: (o) => [newPage(ruling, o)],
     words: `${title} ${PAPER} linien lineatur papier kariert`,
   }));
-  const designed: TemplateEntry[] = blueprints.map((meta) => ({
+  // Interactive building blocks live in “Lernwerkzeuge” (learning/blocks.ts).
+  const designed: TemplateEntry[] = blueprints.filter((meta) => !isInteractiveBlueprint(meta)).map((meta) => ({
     key: `bp-${meta.id}`,
     title: meta.title,
     category: meta.category,
@@ -84,7 +102,17 @@ export function templateCatalog(saved: Template[]): TemplateEntry[] {
       words: `${t.title} ${category}`,
     };
   });
-  return [...paper, ...designed, ...own];
+  const settable: TemplateEntry[] = configurable.map(([title, kind, words]) => ({
+    key: `cfg-${title}`,
+    title,
+    category: CONFIGURABLE,
+    // A fixed seed keeps the preview calm.
+    build: () => generatePages({ kind, title, words: words || '', maximum: 20, seed: 7, showSolutions: false }).slice(0, 1),
+    orientation: 'portrait',
+    configure: { kind, words },
+    words: `${title} ${CONFIGURABLE} arbeitsblatt einstellbar`,
+  }));
+  return [...paper, ...designed, ...settable, ...own];
 }
 
 /**

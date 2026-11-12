@@ -28,6 +28,7 @@ import { audioElement, audioPlaceholder, cassetteRecorder, isAudioPlaceholder, w
 import CollectionDialog from './CollectionDialog';
 import GeneratorDialog from './GeneratorDialog';
 import { ENABLED } from '@/lib/paused';
+import type { WorksheetKind } from '@/lib/learning/worksheets';
 import ShareDialog from './ShareDialog';
 import { LearningRuntime } from './learning/Runtime';
 import LearningDialog from './learning/LearningDialog';
@@ -126,7 +127,7 @@ export default function Editor({
   const [editAudio, setEditAudio] = useState<PageElement | null>(null);
   const [showAudio, setShowAudio] = useState(false);
   const [showCollection, setShowCollection] = useState(false);
-  const [showGenerator, setShowGenerator] = useState(false);
+  const [showGenerator, setShowGenerator] = useState<boolean | { kind: WorksheetKind; title: string; words?: string }>(false);
   const [showShare, setShowShare] = useState(false);
   const [learning, setLearning] = useState<PageElement | 'new' | null>(null);
   /** Stamp chosen under “Einfügen”: every tap on the page places it. */
@@ -1413,6 +1414,7 @@ export default function Editor({
       {showGenerator && (
         <GeneratorDialog
           dictionaryOrigin={dictionaryOrigin}
+          initial={typeof showGenerator === 'object' ? showGenerator : undefined}
           onClose={() => setShowGenerator(false)}
           onInsert={async (pages) => {
             if (!(await flushEditor()))
@@ -1431,6 +1433,11 @@ export default function Editor({
       {learning && (
         <LearningDialog
           element={learning === 'new' ? undefined : learning}
+          onPages={(pages) =>
+            void run(async () => {
+              for (const p of pages) await add(p);
+            })
+          }
           onClose={() => setLearning(null)}
           onWorksheet={
             ENABLED.worksheetGenerator
@@ -1524,7 +1531,7 @@ export default function Editor({
               ? 'Wähle eine Vorlage für die neue Seite – oder hole Seiten aus einer Datei.'
               : 'Leere Seiten bekommen auch den Inhalt der Vorlage. Was schon auf der Seite ist, bleibt erhalten.'
           }
-          entries={catalog}
+          entries={templateMode === 'change' ? catalog.filter((e) => !e.configure) : catalog}
           current={templateMode === 'change' ? page.template : undefined}
           orientation={templateMode === 'change' ? page.orientation : 'landscape'}
           lockOrientation={templateMode === 'change' && page.elements.length > 0}
@@ -1545,6 +1552,11 @@ export default function Editor({
             })
           }
           onPick={(entry, orientation) => {
+            if (entry.configure) {
+              setTemplateMode(null);
+              setShowGenerator({ ...entry.configure, title: entry.title });
+              return;
+            }
             if (templateMode === 'change') {
               const [model] = entry.build(page.elements.length ? page.orientation : orientation);
               s.edit((p) => applyTemplate(p, model, entry.key));

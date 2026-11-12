@@ -31,7 +31,9 @@ import {
   type WidgetKind,
   type LearningSettings,
 } from '@/lib/learning/catalog';
-import { uuid, type PageElement } from '@/lib/notebook-model';
+import { clone, uuid, type Page, type PageElement } from '@/lib/notebook-model';
+import { learningBlocks, SUBJECTS, type LearningBlock, type Subject } from '@/lib/learning/blocks';
+import { ChoiceButton } from '../ui/Choice';
 import { uploadImage } from '@/lib/client-api';
 const activityIcons: Record<ActivityKind, IconName> = {
   quiz: 'questions', matching: 'flow_chart', cloze: 'rules', typing: 'signature',
@@ -50,23 +52,28 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
-const groupIcons: Record<string, IconName> = {
-  Schule: 'graduation_cap', Präsentation: 'podium_with_speaker', Musik: 'music',
-  'Comic & Film': 'clapperboard', Mathe: 'calculator', 'Lesen & Schreiben': 'reading',
-  Kommunikation: 'comments',
+const subjectIcons: Record<Subject, IconName> = {
+  Deutsch: 'reading', Mathematik: 'calculator', Sachunterricht: 'globe', Musik: 'music',
+  'Medien & Präsentation': 'podium_with_speaker', Klassenführung: 'alarm_clock',
+  'Unterstützte Kommunikation': 'comments', 'Für alle Fächer': 'puzzle',
 };
+const blockIcon = (b: LearningBlock): IconName =>
+  b.type === 'widget' ? widgetIcons[b.kind as WidgetKind] : activityIcons[b.kind as ActivityKind];
 
 export default function LearningDialog({
   element,
   onSave,
   onClose,
   onWorksheet,
+  onPages,
 }: {
   element?: PageElement;
   onSave: (el: PageElement) => void;
   onClose: () => void;
   /** Opens the worksheet generator (task pages with solutions). */
   onWorksheet?: () => void;
+  /** Building blocks that come as whole pages (the communication book). */
+  onPages?: (pages: Page[]) => void;
 }) {
   const [type, setType] = useState<'widget' | 'activity'>(
     element?.type === 'activity' ? 'activity' : 'widget',
@@ -82,17 +89,31 @@ export default function LearningDialog({
   const [query, setQuery] = useState('');
   const [showAI, setShowAI] = useState(false);
   const [effect, setEffect] = useState<keyof typeof soundEffects>('rain');
+  /** First pick a building block, then set it up. */
+  const [stage, setStage] = useState<'choose' | 'configure'>(element ? 'configure' : 'choose');
+  const [subject, setSubject] = useState<Subject | 'Alle'>('Alle');
+  const [blockTitle, setBlockTitle] = useState('');
   const patch = (values: Partial<LearningSettings>) =>
     setSettings((s) => ({ ...s, ...values }));
-  function choose(
-    type: 'widget' | 'activity',
-    kind: WidgetKind | ActivityKind,
-  ) {
+  function choose(block: LearningBlock) {
     if (busy) return;
-    setType(type);
-    setKind(kind);
-    setSettings(defaultSettings(kind));
+    if (block.pages) {
+      onPages?.(block.pages('landscape'));
+      onClose();
+      return;
+    }
+    setType(block.type);
+    setKind(block.kind);
+    setSettings(block.preset ? clone(block.preset) : defaultSettings(block.kind));
+    setBlockTitle(block.title);
+    setStage('configure');
   }
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const found = learningBlocks.filter(
+    (b) => (!b.pages || onPages) && words.every((w) => `${b.title} ${b.words}`.toLowerCase().includes(w)),
+  );
+  const count = (c: Subject) => found.filter((b) => b.subject === c).length;
+  const shown = subject === 'Alle' || query ? SUBJECTS.filter((c) => count(c) > 0) : [subject];
   async function media(file: File, done: (src: string) => void) {
     setBusy(true);
     try {
@@ -176,17 +197,36 @@ export default function LearningDialog({
           </button>
         </div>
         <div className="learning-dialog-layout">
-          {!element && (
-            <nav className="learning-catalog">
-              <input
-                aria-label="Lernwerkzeug suchen"
-                placeholder="Werkzeug suchen …"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              {onWorksheet && !query && (
-                <>
-                  <h3><Icon name="survey" size={20} />Arbeitsblätter</h3>
+          {stage === 'choose' && (
+            <div className="template-layout learning-chooser">
+              <nav className="template-categories" aria-label="Fächer">
+                <ChoiceButton icon="grid" label={`Alle · ${found.length}`} pressed={subject === 'Alle'} onClick={() => setSubject('Alle')} />
+                {SUBJECTS.map((c) => (
+                  <ChoiceButton
+                    key={c}
+                    icon={subjectIcons[c]}
+                    label={`${c} · ${count(c)}`}
+                    pressed={subject === c}
+                    disabled={!count(c)}
+                    onClick={() => setSubject(subject === c ? 'Alle' : c)}
+                  />
+                ))}
+              </nav>
+              <div className="template-main">
+                <div className="template-tools">
+                  <label className="template-search">
+                    <Icon name="search" size={20} />
+                    <input
+                      type="search"
+                      aria-label="Lernwerkzeug suchen"
+                      placeholder="Suchen, z. B. Uhr, Silben, Klavier …"
+                      value={query}
+                      autoFocus
+                      onChange={(e) => setQuery(e.target.value)}
+                    />
+                  </label>
+                </div>
+                {onWorksheet && !query && (
                   <button type="button" className="learning-worksheet" onClick={onWorksheet}>
                     <Icon name="survey" size={22} />
                     <span>
@@ -194,48 +234,29 @@ export default function LearningDialog({
                       <small>Rechnen, Uhr, Silben, Labyrinth … mit Lösungsseiten</small>
                     </span>
                   </button>
-                </>
-              )}
-              <h3><Icon name="puzzle" size={20} />Interaktive Übungen</h3>
-              {Object.entries(activityCatalog)
-                .filter(([, label]) =>
-                  label.toLowerCase().includes(query.toLowerCase()),
-                )
-                .map(([id, label]) => (
-                  <button
-                    key={id}
-                    aria-pressed={type === 'activity' && kind === id}
-                    onClick={() => choose('activity', id as ActivityKind)}
-                  >
-                    <Icon name={activityIcons[id as ActivityKind]} size={22} />
-                    {label}
-                  </button>
+                )}
+                {!found.length && <p className="template-note">Kein Lernwerkzeug gefunden.</p>}
+                {shown.map((c) => (
+                  <section key={c} className="template-group">
+                    <h3>
+                      <Icon name={subjectIcons[c]} size={20} /> {c}
+                    </h3>
+                    <div className="learning-grid">
+                      {found
+                        .filter((b) => b.subject === c)
+                        .map((b) => (
+                          <button key={b.id} type="button" className="learning-block" aria-label={b.title} onClick={() => choose(b)}>
+                            <Icon name={blockIcon(b)} size={34} />
+                            <span>{b.title}</span>
+                          </button>
+                        ))}
+                    </div>
+                  </section>
                 ))}
-              {Array.from(
-                new Set(Object.values(widgetCatalog).map(([, group]) => group)),
-              ).map((group) => (
-                <div key={group}>
-                  <h3><Icon name={groupIcons[group] ?? 'puzzle'} size={20} />{group}</h3>
-                  {Object.entries(widgetCatalog)
-                    .filter(
-                      ([, data]) =>
-                        data[1] === group &&
-                        data[0].toLowerCase().includes(query.toLowerCase()),
-                    )
-                    .map(([id, [label]]) => (
-                      <button
-                        key={id}
-                        aria-pressed={type === 'widget' && kind === id}
-                        onClick={() => choose('widget', id as WidgetKind)}
-                      >
-                        <Icon name={widgetIcons[id as WidgetKind]} size={22} />
-                        {label}
-                      </button>
-                    ))}
-                </div>
-              ))}
-            </nav>
+              </div>
+            </div>
           )}
+          {stage === 'configure' && (
           <form
             className="learning-options"
             onSubmit={(e) => {
@@ -283,11 +304,17 @@ export default function LearningDialog({
                 Mit KI entwerfen
               </button>
             )}
-            <h3>
-              {type === 'widget'
-                ? widgetCatalog[kind as WidgetKind][0]
-                : activityCatalog[kind as ActivityKind]}
-            </h3>
+            <div className="learning-options-heading">
+              {!element && (
+                <button type="button" className="knopf compact" onClick={() => setStage('choose')}>
+                  <Icon name="left" size={18} /> Andere Auswahl
+                </button>
+              )}
+              <h3>
+                {blockTitle ||
+                  (type === 'widget' ? widgetCatalog[kind as WidgetKind][0] : activityCatalog[kind as ActivityKind])}
+              </h3>
+            </div>
             <label className="property-label">
               Titel
               <input
@@ -1051,6 +1078,7 @@ export default function LearningDialog({
               </button>
             </div>
           </form>
+          )}
         </div>
         {showAI && (
           <AiDialog

@@ -4467,3 +4467,64 @@ input[type='checkbox'] {
   .install-hint { flex-wrap: wrap; }
   .install-hint-actions { flex-direction: row; width: 100%; justify-content: flex-end; }
 }
+
+/* Lernwerkzeuge: subjects on the left, building blocks as tiles (LearningDialog). */
+.modal.learning-dialog {
+  width: min(1180px, 100%);
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
+}
+.learning-dialog-layout {
+  flex: 1;
+  min-height: 0;
+}
+.learning-chooser {
+  width: 100%;
+  height: min(680px, calc(100dvh - 180px));
+  margin-top: 0;
+}
+.learning-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 10px;
+}
+.learning-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 104px;
+  padding: 12px 8px;
+  border: 1px solid #d6dfd0;
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+}
+.learning-block:hover {
+  border-color: #8fae86;
+  background: #f4f8ef;
+}
+.learning-options {
+  overflow-y: auto;
+  max-height: calc(100dvh - 180px);
+  padding-right: 6px;
+}
+.learning-options-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.learning-options-heading h3 {
+  margin: 8px 0;
+}
+@media (max-width: 760px) {
+  .learning-chooser { flex-direction: column; height: auto; }
+  .learning-chooser .template-categories { flex-direction: row; flex-wrap: wrap; width: 100%; }
+  .learning-chooser .template-categories .choice { width: auto; }
+}

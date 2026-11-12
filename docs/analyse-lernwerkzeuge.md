@@ -198,3 +198,21 @@ Umbau Stück für Stück geprüft.
 - **Unterstützte Kommunikation:** Sprechtaste, Satzleiste, Zurück-Taste,
   Kommunikationstafeln (2–20 Felder, Themen-Tafeln)
 - **Für alle Fächer:** Quiz, Zuordnungen, Memory
+
+## 5. Umsetzung
+
+**Schritt 1 – Struktur (erledigt):**
+
+- `src/lib/learning/blocks.ts` ist der Katalog der Lernwerkzeuge: 78 Bausteine in
+  acht Fächern. Die Voreinstellungen (Instrument, Trommelart, Rechenmaterial,
+  Kommunikationstafeln) stammen aus den bisherigen interaktiven Vorlagen.
+- Der Dialog „Lernwerkzeuge & Übungen“ arbeitet in zwei Stufen: Fach und Baustein
+  wählen (mit Suche über alle Fächer), dann einstellen („Andere Auswahl“ führt
+  zurück). Das Kommunikationsbuch fügt seine Seiten direkt ein.
+- Der Vorlagen-Dialog zeigt nur noch gestalterische Vorlagen. Neue Kategorie
+  „Einstellbar“ mit den sieben einstellbaren Arbeitsblättern der HTML-Vorlage;
+  sie öffnen den Arbeitsblatt-Dialog mit passendem Format und Titel.
+
+**Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Sachunterricht/Zeit,
+Klassenführung, Unterstützte Kommunikation, Musik, Medien – jeweils an der Vorlage
+angleichen und fehlende Bausteine ergänzen (siehe 3.2).

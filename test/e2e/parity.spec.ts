@@ -174,13 +174,16 @@ test('Formen, Bildgestaltung, Vorlagenkategorien, Zoom und Tastatur sind verfüg
   await page.getByRole('button', { name: 'Ganze Seite', exact: true }).click();
   await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Neue Seite', exact: true }).click();
   const templates = page.getByRole('dialog', { name: 'Neue Seite' });
-  await templates
-    .getByRole('navigation', { name: 'Kategorien' })
-    .getByRole('button', { name: /^Kommunikation · \d+$/ })
-    .click();
-  await templates
-    .getByRole('button', { name: /Kommunikation · 6 Felder/ })
-    .click();
+  // Templates are design only; interactive boards moved to “Lernwerkzeuge”.
+  const categories = templates.getByRole('navigation', { name: 'Kategorien' });
+  await expect(categories.getByRole('button', { name: /^Kommunikation · \d+$/ })).toHaveCount(0);
+  await expect(categories.getByRole('button', { name: /^Einstellbar · 7$/ })).toBeVisible();
+  await templates.getByRole('button', { name: 'Schließen', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
+  const learning = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
+  await learning.getByRole('navigation', { name: 'Fächer' }).getByRole('button', { name: /^Unterstützte Kommunikation · \d+$/ }).click();
+  await learning.getByRole('button', { name: '6 Felder', exact: true }).click();
+  await learning.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
   await expect(
     page.locator('.interaction-surface .communication-grid button'),
   ).toHaveCount(6);

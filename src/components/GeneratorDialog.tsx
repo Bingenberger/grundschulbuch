@@ -9,6 +9,7 @@ import {
 import AiDialog from './learning/AiDialog';
 import WordBank from './learning/WordBank';
 import { useState } from 'react';
+import { ENABLED } from '@/lib/paused';
 
 import type { Page } from '@/lib/notebook-model';
 /** A fitting icon for a worksheet format, derived from its name. */
@@ -33,14 +34,17 @@ export default function GeneratorDialog({
   onInsert,
   onClose,
   dictionaryOrigin,
+  initial,
 }: {
   onInsert: (pages: Page[]) => Promise<void>;
   onClose: () => void;
   dictionaryOrigin: string;
+  /** Format to start with (from a “Einstellbar” template). */
+  initial?: { kind: WorksheetKind; title?: string; words?: string };
 }) {
-  const [kind, setKind] = useState<WorksheetKind>('rechnen');
-  const [title, setTitle] = useState('');
-  const [words, setWords] = useState('Son-ne, Blu-me, Re-gen-bo-gen');
+  const [kind, setKind] = useState<WorksheetKind>(initial?.kind || 'rechnen');
+  const [title, setTitle] = useState(initial?.title || '');
+  const [words, setWords] = useState(initial?.words || 'Son-ne, Blu-me, Re-gen-bo-gen');
   const [maximum, setMaximum] = useState(20);
   const [solutions, setSolutions] = useState(true);
   const [showAI, setShowAI] = useState(false);
@@ -81,9 +85,11 @@ export default function GeneratorDialog({
         aria-labelledby="generator-title"
       >
         <h2 id="generator-title">Ein Arbeitsblatt erstellen</h2>
-        <button className="knopf compact" onClick={() => setShowAI(true)}>
-          Wörter mit KI entwerfen
-        </button>
+        {ENABLED.aiDesign && (
+          <button className="knopf compact" onClick={() => setShowAI(true)}>
+            Wörter mit KI entwerfen
+          </button>
+        )}
         <Picker
           label="Übungsformat"
           value={kind}

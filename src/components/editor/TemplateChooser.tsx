@@ -98,6 +98,7 @@ export default function TemplateChooser({
         <Preview entry={entry} orientation={orientation} />
         <span className="template-title">{entry.title}</span>
         {entry.key === current && <span className="template-badge">Aktuell</span>}
+        {entry.configure && <span className="template-badge">Einstellbar</span>}
       </button>
       {entry.savedId && onRemove && (
         <button type="button" className="template-remove" aria-label={`Vorlage ${entry.title} entfernen`} disabled={busy} onClick={() => onRemove(entry)}>
