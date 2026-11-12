@@ -27,7 +27,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -72,6 +72,8 @@ const SKIP = new Set([
   'widget-calculator',
   'widget-geometry',
   'widget-geodraw',
+  'widget-shop',
+  'widget-checkout',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -181,6 +183,34 @@ toolBlocks.push({
   kind: 'geodraw',
   pages: geodrawPage,
   words: 'Geometrie Formen zeichnen Lineal Geodreieck Strecke Quadrat Rechteck Dreieck Seite',
+});
+/** Reference template “Einkaufen an der Kasse”: the shop fills a whole page. */
+export function checkoutPage(settings: LearningSettings): Page[] {
+  const page = newPage('blanko', 'landscape');
+  page.elements.push({
+    id: uuid(),
+    type: 'widget',
+    widgetKind: 'checkout',
+    settings,
+    x: 0,
+    y: 0,
+    width: 297,
+    height: 210,
+    rotation: 0,
+    locked: true,
+    color: '#253c42',
+  } as PageElement);
+  return [page];
+}
+
+toolBlocks.push({
+  id: 'checkout',
+  title: 'Einkaufen an der Kasse',
+  subject: 'Mathematik',
+  type: 'widget',
+  kind: 'checkout',
+  preset: { ...defaultSettings('checkout'), title: 'Einkaufen an der Kasse' },
+  words: 'Einkaufen an der Kasse Laden Kaufladen Geld Münzen Scheine Rückgeld Wechselgeld Kunde Bäckerei Kiosk Supermarkt',
 });
 toolBlocks.push({
   id: 'receipt-page',

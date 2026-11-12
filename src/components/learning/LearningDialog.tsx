@@ -30,7 +30,11 @@ import {
   type ActivityKind,
   type WidgetKind,
   type LearningSettings,
+  type JsonValue,
 } from '@/lib/learning/catalog';
+import CheckoutOptions from './CheckoutOptions';
+import { shopConfig } from '@/lib/learning/checkout';
+import { checkoutPage } from '@/lib/learning/blocks';
 import { clone, uuid, type Page, type PageElement } from '@/lib/notebook-model';
 import { learningBlocks, SUBJECTS, type LearningBlock, type Subject } from '@/lib/learning/blocks';
 import { ChoiceButton, Choices, OptionGroup } from '../ui/Choice';
@@ -50,7 +54,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -65,6 +69,7 @@ const blockIcon = (b: LearningBlock): IconName =>
 /** Size of a newly inserted learning element in mm. */
 function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) {
   if (kind === 'mathtool') return pageSize(mathTool(settings));
+  if (kind === 'checkout') return { width: 297, height: 210 };
   return {
     width: kind === 'receipt' ? 120 : 180,
     height: kind === 'receipt' ? 126 : kind === 'alphabet' ? 210 : kind === 'synthesis' || kind === 'clapping' || kind === 'letterguess' || kind === 'syllables' || kind === 'geometry' ? 180 : 140,
@@ -296,6 +301,16 @@ export default function LearningDialog({
               const taskContent = (text: string, media?: { image?: string; audio?: string }) => !!text.trim() || !!media?.image || !!media?.audio;
               if (kind === 'quiz' && (!settings.questions?.length || settings.questions.some(q => !taskContent(q.text, q.media) || q.answers.length < 2 || q.answers.some((answer, i) => !taskContent(answer, q.answerMedia?.[i]))))) { setError('Bitte jede Frage und Antwort mit Text, Bild oder Ton ausfüllen.'); return; }
               if ((kind === 'matching' || kind === 'memory') && (!settings.pairs?.length || settings.pairs.some(pair => !taskContent(pair.left, pair.leftMedia) || !taskContent(pair.right, pair.rightMedia)))) { setError('Bitte beide Seiten jedes Paars mit Text, Bild oder Ton ausfüllen.'); return; }
+              if (kind === 'checkout') {
+                const raw = settings.checkout as { items?: { name?: string }[] } | undefined;
+                if (!raw?.items?.some((item) => item.name?.trim())) { setError('Lege mindestens eine Ware mit Namen an.'); return; }
+                const ready = { ...settings, checkout: shopConfig(settings.checkout) as unknown as JsonValue };
+                if (!element && onPages) {
+                  onPages(checkoutPage(ready));
+                  onClose();
+                  return;
+                }
+              }
               const learning: PageElement = {
                 ...(element || {
                   id: uuid(),
@@ -311,7 +326,7 @@ export default function LearningDialog({
                   type === 'widget' ? (kind as WidgetKind) : undefined,
                 activityKind:
                   type === 'activity' ? (kind as ActivityKind) : undefined,
-                settings,
+                settings: kind === 'checkout' ? { ...settings, checkout: shopConfig(settings.checkout) as unknown as JsonValue } : settings,
               };
               onSave(learning);
               onClose();
@@ -593,6 +608,7 @@ export default function LearningDialog({
                 </>
               );
             })()}
+            {kind === 'checkout' && <CheckoutOptions value={settings.checkout} onChange={(shop) => patch({ checkout: shop as unknown as JsonValue })} />}
             {kind === 'geodraw' && (() => {
               const g = geoConfig(settings.geo);
               // Every change of the settings makes a new series of tasks.

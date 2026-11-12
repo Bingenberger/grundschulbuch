@@ -250,6 +250,32 @@ Umbau Stück für Stück geprüft.
 - Der alte Baustein „Geometrie mit Prüfen“ ist aus dem Katalog genommen; vorhandene
   Elemente funktionieren weiter.
 
-**Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Sachunterricht/Zeit,
+**Schritt 2c – Einkaufen an der Kasse (erledigt):**
+
+- Neuer Baustein `checkout` (`lib/learning/checkout.ts`, `checkout-people.ts`,
+  `Checkout.tsx`, `CheckoutOptions.tsx`), Nachbau der Kasse der Vorlage auf einer
+  ganzen Seite (Bühne 1400 × 990): Laden mit Schild und Tür, sieben gezeichnete
+  Kunden, die hereinlaufen und mit eigener Stimme (Tonhöhe, Tempo) bestellen,
+  Sprechblase mit Bildern und Anzahl, Regal, Einkaufszettel (Datum, Zeit, Anz,
+  Einzel, Summe), „Kunde zahlt“ mit PRÜFEN, Rückgeld, Schublade mit Münzen und
+  Scheinen, Auswertung (Zeit, ohne Fehler, Fehler nach Waren/Bezahlen/Rückgeld,
+  Verbesserungen, Tabelle je Kunde).
+- Gleiche Abläufe und Sätze wie die Vorlage („Das stimmt aber nicht. Ich möchte …“,
+  „Es fehlen noch …“, „Das Wechselgeld beträgt …“), Münzen und Scheine werden
+  gestapelt, Rückgeld der Kasse lässt sich durch Antippen wechseln.
+- Einstellungen wie im Dialog der Vorlage: 9 Warenkörbe, 6 Preisstufen (Preise
+  neu würfeln, Reihenfolge bleibt), Kunden 1–10, Waren je Kunde bis 1–5, mehrere
+  Stück, Bilder in der Sprechblase, Vorlesen beim Antippen, Rückgeld selbst
+  herausgeben, Schild, eigene Waren mit Bild, Preis, Artikel (einen/eine/ein),
+  Einzahl und Mehrzahl; Vorschau oben.
+- Bilder: die 81 ARASAAC-Warenbilder der Vorlage und 14 ARASAAC-Geldbilder liegen in
+  `public/kasse/` (CC BY-NC-SA 4.0); beim Export werden sie mitgenommen. Eigene
+  Bilder liegen auf dem Schulserver.
+- Der alte Baustein „Einkaufen & Rückgeld“ ist aus dem Katalog genommen; vorhandene
+  Elemente funktionieren weiter. Mathe-Werkzeuge mit festen Einstellungen
+  (Rechenschiffchen, Rechenrahmen, Lineal, Taschenrechner) kommen ohne
+  Einstellungsschritt direkt auf die Seite.
+
+**Schritt 2 – Fach für Fach (offen):** Mathematik (fertig), Deutsch, Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Musik, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).

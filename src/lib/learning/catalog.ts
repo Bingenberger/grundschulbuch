@@ -1,3 +1,4 @@
+import { defaultShop } from './checkout';
 export const widgetCatalog = {
   timer: ['Timer', 'Schule'],
   multitimer: ['Mehrere Timer', 'Schule'],
@@ -26,6 +27,7 @@ export const widgetCatalog = {
   mathtool: ['Mathe-Werkzeug', 'Mathe'],
   receipt: ['Kassenzettel', 'Mathe'],
   geodraw: ['Geometrie: Formen zeichnen', 'Mathe'],
+  checkout: ['Einkaufen an der Kasse', 'Mathe'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -67,6 +69,8 @@ export type LearningSettings = {
   mathSize?: number;
   /** Geometrie: Formen zeichnen (see learning/geodraw.ts). */
   geo?: { level?: string; count?: number; groups?: string[]; tol?: string; flash?: number; tasks?: { k: string; a: number; b?: number; d?: number; n?: number }[] };
+  /** Einkaufen an der Kasse (see learning/checkout.ts). */
+  checkout?: JsonValue;
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';
@@ -205,6 +209,7 @@ export function defaultSettings(
     difficulty: 1,
     seed: 42,
   };
+  if (kind === 'checkout') Object.assign(settings, { checkout: defaultShop() as unknown as JsonValue });
   if (kind === 'receipt') Object.assign(settings, { receipt: { count: 5, level: 'simple', format: 'eurocent', change: false, rounds: 3 } });
   if (kind === 'geometry') Object.assign(settings, { geometryMode: 'series', geometryHelp: 'preview', geometryCount: 5, geometryPreview: 3 });
   if (kind === 'syllables') Object.assign(settings, { syllablePrompt: 'image', syllableColours: true, font: 'Andika', speechRate: 0.85, volume: 0.8 });
