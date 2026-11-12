@@ -1596,6 +1596,7 @@ export default function Editor({
               else if (entry.configure.kind === 'uhr') setSheetDialog('clock');
               else if (entry.configure.kind === 'moneycalc') setSheetDialog('money');
               else if (entry.configure.kind === 'mazes') setSheetDialog('maze');
+              else if (entry.configure.kind === 'notenames') setSheetDialog('notes');
               else setShowGenerator({ ...entry.configure, title: entry.title });
               return;
             }

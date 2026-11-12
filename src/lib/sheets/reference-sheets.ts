@@ -1361,6 +1361,105 @@ export const MAZE_DEFAULTS = pOe;
 export const mazeSizeLabel = mOe;
 export const makeMazePages = OOe;
 
+
+// ---- Noten lernen ----
+var Kl = [`AFFE`, `CAFE`, `CHEF`, `DACH`, `FACH`, `HEFE`, `FEE`, `ADE`, `ACH`, `EHE`, `AHA`, `EGGE`], ql = { whole: `4`, half: `2`, quarter: `1`, eighth: `\xBD` }, Jl = { clef: `treble`, ledger: false, answer: `names`, rounds: 10 };
+var Ml = (e10) => (e10?.tracks ?? []).map((e11) => e11.sound).filter((e11) => !!e11), Nl = [`C`, `D`, `E`, `F`, `G`, `A`, `H`], Pl = [0, 2, 4, 5, 7, 9, 11], Fl = (e10) => Math.round(e10 * 10) / 10, Il = (e10) => Nl[(e10 % 7 + 7) % 7], Ll = (e10) => 12 * (Math.floor(e10 / 7) + 1) + Pl[(e10 % 7 + 7) % 7], Rl = (e10) => Pl.includes((e10 % 12 + 12) % 12), zl = (e10, t10) => t10 - (e10 === `treble` ? 30 : 18), Bl = (e10, t10, n10) => e10 + 4 * t10 - n10 * t10 / 2;
+function Vl(e10, t10) {
+  return e10 === `treble` ? t10 ? [28, 40] : [30, 38] : t10 ? [16, 28] : [18, 26];
+}
+function Hl(e10, t10, n10, r10, i10 = `#1f2937`) {
+  let a10 = ``;
+  for (let o10 = 0; o10 < 5; o10++) a10 += `<path d="M${Fl(e10)} ${Fl(t10 + o10 * r10)}H${Fl(e10 + n10)}" stroke="${i10}" stroke-width="${Fl(Math.max(1.2, r10 * 0.09))}"/>`;
+  return a10;
+}
+function Ul(e10, t10, n10, r10, i10 = `#1f2937`) {
+  let a10 = r10 / 10;
+  return ((e11) => `<g transform="translate(${Fl(t10)} ${Fl(n10)}) scale(${Fl(a10 * 1e3) / 1e3})">${e11}</g>`)(e10 === `treble` ? `<path d="M15 30C14 24 24 23 24 31C24 39 11 42 6 34C1 25 8 13 19 7C26 3 26 -8 21 -12C16 -16 12 -8 13 0C14 10 16 24 18 36L19 47C19.5 54 12 56 10 51" fill="none" stroke="${i10}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11.5" cy="50" r="3.2" fill="${i10}"/>` : `<path d="M5 10.5C4 3 13 -1 19 3C26 8 24 22 6 33" fill="none" stroke="${i10}" stroke-width="3" stroke-linecap="round"/><circle cx="6" cy="10" r="3.4" fill="${i10}"/><circle cx="28" cy="5" r="2" fill="${i10}"/><circle cx="28" cy="15" r="2" fill="${i10}"/>`);
+}
+var Wl = (e10) => e10 * 3.2;
+function Gl(e10, t10, n10, r10, i10, a10 = `quarter`, o10 = `#1f2937`) {
+  let s10 = zl(e10, t10), c10 = Bl(r10, i10, s10), l10 = i10 * (a10 === `whole` ? 0.72 : 0.62), u10 = i10 * 0.45, d10 = Fl(Math.max(1.2, i10 * 0.12)), f10 = ``, p10 = l10 * 1.75;
+  for (let e11 = -2; e11 >= s10; e11 -= 2) f10 += `<path d="M${Fl(n10 - p10)} ${Fl(Bl(r10, i10, e11))}H${Fl(n10 + p10)}" stroke="${o10}" stroke-width="${Fl(Math.max(1.2, i10 * 0.09))}"/>`;
+  for (let e11 = 10; e11 <= s10; e11 += 2) f10 += `<path d="M${Fl(n10 - p10)} ${Fl(Bl(r10, i10, e11))}H${Fl(n10 + p10)}" stroke="${o10}" stroke-width="${Fl(Math.max(1.2, i10 * 0.09))}"/>`;
+  let m10 = a10 === `whole` || a10 === `half`;
+  if (f10 += `<ellipse cx="${Fl(n10)}" cy="${Fl(c10)}" rx="${Fl(l10)}" ry="${Fl(u10)}" transform="rotate(-20 ${Fl(n10)} ${Fl(c10)})" fill="${m10 ? `none` : o10}" stroke="${o10}" stroke-width="${m10 ? Fl(i10 * 0.16) : 0}"/>`, a10 === `whole`) return f10;
+  let h10 = s10 < 4, g10 = h10 ? n10 + l10 * 0.9 : n10 - l10 * 0.9, _10 = h10 ? c10 - i10 * 3.4 : c10 + i10 * 3.4;
+  if (f10 += `<path d="M${Fl(g10)} ${Fl(c10 + (h10 ? -i10 * 0.1 : i10 * 0.1))}V${Fl(_10)}" stroke="${o10}" stroke-width="${d10}" stroke-linecap="round"/>`, a10 === `eighth`) {
+    let e11 = h10 ? 1 : -1;
+    f10 += `<path d="M${Fl(g10)} ${Fl(_10)}c${Fl(i10 * 0.2)} ${Fl(e11 * i10 * 0.9)} ${Fl(i10 * 1.15)} ${Fl(e11 * i10 * 1.1)} ${Fl(i10 * 0.85)} ${Fl(e11 * i10 * 2.3)}" fill="none" stroke="${o10}" stroke-width="${Fl(i10 * 0.22)}" stroke-linecap="round"/>`;
+  }
+  return f10;
+}
+
+var r5 = { clef: `treble`, ledger: false, formats: [`name`, `draw`], layout: `mixed`, pages: 1, solutions: false }, i5 = 18, FOe = 2.7 * i5, IOe = 156.6, a5 = 58, o5 = 50, s5 = 30, LOe = `#15803d`, c5 = (e10) => Vl(e10.o.clef, e10.o.ledger), ROe = (e10) => K(...c5(e10));
+function zOe(e10, t10) {
+  let n10 = [];
+  for (; n10.length < t10; ) {
+    let t11 = ROe(e10);
+    n10.length && n10[n10.length - 1] === t11 || n10.push(t11);
+  }
+  return n10;
+}
+function l5(e10, t10, n10, r10) {
+  let [i10, a10] = e10.at(n10, FOe);
+  return e10.raw(Hl(i10, a10, r10, i5) + Ul(t10.o.clef, i10 + 4, a10, i5)), n10 + Wl(i5) + 34;
+}
+function u5(e10, t10, n10, r10, i10 = `quarter`, a10 = GB) {
+  let [o10, s10] = e10.at(r10, FOe);
+  e10.raw(Gl(t10.o.clef, n10, o10, s10, i5, i10, a10));
+}
+var d5 = (e10, t10, n10) => Array.from({ length: n10 }, (r10, i10) => n10 === 1 ? (e10 + t10) / 2 : e10 + (t10 - e10) * i10 / (n10 - 1));
+function BOe(e10, t10, n10) {
+  let r10 = new eV(70, VB, 214.6), i10 = l5(r10, e10, 70, VB), a10 = tV(e10, () => zOe(e10, 8), (e11) => `n${e11.join(`,`)}`);
+  d5(i10 + 10, 70 + VB - 50, a10.length).forEach((i11, o10) => {
+    u5(r10, e10, a10[o10], i11), rV(t10, r10, i11 - a5 / 2, n10, 164.6, a5, o5, Il(a10[o10]), s5);
+  }), t10.graphic(r10, n10, `Noten`);
+}
+function VOe(e10, t10, n10) {
+  let r10 = 164.6 + XB(s5), i10 = new eV(70, VB, r10), a10 = new eV(70, VB, r10), o10 = l5(i10, e10, 70, VB);
+  l5(a10, e10, 70, VB);
+  let [s10, c10] = c5(e10), l10 = tV(e10, () => zOe(e10, 7), (e11) => `z${e11.map(Il).join(``)}`);
+  d5(o10 + 20, 70 + VB - 60, l10.length).forEach((r11, i11) => {
+    let o11 = Il(l10[i11]);
+    t10.text(r11 - 40, n10 + IOe + 8, 80, mT(o11), s5, { bold: true });
+    for (let t11 = s10; t11 <= c10; t11++) Il(t11) === o11 && u5(a10, e10, t11, r11, `whole`, LOe);
+  }), t10.graphic(i10, n10, `Notenlinien`, a10);
+}
+function HOe(e10, t10, n10) {
+  let r10 = new eV(70, VB, 214.6), i10 = (VB - 40) / 2, [a10, o10] = c5(e10);
+  tV(e10, () => LB(Kl.slice()).slice(0, 2), (e11) => `w${e11.join(`,`)}`).forEach((s10, c10) => {
+    let l10 = 70 + c10 * (i10 + 40), u10 = d5(l5(r10, e10, l10, i10) + 20, l10 + i10 - 40, s10.length);
+    [...s10].forEach((i11, s11) => {
+      let c11 = [];
+      for (let e11 = a10; e11 <= o10; e11++) Il(e11) === i11 && c11.push(e11);
+      u5(r10, e10, PB(c11), u10[s11]), rV(t10, r10, u10[s11] - a5 / 2, n10, 164.6, a5, o5, i11, s5);
+    });
+  }), t10.graphic(r10, n10, `Notenr\xE4tsel`);
+}
+function UOe(e10, t10, n10) {
+  let r10 = new eV(70, VB, 214.6), i10 = l5(r10, e10, 70, VB), a10 = tV(e10, () => {
+    let e11 = [`whole`, `half`, `quarter`, `eighth`];
+    return LB([...e11, PB(e11), PB(e11)]);
+  }, (e11) => `v${e11.join(`,`)}`);
+  d5(i10 + 20, 70 + VB - 60, a10.length).forEach((i11, o10) => {
+    u5(r10, e10, ROe(e10), i11, a10[o10]), rV(t10, r10, i11 - a5 / 2, n10, 164.6, a5, o5, ql[a10[o10]], s5);
+  }), t10.graphic(r10, n10, `Notenwerte`);
+}
+var WOe = [{ id: `name`, label: `Notennamen`, title: `Notennamen`, sample: `Note \u2192 C D E \u2026`, instruction: () => `Wie hei\xDFen die Noten? Schreibe den Namen in das K\xE4stchen.`, rowH: () => 214.6, row: BOe }, { id: `draw`, label: `Noten einzeichnen`, title: `Noten einzeichnen`, sample: `C D E \u2192 Noten malen`, instruction: () => `Zeichne die Noten mit dem Stift auf die Notenlinien.`, rowH: () => 164.6 + XB(s5), row: VOe }, { id: `word`, label: `Notenr\xE4tsel`, title: `Notenr\xE4tsel`, sample: `Noten \u2192 DACH`, instruction: () => `Notenr\xE4tsel: Schreibe die Notennamen auf \u2013 welches Wort ergibt sich?`, rowH: () => 214.6, row: HOe }, { id: `values`, label: `Notenwerte`, title: `Notenwerte`, sample: `Halbe \u2192 2 Schl\xE4ge`, instruction: () => `Wie viele Schl\xE4ge dauert die Note? Ganze = 4, Halbe = 2, Viertel = 1, Achtel = \xBD`, rowH: () => 214.6, row: UOe }], GOe = (e10) => WOe.find((t10) => t10.id === e10);
+function KOe(e10, t10) {
+  let n10 = e10.formats.map(GOe).filter((e11) => !!e11), r10 = e10.clef === `bass` ? ` (Bassschl\xFCssel)` : ``;
+  return bV(n10, e10, () => ({ o: e10, seen: /* @__PURE__ */ new Set() }), (e11) => `${e11 ? e11.title : `Noten lernen`}${r10}`, `notes`, t10);
+}
+function qOe() {
+  return KOe({ ...r5, formats: [`name`, `word`, `draw`] })[0];
+}
+
+export const NOTE_DEFAULTS = r5;
+export const NOTE_FORMATS = WOe;
+export const findNoteFormat = GOe;
+export const makeNotePages = KOe;
+
 export const MATH_RANGES = MB;
 export const MATH_DEFAULTS = NB;
 export const MATH_FORMATS = hV;

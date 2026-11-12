@@ -5,10 +5,12 @@ import MathSheetDialog from './MathSheetDialog';
 import ClockSheetDialog from './ClockSheetDialog';
 import MoneySheetDialog from './MoneySheetDialog';
 import MazeSheetDialog from './MazeSheetDialog';
+import NoteSheetDialog from './NoteSheetDialog';
 
-export type SheetKind = 'math' | 'clock' | 'money' | 'maze';
+export type SheetKind = 'math' | 'clock' | 'money' | 'maze' | 'notes';
 
 export default function SheetDialogFor({ kind, onClose, onInsert }: { kind: SheetKind; onClose: () => void; onInsert: (pages: Page[]) => Promise<void> }) {
+  if (kind === 'notes') return <NoteSheetDialog onClose={onClose} onInsert={onInsert} />;
   if (kind === 'maze') return <MazeSheetDialog onClose={onClose} onInsert={onInsert} />;
   if (kind === 'money') return <MoneySheetDialog onClose={onClose} onInsert={onInsert} />;
   if (kind === 'clock') return <ClockSheetDialog onClose={onClose} onInsert={onInsert} />;

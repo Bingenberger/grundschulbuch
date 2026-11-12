@@ -106,3 +106,27 @@ test('Labyrinth: Form, Schwierigkeit, Katzen und Lösung wie in der Vorlage', as
   await expect(page.locator('.page-thumbnail')).toHaveCount(2);
   await page.screenshot({ path: test.info().outputPath('labyrinth-seite.png') });
 });
+
+test('Noten lernen: Schlüssel, Tonraum und Übungen wie in der Vorlage', async ({ page }) => {
+  test.setTimeout(90000);
+  await login(page);
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Noten', pages: [newPage('blanko', 'landscape')] } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  await page.evaluate(() => localStorage.removeItem('grundschulbuch-noten-lernen'));
+  await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Neue Seite', exact: true }).click();
+  const templates = page.getByRole('dialog', { name: 'Neue Seite' });
+  await templates.getByRole('navigation', { name: 'Kategorien' }).getByRole('button', { name: /^Einstellbar · / }).click();
+  await templates.getByRole('button', { name: 'Vorlage Noten lernen' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Noten lernen' });
+  await expect(dialog.getByRole('radio', { name: /Violinschlüssel/ })).toHaveAttribute('aria-checked', 'true');
+  await expect(dialog.getByRole('radio', { name: /Im Notensystem E bis F/ })).toHaveAttribute('aria-checked', 'true');
+  await expect(dialog.getByRole('button', { name: /^Notennamen/ })).toHaveAttribute('aria-pressed', 'true');
+  await dialog.getByRole('radio', { name: /Bassschlüssel/ }).click();
+  await expect(dialog.getByRole('radio', { name: /Im Notensystem G bis A/ })).toBeVisible();
+  await dialog.getByRole('button', { name: /^Notenrätsel/ }).click();
+  await page.screenshot({ path: test.info().outputPath('noten-dialog.png') });
+  await dialog.getByRole('button', { name: /Seiten? einfügen/ }).click();
+  await expect(dialog).toHaveCount(0, { timeout: 20000 });
+  await expect(page.locator('.interaction-surface').getByRole('textbox', { name: 'Antwort' }).first()).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath('noten-seite.png') });
+});

@@ -1,5 +1,5 @@
 'use client';
-import { CLOCK_DEFAULTS, MATH_DEFAULTS, MAZE_DEFAULTS, MONEY_DEFAULTS, makeClockPages, makeMazePages, makeMathPages, makeMoneyPages } from '@/lib/sheets/reference-sheets';
+import { CLOCK_DEFAULTS, MATH_DEFAULTS, MAZE_DEFAULTS, MONEY_DEFAULTS, NOTE_DEFAULTS, makeClockPages, makeMazePages, makeNotePages, makeMathPages, makeMoneyPages } from '@/lib/sheets/reference-sheets';
 import { toPages } from '@/lib/sheets/convert';
 import { clone, newPage, rulings, uuid, type Page, type Ruling, type Template } from '@/lib/notebook-model';
 import { blueprintPages, blueprints } from '@/lib/learning/templates';
@@ -73,6 +73,10 @@ function moneySample() {
 function mazeSample() {
   return toPages(makeMazePages({ ...MAZE_DEFAULTS, level: 1, cats: 2, pages: 1, solutions: false }).slice(0, 1), 'sheet-labyrinth');
 }
+/** Preview of “Noten lernen” like in the reference. */
+function noteSample() {
+  return toPages(makeNotePages({ ...NOTE_DEFAULTS }, undefined).slice(0, 1), 'sheet-noten');
+}
 export const categoryIcon = (category: string): IconName => categoryIcons[category] || 'template';
 
 /** Fresh ids, so a template can be used again and again. */
@@ -125,8 +129,8 @@ export function templateCatalog(saved: Template[]): TemplateEntry[] {
     title,
     category: CONFIGURABLE,
     // A fixed seed keeps the preview calm.
-    build: () => (kind === 'rechnen' ? mathSample() : kind === 'uhr' ? clockSample() : kind === 'moneycalc' ? moneySample() : kind === 'mazes' ? mazeSample() : generatePages({ kind, title, words: words || '', maximum: 20, seed: 7, showSolutions: false }).slice(0, 1)),
-    orientation: ['rechnen', 'uhr', 'moneycalc', 'mazes'].includes(kind) ? 'landscape' : 'portrait',
+    build: () => (kind === 'rechnen' ? mathSample() : kind === 'uhr' ? clockSample() : kind === 'moneycalc' ? moneySample() : kind === 'mazes' ? mazeSample() : kind === 'notenames' ? noteSample() : generatePages({ kind, title, words: words || '', maximum: 20, seed: 7, showSolutions: false }).slice(0, 1)),
+    orientation: ['rechnen', 'uhr', 'moneycalc', 'mazes', 'notenames'].includes(kind) ? 'landscape' : 'portrait',
     configure: { kind, words },
     words: `${title} ${CONFIGURABLE} arbeitsblatt einstellbar`,
   }));
