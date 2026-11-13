@@ -34,7 +34,7 @@ import {
 } from '@/lib/learning/catalog';
 import CheckoutOptions from './CheckoutOptions';
 import { shopConfig } from '@/lib/learning/checkout';
-import { checkoutPage, fullPageWidget } from '@/lib/learning/blocks';
+import { checkoutPage, fullPageWidget, receiptPage } from '@/lib/learning/blocks';
 import MonsterOptions from './MonsterOptions';
 import SynthOptions from './SynthOptions';
 import AnlautOptions from './AnlautOptions';
@@ -338,6 +338,12 @@ export default function LearningDialog({
                   onClose();
                   return;
                 }
+              }
+              // “Rechnen mit dem Taschenrechner”: receipt and calculator on their own page.
+              if (kind === 'receipt' && !element && onPages) {
+                onPages(receiptPage('landscape', settings.receipt));
+                onClose();
+                return;
               }
               const learning: PageElement = {
                 ...(element || {
@@ -683,13 +689,13 @@ export default function LearningDialog({
               return (
                 <>
                   <Choices
-                    label="Geld"
+                    label="Schreibweise"
                     value={r.format || 'eurocent'}
                     onChange={(format) => set({ format })}
                     options={[
-                      { value: 'eurocent', label: 'Euro und Cent (Supermarkt)', icon: <TextGlyph text="€,ct" /> },
-                      { value: 'euro', label: 'Nur Euro (Kaufhaus)', icon: <TextGlyph text="€" /> },
-                      { value: 'cent', label: 'Nur Cent (Kiosk)', icon: <TextGlyph text="ct" /> },
+                      { value: 'eurocent', label: 'Euro und Cent (1,49 €)', icon: <TextGlyph text="€,ct" /> },
+                      { value: 'euro', label: 'Nur Euro (6 €)', icon: <TextGlyph text="€" /> },
+                      { value: 'cent', label: 'Nur Cent (45 ct)', icon: <TextGlyph text="ct" /> },
                     ]}
                   />
                   <Choices
@@ -697,31 +703,33 @@ export default function LearningDialog({
                     value={r.level || 'simple'}
                     onChange={(level) => set({ level })}
                     options={[
-                      { value: 'simple', label: 'Leicht (runde Preise)', icon: <TextGlyph text="10" /> },
-                      { value: 'complex', label: 'Schwer (krumme Preise)', icon: <TextGlyph text="9,99" /> },
+                      { value: 'simple', label: 'Einfache Preise', icon: <TextGlyph text="10" /> },
+                      { value: 'complex', label: 'Krumme Preise', icon: <TextGlyph text="9,99" /> },
                     ]}
                   />
                   <Choices
-                    label="Einkäufe pro Zettel"
+                    label="Einkäufe auf dem Kassenzettel"
                     value={r.count ?? 5}
                     onChange={(count) => set({ count })}
                     options={[3, 4, 5, 6, 8, 10].map((n) => ({ value: n, label: String(n), icon: <TextGlyph text={String(n)} /> }))}
                   />
                   <Choices
-                    label="Zettel nacheinander"
+                    label="Wechselgeld rechnen"
+                    value={!!r.change}
+                    onChange={(change) => set({ change })}
+                    options={[
+                      { value: true, label: 'Ja', icon: 'checkmark' as const },
+                      { value: false, label: 'Nein, nur die Summe', icon: 'cancel' as const },
+                    ]}
+                  />
+                  <p className="option-hint">Ist die Summe richtig, erscheint, wie viel bezahlt wurde (aufgerundet, z. B. 20 €) – dann wird das Rückgeld ausgerechnet und eingetragen.</p>
+                  <Choices
+                    label="Kassenzettel nacheinander"
                     value={r.rounds ?? 3}
                     onChange={(rounds) => set({ rounds })}
                     options={[1, 3, 5, 10].map((n) => ({ value: n, label: n === 1 ? '1 Zettel' : `${n} Zettel`, icon: <TextGlyph text={String(n)} /> }))}
                   />
-                  <Choices
-                    label="Rückgeld"
-                    value={!!r.change}
-                    onChange={(change) => set({ change })}
-                    options={[
-                      { value: false, label: 'Nur die Summe', icon: <TextGlyph text="Σ" /> },
-                      { value: true, label: 'Summe und Rückgeld', icon: <TextGlyph text="↩" /> },
-                    ]}
-                  />
+                  <p className="option-hint">Danach kommt eine Auswertung: Zeit, Fehler, wie oft verbessert wurde.</p>
                 </>
               );
             })()}

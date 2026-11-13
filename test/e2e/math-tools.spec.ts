@@ -88,3 +88,26 @@ test('Kassenzettel: Summe und Rückgeld eintragen, Stempel, nächster Zettel', a
   await expect(receipt.getByText('Zettel 2 von 3')).toBeVisible();
   await expect(receipt.getByText('RICHTIG')).toHaveCount(0);
 });
+
+test('Rechnen mit dem Taschenrechner: ein Baustein mit allen Einstellungen des Kassenzettels', async ({ page }) => {
+  await login(page);
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Taschenrechner', orientation: 'landscape' } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
+  await dialog.getByRole('navigation', { name: 'Fächer' }).getByRole('button', { name: /^Mathematik · / }).click();
+  // Like the reference: no separate “Kassenzettel” block.
+  await expect(dialog.getByRole('button', { name: 'Kassenzettel', exact: true })).toHaveCount(0);
+  await dialog.getByRole('button', { name: 'Rechnen mit dem Taschenrechner', exact: true }).click();
+  for (const group of ['Schreibweise', 'Preise', 'Einkäufe auf dem Kassenzettel', 'Wechselgeld rechnen', 'Kassenzettel nacheinander'])
+    await expect(dialog.getByRole('group', { name: group })).toBeVisible();
+  await dialog.getByRole('group', { name: 'Schreibweise' }).getByRole('button', { name: 'Nur Euro (6 €)' }).click();
+  await dialog.getByRole('group', { name: 'Einkäufe auf dem Kassenzettel' }).getByRole('button', { name: '3', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  const receipt = page.locator('.interaction-surface svg.receipt-widget');
+  await expect(receipt).toBeVisible();
+  await expect(page.locator('.interaction-surface').getByRole('group', { name: /^Taschenrechner/ })).toBeVisible();
+  const prices = (await receipt.locator('text[text-anchor="end"]').allTextContents()).filter((t) => /€$/.test(t) && !/Summe/.test(t));
+  expect(prices.filter((t) => /^\d+ €$/.test(t)).length).toBe(3);
+});

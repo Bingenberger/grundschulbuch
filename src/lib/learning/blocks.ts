@@ -82,6 +82,7 @@ const SKIP = new Set([
   'widget-anlaut',
   'widget-clapping',
   'widget-clapsyllables',
+  'widget-receipt',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -95,8 +96,10 @@ const mathTools: [string, MathToolKind, number, string][] = [
   ['Lineal 30 cm', 'ruler', 30, 'in echter Größe beim Ausdrucken'],
   ['Taschenrechner', 'calc', 0, 'plus, minus, mal, geteilt'],
 ];
+/** Settings of the receipt in “Rechnen mit dem Taschenrechner” as in the reference. */
+export const RECEIPT_START = { count: 5, level: 'complex', format: 'eurocent', change: true, rounds: 3 } as const;
 /** Reference template “Rechnen mit dem Taschenrechner”: receipt and calculator on one page. */
-function receiptPage(orientation: Page['orientation']): Page[] {
+export function receiptPage(orientation: Page['orientation'], receipt: LearningSettings['receipt'] = RECEIPT_START): Page[] {
   const page = newPage('blanko', orientation);
   const wide = orientation === 'landscape';
   const element = (values: Partial<PageElement>): PageElement => ({ id: uuid(), x: 0, y: 0, width: 10, height: 10, rotation: 0, locked: false, color: '#253c42', ...values } as PageElement);
@@ -107,7 +110,7 @@ function receiptPage(orientation: Page['orientation']): Page[] {
     element({
       type: 'widget',
       widgetKind: 'receipt',
-      settings: { ...defaultSettings('receipt'), title: 'Kassenzettel', receipt: { count: 5, level: 'complex', format: 'eurocent', change: true, rounds: 3 } },
+      settings: { ...defaultSettings('receipt'), title: 'Kassenzettel', receipt: { ...RECEIPT_START, ...receipt } },
       ...(wide ? { x: 8.5, y: 30, width: 168, height: 176 } : { x: 10, y: 30, width: 150, height: 157 }),
     }),
     element({
@@ -266,8 +269,9 @@ toolBlocks.push({
   subject: 'Mathematik',
   type: 'widget',
   kind: 'receipt',
-  pages: receiptPage,
-  words: 'Rechnen mit dem Taschenrechner Kassenzettel Rückgeld Seite',
+  // Settings first (like the reference), then receipt and calculator on a page.
+  preset: { ...defaultSettings('receipt'), title: 'Rechnen mit dem Taschenrechner', receipt: { ...RECEIPT_START } },
+  words: 'Rechnen mit dem Taschenrechner Kassenzettel Rückgeld Wechselgeld Summe Seite',
 });
 
 export const learningBlocks: LearningBlock[] = [...toolBlocks, ...blueprints.map(fromBlueprint)]
