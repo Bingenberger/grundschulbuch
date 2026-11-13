@@ -271,6 +271,12 @@ Beide Apps laufen auf getrennten Subdomains mit eigenen Konten. Für den Anfang 
 - **Keine Übernahme aus dem Lernsachen-Heft.** Dessen Lizenz (CC BY-NC-SA 4.0)
   ist wegen „nicht kommerziell“ mit keiner der genannten offenen Lizenzen
   vereinbar. Es dient nur als Ideengeber.
+  *Stand November 2026, auf Wunsch der Schule geändert:* Widgets des
+  Lernsachen-Hefts und die Spieler von Textsachen und Schiebesachen werden
+  unverändert übernommen (`src/lib/reference/`, CC BY-NC-SA 4.0,
+  Lernsachen.blog). Diese Teile dürfen nur nicht kommerziell genutzt werden; die
+  Lizenzfrage für das Gesamtpaket ist damit offen und vor einer Veröffentlichung
+  zu klären.
 - **Kein ungeprüfter Code aus der Grundschultafel.** Die Tafel ist schulintern
   und nicht frei lizenziert. Login, Sitzungen und Dateispeicher sind deshalb
   neu geschrieben. Übernommen werden dürfen nur Teile, deren Urheber der

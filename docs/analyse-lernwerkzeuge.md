@@ -312,6 +312,23 @@ Umbau Stück für Stück geprüft.
   Vorlage keine Aufgabe bilden kann (z. B. Nur Euro + Nur Münzen bei Wechselgeld),
   werden mit Hinweis weggelassen statt abzustürzen.
 
+**Deutsch – Übungen von Textsachen (13.11.2026):** Lesen & Schreiben (Bild-,
+Hör- und Wortdiktat, Blitzlesen, Lesen mit Bilder-Quiz, Lückentext, Abtippen),
+Memory mit Wörtern, Maus & Käse, Kreuzworträtsel, Suchsel und Wordle laufen mit
+dem Originalspieler von Textsachen (Lernsachen.blog, CC BY-NC-SA 4.0), genau wie
+im Lernsachen-Heft – aber ohne Internet: `scripts/extract-players.mjs` löst den
+Spieler aus der veröffentlichten App (`reference/textsachen-player.ts`),
+`TextsachenFrame.tsx` startet ihn in einem eigenen Rahmen (Seite wie im
+Lernsachen-Heft, Schriften der Seite, Bilder als Daten-Adressen) und speichert den
+Spielstand je Kind. Die Einstellungen (`TextsachenOptions.tsx`) folgen dem Editor
+von Textsachen: Wortliste oder Text mit Lernwörtern, Übungsart, Bilder (fehlende
+werden in ARASAAC gesucht), Abschnitt zur Übung, Schrift, Hilfen, Vorlese-Stimme,
+Checkliste. Die Übung kommt wie in der Vorlage auf eine eigene Seite. Die
+früheren eigenen Übungen (Lückentext, Abschreiben, Blitzlesen, Buchstaben raten,
+Kreuzworträtsel, Suchsel, Worträtsel) sind nicht mehr auswählbar; vorhandene
+Seiten damit funktionieren weiter. Offen: Silbenlesen mit dem Spieler von
+Schiebesachen (`reference/schiebesachen-player.ts` ist schon herausgelöst).
+
 **Schritt 2 – Fach für Fach (offen):** Mathematik (fertig), Deutsch, Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Musik, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).

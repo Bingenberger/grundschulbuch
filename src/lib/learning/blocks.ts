@@ -5,7 +5,8 @@
 import { newPage, uuid, type Page, type PageElement } from '../notebook-model';
 import { activityCatalog, widgetCatalog, type ActivityKind, type LearningSettings, type WidgetKind } from './catalog';
 import { blueprintPages, blueprints, type Blueprint } from './templates';
-import { defaultSettings } from './catalog';
+import { defaultSettings, type JsonValue } from './catalog';
+import { defaultTs } from './textsachen';
 import type { MathToolKind } from './mathtool';
 import { geoConfig } from './geodraw';
 import { musicPresets, musicKind, musicSettings, musicPage } from './music';
@@ -28,7 +29,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -95,6 +96,15 @@ const SKIP = new Set([
   'widget-dienes',
   'widget-numberline',
   'widget-hundredfield',
+  // Replaced by the exercises of Textsachen (Lesen & Schreiben, games).
+  'widget-textsachen',
+  'activity-cloze',
+  'activity-typing',
+  'activity-reading',
+  'activity-letterguess',
+  'activity-crossword',
+  'activity-wordsearch',
+  'activity-wordle',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -274,6 +284,16 @@ for (const [kind, title, words] of [
   ['hundredfield', 'Hunderterfeld', 'Hunderterfeld Zwanzigerfeld Punktefeld Abdeckwinkel färben Zahlen zeigen'],
 ] as const)
   toolBlocks.push({ id: kind, title, subject: 'Mathematik', type: 'widget', kind, preset: { ...defaultSettings(kind), title }, words });
+// Lesen & Schreiben and the word games of Textsachen, as in Lernsachen-Heft.
+for (const [id, mode, title, words] of [
+  ['ts-lesen-schreiben', 'picture', 'Lesen & Schreiben', 'Lesen Schreiben Textsachen Bilddiktat Hördiktat Wortdiktat Diktat Blitzlesen Lückentext Abtippen Abschreiben Text vorlesen Lernwörter'],
+  ['ts-memory', 'memory', 'Memory mit Wörtern', 'Memory Paare Bild Wort Ton Wörter Textsachen'],
+  ['ts-mouse', 'mouse', 'Maus & Käse', 'Maus Käse Buchstaben raten Galgenmännchen Wörter Textsachen'],
+  ['ts-crossword', 'crossword', 'Kreuzworträtsel', 'Kreuzworträtsel Rätsel Bilder Wörter Textsachen'],
+  ['ts-search', 'search', 'Suchsel', 'Suchsel Wortsuche Buchstabengitter Wörter finden Textsachen'],
+  ['ts-wordle', 'wordle', 'Wordle', 'Wordle Worträtsel Wort erraten Buchstaben Textsachen'],
+] as const)
+  toolBlocks.push({ id, title, subject: 'Deutsch', type: 'widget', kind: 'textsachen', preset: { ...defaultSettings('textsachen'), ts: defaultTs(mode) as unknown as JsonValue, title }, words });
 toolBlocks.push({
   id: 'checkout',
   title: 'Einkaufen an der Kasse',

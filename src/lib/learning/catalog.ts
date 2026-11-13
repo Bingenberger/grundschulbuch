@@ -9,6 +9,7 @@ import { PLACE_DEFAULTS } from './placevalue';
 import { DIENES_DEFAULTS } from './dienes';
 import { NUMBERLINE_DEFAULTS } from './numberline';
 import { FIELD_DEFAULTS } from './hundredfield';
+import { defaultTs } from './textsachen';
 export const widgetCatalog = {
   timer: ['Timer', 'Schule'],
   multitimer: ['Mehrere Timer', 'Schule'],
@@ -46,6 +47,7 @@ export const widgetCatalog = {
   dienes: ['Dienes-Material', 'Mathe'],
   numberline: ['Zahlenstrahl', 'Mathe'],
   hundredfield: ['Hunderterfeld', 'Mathe'],
+  textsachen: ['Lesen & Schreiben', 'Lesen & Schreiben'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -107,6 +109,8 @@ export type LearningSettings = {
   dienes?: JsonValue;
   numberline?: JsonValue;
   field?: JsonValue;
+  /** Übungen von Textsachen (see learning/textsachen.ts). */
+  ts?: JsonValue;
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';
@@ -249,6 +253,7 @@ export function defaultSettings(
   if (kind === 'dienes') Object.assign(settings, { dienes: { ...DIENES_DEFAULTS } });
   if (kind === 'numberline') Object.assign(settings, { numberline: { ...NUMBERLINE_DEFAULTS } });
   if (kind === 'hundredfield') Object.assign(settings, { field: { ...FIELD_DEFAULTS } });
+  if (kind === 'textsachen') Object.assign(settings, { ts: defaultTs() as unknown as JsonValue });
   if (kind === 'clapsyllables') Object.assign(settings, { clap: defaultClap() as unknown as JsonValue });
   if (kind === 'anlaut') Object.assign(settings, { anlaut: encodeMaps(defaultAnlaut(), ['keys', 'sounds']) as unknown as JsonValue });
   if (kind === 'syllablejoin') Object.assign(settings, { synth: encodeMaps(withRecordings(makeSynth()), ['sounds', 'voice']) as unknown as JsonValue });

@@ -58,8 +58,13 @@ test('Alle Lernwerkzeuge und Übungen lassen sich im Heft öffnen', async ({
   await page.goto(`/heft/${data.book.id}`);
   for (let i = 0; i < catalogue.length; i++) {
     await page.getByLabel(`Seite ${i + 1} öffnen`, { exact: true }).click();
+    // Textsachen: the original player in its own frame.
+    if (catalogue[i].kind === 'textsachen') {
+      await expect(page.frameLocator('.interaction-surface .textsachen-frame iframe').locator('#lh-root')).not.toBeEmpty();
+      continue;
+    }
     // Drawn like the reference: no header, just the picture.
-    if (['mathtool', 'receipt', 'geodraw', 'checkout', 'monsternames', 'syllablejoin', 'anlaut', 'clapsyllables', 'placevalue', 'dienes', 'numberline', 'hundredfield'].includes(catalogue[i].kind)) {
+    if (['mathtool', 'receipt', 'geodraw', 'checkout', 'monsternames', 'syllablejoin', 'anlaut', 'clapsyllables', 'placevalue', 'dienes', 'numberline', 'hundredfield', 'textsachen'].includes(catalogue[i].kind)) {
       await expect(page.locator('.interaction-surface .page-element svg').first()).toBeVisible();
       continue;
     }
