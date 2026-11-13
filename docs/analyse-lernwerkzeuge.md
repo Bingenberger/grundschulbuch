@@ -326,8 +326,27 @@ werden in ARASAAC gesucht), Abschnitt zur Übung, Schrift, Hilfen, Vorlese-Stimm
 Checkliste. Die Übung kommt wie in der Vorlage auf eine eigene Seite. Die
 früheren eigenen Übungen (Lückentext, Abschreiben, Blitzlesen, Buchstaben raten,
 Kreuzworträtsel, Suchsel, Worträtsel) sind nicht mehr auswählbar; vorhandene
-Seiten damit funktionieren weiter. Offen: Silbenlesen mit dem Spieler von
-Schiebesachen (`reference/schiebesachen-player.ts` ist schon herausgelöst).
+Seiten damit funktionieren weiter.
+
+**Zuordnungen (Schiebesachen, 13.11.2026):** Wie im Lernsachen-Heft entstehen
+Zuordnungen mit dem Baukasten des Schiebesachen-Dialogs „Neue Übung“ (Bild und
+Wort, Oberbegriffe sortieren, Artikel, Reihenfolge, Paare, Buchstabieren,
+Silbenlesen) und laufen mit dem Originalspieler. `scripts/extract-players.mjs`
+übernimmt den Baukasten unverändert (nur die nötigen Deklarationen, per
+Scope-Analyse ermittelt, samt Silbentrennung) nach
+`reference/schiebesachen-builder.ts`. Der Dialog (`ZuordnungOptions.tsx`) folgt
+„Neue Übung“: Format, Liste mit Beispiel und „So geht's“, Format-Optionen,
+Bilder (ARASAAC-Suche), Design, Vorschau. Die Übung wird beim Einstellen gebaut
+und gespeichert, damit der Spielstand der Kinder zu den Karten passt. „Zuordnungen“
+steht unter „Für alle Fächer“; Silbenlesen, Buchstabieren, Artikel und Bild und
+Wort zusätzlich unter Deutsch. „Bild beschriften“ fehlt noch (braucht das
+Platzieren der Bereiche auf einem eigenen Bild). Die frühere eigene Zuordnung
+und das frühere Silbenlesen sind nicht mehr auswählbar.
+
+**Einstellungsseiten Deutsch:** Monsternamen, Silben verbinden, Anlaut-Tastatur
+und Silben klatschen zeigen ihre Auswahl jetzt wie die neueren Seiten – Schalter
+statt Ja/Nein-Kacheln, Schieberegler für Anzahlen, Auswahlknöpfe mit Überschrift
+(`OptionControls.tsx`).
 
 **Schritt 2 – Fach für Fach (offen):** Mathematik (fertig), Deutsch, Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Musik, Medien – jeweils an der Vorlage

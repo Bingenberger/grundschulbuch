@@ -21,7 +21,7 @@ test('Monsternamen lesen wie in der Vorlage: Silben hören, Gelesen!, Urkunde', 
   await expect(dialog.getByRole('button', { name: 'Fantasienamen lesen', exact: true })).toHaveCount(0);
   await expect(dialog.getByText('Diese Buchstaben kennen die Kinder schon')).toBeVisible();
   await expect(dialog.getByLabel('Gelernte Buchstaben')).toHaveValue('m a l o i s e r n u');
-  await dialog.getByRole('group', { name: 'Wie viele Monster?' }).getByRole('button', { name: '2 Monster' }).click();
+  await dialog.getByRole('slider', { name: 'Wie viele Monster?' }).fill('2');
   await expect(dialog.locator('.monster-listen')).toHaveCount(2);
   await page.screenshot({ path: test.info().outputPath('monster-dialog.png') });
   await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
@@ -49,7 +49,7 @@ test('Silben verbinden wie in der Vorlage: Buchstaben ziehen, Silbe fährt davon
   const dialog = await openBlock(page, 'Silben verbinden');
   await expect(dialog.getByRole('button', { name: 'Laute verbinden', exact: true })).toHaveCount(0);
   await expect(dialog.getByLabel('Gelernte Buchstaben')).toHaveValue('m l s f r n a o i e u');
-  await dialog.getByRole('group', { name: 'Wie viele Silben?' }).getByRole('button', { name: '2 Silben', exact: true }).click();
+  await dialog.getByRole('slider', { name: 'Wie viele Silben?' }).fill('2');
   await expect(dialog.locator('.monster-listen')).toHaveCount(2);
   await page.screenshot({ path: test.info().outputPath('silben-dialog.png') });
   await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
@@ -99,7 +99,7 @@ test('Silben klatschen wie in der Vorlage: Bild, Silben zeigen, Weiter', async (
   await login(page);
   const dialog = await openBlock(page, 'Silben klatschen');
   await expect(dialog.getByLabel('Wort, Silben mit Bindestrich')).toHaveCount(4);
-  await dialog.getByRole('group', { name: 'Hilfe' }).getByRole('button', { name: 'Wort in Silbenschrift' }).click();
+  await dialog.getByRole('radiogroup', { name: 'Hilfe' }).getByRole('radio', { name: 'Wort in Silbenschrift' }).click();
   await page.screenshot({ path: test.info().outputPath('klatschen-dialog.png') });
   await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
   await expect(dialog).toHaveCount(0);

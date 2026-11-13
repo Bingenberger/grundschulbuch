@@ -3,7 +3,7 @@
 // keys, pictures of the keys, practising words.
 import { useState } from 'react';
 import Icon from '../Icon';
-import { Choices } from '../ui/Choice';
+import { Choices } from './OptionControls';
 import { TextGlyph } from '../ui/Glyphs';
 import { uploadImage } from '@/lib/client-api';
 import { cleanAnlaut } from '@/lib/reference/anlaut';

@@ -9,6 +9,7 @@ import {
   MEMORY_BACKS, MEMORY_COLORS, TS_FONTS, TS_GROUPS, TS_MODES, lower, modesOf, pictureOf, pictureWords, textWords, tsConfig, tsProblems, withoutArticle,
   type TsConfig, type TsKind, type TsMode, type TsSettings,
 } from '@/lib/learning/textsachen';
+import { findPicture } from '@/lib/learning/picture-search';
 import Icon, { type IconName } from '../Icon';
 import { Chips, Slider, Toggle } from '../sheets/SheetParts';
 
@@ -21,19 +22,6 @@ function Part({ title, children }: { title: string; children: React.ReactNode })
       {children}
     </section>
   );
-}
-
-/** Picture of a word from ARASAAC through the school server (as the karaoke sheet does). */
-async function findPicture(word: string, signal: AbortSignal) {
-  const found = await fetch(`/api/bilder?${new URLSearchParams({ quelle: 'arasaac', karaoke: '1', q: withoutArticle(word) })}`, { signal });
-  const result = await found.json();
-  if (!found.ok) throw Error(result.error || 'Die Bildsuche ist nicht erreichbar.');
-  const first = result.items?.[0];
-  if (!first) return null;
-  const saved = await fetch('/api/bilder', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ quelle: 'arasaac', bild: first.full }), signal });
-  const media = await saved.json();
-  if (!saved.ok) throw Error(media.error || 'Das Bild konnte nicht gespeichert werden.');
-  return media.src as string;
 }
 
 export default function TextsachenOptions({ value, onChange, upload, busy }: Props) {
@@ -67,7 +55,7 @@ export default function TextsachenOptions({ value, onChange, upload, busy }: Pro
       for (const word of todo) {
         searched.current.add(lower(word));
         try {
-          const src = await findPicture(word, controller.signal);
+          const src = await findPicture(withoutArticle(word), controller.signal);
           if (src && !pictureOf(latest.current, word)) setPicture(word, src);
         } catch (e) {
           if (controller.signal.aborted) return;
@@ -146,6 +134,7 @@ export default function TextsachenOptions({ value, onChange, upload, busy }: Pro
 
       <Part title={c.kind === 'words' ? 'Bilder zu den Wörtern' : 'Bilder zu den Lernwörtern'}>
         <Toggle checked={auto} label="Bilder automatisch suchen" hint="Fehlende Bilder werden in den ARASAAC-Piktogrammen gesucht (Sergio Palao, CC BY-NC-SA 4.0)." onChange={setAuto} />
+        {c.mode === 'picture' && toPictures('Für das Bilddiktat braucht jedes Wort ein Bild. Wörter ohne Bild werden übersprungen.')}
         {searching > 0 && <p className="option-hint" role="status">Bilder werden gesucht …</p>}
         {note && <p className="option-hint" role="status">{note}</p>}
         <div className="ts-pictures">
@@ -216,7 +205,6 @@ export default function TextsachenOptions({ value, onChange, upload, busy }: Pro
           })()}
         </Part>
       )}
-      {c.mode === 'picture' && <Part title="Bilder">{toPictures('Für das Bilddiktat braucht jedes Wort ein Bild. Wörter ohne Bild werden übersprungen.')}</Part>}
       {c.mode === 'flash' && (
         <Part title="Blitzlesen">
           <Toggle checked={s.flashDynamic} label="Anzeigedauer automatisch einstellen (empfohlen)" hint="Vorher kommen 5 einfache Aufwärmwörter – sie stellen die Anzeigedauer ein und zählen nicht. Danach passt sie sich an: schnelle richtige Antworten verkürzen sie, Fehler und Hilfen verlängern sie." onChange={(v) => setting('flashDynamic', v)} />

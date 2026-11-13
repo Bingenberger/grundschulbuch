@@ -2,7 +2,7 @@
 // Settings of “Silben klatschen”, like the dialog of the reference.
 import { useState } from 'react';
 import Icon from '../Icon';
-import { Choices } from '../ui/Choice';
+import { Choices } from './OptionControls';
 import { TextGlyph } from '../ui/Glyphs';
 import { uploadImage } from '@/lib/client-api';
 import { cleanClap, splitWord, syllablesOf } from '@/lib/reference/clap';

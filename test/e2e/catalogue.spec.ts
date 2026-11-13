@@ -63,6 +63,11 @@ test('Alle Lernwerkzeuge und Übungen lassen sich im Heft öffnen', async ({
       await expect(page.frameLocator('.interaction-surface .textsachen-frame iframe').locator('#lh-root')).not.toBeEmpty();
       continue;
     }
+    // Zuordnung: built in its settings – without them a note to set it up.
+    if (catalogue[i].kind === 'zuordnung') {
+      await expect(page.locator('.interaction-surface .textsachen-frame.is-still')).toContainText('bitte einstellen');
+      continue;
+    }
     // Drawn like the reference: no header, just the picture.
     if (['mathtool', 'receipt', 'geodraw', 'checkout', 'monsternames', 'syllablejoin', 'anlaut', 'clapsyllables', 'placevalue', 'dienes', 'numberline', 'hundredfield', 'textsachen'].includes(catalogue[i].kind)) {
       await expect(page.locator('.interaction-surface .page-element svg').first()).toBeVisible();

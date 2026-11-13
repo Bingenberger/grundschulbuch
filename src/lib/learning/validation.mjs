@@ -38,6 +38,7 @@ export const WIDGET_KINDS = [
   'numberline',
   'hundredfield',
   'textsachen',
+  'zuordnung',
   'shop',
   'geometry',
   'monster',

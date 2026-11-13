@@ -2,7 +2,7 @@
 // Settings of “Silben verbinden”, like the dialog of the reference.
 import { useState } from 'react';
 import Icon from '../Icon';
-import { ChoiceButton, Choices, OptionGroup } from '../ui/Choice';
+import { Choices } from './OptionControls';
 import { TextGlyph } from '../ui/Glyphs';
 
 import { casing, cleanSynth, pickSyllables, sayPart, splitLetters, stretchable, syllablePairs } from '@/lib/reference/synth';
@@ -94,9 +94,7 @@ export default function SynthOptions({ value, onChange }: { value: unknown; onCh
       <Choices label="Schreibweise" value={s.case} onChange={(c) => save({ ...s, case: c })} options={(MONSTER_CASES as { id: Synth['case']; label: string }[]).map((c) => ({ value: c.id, label: c.label, icon: <TextGlyph text={c.label.split(':')[1]?.trim().slice(0, 2) || 'mo'} /> }))} />
       <Choices label="Schrift" value={s.font} onChange={(font) => save({ ...s, font })} options={FONTS.map((f) => ({ value: f.value, label: f.label, icon: <TextGlyph text="Aa" font={f.family.split(',')[0].replace(/"/g, '')} /> }))} />
       <section>
-        <OptionGroup label="Die Silben">
-          <ChoiceButton icon="synchronize" label="Andere Silben" disabled={!!problem} onClick={() => remake({})} />
-        </OptionGroup>
+        <div className="option-row"><h4>Die Silben</h4><button type="button" className="knopf compact" disabled={!!problem} onClick={() => remake({})}><Icon name="synchronize" size={18} /> Andere Silben</button></div>
         {s.syls.length && !problem ? (
           <ul className="monster-preview">
             {s.syls.map(([a, b], i) => (
@@ -147,7 +145,7 @@ export default function SynthOptions({ value, onChange }: { value: unknown; onCh
               </button>
             </div>
           ))}
-          <ChoiceButton icon="plus" label="Korrektur dazu" disabled={say.length >= 40} onClick={() => setSay([...say, ['', '']])} />
+          <button type="button" className="knopf compact" disabled={say.length >= 40} onClick={() => setSay([...say, ['', '']])}><Icon name="plus" size={18} /> Korrektur dazu</button>
         </section>
       )}
     </div>

@@ -4891,3 +4891,24 @@ input[type='checkbox'] {
 .ts-ok { margin: 0; color: #2f9e44; font-weight: 700; }
 /* Hints inside settings pages run across the whole width (not like the option bar). */
 .receipt-options .option-hint { align-self: stretch; max-width: none; margin: 0; font-size: 13px; color: #4b5563; }
+/* Zuordnungen (Schiebesachen): list, status, designs, preview. */
+.dnd-input { width: 100%; font: 15px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; padding: 10px; border: 1px solid #cbd5e1; border-radius: 10px; }
+.dnd-status { margin: 0; font-weight: 700; color: #2f9e44; }
+.dnd-status.is-problem { color: #b45309; }
+.dnd-help { border-collapse: collapse; font-size: 13px; }
+.dnd-help td { padding: 4px 8px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+.dnd-help code { white-space: nowrap; background: #f3f4f6; padding: 1px 5px; border-radius: 4px; }
+.dnd-designs { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+.dnd-design { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px; border: 2px solid #e5e7eb; border-radius: 12px; cursor: pointer; font-weight: 700; }
+.dnd-design.is-active { border-color: #4054d6; box-shadow: 0 0 0 3px #c7d2fe; }
+.dnd-design-card { padding: 4px 12px; border: 1px solid; border-radius: 8px; font-size: 18px; }
+.dnd-preview { border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+/* Deutsch settings pages: the same calm layout as the newer pages. */
+.monster-options { display: flex; flex-direction: column; gap: 16px; max-width: 760px; }
+.monster-options > section { display: flex; flex-direction: column; gap: 10px; }
+.monster-options h3 { margin: 10px 0 0; font-size: 1.05rem; color: #c2410c; }
+.monster-options h4 { margin: 0; font-size: .95rem; }
+.monster-options .option-hint { align-self: stretch; max-width: none; margin: 0; font-size: 13px; color: #4b5563; }
+.option-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ts-part .property-label { font-size: 14px; font-weight: 700; color: #1f2937; }
+.ts-part .property-label textarea { font-size: 15px; }

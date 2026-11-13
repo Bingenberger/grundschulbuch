@@ -7,6 +7,7 @@ import { activityCatalog, widgetCatalog, type ActivityKind, type LearningSetting
 import { blueprintPages, blueprints, type Blueprint } from './templates';
 import { defaultSettings, type JsonValue } from './catalog';
 import { defaultTs } from './textsachen';
+import { defaultDnd } from './zuordnung';
 import type { MathToolKind } from './mathtool';
 import { geoConfig } from './geodraw';
 import { musicPresets, musicKind, musicSettings, musicPage } from './music';
@@ -29,7 +30,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -105,6 +106,10 @@ const SKIP = new Set([
   'activity-crossword',
   'activity-wordsearch',
   'activity-wordle',
+  // Replaced by the Zuordnungen of Schiebesachen (Silbenlesen is one of them).
+  'widget-zuordnung',
+  'activity-matching',
+  'activity-syllables',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -294,6 +299,16 @@ for (const [id, mode, title, words] of [
   ['ts-wordle', 'wordle', 'Wordle', 'Wordle Worträtsel Wort erraten Buchstaben Textsachen'],
 ] as const)
   toolBlocks.push({ id, title, subject: 'Deutsch', type: 'widget', kind: 'textsachen', preset: { ...defaultSettings('textsachen'), ts: defaultTs(mode) as unknown as JsonValue, title }, words });
+// Zuordnungen of Schiebesachen, as in Lernsachen-Heft; the formats for reading
+// and writing are also offered under Deutsch.
+for (const [id, subject, format, title, words] of [
+  ['dnd-silben', 'Deutsch', 'silben', 'Silbenlesen', 'Silbenlesen Silben legen ziehen Wörter Silbenmethode blau rot Schiebesachen'],
+  ['dnd-buchstabieren', 'Deutsch', 'buchstabieren', 'Buchstabieren', 'Buchstabieren Buchstaben legen Wort legen Bild Schiebesachen'],
+  ['dnd-artikel', 'Deutsch', 'artikel', 'Artikel: der, die, das', 'Artikel der die das Nomen sortieren Begleiter Schiebesachen'],
+  ['dnd-bildwort', 'Deutsch', 'bildwort', 'Bild und Wort', 'Bild Wort zuordnen Wörter Bilder Schiebesachen'],
+  ['dnd-zuordnungen', 'Für alle Fächer', 'bildwort', 'Zuordnungen', 'Zuordnungen zuordnen Sortieren Oberbegriffe Reihenfolge Paare Schiebesachen ziehen'],
+] as const)
+  toolBlocks.push({ id, title, subject, type: 'widget', kind: 'zuordnung', preset: { ...defaultSettings('zuordnung'), dnd: defaultDnd(format) as unknown as JsonValue, title }, words });
 toolBlocks.push({
   id: 'checkout',
   title: 'Einkaufen an der Kasse',

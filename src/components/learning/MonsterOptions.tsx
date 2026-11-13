@@ -2,7 +2,7 @@
 // Settings of “Monsternamen lesen”, like the dialog of the reference.
 import { useState } from 'react';
 import Icon from '../Icon';
-import { ChoiceButton, Choices, OptionGroup } from '../ui/Choice';
+import { Choices } from './OptionControls';
 import { TextGlyph } from '../ui/Glyphs';
 import { MONSTER_CASES, casing, cleanMonster, letterProblem, monsterPicture, nameCount, newLooks, partColor, pickNames, sayName, sayPart, splitLetters } from '@/lib/reference/monster';
 import { speakAndWait, stopSpeaking } from '@/lib/speech';
@@ -80,9 +80,7 @@ export default function MonsterOptions({ value, onChange }: { value: unknown; on
       <Choices label="Schreibweise" value={m.case} onChange={(c) => onChange({ ...m, case: c })} options={(MONSTER_CASES as { id: Monster['case']; label: string }[]).map((c) => ({ value: c.id, label: c.label, icon: <TextGlyph text={c.label.split(':')[1]?.trim().slice(0, 2) || 'mo'} /> }))} />
       <Choices label="Schrift" value={m.font} onChange={(font) => onChange({ ...m, font })} options={FONTS.map((f) => ({ value: f.value, label: f.label, icon: <TextGlyph text="Aa" font={f.family.split(',')[0].replace(/"/g, '')} /> }))} />
       <section>
-        <OptionGroup label="Die Monster und ihre Namen">
-          <ChoiceButton icon="synchronize" label="Andere Wörter" disabled={!!problem} onClick={() => remake({ looks: newLooks(m.words.length) })} />
-        </OptionGroup>
+        <div className="option-row"><h4>Die Monster und ihre Namen</h4><button type="button" className="knopf compact" disabled={!!problem} onClick={() => remake({ looks: newLooks(m.words.length) })}><Icon name="synchronize" size={18} /> Andere Wörter</button></div>
         {m.words.length && !problem ? (
           <ul className={`monster-preview${m.syl === 3 ? ' is-long' : ''}`}>
             {m.words.map((w, i) => (
@@ -120,7 +118,7 @@ export default function MonsterOptions({ value, onChange }: { value: unknown; on
             </button>
           </div>
         ))}
-        <ChoiceButton icon="plus" label="Korrektur dazu" disabled={say.length >= 40} onClick={() => setSay([...say, ['', '']])} />
+        <button type="button" className="knopf compact" disabled={say.length >= 40} onClick={() => setSay([...say, ['', '']])}><Icon name="plus" size={18} /> Korrektur dazu</button>
       </section>
     </div>
   );
