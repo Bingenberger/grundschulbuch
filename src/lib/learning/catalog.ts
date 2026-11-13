@@ -5,6 +5,10 @@ import { withRecordings } from '../reference/recordings';
 import { defaultAnlaut } from '../reference/anlaut-defaults';
 import { encodeMaps } from '../reference/keys';
 import { defaultClap } from '../reference/clap-defaults';
+import { PLACE_DEFAULTS } from './placevalue';
+import { DIENES_DEFAULTS } from './dienes';
+import { NUMBERLINE_DEFAULTS } from './numberline';
+import { FIELD_DEFAULTS } from './hundredfield';
 export const widgetCatalog = {
   timer: ['Timer', 'Schule'],
   multitimer: ['Mehrere Timer', 'Schule'],
@@ -38,6 +42,10 @@ export const widgetCatalog = {
   syllablejoin: ['Silben verbinden', 'Lesen & Schreiben'],
   anlaut: ['Anlaut-Tastatur', 'Lesen & Schreiben'],
   clapsyllables: ['Silben klatschen', 'Lesen & Schreiben'],
+  placevalue: ['Stellenwerttafel', 'Mathe'],
+  dienes: ['Dienes-Material', 'Mathe'],
+  numberline: ['Zahlenstrahl', 'Mathe'],
+  hundredfield: ['Hunderterfeld', 'Mathe'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -94,6 +102,11 @@ export type LearningSettings = {
   anlaut?: JsonValue;
   /** Silben klatschen (see reference/clap.ts). */
   clap?: JsonValue;
+  /** Stellenwerttafel, Dienes-Material, Zahlenstrahl, Hunderterfeld (see learning/placevalue.ts …). */
+  place?: JsonValue;
+  dienes?: JsonValue;
+  numberline?: JsonValue;
+  field?: JsonValue;
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';
@@ -232,6 +245,10 @@ export function defaultSettings(
     difficulty: 1,
     seed: 42,
   };
+  if (kind === 'placevalue') Object.assign(settings, { place: { ...PLACE_DEFAULTS } });
+  if (kind === 'dienes') Object.assign(settings, { dienes: { ...DIENES_DEFAULTS } });
+  if (kind === 'numberline') Object.assign(settings, { numberline: { ...NUMBERLINE_DEFAULTS } });
+  if (kind === 'hundredfield') Object.assign(settings, { field: { ...FIELD_DEFAULTS } });
   if (kind === 'clapsyllables') Object.assign(settings, { clap: defaultClap() as unknown as JsonValue });
   if (kind === 'anlaut') Object.assign(settings, { anlaut: encodeMaps(defaultAnlaut(), ['keys', 'sounds']) as unknown as JsonValue });
   if (kind === 'syllablejoin') Object.assign(settings, { synth: encodeMaps(withRecordings(makeSynth()), ['sounds', 'voice']) as unknown as JsonValue });

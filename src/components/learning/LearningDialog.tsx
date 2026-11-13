@@ -46,6 +46,7 @@ import SynthOptions from './SynthOptions';
 import AnlautOptions from './AnlautOptions';
 import ClapOptions from './ClapOptions';
 import ReceiptOptions from './ReceiptOptions';
+import { DienesOptions, HundredFieldOptions, NumberLineOptions, PlaceValueOptions } from './MathMaterialOptions';
 import { cleanMonster } from '@/lib/reference/monster';
 import { clone, uuid, type Page, type PageElement } from '@/lib/notebook-model';
 import { learningBlocks, SUBJECTS, type LearningBlock, type Subject } from '@/lib/learning/blocks';
@@ -66,7 +67,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -81,6 +82,9 @@ const blockIcon = (b: LearningBlock): IconName =>
 /** Size of a newly inserted learning element in mm. */
 function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) {
   if (kind === 'mathtool') return pageSize(mathTool(settings));
+  if (kind === 'placevalue' || kind === 'dienes') return { width: 220, height: 160 };
+  if (kind === 'numberline') return { width: 250, height: 80 };
+  if (kind === 'hundredfield') return { width: 200, height: 150 };
   if (kind === 'checkout' || kind === 'monsternames' || kind === 'syllablejoin' || kind === 'anlaut' || kind === 'clapsyllables') return { width: 297, height: 210 };
   return {
     width: kind === 'receipt' ? 120 : 180,
@@ -733,6 +737,10 @@ export default function LearningDialog({
                 </>
               );
             })()}
+            {kind === 'placevalue' && <PlaceValueOptions value={settings.place} onChange={(place) => patch({ place })} />}
+            {kind === 'dienes' && <DienesOptions value={settings.dienes} onChange={(dienes) => patch({ dienes })} />}
+            {kind === 'numberline' && <NumberLineOptions value={settings.numberline} onChange={(numberline) => patch({ numberline })} />}
+            {kind === 'hundredfield' && <HundredFieldOptions value={settings.field} onChange={(field) => patch({ field })} />}
             {kind === 'receipt' && <ReceiptOptions value={settings.receipt} onChange={(receipt) => patch({ receipt })} />}
             {kind === 'mathboard' && (
               <Picker label="Rechenmaterial" value={settings.mode || 'beads'} onChange={(value) => patch({ mode: value })}

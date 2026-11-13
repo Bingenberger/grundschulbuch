@@ -173,8 +173,21 @@ Umbau Stück für Stück geprüft.
 **Bei uns zusätzlich, nicht in der Vorlage:**
 
 - Übungen: Lückentext, Abschreiben, Blitzlesen, Buchstaben raten
-- Spiele: Vier in einer Reihe, Koordinaten-Spiel
-- Mathe: Zahlenstrahl, Stellenwerttafel (als Rechenmaterial)
+- Spiele: Vier in einer Reihe (das Koordinaten-Spiel ist seit 13.11.2026
+  entfernt)
+- Mathe – interaktives Lernmaterial (neu gebaut am 13.11.2026, jeweils mit
+  Einstellungsseite aus Schaltern, Schiebereglern und Auswahlknöpfen):
+  - Stellenwerttafel in Montessori-Farben (Einer grün, Zehner blau, Hunderter
+    rot, ab Tausender wieder von vorn); einstellbar von Einer bis
+    Hunderttausender; Plättchen legen, Ziffern mit + und −, Bündeln und
+    Entbündeln, Zahl darunter, „Lege die Zahl …“ mit Prüfen
+  - Dienes-Material: Einerwürfel, Zehnerstangen, Hunderterplatten,
+    Tausenderwürfel aus der Kiste legen und tauschen; Holz- oder
+    Montessori-Farben; Aufgaben
+  - Zahlenstrahl: Bereich (bis 10 … 1000, Ausschnitt), Beschriftung; Punkte
+    setzen und Rechensprünge (+7, −3) zeichnen oder „Wo liegt die 37?“
+  - Hunderterfeld bzw. Zwanzigerfeld: frei färben (Rot, Blau, Radierer,
+    Wischen), Abdeckwinkel oder „Zeige 37“ mit Prüfen
 - Musik: Playlist als Baustein
 
 **Auffällig:**

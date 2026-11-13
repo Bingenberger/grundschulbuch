@@ -18,6 +18,10 @@ import MonsterReader from './MonsterReader';
 import SyllableJoin from './SyllableJoin';
 import AnlautKeyboard from './AnlautKeyboard';
 import ClapSyllables from './ClapSyllables';
+import PlaceValueTable from './PlaceValueTable';
+import DienesMaterial from './DienesMaterial';
+import NumberLine from './NumberLine';
+import HundredField from './HundredField';
 import MusicTemplate from './MusicTemplate';
 export default function Widget({ element }: { element: PageElement }) {
   const kind = element.widgetKind!;
@@ -30,6 +34,10 @@ export default function Widget({ element }: { element: PageElement }) {
   if (kind === 'syllablejoin') return <SyllableJoin element={element} />;
   if (kind === 'anlaut') return <AnlautKeyboard element={element} />;
   if (kind === 'clapsyllables') return <ClapSyllables element={element} />;
+  if (kind === 'placevalue') return <PlaceValueTable element={element} />;
+  if (kind === 'dienes') return <DienesMaterial element={element} />;
+  if (kind === 'numberline') return <NumberLine element={element} />;
+  if (kind === 'hundredfield') return <HundredField element={element} />;
   if (kind === 'geometry') return <GeometryWidget element={element} />;
   if (kind === 'slideshow') return <SlideshowWidget element={element} />;
   if (kind === 'karaoke') return <KaraokeWidget element={element} />;

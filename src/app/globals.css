@@ -4857,3 +4857,6 @@ input[type='checkbox'] {
 .sheet-slider-hint { color: #5b6b57; }
 .receipt-options { display: flex; flex-direction: column; gap: 18px; max-width: 620px; padding: 6px 0 12px; }
 .receipt-option { display: flex; flex-direction: column; gap: 8px; }
+.math-tool .svg-key { cursor: pointer; outline: none; }
+.math-tool .svg-key:focus-visible > :first-child { stroke: #1c7ed6; stroke-width: 6; }
+.math-tool .svg-key:active { filter: brightness(0.92); }

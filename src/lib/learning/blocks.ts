@@ -28,7 +28,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -87,6 +87,14 @@ const SKIP = new Set([
   'widget-clapping',
   'widget-clapsyllables',
   'widget-receipt',
+  // Replaced by the new maths materials below; the Koordinaten-Spiel is gone.
+  'math-place',
+  'math-numberline',
+  'activity-battleship',
+  'widget-placevalue',
+  'widget-dienes',
+  'widget-numberline',
+  'widget-hundredfield',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -259,6 +267,13 @@ toolBlocks.push({
   preset: { ...defaultSettings('clapsyllables'), title: 'Silben klatschen' },
   words: 'Silben klatschen Silbenbögen Silben schwingen Mikrofon Bilder Wörter',
 });
+for (const [kind, title, words] of [
+  ['placevalue', 'Stellenwerttafel', 'Stellenwerttafel Stellenwerte Einer Zehner Hunderter Tausender Montessori Plättchen bündeln entbündeln'],
+  ['dienes', 'Dienes-Material', 'Dienes-Material Mehrsystemblöcke Einerwürfel Zehnerstange Hunderterplatte Tausenderwürfel bündeln tauschen'],
+  ['numberline', 'Zahlenstrahl', 'Zahlenstrahl Zahlengerade Rechenstrich Sprünge Zahlen finden'],
+  ['hundredfield', 'Hunderterfeld', 'Hunderterfeld Zwanzigerfeld Punktefeld Abdeckwinkel färben Zahlen zeigen'],
+] as const)
+  toolBlocks.push({ id: kind, title, subject: 'Mathematik', type: 'widget', kind, preset: { ...defaultSettings(kind), title }, words });
 toolBlocks.push({
   id: 'checkout',
   title: 'Einkaufen an der Kasse',
