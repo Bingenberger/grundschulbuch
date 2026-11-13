@@ -212,3 +212,21 @@ export function LevelChips<T extends string>({ label, value, options, onChange }
     </div>
   );
 }
+
+/** A slider with its value shown next to the label. */
+export function Slider({ label, value, min, max, step = 1, format = String, hint, onChange }: { label: string; value: number; min: number; max: number; step?: number; format?: (v: number) => string; hint?: string; onChange: (v: number) => void }) {
+  return (
+    <label className="sheet-slider">
+      <span className="sheet-slider-head">
+        <strong>{label}</strong>
+        <output aria-hidden="true">{format(value)}</output>
+      </span>
+      <input type="range" min={min} max={max} step={step} value={value} aria-label={label} aria-valuetext={format(value)} onChange={(e) => onChange(Number(e.target.value))} />
+      <span className="sheet-slider-scale" aria-hidden="true">
+        <small>{format(min)}</small>
+        <small>{format(max)}</small>
+      </span>
+      {hint && <small className="sheet-slider-hint">{hint}</small>}
+    </label>
+  );
+}

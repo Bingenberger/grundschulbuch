@@ -4849,3 +4849,11 @@ input[type='checkbox'] {
 .karaoke-lrc-preview pre { white-space:pre-wrap; max-height:180px; overflow:auto; }
 @media (max-width:800px) { .music-settings-layout { grid-template-columns:minmax(0,1fr); } .music-settings-preview-column { position:static; grid-row:1; } .music-settings-preview { max-height:280px; } }
 @media print { .music-settings-launch { display:none; } }
+.sheet-slider { display: flex; flex-direction: column; gap: 4px; cursor: pointer; }
+.sheet-slider-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.sheet-slider-head output { font-weight: 700; color: #1c63c7; font-variant-numeric: tabular-nums; }
+.sheet-slider input[type='range'] { width: 100%; accent-color: #1c63c7; height: 28px; }
+.sheet-slider-scale { display: flex; justify-content: space-between; color: #8a9686; }
+.sheet-slider-hint { color: #5b6b57; }
+.receipt-options { display: flex; flex-direction: column; gap: 18px; max-width: 620px; padding: 6px 0 12px; }
+.receipt-option { display: flex; flex-direction: column; gap: 8px; }

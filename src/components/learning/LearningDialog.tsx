@@ -45,6 +45,7 @@ import MonsterOptions from './MonsterOptions';
 import SynthOptions from './SynthOptions';
 import AnlautOptions from './AnlautOptions';
 import ClapOptions from './ClapOptions';
+import ReceiptOptions from './ReceiptOptions';
 import { cleanMonster } from '@/lib/reference/monster';
 import { clone, uuid, type Page, type PageElement } from '@/lib/notebook-model';
 import { learningBlocks, SUBJECTS, type LearningBlock, type Subject } from '@/lib/learning/blocks';
@@ -732,56 +733,7 @@ export default function LearningDialog({
                 </>
               );
             })()}
-            {kind === 'receipt' && (() => {
-              const r = settings.receipt || {};
-              const set = (values: Partial<NonNullable<LearningSettings['receipt']>>) => patch({ receipt: { ...r, ...values } });
-              return (
-                <>
-                  <Choices
-                    label="Schreibweise"
-                    value={r.format || 'eurocent'}
-                    onChange={(format) => set({ format })}
-                    options={[
-                      { value: 'eurocent', label: 'Euro und Cent (1,49 €)', icon: <TextGlyph text="€,ct" /> },
-                      { value: 'euro', label: 'Nur Euro (6 €)', icon: <TextGlyph text="€" /> },
-                      { value: 'cent', label: 'Nur Cent (45 ct)', icon: <TextGlyph text="ct" /> },
-                    ]}
-                  />
-                  <Choices
-                    label="Preise"
-                    value={r.level || 'simple'}
-                    onChange={(level) => set({ level })}
-                    options={[
-                      { value: 'simple', label: 'Einfache Preise', icon: <TextGlyph text="10" /> },
-                      { value: 'complex', label: 'Krumme Preise', icon: <TextGlyph text="9,99" /> },
-                    ]}
-                  />
-                  <Choices
-                    label="Einkäufe auf dem Kassenzettel"
-                    value={r.count ?? 5}
-                    onChange={(count) => set({ count })}
-                    options={[3, 4, 5, 6, 8, 10].map((n) => ({ value: n, label: String(n), icon: <TextGlyph text={String(n)} /> }))}
-                  />
-                  <Choices
-                    label="Wechselgeld rechnen"
-                    value={!!r.change}
-                    onChange={(change) => set({ change })}
-                    options={[
-                      { value: true, label: 'Ja', icon: 'checkmark' as const },
-                      { value: false, label: 'Nein, nur die Summe', icon: 'cancel' as const },
-                    ]}
-                  />
-                  <p className="option-hint">Ist die Summe richtig, erscheint, wie viel bezahlt wurde (aufgerundet, z. B. 20 €) – dann wird das Rückgeld ausgerechnet und eingetragen.</p>
-                  <Choices
-                    label="Kassenzettel nacheinander"
-                    value={r.rounds ?? 3}
-                    onChange={(rounds) => set({ rounds })}
-                    options={[1, 3, 5, 10].map((n) => ({ value: n, label: n === 1 ? '1 Zettel' : `${n} Zettel`, icon: <TextGlyph text={String(n)} /> }))}
-                  />
-                  <p className="option-hint">Danach kommt eine Auswertung: Zeit, Fehler, wie oft verbessert wurde.</p>
-                </>
-              );
-            })()}
+            {kind === 'receipt' && <ReceiptOptions value={settings.receipt} onChange={(receipt) => patch({ receipt })} />}
             {kind === 'mathboard' && (
               <Picker label="Rechenmaterial" value={settings.mode || 'beads'} onChange={(value) => patch({ mode: value })}
                 options={[{ value: 'beads', label: 'Rechenrahmen / Zwanziger- und Hunderterfeld', icon: 'calculator' as const }, { value: 'place', label: 'Stellenwerttafel', icon: 'grid' as const }, { value: 'numberline', label: 'Zahlenstrahl', icon: 'timeline' as const }]} />

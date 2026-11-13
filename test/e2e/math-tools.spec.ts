@@ -99,10 +99,14 @@ test('Rechnen mit dem Taschenrechner: ein Baustein mit allen Einstellungen des K
   // Like the reference: no separate “Kassenzettel” block.
   await expect(dialog.getByRole('button', { name: 'Kassenzettel', exact: true })).toHaveCount(0);
   await dialog.getByRole('button', { name: 'Rechnen mit dem Taschenrechner', exact: true }).click();
-  for (const group of ['Schreibweise', 'Preise', 'Einkäufe auf dem Kassenzettel', 'Wechselgeld rechnen', 'Kassenzettel nacheinander'])
-    await expect(dialog.getByRole('group', { name: group })).toBeVisible();
-  await dialog.getByRole('group', { name: 'Schreibweise' }).getByRole('button', { name: 'Nur Euro (6 €)' }).click();
-  await dialog.getByRole('group', { name: 'Einkäufe auf dem Kassenzettel' }).getByRole('button', { name: '3', exact: true }).click();
+  // Switches and sliders instead of rows of buttons.
+  await expect(dialog.getByRole('switch', { name: /Krumme Preise/ })).toBeChecked();
+  await expect(dialog.getByRole('switch', { name: /Wechselgeld rechnen/ })).toBeChecked();
+  await expect(dialog.getByRole('slider', { name: 'Kassenzettel nacheinander' })).toHaveValue('3');
+  await dialog.getByRole('radiogroup', { name: 'Schreibweise' }).getByRole('radio', { name: 'Nur Euro (6 €)' }).click();
+  await dialog.getByRole('slider', { name: 'Einkäufe auf dem Kassenzettel' }).fill('3');
+  await expect(dialog.locator('output', { hasText: '3 Einkäufe' })).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath('taschenrechner-einstellungen.png') });
   await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   const receipt = page.locator('.interaction-surface svg.receipt-widget');
