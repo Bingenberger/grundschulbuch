@@ -25,8 +25,8 @@ eigenem Zugang darin. Code oder Inhalte aus dem Lernsachen-Heft werden nicht
   Container mit eigener Subdomain, Sicherung und Release-Image. Das
   Grundschulbuch bekommt denselben Plattformvertrag wie die Tafel
   (siehe [PLATFORM.md](../PLATFORM.md)).
-- **Offene Lizenz.** Die App entsteht in einem neuen Repository unter einer
-  offenen Lizenz, unabhängig von der schulinternen Tafel.
+- **Eigene Lizenz.** Die App entsteht in einem neuen Repository unter
+  CC BY-NC-SA 4.0, unabhängig von der schulinternen Tafel.
 
 ## Ergänzung: Funktionsumfang des Lernsachen-Hefts
 
@@ -198,7 +198,7 @@ Plattformvertrag (schreibgeschütztes Root-Dateisystem, UID 10001, `/data`,
   den Home-Bildschirm legen und startet dann im Vollbild. Die Kamera für den
   QR-Scanner braucht HTTPS, das die Plattform bereitstellt. Safari kennt
   `BarcodeDetector` nicht, deshalb kommt eine Scanner-Bibliothek mit
-  AGPL-verträglicher Lizenz zum Einsatz (z. B. `jsQR`, Apache-2.0).
+  freier Lizenz zum Einsatz (z. B. `jsQR`, Apache-2.0).
   Für den Apple Pencil gibt es die Einstellung „Nur Stift zeichnet“, damit die
   aufgelegte Hand keine Striche macht.
 - **iiyama-Tafeln:** Sie laufen mit einem älteren Browser. Neuere
@@ -263,27 +263,20 @@ Beide Apps laufen auf getrennten Subdomains mit eigenen Konten. Für den Anfang 
 ## Lizenz und Repository
 
 - **Repository:** [Bingenberger/grundschulbuch](https://github.com/Bingenberger/grundschulbuch).
-- **Code: AGPL-3.0** (entschieden). Wer das Grundschulbuch verändert und als
-  Dienst für andere betreibt, muss die Änderungen ebenfalls offenlegen.
-- **Mitgelieferte Inhalte** (Lineaturen, Vorlagen, Symbole): **CC BY 4.0**
-  (entschieden). Andere Schulen dürfen sie frei nutzen und anpassen,
-  solange sie die Quelle nennen.
-- **Keine Übernahme aus dem Lernsachen-Heft.** Dessen Lizenz (CC BY-NC-SA 4.0)
-  ist wegen „nicht kommerziell“ mit keiner der genannten offenen Lizenzen
-  vereinbar. Es dient nur als Ideengeber.
-  *Stand November 2026, auf Wunsch der Schule geändert:* Widgets des
-  Lernsachen-Hefts und die Spieler von Textsachen und Schiebesachen werden
-  unverändert übernommen (`src/lib/reference/`, CC BY-NC-SA 4.0,
-  Lernsachen.blog). Diese Teile dürfen nur nicht kommerziell genutzt werden; die
-  Lizenzfrage für das Gesamtpaket ist damit offen und vor einer Veröffentlichung
-  zu klären.
+- **Lizenz: CC BY-NC-SA 4.0** für das gesamte Projekt (entschieden am
+  13.11.2026, vorher AGPL-3.0 für den Code und CC BY 4.0 für die Inhalte).
+  Grund: Viele Teile sind aus Originalprojekten unter CC BY-NC-SA 4.0
+  übernommen oder ihnen nachgebaut – Lernsachen-Heft, Textsachen und
+  Schiebesachen von Lernsachen.blog sowie ARASAAC-Piktogramme. Sie werden in
+  README.md und NOTICE.md genannt. Das Grundschulbuch darf damit nur nicht
+  kommerziell genutzt und nur unter gleichen Bedingungen weitergegeben werden.
 - **Kein ungeprüfter Code aus der Grundschultafel.** Die Tafel ist schulintern
   und nicht frei lizenziert. Login, Sitzungen und Dateispeicher sind deshalb
   neu geschrieben. Übernommen werden dürfen nur Teile, deren Urheber der
-  offenen Lizenz ausdrücklich zustimmen.
+  Lizenz des Grundschulbuchs ausdrücklich zustimmen.
 - **Schriften:** nur Schriften unter SIL OFL 1.1 (siehe nächster Abschnitt).
-- **Piktogramme** wie ARASAAC stehen unter NC-SA-Lizenzen. Sie gehören, wenn
-  überhaupt, in die Bildergalerie der Schule, nicht ins Repository.
+- **Piktogramme** von ARASAAC stehen wie das Grundschulbuch unter
+  CC BY-NC-SA 4.0 und werden mit Bildnachweis mitgeliefert (siehe NOTICE.md).
 - **Abhängigkeiten** müssen zur gewählten Lizenz passen (MIT, BSD, Apache 2.0
   und ISC sind unproblematisch).
 
@@ -291,7 +284,7 @@ Beide Apps laufen auf getrennten Subdomains mit eigenen Konten. Für den Anfang 
 
 Es sollen dieselben Schriften wie im Lernsachen-Heft zur Verfügung stehen.
 Alle stehen unter der **SIL Open Font License 1.1** und dürfen im
-AGPL-Repository mitgeliefert werden (geprüft anhand der eingebetteten
+Repository mitgeliefert werden (geprüft anhand der eingebetteten
 Schriftdateien):
 
 | Im Grundschulbuch | Schrift | Quelle |
@@ -323,7 +316,7 @@ Schriftdateien):
 
 ## Nächste Schritte
 
-1. ~~Repository mit `LICENSE` (AGPL-3.0) und `LICENSE-CONTENT` (CC BY 4.0)
+1. ~~Repository mit `LICENSE` (seit 13.11.2026 CC BY-NC-SA 4.0) und `NOTICE.md`
    anlegen.~~ Erledigt.
 2. ~~Plattformgerüst neu aufbauen (Login für Lehrkräfte, Health, Migration,
    Docker).~~ Erledigt. Offen: das Grundschulbuch in der Schulplattform als

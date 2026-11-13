@@ -52,7 +52,7 @@ for (const name of Object.keys(manifest.dependencies)) {
   }
 }
 licenses.Grundschulbuch = await fs.readFile('LICENSE', 'utf8');
-licenses.Unterrichtsinhalte = await fs.readFile('LICENSE-CONTENT', 'utf8');
+licenses['Herkunft und Fremdbestandteile'] = await fs.readFile('NOTICE.md', 'utf8');
 for (const folder of await fs.readdir('public/fonts', {
   withFileTypes: true,
 })) {
@@ -102,7 +102,7 @@ for (const name of [
   'README.md',
   'PLATFORM.md',
   'LICENSE',
-  'LICENSE-CONTENT',
+  'NOTICE.md',
 ]) {
   try {
     entries[name] = new Uint8Array(await fs.readFile(name));

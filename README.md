@@ -99,15 +99,33 @@ keine `dvh`-Einheiten.
 
 ## Lizenz
 
-- **Programmcode:** [GNU Affero General Public License 3.0](LICENSE).
-  Wer das Grundschulbuch verändert und anderen als Dienst bereitstellt, muss
-  den veränderten Quellcode ebenfalls zugänglich machen.
-- **Vorlagen, Lineaturen und andere mitgelieferte Inhalte:**
-  [CC BY 4.0](LICENSE-CONTENT).
-- **Schriften:** jeweils SIL Open Font License 1.1 (siehe Schriftverzeichnisse).
+Das gesamte Projekt – Programmcode, Vorlagen, Lineaturen und andere
+mitgelieferte Inhalte – steht unter
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de)
+(Namensnennung – Nicht kommerziell – Weitergabe unter gleichen Bedingungen),
+siehe [LICENSE](LICENSE). Mitgelieferte Fremdbestandteile wie Schriften
+(SIL Open Font License 1.1), Silbentrennmuster und npm-Abhängigkeiten behalten
+ihre eigene Lizenz.
 
-Die Idee eines digitalen Heftes ist vom
-[Lernsachen-Heft](https://github.com/Majort0m0/Lernsachen-Heft) inspiriert.
-Die interaktiven Musikwerkzeuge und einige weitere Lernwerkzeuge basieren auf der
-mitgelieferten Referenzdatei. Die Musikvorlagen verwenden den Kassettenrekorder
-des Grundschulbuchs; Einzelheiten: [Musikwerkzeuge](docs/musikwerkzeuge.md).
+## Originalprojekte
+
+Vieles im Grundschulbuch ist aus Projekten übernommen oder ihnen nachgebaut,
+die unter CC BY-NC-SA 4.0 stehen. Herzlichen Dank an ihre Urheber:
+
+- **[Lernsachen-Heft](https://github.com/Majort0m0/Lernsachen-Heft)** von
+  [Lernsachen.blog](https://lernsachen.blog). Von hier stammen:
+  - die Idee des digitalen Heftes;
+  - unverändert übernommen: die Lernwerkzeuge Anlaut-Tastatur, Silben klatschen, Silben verbinden, Monsternamen lesen und die Musikwerkzeuge, die einstellbaren Vorlagen (Buchstaben, Mathe-Aufgaben, Uhrzeiten, Geld, Ziffern, Labyrinth, Noten), Sticker sowie Laut- und Silbenaufnahmen;
+  - als Vorbild nachgebaut: weitere Werkzeuge wie die Kasse.
+- **[Textsachen](https://majort0m0.github.io/Textsachen/Textsachen.html)** von
+  [Lernsachen.blog](https://lernsachen.blog): Der Spieler der Übungen Lesen &
+  Schreiben, Memory, Maus & Käse, Kreuzworträtsel, Suchsel und Wordle ist unverändert übernommen.
+- **[Schiebesachen](https://majort0m0.github.io/Schiebesachen/Schiebesachen.html)**
+  von [Lernsachen.blog](https://lernsachen.blog): Spieler und Übungsbaukasten der
+  Zuordnungen (u. a. Silbenlesen, Buchstabieren, Artikel) sind unverändert übernommen.
+- **[ARASAAC](https://arasaac.org)**-Piktogramme von Sergio Palao (Eigentum der
+  Regierung von Aragón) für Anlautbilder, Wortbilder und die Kasse.
+
+Was genau woher stammt und welche Fremdbestandteile mit eigener Lizenz enthalten
+sind, steht in [NOTICE.md](NOTICE.md). Einzelheiten zu den Musikwerkzeugen:
+[Musikwerkzeuge](docs/musikwerkzeuge.md).

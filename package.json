@@ -2,7 +2,7 @@
   "name": "grundschulbuch",
   "version": "0.1.0",
   "private": true,
-  "license": "AGPL-3.0-only",
+  "license": "CC-BY-NC-SA-4.0",
   "scripts": {
     "dev": "node scripts/build-assets.mjs && next dev -H 0.0.0.0",
     "build": "node scripts/build-assets.mjs && next build",

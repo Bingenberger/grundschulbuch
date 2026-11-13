@@ -177,7 +177,7 @@ function Viewer() {
             target="_blank"
             rel="noreferrer"
           >
-            Quellcode (AGPL-3.0)
+            Quellcode (CC BY-NC-SA 4.0)
           </a>
           {data.sourceArchive && (
             <p>
