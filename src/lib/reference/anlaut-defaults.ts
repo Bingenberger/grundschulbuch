@@ -5,7 +5,7 @@ import { newAnlaut } from './anlaut';
 import { shippedSounds } from './recordings';
 
 export function defaultAnlaut() {
-  return { ...newAnlaut(), keys: structuredClone(keys), sounds: shippedSounds() };
+  return { ...newAnlaut(), keys: JSON.parse(JSON.stringify(keys)), sounds: shippedSounds() };
 }
 /** Pictures and recordings that may be shown or played (also in exported books). */
 export const safeAnlautAsset = (v: unknown) =>

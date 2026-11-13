@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { dimensions, type Page } from '@/lib/notebook-model';
 import PageView from './PageView';
+import { Decorative } from './Decorative';
 export default function ScaledPage({
   page,
   maxScale = 1,
@@ -63,7 +64,7 @@ export default function ScaledPage({
             transformOrigin: 'top left',
           }}
         >
-          <PageView page={page}>{children}</PageView>
+          <Decorative.Provider value={decorative}><PageView page={page}>{children}</PageView></Decorative.Provider>
         </div>
       </div>
     </div>

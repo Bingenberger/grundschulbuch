@@ -46,9 +46,12 @@ test('Karaoke folgt der Medienzeit, pausiert gemeinsam und springt beim Vor- und
 });
 test('LRC-Import zeigt eine Vorschau, ersetzt erst bei Übernahme und lässt sich wieder exportieren', async ({ page }) => {
   await login(page); const data = await create(page, false); await page.goto(`/heft/${data.book.id}`);
-  await page.getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
-  await dialog.getByRole('button', { name: 'Karaoke & Liedblatt', exact: true }).click();
+  // The old “Karaoke & Liedblatt” is no longer offered (see music-settings.spec for the new one);
+  // existing ones are still edited with these settings: select it, Enter.
+  await expect(page.locator('.interaction-surface .karaoke-widget')).toHaveCount(1);
+  await page.locator('.interaction-surface').click({ position: { x: 5, y: 5 } });
+  await page.keyboard.press('ControlOrMeta+a'); await page.keyboard.press('Enter');
+  const dialog = page.getByRole('dialog', { name: 'Lernwerkzeug gestalten' });
   const text = dialog.getByLabel('Liedtext', { exact: true }), previous = await text.inputValue();
   await dialog.getByLabel('LRC-Datei laden', { exact: true }).setInputFiles({ name: 'lied.lrc', mimeType: 'text/plain', buffer: Buffer.from('[00:02.125]Hallo\n[00:04.500]\n[00:06.750]Welt') });
   await expect(dialog.locator('.karaoke-import-preview')).toBeVisible(); await expect(text).toHaveValue(previous);
@@ -58,7 +61,7 @@ test('LRC-Import zeigt eine Vorschau, ersetzt erst bei Übernahme und lässt sic
   for await (const chunk of stream!) chunks.push(Buffer.from(chunk));
   expect(Buffer.concat(chunks).toString()).toBe('[00:02.125]Hallo\n[00:04.500]\n[00:06.750]Welt');
   await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click(); await expect(dialog).toHaveCount(0);
-  await expect(page.locator('.save-status')).toHaveText('✓ Gespeichert'); await page.reload(); await expect(page.locator('.interaction-surface .karaoke-widget')).toHaveCount(2);
+  await expect(page.locator('.save-status')).toHaveText('✓ Gespeichert'); await page.reload(); await expect(page.locator('.interaction-surface .karaoke-widget')).toHaveCount(1);
 });
 test('Textbegleitung ohne Musik endet und startet nach Pause an derselben Position weiter', async ({ page }) => {
   await login(page); const data = await create(page, false); await page.goto(`/heft/${data.book.id}`);

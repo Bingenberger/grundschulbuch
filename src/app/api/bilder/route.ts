@@ -3,7 +3,7 @@ import { currentUser, fromOwnOrigin, jsonError } from '@/lib/auth';
 import { currentChild } from '@/lib/child-auth';
 import { grantImages } from '@/lib/classes.mjs';
 import { BookError, storeImage } from '@/lib/notebooks.mjs';
-import { SourceError, galleryOrigin, loadImage, searchImages } from '@/lib/image-sources.mjs';
+import { SourceError, galleryOrigin, loadImage, searchImages, findKaraokeImage } from '@/lib/image-sources.mjs';
 export const dynamic = 'force-dynamic';
 
 /** Who may use which source: children only pictograms and the school gallery. */
@@ -43,6 +43,10 @@ export async function GET(request: Request) {
           'Content-Security-Policy': "default-src 'none'",
         },
       });
+    }
+    if (source === 'arasaac' && params.get('karaoke') === '1') {
+      const match = await findKaraokeImage(params.get('q') || '', params.get('begriff') || '', request.signal);
+      return NextResponse.json({ items: match ? [match] : [], more: false, page: 1 });
     }
     return NextResponse.json(await searchImages(source, params.get('q') || '', params.get('seite') || 1), {
       headers: { 'Cache-Control': 'private, max-age=300' },

@@ -108,4 +108,6 @@ keine `dvh`-Einheiten.
 
 Die Idee eines digitalen Heftes ist vom
 [Lernsachen-Heft](https://github.com/Majort0m0/Lernsachen-Heft) inspiriert.
-Aus diesem Projekt werden weder Code noch Inhalte übernommen.
+Die interaktiven Musikwerkzeuge und einige weitere Lernwerkzeuge basieren auf der
+mitgelieferten Referenzdatei. Die Musikvorlagen verwenden den Kassettenrekorder
+des Grundschulbuchs; Einzelheiten: [Musikwerkzeuge](docs/musikwerkzeuge.md).

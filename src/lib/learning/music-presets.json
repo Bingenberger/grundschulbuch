@@ -1,0 +1,2574 @@
+[
+  {
+    "id": "inst-piano",
+    "title": "Klavier",
+    "hidden": false,
+    "paper": "#fbf5ea",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-piano\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fdf8ef\"/><stop offset=\"1\" stop-color=\"#f0e2cc\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-piano)\"/><path d=\"M420 122C700 52 980 162 1350 82\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 138C700 68 980 178 1350 98\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 154C700 84 980 194 1350 114\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 170C700 100 980 210 1350 130\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 186C700 116 980 226 1350 146\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><g opacity=\"0.8\"><ellipse cx=\"560\" cy=\"118\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 560 118)\" fill=\"#b08d57\"/><path d=\"M571 116V66c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"720\" cy=\"136\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 720 136)\" fill=\"#b08d57\"/><ellipse cx=\"758\" cy=\"126\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 758 126)\" fill=\"#b08d57\"/><path d=\"M731 134V84L769 74V124\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M731 84L769 74\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"940\" cy=\"132\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 940 132)\" fill=\"#b08d57\"/><path d=\"M951 130V80c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"1100\" cy=\"112\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1100 112)\" fill=\"#b08d57\"/><ellipse cx=\"1138\" cy=\"102\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1138 102)\" fill=\"#b08d57\"/><path d=\"M1111 110V60L1149 50V100\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M1111 60L1149 50\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"1270\" cy=\"96\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1270 96)\" fill=\"#b08d57\"/><path d=\"M1281 94V44c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><rect x=\"0\" y=\"920\" width=\"1400\" height=\"70\" fill=\"#e5d2b4\" opacity=\"0.6\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Klavier",
+        "font": "nunito",
+        "size": 60,
+        "color": "#5b3a1e",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 294,
+        "w": 1300,
+        "h": 572,
+        "kind": "piano",
+        "inst": {
+          "skin": "piano",
+          "voice": "piano",
+          "scale": "all",
+          "root": 0,
+          "octave": 4,
+          "octaves": 2,
+          "labels": "none",
+          "colors": false
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 660,
+        "y": 20,
+        "w": 306,
+        "h": 170,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "inst-xylophone",
+    "title": "Xylophon",
+    "hidden": false,
+    "paper": "#fff9db",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-xylo\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff9db\"/><stop offset=\"1\" stop-color=\"#e7f5ff\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-xylo)\"/><path d=\"M1030 260A330 330 0 0 1 1690 260\" fill=\"none\" stroke=\"#e03131\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1058 260A302 302 0 0 1 1662 260\" fill=\"none\" stroke=\"#fd7e14\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1086 260A274 274 0 0 1 1634 260\" fill=\"none\" stroke=\"#fcc419\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1114 260A246 246 0 0 1 1606 260\" fill=\"none\" stroke=\"#40c057\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1142 260A218 218 0 0 1 1578 260\" fill=\"none\" stroke=\"#228be6\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1170 260A190 190 0 0 1 1550 260\" fill=\"none\" stroke=\"#7048e8\" stroke-width=\"24\" opacity=\"0.55\"/><circle cx=\"1120\" cy=\"250\" r=\"40\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"1170\" cy=\"232\" r=\"52\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"1230\" cy=\"252\" r=\"38\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"20\" cy=\"897.4\" r=\"9.2\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"531.3\" cy=\"921.8\" r=\"13.9\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"211.9\" cy=\"854.4\" r=\"6.5\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1113.5\" cy=\"868.1\" r=\"12.7\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"690.3\" cy=\"862.4\" r=\"7.9\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"821.2\" cy=\"851.6\" r=\"6.3\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"224.3\" cy=\"874.1\" r=\"9\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"102\" cy=\"942\" r=\"15.5\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"752.4\" cy=\"919.7\" r=\"9.3\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"1328\" cy=\"879.8\" r=\"7.2\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1014.1\" cy=\"884.4\" r=\"15.4\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"213.7\" cy=\"875\" r=\"17.8\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"1241.2\" cy=\"882.3\" r=\"17.7\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"150.6\" cy=\"938.9\" r=\"17.4\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"248.5\" cy=\"881.2\" r=\"17.5\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"316.6\" cy=\"957.4\" r=\"13.8\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"1132.7\" cy=\"887.1\" r=\"9.6\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"609.1\" cy=\"935.6\" r=\"15.9\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"125.8\" cy=\"909.9\" r=\"11.5\" fill=\"#fcc419\" opacity=\"0.45\"/><circle cx=\"962.4\" cy=\"937.3\" r=\"8.2\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"991\" cy=\"911.6\" r=\"12.6\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"1321.7\" cy=\"965.2\" r=\"11.8\" fill=\"#fcc419\" opacity=\"0.45\"/><circle cx=\"1105.9\" cy=\"882.7\" r=\"16.1\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"320.9\" cy=\"910.3\" r=\"7.8\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1150.5\" cy=\"939\" r=\"13.1\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"554.9\" cy=\"948.8\" r=\"7.8\" fill=\"#e03131\" opacity=\"0.45\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Xylophon",
+        "font": "nunito",
+        "size": 60,
+        "color": "#e8590c",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 257,
+        "w": 1300,
+        "h": 647,
+        "kind": "piano",
+        "inst": {
+          "skin": "xylophone",
+          "voice": "xylophone",
+          "scale": "major",
+          "root": 0,
+          "octave": 5,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": true
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 660,
+        "y": 20,
+        "w": 306,
+        "h": 170,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "inst-glockenspiel",
+    "title": "Glockenspiel",
+    "hidden": false,
+    "paper": "#eef2ff",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-glock\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f3f0ff\"/><stop offset=\"1\" stop-color=\"#dbe4ff\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-glock)\"/><path d=\"M40.1 85.3Q42.5 99.1 56.3 101.5Q42.5 103.9 40.1 117.7Q37.7 103.9 23.9 101.5Q37.7 99.1 40.1 85.3z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M99.6 149.5Q102.3 164.9 117.8 167.7Q102.3 170.4 99.6 185.8Q96.9 170.4 81.4 167.7Q96.9 164.9 99.6 149.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M723.1 85.4Q726 101.9 742.5 104.8Q726 107.7 723.1 124.2Q720.2 107.7 703.6 104.8Q720.2 101.9 723.1 85.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M411.7 43.5L417.4 57.2L432.1 58.3L420.9 67.9L424.3 82.3L411.7 74.6L399.2 82.3L402.6 67.9L391.4 58.3L406.1 57.2z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M225.6 71.4L230.8 83.8L244.1 84.8L233.9 93.5L237 106.5L225.6 99.6L214.2 106.5L217.3 93.5L207.2 84.8L220.5 83.8z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1131.2 79.5Q1133 89.5 1142.9 91.2Q1133 93 1131.2 102.9Q1129.5 93 1119.6 91.2Q1129.5 89.5 1131.2 79.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M327.2 128.2L332.3 140.6L345.7 141.6L335.5 150.4L338.6 163.4L327.2 156.4L315.7 163.4L318.9 150.4L308.7 141.6L322 140.6z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M771.9 91.9Q774.1 104.4 786.6 106.6Q774.1 108.8 771.9 121.3Q769.7 108.8 757.2 106.6Q769.7 104.4 771.9 91.9z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M446.3 147.2Q447.9 155.9 456.6 157.4Q447.9 158.9 446.3 167.6Q444.8 158.9 436.1 157.4Q444.8 155.9 446.3 147.2z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M294.9 100.7L300.6 114.4L315.3 115.5L304.1 125.1L307.5 139.5L294.9 131.8L282.3 139.5L285.7 125.1L274.5 115.5L289.2 114.4z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M57.9 67.3L64.3 82.7L80.9 84L68.2 94.8L72.1 111L57.9 102.4L43.6 111L47.5 94.8L34.9 84L51.5 82.7z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M729.2 25.7L734.4 38.3L748 39.4L737.6 48.3L740.8 61.5L729.2 54.4L717.6 61.5L720.7 48.3L710.4 39.4L724 38.3z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1305.9 56.9L1312.4 72.4L1329.1 73.7L1316.4 84.7L1320.3 101L1305.9 92.3L1291.6 101L1295.5 84.7L1282.7 73.7L1299.5 72.4z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M64.7 121.9L70.8 136.4L86.5 137.7L74.5 148L78.2 163.3L64.7 155.1L51.2 163.3L54.9 148L42.9 137.7L58.7 136.4z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1293 62.6Q1295 73.9 1306.4 75.9Q1295 77.9 1293 89.2Q1291 77.9 1279.7 75.9Q1291 73.9 1293 62.6z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M1095.4 160L1101.1 173.8L1116 175L1104.7 184.7L1108.2 199.2L1095.4 191.4L1082.6 199.2L1086.1 184.7L1074.8 175L1089.7 173.8z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1359.7 139.5Q1362.5 155.3 1378.4 158.1Q1362.5 160.9 1359.7 176.7Q1357 160.9 1341.1 158.1Q1357 155.3 1359.7 139.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M376.7 118Q378.2 126.9 387.1 128.5Q378.2 130.1 376.7 139Q375.1 130.1 366.2 128.5Q375.1 126.9 376.7 118z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M40.1 910.3L45 922.3L58 923.4L48.1 931.8L51.2 944.5L40.1 937.7L28.9 944.5L32 931.8L22.1 923.4L35.1 922.3z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M427.1 918Q428.8 928 438.8 929.7Q428.8 931.5 427.1 941.5Q425.3 931.5 415.4 929.7Q425.3 928 427.1 918z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M350.5 888.4Q353.1 902.9 367.6 905.5Q353.1 908.1 350.5 922.6Q347.9 908.1 333.4 905.5Q347.9 902.9 350.5 888.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M929 936.2L933.3 946.6L944.5 947.5L936 954.9L938.6 965.8L929 959.9L919.4 965.8L922 954.9L913.4 947.5L924.6 946.6z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M244.4 870.7Q246.6 883.3 259.2 885.6Q246.6 887.8 244.4 900.4Q242.1 887.8 229.6 885.6Q242.1 883.3 244.4 870.7z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M896 891.3Q897.6 900.4 906.7 902Q897.6 903.6 896 912.7Q894.4 903.6 885.3 902Q894.4 900.4 896 891.3z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M1250.5 888.5Q1252.3 898.3 1262.1 900.1Q1252.3 901.8 1250.5 911.7Q1248.8 901.8 1239 900.1Q1248.8 898.3 1250.5 888.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M612.7 937.9L617.2 948.8L629 949.7L620 957.4L622.8 968.9L612.7 962.7L602.6 968.9L605.4 957.4L596.4 949.7L608.2 948.8z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M344.7 908.8Q347.4 924.4 363 927.1Q347.4 929.9 344.7 945.4Q342 929.9 326.4 927.1Q342 924.4 344.7 908.8z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M395.9 862.1L399.9 871.7L410.2 872.5L402.3 879.3L404.7 889.4L395.9 884L387 889.4L389.4 879.3L381.5 872.5L391.9 871.7z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M768.1 927.4Q770.5 940.6 783.7 943Q770.5 945.3 768.1 958.6Q765.8 945.3 752.5 943Q765.8 940.6 768.1 927.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M353.3 914.3L357.8 925.1L369.4 926L360.5 933.6L363.2 945L353.3 938.9L343.3 945L346 933.6L337.1 926L348.8 925.1z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M255.4 919L261.1 932.6L275.7 933.8L264.6 943.4L268 957.7L255.4 950L242.9 957.7L246.3 943.4L235.1 933.8L249.8 932.6z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M1131.2 870.4L1136.7 883.6L1151 884.7L1140.1 894.1L1143.4 908L1131.2 900.5L1119 908L1122.3 894.1L1111.5 884.7L1125.7 883.6z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M849.6 924.4Q851.8 936.8 864.2 939Q851.8 941.2 849.6 953.6Q847.4 941.2 834.9 939Q847.4 936.8 849.6 924.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M519.7 866.6Q522.4 881.6 537.4 884.2Q522.4 886.9 519.7 901.9Q517.1 886.9 502.1 884.2Q517.1 881.6 519.7 866.6z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M519.9 866.7L525.1 879.2L538.6 880.3L528.3 889.1L531.4 902.3L519.9 895.2L508.3 902.3L511.5 889.1L501.2 880.3L514.7 879.2z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M553 870.3Q555.5 884.5 569.8 887Q555.5 889.5 553 903.7Q550.5 889.5 536.3 887Q550.5 884.5 553 870.3z\" fill=\"#ffffff\" opacity=\"0.95\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Glockenspiel",
+        "font": "nunito",
+        "size": 60,
+        "color": "#3b5bdb",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 257,
+        "w": 1300,
+        "h": 647,
+        "kind": "piano",
+        "inst": {
+          "skin": "glockenspiel",
+          "voice": "glockenspiel",
+          "scale": "major",
+          "root": 0,
+          "octave": 5,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": false
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 660,
+        "y": 20,
+        "w": 306,
+        "h": 170,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "inst-tubes",
+    "title": "Klangrohre",
+    "hidden": false,
+    "paper": "#f3fff6",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-tubes\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f4fce3\"/><stop offset=\"1\" stop-color=\"#e6fcf5\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-tubes)\"/><rect x=\"20.1\" y=\"126.5\" width=\"18.2\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(52 20.1 126.5)\"/><rect x=\"1328.9\" y=\"158.9\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(55 1328.9 158.9)\"/><rect x=\"851.7\" y=\"143.8\" width=\"18.3\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(53 851.7 143.8)\"/><rect x=\"225.4\" y=\"167.8\" width=\"17.5\" height=\"8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(40 225.4 167.8)\"/><rect x=\"1111.5\" y=\"87.4\" width=\"17\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(31 1111.5 87.4)\"/><circle cx=\"1225.1\" cy=\"128.7\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"1358.8\" cy=\"150.3\" r=\"7.4\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"1282.1\" cy=\"118.5\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"20.2\" cy=\"147.5\" r=\"5.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><circle cx=\"701.3\" cy=\"81.2\" r=\"4.9\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"1154.5\" cy=\"156.3\" r=\"7.3\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"859.2\" cy=\"105.4\" r=\"6.1\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"325\" y=\"145\" width=\"18.8\" height=\"8.5\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(61 325 145)\"/><rect x=\"1039.2\" y=\"51.7\" width=\"17.7\" height=\"8.1\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(44 1039.2 51.7)\"/><circle cx=\"556.6\" cy=\"139\" r=\"7.8\" fill=\"#fcc419\" opacity=\"0.5\"/><rect x=\"1305.1\" y=\"51.7\" width=\"15\" height=\"7\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(0 1305.1 51.7)\"/><rect x=\"761.5\" y=\"121\" width=\"19.6\" height=\"8.9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(74 761.5 121)\"/><rect x=\"306.3\" y=\"33.7\" width=\"15.7\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(12 306.3 33.7)\"/><circle cx=\"931.8\" cy=\"44.7\" r=\"6.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"930.6\" y=\"143\" width=\"17.9\" height=\"8.1\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(46 930.6 143)\"/><rect x=\"1054.3\" y=\"103.8\" width=\"17.1\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(34 1054.3 103.8)\"/><circle cx=\"220.5\" cy=\"144\" r=\"7.4\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"645.4\" cy=\"46.9\" r=\"6.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"1323.9\" y=\"96.4\" width=\"19.9\" height=\"9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(79 1323.9 96.4)\"/><rect x=\"838.8\" y=\"151.9\" width=\"18.9\" height=\"8.5\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(62 838.8 151.9)\"/><rect x=\"71.4\" y=\"54.9\" width=\"16.5\" height=\"7.6\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(24 71.4 54.9)\"/><rect x=\"1243.6\" y=\"21.9\" width=\"17.6\" height=\"8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(42 1243.6 21.9)\"/><rect x=\"876.5\" y=\"50.9\" width=\"19.5\" height=\"8.8\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(72 876.5 50.9)\"/><rect x=\"410.6\" y=\"47.6\" width=\"15.7\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(11 410.6 47.6)\"/><rect x=\"605.3\" y=\"168.9\" width=\"15.5\" height=\"7.2\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(8 605.3 168.9)\"/><rect x=\"62.9\" y=\"167.3\" width=\"15.6\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(10 62.9 167.3)\"/><rect x=\"934.7\" y=\"122.7\" width=\"20\" height=\"9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(80 934.7 122.7)\"/><rect x=\"505.6\" y=\"160.9\" width=\"15\" height=\"7\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(0 505.6 160.9)\"/><circle cx=\"564.2\" cy=\"167.7\" r=\"4.7\" fill=\"#e03131\" opacity=\"0.5\"/><rect x=\"20.2\" y=\"949.4\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(55 20.2 949.4)\"/><rect x=\"1104\" y=\"942.3\" width=\"17.2\" height=\"7.9\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(36 1104 942.3)\"/><rect x=\"1107.7\" y=\"961.6\" width=\"15.5\" height=\"7.2\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(8 1107.7 961.6)\"/><rect x=\"1230.1\" y=\"960.8\" width=\"18.3\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(53 1230.1 960.8)\"/><rect x=\"191.9\" y=\"963.5\" width=\"19.1\" height=\"8.6\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(65 191.9 963.5)\"/><circle cx=\"26.7\" cy=\"956.4\" r=\"5\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"724.6\" cy=\"945.5\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><rect x=\"938.2\" y=\"940.5\" width=\"18.2\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(51 938.2 940.5)\"/><rect x=\"543.4\" y=\"978.3\" width=\"15.6\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(10 543.4 978.3)\"/><rect x=\"178.6\" y=\"942.9\" width=\"19.2\" height=\"8.7\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(67 178.6 942.9)\"/><circle cx=\"666.6\" cy=\"978.3\" r=\"7.7\" fill=\"#fcc419\" opacity=\"0.5\"/><rect x=\"1117.4\" y=\"960.5\" width=\"15.8\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(13 1117.4 960.5)\"/><rect x=\"1046.6\" y=\"974.4\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(56 1046.6 974.4)\"/><rect x=\"306.6\" y=\"948\" width=\"17\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(33 306.6 948)\"/><circle cx=\"407.9\" cy=\"972.3\" r=\"4.6\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"340.5\" cy=\"969.5\" r=\"4.3\" fill=\"#e03131\" opacity=\"0.5\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Klangrohre",
+        "font": "nunito",
+        "size": 60,
+        "color": "#0ca678",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 110,
+        "y": 225,
+        "w": 1179,
+        "h": 710,
+        "kind": "piano",
+        "inst": {
+          "skin": "tubes",
+          "voice": "tube",
+          "scale": "major",
+          "root": 0,
+          "octave": 4,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": true
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 660,
+        "y": 20,
+        "w": 306,
+        "h": 170,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "inst-synth",
+    "title": "Synthesizer",
+    "hidden": false,
+    "paper": "#120c2e",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-synth\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#0b1026\"/><stop offset=\"1\" stop-color=\"#2a1050\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-synth)\"/><defs><linearGradient id=\"mu-sun\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffd43b\"/><stop offset=\"1\" stop-color=\"#f06595\"/></linearGradient></defs><circle cx=\"1170\" cy=\"150\" r=\"105\" fill=\"url(#mu-sun)\" opacity=\"0.9\"/><rect x=\"1050\" y=\"170\" width=\"240\" height=\"4\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"188\" width=\"240\" height=\"5.5\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"206\" width=\"240\" height=\"7\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"224\" width=\"240\" height=\"8.5\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"242\" width=\"240\" height=\"10\" fill=\"#1a1140\"/><path d=\"M0 820H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 826.8H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 843.5H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 868.8H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 901.9H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 942.4H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 990H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M300 820L-1200 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M340 820L-1010 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M380 820L-820 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M420 820L-630 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M460 820L-440 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M500 820L-250 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M540 820L-60 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M580 820L130 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M620 820L320 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M660 820L510 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M700 820L700 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M740 820L890 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M780 820L1080 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M820 820L1270 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M860 820L1460 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M900 820L1650 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M940 820L1840 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M980 820L2030 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M1020 820L2220 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M1060 820L2410 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M1100 820L2600 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><circle cx=\"0.1\" cy=\"736.6\" r=\"1.6\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"294.8\" cy=\"583.5\" r=\"2.1\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"461\" cy=\"601.6\" r=\"2.5\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"760\" cy=\"547.6\" r=\"2.3\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"1143.5\" cy=\"193.6\" r=\"1.7\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"991.1\" cy=\"558.4\" r=\"1.1\" fill=\"#ffffff\" opacity=\"0.3\"/><circle cx=\"957.5\" cy=\"374.3\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"1130.4\" cy=\"98.3\" r=\"2\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"1292.4\" cy=\"550.8\" r=\"2.3\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"808.4\" cy=\"729.6\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"521.1\" cy=\"268.3\" r=\"2.7\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"465.2\" cy=\"122.1\" r=\"1.6\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"599.9\" cy=\"235.9\" r=\"2.9\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"780.3\" cy=\"583.4\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"82.1\" cy=\"218.8\" r=\"2.1\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"712.3\" cy=\"337.2\" r=\"1.4\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"1272.6\" cy=\"43.9\" r=\"1.7\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"481.8\" cy=\"531.5\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"720.8\" cy=\"132.4\" r=\"1.8\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"397\" cy=\"291.6\" r=\"1.8\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"465.6\" cy=\"425.3\" r=\"2.2\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"326.5\" cy=\"725.2\" r=\"1.9\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"1208.2\" cy=\"508.1\" r=\"2.3\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"722.7\" cy=\"404\" r=\"2.4\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"1315.4\" cy=\"317.4\" r=\"2.4\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"351.6\" cy=\"469.5\" r=\"1.7\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"462.8\" cy=\"313.1\" r=\"2.6\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"1228.6\" cy=\"88.9\" r=\"2.6\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"108.8\" cy=\"325.4\" r=\"1.3\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"109\" cy=\"797\" r=\"1.4\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"885.3\" cy=\"115.4\" r=\"1.9\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"830.1\" cy=\"110.2\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"1238.4\" cy=\"712.5\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"1270.9\" cy=\"608.9\" r=\"1.6\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"14.7\" cy=\"198.6\" r=\"1.2\" fill=\"#ffffff\" opacity=\"0.3\"/><circle cx=\"2.2\" cy=\"493.5\" r=\"1.5\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"1037.6\" cy=\"391.5\" r=\"2.4\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"333.3\" cy=\"705.7\" r=\"1.5\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"523.5\" cy=\"715.4\" r=\"1.2\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"685\" cy=\"2.4\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Synthesizer",
+        "font": "nunito",
+        "size": 60,
+        "color": "#f8f0fc",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 294,
+        "w": 1300,
+        "h": 572,
+        "kind": "piano",
+        "inst": {
+          "skin": "synth",
+          "voice": "synth",
+          "scale": "all",
+          "root": 0,
+          "octave": 4,
+          "octaves": 2,
+          "labels": "none",
+          "colors": false
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 660,
+        "y": 20,
+        "w": 306,
+        "h": 170,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "inst-custom",
+    "title": "Instrument einstellen",
+    "hidden": false,
+    "generator": "instrument",
+    "paper": "#fbf5ea",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-piano\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fdf8ef\"/><stop offset=\"1\" stop-color=\"#f0e2cc\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-piano)\"/><path d=\"M420 122C700 52 980 162 1350 82\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 138C700 68 980 178 1350 98\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 154C700 84 980 194 1350 114\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 170C700 100 980 210 1350 130\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 186C700 116 980 226 1350 146\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><g opacity=\"0.8\"><ellipse cx=\"560\" cy=\"118\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 560 118)\" fill=\"#b08d57\"/><path d=\"M571 116V66c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"720\" cy=\"136\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 720 136)\" fill=\"#b08d57\"/><ellipse cx=\"758\" cy=\"126\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 758 126)\" fill=\"#b08d57\"/><path d=\"M731 134V84L769 74V124\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M731 84L769 74\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"940\" cy=\"132\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 940 132)\" fill=\"#b08d57\"/><path d=\"M951 130V80c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"1100\" cy=\"112\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1100 112)\" fill=\"#b08d57\"/><ellipse cx=\"1138\" cy=\"102\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1138 102)\" fill=\"#b08d57\"/><path d=\"M1111 110V60L1149 50V100\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M1111 60L1149 50\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"1270\" cy=\"96\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1270 96)\" fill=\"#b08d57\"/><path d=\"M1281 94V44c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><rect x=\"0\" y=\"920\" width=\"1400\" height=\"70\" fill=\"#e5d2b4\" opacity=\"0.6\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Klavier",
+        "font": "nunito",
+        "size": 60,
+        "color": "#5b3a1e",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 294,
+        "w": 1300,
+        "h": 572,
+        "kind": "piano",
+        "inst": {
+          "skin": "piano",
+          "voice": "piano",
+          "scale": "all",
+          "root": 0,
+          "octave": 4,
+          "octaves": 2,
+          "labels": "none",
+          "colors": false
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 660,
+        "y": 20,
+        "w": 306,
+        "h": 170,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "drum-drumset",
+    "title": "Schlagzeug",
+    "hidden": false,
+    "paper": "#14101f",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-drums\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#1b1030\"/><stop offset=\"1\" stop-color=\"#0b0814\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-drums)\"/><path d=\"M230 0H290L520 990H0Z\" fill=\"#ffd43b\" opacity=\"0.08\"/><ellipse cx=\"260\" cy=\"8\" rx=\"46\" ry=\"18\" fill=\"#ffd43b\" opacity=\"0.5\"/><path d=\"M670 0H730L960 990H440Z\" fill=\"#ffffff\" opacity=\"0.08\"/><ellipse cx=\"700\" cy=\"8\" rx=\"46\" ry=\"18\" fill=\"#ffffff\" opacity=\"0.5\"/><path d=\"M1110 0H1170L1400 990H880Z\" fill=\"#74c0fc\" opacity=\"0.08\"/><ellipse cx=\"1140\" cy=\"8\" rx=\"46\" ry=\"18\" fill=\"#74c0fc\" opacity=\"0.5\"/><rect x=\"0\" y=\"930\" width=\"1400\" height=\"60\" fill=\"#2b1d12\" opacity=\"0.8\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Schlagzeug",
+        "font": "nunito",
+        "size": 60,
+        "color": "#fff4e6",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 230,
+        "w": 1300,
+        "h": 700,
+        "kind": "drums",
+        "kit": {
+          "skin": "drumset",
+          "labels": true
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 660,
+        "y": 20,
+        "w": 306,
+        "h": 170,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "drum-cajon",
+    "title": "Cajón",
+    "hidden": false,
+    "paper": "#fff4e6",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-cajon\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff4e6\"/><stop offset=\"1\" stop-color=\"#ffd8a8\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-cajon)\"/><path d=\"M1280 120L382.9 191.9L382.9 48.1Z\" fill=\"#ffffff\" opacity=\"0.22\"/><path d=\"M1280 120L394.8 -42.7L432.1 -181.7Z\" fill=\"#ffffff\" opacity=\"0.22\"/><path d=\"M1280 120L467.1 -266.3L539 -390.8Z\" fill=\"#ffffff\" opacity=\"0.22\"/><path d=\"M1280 120L594.8 -463.5L696.5 -565.2Z\" fill=\"#ffffff\" opacity=\"0.22\"/><path d=\"M1280 120L769.2 -621L893.7 -692.9Z\" fill=\"#ffffff\" opacity=\"0.22\"/><path d=\"M1280 120L978.3 -727.9L1117.3 -765.2Z\" fill=\"#ffffff\" opacity=\"0.22\"/><path d=\"M1280 120L1208.1 -777.1L1351.9 -777.1Z\" fill=\"#ffffff\" opacity=\"0.22\"/><path d=\"M1280 120L1442.7 -765.2L1581.7 -727.9Z\" fill=\"#ffffff\" opacity=\"0.22\"/><path d=\"M1280 120L1666.3 -692.9L1790.8 -621Z\" fill=\"#ffffff\" opacity=\"0.22\"/><path d=\"M1280 120L1863.5 -565.2L1965.2 -463.5Z\" fill=\"#ffffff\" opacity=\"0.22\"/><path d=\"M1280 120L2021 -390.8L2092.9 -266.3Z\" fill=\"#ffffff\" opacity=\"0.22\"/><path d=\"M1280 120L2127.9 -181.7L2165.2 -42.7Z\" fill=\"#ffffff\" opacity=\"0.22\"/><circle cx=\"1280\" cy=\"120\" r=\"70\" fill=\"#ffa94d\" opacity=\"0.8\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Cajón",
+        "font": "nunito",
+        "size": 60,
+        "color": "#d9480f",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 230,
+        "w": 1300,
+        "h": 700,
+        "kind": "drums",
+        "kit": {
+          "skin": "cajon",
+          "labels": true
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 660,
+        "y": 20,
+        "w": 306,
+        "h": 170,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "drum-hand",
+    "title": "Bongos & Congas",
+    "hidden": false,
+    "paper": "#f4fce3",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-hand\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff9db\"/><stop offset=\"1\" stop-color=\"#d3f9d8\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-hand)\"/><g transform=\"rotate(20 -30 60)\"><path d=\"M-30 60C60 -24.000000000000014 195 -15 270 60C195 135 60 144 -30 60z\" fill=\"#69db7c\"/><path d=\"M-30 60H255\" stroke=\"#ffffff\" stroke-width=\"3\" opacity=\"0.35\"/></g><g transform=\"rotate(40 -20 160)\"><path d=\"M-20 160C58 87.19999999999999 175 95 240 160C175 225 58 232.8 -20 160z\" fill=\"#40c057\"/><path d=\"M-20 160H227\" stroke=\"#ffffff\" stroke-width=\"3\" opacity=\"0.35\"/></g><g transform=\"rotate(160 1430 90)\"><path d=\"M1430 90C1520 5.999999999999986 1655 15 1730 90C1655 165 1520 174 1430 90z\" fill=\"#69db7c\"/><path d=\"M1430 90H1715\" stroke=\"#ffffff\" stroke-width=\"3\" opacity=\"0.35\"/></g><g transform=\"rotate(140 1420 200)\"><path d=\"M1420 200C1492 132.8 1600 140 1660 200C1600 260 1492 267.2 1420 200z\" fill=\"#40c057\"/><path d=\"M1420 200H1648\" stroke=\"#ffffff\" stroke-width=\"3\" opacity=\"0.35\"/></g><g transform=\"rotate(-25 -30 950)\"><path d=\"M-30 950C54 871.6 180 880 250 950C180 1020 54 1028.4 -30 950z\" fill=\"#51cf66\"/><path d=\"M-30 950H236\" stroke=\"#ffffff\" stroke-width=\"3\" opacity=\"0.35\"/></g><g transform=\"rotate(200 1430 940)\"><path d=\"M1430 940C1514 861.6 1640 870 1710 940C1640 1010 1514 1018.4 1430 940z\" fill=\"#51cf66\"/><path d=\"M1430 940H1696\" stroke=\"#ffffff\" stroke-width=\"3\" opacity=\"0.35\"/></g></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Bongos & Congas",
+        "font": "nunito",
+        "size": 60,
+        "color": "#2b8a3e",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 230,
+        "w": 1300,
+        "h": 700,
+        "kind": "drums",
+        "kit": {
+          "skin": "hand",
+          "labels": true
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 660,
+        "y": 20,
+        "w": 306,
+        "h": 170,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "drum-orff",
+    "title": "Orff-Instrumente",
+    "hidden": false,
+    "paper": "#f3f0ff",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-orff\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f8f0fc\"/><stop offset=\"1\" stop-color=\"#e5dbff\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-orff)\"/><g opacity=\"0.5\"><ellipse cx=\"720.1\" cy=\"73.3\" rx=\"9.3\" ry=\"6.6\" transform=\"rotate(-22 720.1 73.3)\" fill=\"#da77f2\"/><ellipse cx=\"748.7\" cy=\"65.8\" rx=\"9.3\" ry=\"6.6\" transform=\"rotate(-22 748.7 65.8)\" fill=\"#da77f2\"/><path d=\"M728.4 71.8V34.2L756.9 26.7V64.3\" fill=\"none\" stroke=\"#da77f2\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/><path d=\"M728.4 34.2L756.9 26.7\" stroke=\"#da77f2\" stroke-width=\"6.3\"/></g><g opacity=\"0.5\"><ellipse cx=\"1071.3\" cy=\"103\" rx=\"7.6\" ry=\"5.4\" transform=\"rotate(-22 1071.3 103)\" fill=\"#da77f2\"/><ellipse cx=\"1094.7\" cy=\"96.8\" rx=\"7.6\" ry=\"5.4\" transform=\"rotate(-22 1094.7 96.8)\" fill=\"#da77f2\"/><path d=\"M1078.1 101.7V71L1101.4 64.9V95.6\" fill=\"none\" stroke=\"#da77f2\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M1078.1 71L1101.4 64.9\" stroke=\"#da77f2\" stroke-width=\"5.2\"/></g><g opacity=\"0.6\"><ellipse cx=\"772.5\" cy=\"149.8\" rx=\"11.8\" ry=\"8.4\" transform=\"rotate(-22 772.5 149.8)\" fill=\"#b197fc\"/><path d=\"M782.9 147.9V100.4c3.8 13.3 20.9 15.2 17.1 34.2\" fill=\"none\" stroke=\"#b197fc\" stroke-width=\"3\" stroke-linecap=\"round\"/></g><g opacity=\"0.6\"><ellipse cx=\"1038.7\" cy=\"176.7\" rx=\"13.4\" ry=\"9.5\" transform=\"rotate(-22 1038.7 176.7)\" fill=\"#b197fc\"/><path d=\"M1050.5 174.5V120.6c4.3 15.1 23.7 17.3 19.4 38.8\" fill=\"none\" stroke=\"#b197fc\" stroke-width=\"3.5\" stroke-linecap=\"round\"/></g><g opacity=\"0.5\"><ellipse cx=\"791.8\" cy=\"173.4\" rx=\"8.6\" ry=\"6.1\" transform=\"rotate(-22 791.8 173.4)\" fill=\"#da77f2\"/><ellipse cx=\"818.1\" cy=\"166.5\" rx=\"8.6\" ry=\"6.1\" transform=\"rotate(-22 818.1 166.5)\" fill=\"#da77f2\"/><path d=\"M799.4 172V137.4L825.7 130.5V165.1\" fill=\"none\" stroke=\"#da77f2\" stroke-width=\"2.2\" stroke-linejoin=\"round\"/><path d=\"M799.4 137.4L825.7 130.5\" stroke=\"#da77f2\" stroke-width=\"5.8\"/></g><g opacity=\"0.5\"><ellipse cx=\"837.2\" cy=\"126.7\" rx=\"8.3\" ry=\"5.9\" transform=\"rotate(-22 837.2 126.7)\" fill=\"#da77f2\"/><ellipse cx=\"862.7\" cy=\"120\" rx=\"8.3\" ry=\"5.9\" transform=\"rotate(-22 862.7 120)\" fill=\"#da77f2\"/><path d=\"M844.6 125.4V91.9L870.1 85.1V118.7\" fill=\"none\" stroke=\"#da77f2\" stroke-width=\"2.1\" stroke-linejoin=\"round\"/><path d=\"M844.6 91.9L870.1 85.1\" stroke=\"#da77f2\" stroke-width=\"5.6\"/></g><g opacity=\"0.6\"><ellipse cx=\"1243.9\" cy=\"139.9\" rx=\"11.7\" ry=\"8.3\" transform=\"rotate(-22 1243.9 139.9)\" fill=\"#b197fc\"/><path d=\"M1254.2 138V90.9c3.8 13.2 20.7 15.1 16.9 33.9\" fill=\"none\" stroke=\"#b197fc\" stroke-width=\"3\" stroke-linecap=\"round\"/></g><g opacity=\"0.5\"><ellipse cx=\"1229.3\" cy=\"141\" rx=\"9.4\" ry=\"6.7\" transform=\"rotate(-22 1229.3 141)\" fill=\"#da77f2\"/><ellipse cx=\"1258.2\" cy=\"133.4\" rx=\"9.4\" ry=\"6.7\" transform=\"rotate(-22 1258.2 133.4)\" fill=\"#da77f2\"/><path d=\"M1237.7 139.5V101.5L1266.5 93.9V131.9\" fill=\"none\" stroke=\"#da77f2\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/><path d=\"M1237.7 101.5L1266.5 93.9\" stroke=\"#da77f2\" stroke-width=\"6.4\"/></g><g opacity=\"0.5\"><ellipse cx=\"1015.6\" cy=\"85.5\" rx=\"8\" ry=\"5.7\" transform=\"rotate(-22 1015.6 85.5)\" fill=\"#da77f2\"/><ellipse cx=\"1040.1\" cy=\"79.1\" rx=\"8\" ry=\"5.7\" transform=\"rotate(-22 1040.1 79.1)\" fill=\"#da77f2\"/><path d=\"M1022.7 84.2V51.9L1047.2 45.5V77.8\" fill=\"none\" stroke=\"#da77f2\" stroke-width=\"2.1\" stroke-linejoin=\"round\"/><path d=\"M1022.7 51.9L1047.2 45.5\" stroke=\"#da77f2\" stroke-width=\"5.4\"/></g><g opacity=\"0.5\"><ellipse cx=\"745.7\" cy=\"143.8\" rx=\"8.1\" ry=\"5.7\" transform=\"rotate(-22 745.7 143.8)\" fill=\"#da77f2\"/><ellipse cx=\"770.4\" cy=\"137.3\" rx=\"8.1\" ry=\"5.7\" transform=\"rotate(-22 770.4 137.3)\" fill=\"#da77f2\"/><path d=\"M752.8 142.5V110L777.6 103.5V136\" fill=\"none\" stroke=\"#da77f2\" stroke-width=\"2.1\" stroke-linejoin=\"round\"/><path d=\"M752.8 110L777.6 103.5\" stroke=\"#da77f2\" stroke-width=\"5.5\"/></g><g opacity=\"0.5\"><ellipse cx=\"1319.9\" cy=\"139\" rx=\"7.6\" ry=\"5.4\" transform=\"rotate(-22 1319.9 139)\" fill=\"#da77f2\"/><ellipse cx=\"1343.3\" cy=\"132.8\" rx=\"7.6\" ry=\"5.4\" transform=\"rotate(-22 1343.3 132.8)\" fill=\"#da77f2\"/><path d=\"M1326.7 137.7V107L1350 100.9V131.6\" fill=\"none\" stroke=\"#da77f2\" stroke-width=\"2\" stroke-linejoin=\"round\"/><path d=\"M1326.7 107L1350 100.9\" stroke=\"#da77f2\" stroke-width=\"5.2\"/></g><g opacity=\"0.6\"><ellipse cx=\"778.7\" cy=\"190.9\" rx=\"11.4\" ry=\"8.1\" transform=\"rotate(-22 778.7 190.9)\" fill=\"#b197fc\"/><path d=\"M788.8 189V143.1c3.7 12.9 20.2 14.7 16.6 33.1\" fill=\"none\" stroke=\"#b197fc\" stroke-width=\"2.9\" stroke-linecap=\"round\"/></g></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Orff-Instrumente",
+        "font": "nunito",
+        "size": 60,
+        "color": "#7048e8",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 230,
+        "w": 1300,
+        "h": 700,
+        "kind": "drums",
+        "kit": {
+          "skin": "orff",
+          "labels": true
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 660,
+        "y": 20,
+        "w": 306,
+        "h": 170,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "drum-pads",
+    "title": "Klang-Pads",
+    "hidden": false,
+    "paper": "#101a3a",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-pads\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#14204a\"/><stop offset=\"1\" stop-color=\"#0a0f24\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-pads)\"/><circle cx=\"0.3\" cy=\"806.4\" r=\"226\" fill=\"#7048e8\" opacity=\"0.1\"/><circle cx=\"421.2\" cy=\"445.7\" r=\"136\" fill=\"#fcc419\" opacity=\"0.1\"/><circle cx=\"510\" cy=\"680.2\" r=\"191.9\" fill=\"#228be6\" opacity=\"0.1\"/><circle cx=\"148.5\" cy=\"120.3\" r=\"90.1\" fill=\"#e03131\" opacity=\"0.1\"/><circle cx=\"137.2\" cy=\"2.6\" r=\"168.1\" fill=\"#40c057\" opacity=\"0.1\"/><circle cx=\"505.8\" cy=\"458.7\" r=\"115.7\" fill=\"#fd7e14\" opacity=\"0.1\"/><circle cx=\"166.7\" cy=\"929\" r=\"97.1\" fill=\"#e03131\" opacity=\"0.1\"/><circle cx=\"1283\" cy=\"79.5\" r=\"237.2\" fill=\"#7048e8\" opacity=\"0.1\"/><circle cx=\"754.4\" cy=\"278.1\" r=\"186.7\" fill=\"#228be6\" opacity=\"0.1\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Klang-Pads",
+        "font": "nunito",
+        "size": 60,
+        "color": "#f8f9fa",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 230,
+        "w": 1300,
+        "h": 700,
+        "kind": "drums",
+        "kit": {
+          "skin": "pads",
+          "labels": true,
+          "pads": [
+            {
+              "label": "",
+              "color": "#e03131"
+            },
+            {
+              "label": "",
+              "color": "#fd7e14"
+            },
+            {
+              "label": "",
+              "color": "#fab005"
+            },
+            {
+              "label": "",
+              "color": "#40c057"
+            },
+            {
+              "label": "",
+              "color": "#15aabf"
+            },
+            {
+              "label": "",
+              "color": "#4c6ef5"
+            },
+            {
+              "label": "",
+              "color": "#7950f2"
+            },
+            {
+              "label": "",
+              "color": "#e64980"
+            }
+          ]
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 660,
+        "y": 20,
+        "w": 306,
+        "h": 170,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "echo-tubes",
+    "title": "Tonfolgen: Klangrohre",
+    "hidden": false,
+    "paper": "#f3fff6",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-tubes\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f4fce3\"/><stop offset=\"1\" stop-color=\"#e6fcf5\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-tubes)\"/><rect x=\"20.1\" y=\"126.5\" width=\"18.2\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(52 20.1 126.5)\"/><rect x=\"1328.9\" y=\"158.9\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(55 1328.9 158.9)\"/><rect x=\"851.7\" y=\"143.8\" width=\"18.3\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(53 851.7 143.8)\"/><rect x=\"225.4\" y=\"167.8\" width=\"17.5\" height=\"8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(40 225.4 167.8)\"/><rect x=\"1111.5\" y=\"87.4\" width=\"17\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(31 1111.5 87.4)\"/><circle cx=\"1225.1\" cy=\"128.7\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"1358.8\" cy=\"150.3\" r=\"7.4\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"1282.1\" cy=\"118.5\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"20.2\" cy=\"147.5\" r=\"5.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><circle cx=\"701.3\" cy=\"81.2\" r=\"4.9\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"1154.5\" cy=\"156.3\" r=\"7.3\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"859.2\" cy=\"105.4\" r=\"6.1\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"325\" y=\"145\" width=\"18.8\" height=\"8.5\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(61 325 145)\"/><rect x=\"1039.2\" y=\"51.7\" width=\"17.7\" height=\"8.1\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(44 1039.2 51.7)\"/><circle cx=\"556.6\" cy=\"139\" r=\"7.8\" fill=\"#fcc419\" opacity=\"0.5\"/><rect x=\"1305.1\" y=\"51.7\" width=\"15\" height=\"7\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(0 1305.1 51.7)\"/><rect x=\"761.5\" y=\"121\" width=\"19.6\" height=\"8.9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(74 761.5 121)\"/><rect x=\"306.3\" y=\"33.7\" width=\"15.7\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(12 306.3 33.7)\"/><circle cx=\"931.8\" cy=\"44.7\" r=\"6.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"930.6\" y=\"143\" width=\"17.9\" height=\"8.1\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(46 930.6 143)\"/><rect x=\"1054.3\" y=\"103.8\" width=\"17.1\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(34 1054.3 103.8)\"/><circle cx=\"220.5\" cy=\"144\" r=\"7.4\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"645.4\" cy=\"46.9\" r=\"6.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"1323.9\" y=\"96.4\" width=\"19.9\" height=\"9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(79 1323.9 96.4)\"/><rect x=\"838.8\" y=\"151.9\" width=\"18.9\" height=\"8.5\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(62 838.8 151.9)\"/><rect x=\"71.4\" y=\"54.9\" width=\"16.5\" height=\"7.6\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(24 71.4 54.9)\"/><rect x=\"1243.6\" y=\"21.9\" width=\"17.6\" height=\"8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(42 1243.6 21.9)\"/><rect x=\"876.5\" y=\"50.9\" width=\"19.5\" height=\"8.8\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(72 876.5 50.9)\"/><rect x=\"410.6\" y=\"47.6\" width=\"15.7\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(11 410.6 47.6)\"/><rect x=\"605.3\" y=\"168.9\" width=\"15.5\" height=\"7.2\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(8 605.3 168.9)\"/><rect x=\"62.9\" y=\"167.3\" width=\"15.6\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(10 62.9 167.3)\"/><rect x=\"934.7\" y=\"122.7\" width=\"20\" height=\"9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(80 934.7 122.7)\"/><rect x=\"505.6\" y=\"160.9\" width=\"15\" height=\"7\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(0 505.6 160.9)\"/><circle cx=\"564.2\" cy=\"167.7\" r=\"4.7\" fill=\"#e03131\" opacity=\"0.5\"/><rect x=\"20.2\" y=\"949.4\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(55 20.2 949.4)\"/><rect x=\"1104\" y=\"942.3\" width=\"17.2\" height=\"7.9\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(36 1104 942.3)\"/><rect x=\"1107.7\" y=\"961.6\" width=\"15.5\" height=\"7.2\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(8 1107.7 961.6)\"/><rect x=\"1230.1\" y=\"960.8\" width=\"18.3\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(53 1230.1 960.8)\"/><rect x=\"191.9\" y=\"963.5\" width=\"19.1\" height=\"8.6\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(65 191.9 963.5)\"/><circle cx=\"26.7\" cy=\"956.4\" r=\"5\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"724.6\" cy=\"945.5\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><rect x=\"938.2\" y=\"940.5\" width=\"18.2\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(51 938.2 940.5)\"/><rect x=\"543.4\" y=\"978.3\" width=\"15.6\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(10 543.4 978.3)\"/><rect x=\"178.6\" y=\"942.9\" width=\"19.2\" height=\"8.7\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(67 178.6 942.9)\"/><circle cx=\"666.6\" cy=\"978.3\" r=\"7.7\" fill=\"#fcc419\" opacity=\"0.5\"/><rect x=\"1117.4\" y=\"960.5\" width=\"15.8\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(13 1117.4 960.5)\"/><rect x=\"1046.6\" y=\"974.4\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(56 1046.6 974.4)\"/><rect x=\"306.6\" y=\"948\" width=\"17\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(33 306.6 948)\"/><circle cx=\"407.9\" cy=\"972.3\" r=\"4.6\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"340.5\" cy=\"969.5\" r=\"4.3\" fill=\"#e03131\" opacity=\"0.5\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Hör zu – spiel nach",
+        "font": "nunito",
+        "size": 60,
+        "color": "#0ca678",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "echo",
+        "inst": {
+          "skin": "tubes",
+          "voice": "tube",
+          "scale": "major",
+          "root": 0,
+          "octave": 4,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": true
+        },
+        "echo": {
+          "tones": 3,
+          "speed": "mid",
+          "start": 1,
+          "voice": true
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "echo-xylophone",
+    "title": "Tonfolgen: Xylophon",
+    "hidden": false,
+    "paper": "#fff9db",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-xylo\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff9db\"/><stop offset=\"1\" stop-color=\"#e7f5ff\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-xylo)\"/><path d=\"M1030 260A330 330 0 0 1 1690 260\" fill=\"none\" stroke=\"#e03131\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1058 260A302 302 0 0 1 1662 260\" fill=\"none\" stroke=\"#fd7e14\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1086 260A274 274 0 0 1 1634 260\" fill=\"none\" stroke=\"#fcc419\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1114 260A246 246 0 0 1 1606 260\" fill=\"none\" stroke=\"#40c057\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1142 260A218 218 0 0 1 1578 260\" fill=\"none\" stroke=\"#228be6\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1170 260A190 190 0 0 1 1550 260\" fill=\"none\" stroke=\"#7048e8\" stroke-width=\"24\" opacity=\"0.55\"/><circle cx=\"1120\" cy=\"250\" r=\"40\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"1170\" cy=\"232\" r=\"52\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"1230\" cy=\"252\" r=\"38\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"20\" cy=\"897.4\" r=\"9.2\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"531.3\" cy=\"921.8\" r=\"13.9\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"211.9\" cy=\"854.4\" r=\"6.5\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1113.5\" cy=\"868.1\" r=\"12.7\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"690.3\" cy=\"862.4\" r=\"7.9\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"821.2\" cy=\"851.6\" r=\"6.3\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"224.3\" cy=\"874.1\" r=\"9\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"102\" cy=\"942\" r=\"15.5\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"752.4\" cy=\"919.7\" r=\"9.3\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"1328\" cy=\"879.8\" r=\"7.2\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1014.1\" cy=\"884.4\" r=\"15.4\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"213.7\" cy=\"875\" r=\"17.8\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"1241.2\" cy=\"882.3\" r=\"17.7\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"150.6\" cy=\"938.9\" r=\"17.4\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"248.5\" cy=\"881.2\" r=\"17.5\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"316.6\" cy=\"957.4\" r=\"13.8\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"1132.7\" cy=\"887.1\" r=\"9.6\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"609.1\" cy=\"935.6\" r=\"15.9\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"125.8\" cy=\"909.9\" r=\"11.5\" fill=\"#fcc419\" opacity=\"0.45\"/><circle cx=\"962.4\" cy=\"937.3\" r=\"8.2\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"991\" cy=\"911.6\" r=\"12.6\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"1321.7\" cy=\"965.2\" r=\"11.8\" fill=\"#fcc419\" opacity=\"0.45\"/><circle cx=\"1105.9\" cy=\"882.7\" r=\"16.1\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"320.9\" cy=\"910.3\" r=\"7.8\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1150.5\" cy=\"939\" r=\"13.1\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"554.9\" cy=\"948.8\" r=\"7.8\" fill=\"#e03131\" opacity=\"0.45\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Hör zu – spiel nach",
+        "font": "nunito",
+        "size": 60,
+        "color": "#e8590c",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "echo",
+        "inst": {
+          "skin": "xylophone",
+          "voice": "xylophone",
+          "scale": "major",
+          "root": 0,
+          "octave": 5,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": true
+        },
+        "echo": {
+          "tones": 5,
+          "speed": "mid",
+          "start": 1,
+          "voice": true
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "echo-piano",
+    "title": "Tonfolgen: Klavier",
+    "hidden": false,
+    "paper": "#fbf5ea",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-piano\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fdf8ef\"/><stop offset=\"1\" stop-color=\"#f0e2cc\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-piano)\"/><path d=\"M420 122C700 52 980 162 1350 82\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 138C700 68 980 178 1350 98\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 154C700 84 980 194 1350 114\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 170C700 100 980 210 1350 130\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 186C700 116 980 226 1350 146\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><g opacity=\"0.8\"><ellipse cx=\"560\" cy=\"118\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 560 118)\" fill=\"#b08d57\"/><path d=\"M571 116V66c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"720\" cy=\"136\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 720 136)\" fill=\"#b08d57\"/><ellipse cx=\"758\" cy=\"126\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 758 126)\" fill=\"#b08d57\"/><path d=\"M731 134V84L769 74V124\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M731 84L769 74\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"940\" cy=\"132\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 940 132)\" fill=\"#b08d57\"/><path d=\"M951 130V80c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"1100\" cy=\"112\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1100 112)\" fill=\"#b08d57\"/><ellipse cx=\"1138\" cy=\"102\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1138 102)\" fill=\"#b08d57\"/><path d=\"M1111 110V60L1149 50V100\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M1111 60L1149 50\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"1270\" cy=\"96\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1270 96)\" fill=\"#b08d57\"/><path d=\"M1281 94V44c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><rect x=\"0\" y=\"920\" width=\"1400\" height=\"70\" fill=\"#e5d2b4\" opacity=\"0.6\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Hör zu – spiel nach",
+        "font": "nunito",
+        "size": 60,
+        "color": "#5b3a1e",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "echo",
+        "inst": {
+          "skin": "piano",
+          "voice": "piano",
+          "scale": "all",
+          "root": 0,
+          "octave": 4,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": true
+        },
+        "echo": {
+          "tones": 5,
+          "speed": "mid",
+          "start": 1,
+          "voice": true
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "echo-glockenspiel",
+    "title": "Tonfolgen: Glockenspiel",
+    "hidden": true,
+    "paper": "#eef2ff",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-glock\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f3f0ff\"/><stop offset=\"1\" stop-color=\"#dbe4ff\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-glock)\"/><path d=\"M40.1 85.3Q42.5 99.1 56.3 101.5Q42.5 103.9 40.1 117.7Q37.7 103.9 23.9 101.5Q37.7 99.1 40.1 85.3z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M99.6 149.5Q102.3 164.9 117.8 167.7Q102.3 170.4 99.6 185.8Q96.9 170.4 81.4 167.7Q96.9 164.9 99.6 149.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M723.1 85.4Q726 101.9 742.5 104.8Q726 107.7 723.1 124.2Q720.2 107.7 703.6 104.8Q720.2 101.9 723.1 85.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M411.7 43.5L417.4 57.2L432.1 58.3L420.9 67.9L424.3 82.3L411.7 74.6L399.2 82.3L402.6 67.9L391.4 58.3L406.1 57.2z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M225.6 71.4L230.8 83.8L244.1 84.8L233.9 93.5L237 106.5L225.6 99.6L214.2 106.5L217.3 93.5L207.2 84.8L220.5 83.8z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1131.2 79.5Q1133 89.5 1142.9 91.2Q1133 93 1131.2 102.9Q1129.5 93 1119.6 91.2Q1129.5 89.5 1131.2 79.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M327.2 128.2L332.3 140.6L345.7 141.6L335.5 150.4L338.6 163.4L327.2 156.4L315.7 163.4L318.9 150.4L308.7 141.6L322 140.6z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M771.9 91.9Q774.1 104.4 786.6 106.6Q774.1 108.8 771.9 121.3Q769.7 108.8 757.2 106.6Q769.7 104.4 771.9 91.9z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M446.3 147.2Q447.9 155.9 456.6 157.4Q447.9 158.9 446.3 167.6Q444.8 158.9 436.1 157.4Q444.8 155.9 446.3 147.2z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M294.9 100.7L300.6 114.4L315.3 115.5L304.1 125.1L307.5 139.5L294.9 131.8L282.3 139.5L285.7 125.1L274.5 115.5L289.2 114.4z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M57.9 67.3L64.3 82.7L80.9 84L68.2 94.8L72.1 111L57.9 102.4L43.6 111L47.5 94.8L34.9 84L51.5 82.7z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M729.2 25.7L734.4 38.3L748 39.4L737.6 48.3L740.8 61.5L729.2 54.4L717.6 61.5L720.7 48.3L710.4 39.4L724 38.3z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1305.9 56.9L1312.4 72.4L1329.1 73.7L1316.4 84.7L1320.3 101L1305.9 92.3L1291.6 101L1295.5 84.7L1282.7 73.7L1299.5 72.4z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M64.7 121.9L70.8 136.4L86.5 137.7L74.5 148L78.2 163.3L64.7 155.1L51.2 163.3L54.9 148L42.9 137.7L58.7 136.4z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1293 62.6Q1295 73.9 1306.4 75.9Q1295 77.9 1293 89.2Q1291 77.9 1279.7 75.9Q1291 73.9 1293 62.6z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M1095.4 160L1101.1 173.8L1116 175L1104.7 184.7L1108.2 199.2L1095.4 191.4L1082.6 199.2L1086.1 184.7L1074.8 175L1089.7 173.8z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1359.7 139.5Q1362.5 155.3 1378.4 158.1Q1362.5 160.9 1359.7 176.7Q1357 160.9 1341.1 158.1Q1357 155.3 1359.7 139.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M376.7 118Q378.2 126.9 387.1 128.5Q378.2 130.1 376.7 139Q375.1 130.1 366.2 128.5Q375.1 126.9 376.7 118z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M40.1 910.3L45 922.3L58 923.4L48.1 931.8L51.2 944.5L40.1 937.7L28.9 944.5L32 931.8L22.1 923.4L35.1 922.3z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M427.1 918Q428.8 928 438.8 929.7Q428.8 931.5 427.1 941.5Q425.3 931.5 415.4 929.7Q425.3 928 427.1 918z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M350.5 888.4Q353.1 902.9 367.6 905.5Q353.1 908.1 350.5 922.6Q347.9 908.1 333.4 905.5Q347.9 902.9 350.5 888.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M929 936.2L933.3 946.6L944.5 947.5L936 954.9L938.6 965.8L929 959.9L919.4 965.8L922 954.9L913.4 947.5L924.6 946.6z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M244.4 870.7Q246.6 883.3 259.2 885.6Q246.6 887.8 244.4 900.4Q242.1 887.8 229.6 885.6Q242.1 883.3 244.4 870.7z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M896 891.3Q897.6 900.4 906.7 902Q897.6 903.6 896 912.7Q894.4 903.6 885.3 902Q894.4 900.4 896 891.3z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M1250.5 888.5Q1252.3 898.3 1262.1 900.1Q1252.3 901.8 1250.5 911.7Q1248.8 901.8 1239 900.1Q1248.8 898.3 1250.5 888.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M612.7 937.9L617.2 948.8L629 949.7L620 957.4L622.8 968.9L612.7 962.7L602.6 968.9L605.4 957.4L596.4 949.7L608.2 948.8z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M344.7 908.8Q347.4 924.4 363 927.1Q347.4 929.9 344.7 945.4Q342 929.9 326.4 927.1Q342 924.4 344.7 908.8z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M395.9 862.1L399.9 871.7L410.2 872.5L402.3 879.3L404.7 889.4L395.9 884L387 889.4L389.4 879.3L381.5 872.5L391.9 871.7z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M768.1 927.4Q770.5 940.6 783.7 943Q770.5 945.3 768.1 958.6Q765.8 945.3 752.5 943Q765.8 940.6 768.1 927.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M353.3 914.3L357.8 925.1L369.4 926L360.5 933.6L363.2 945L353.3 938.9L343.3 945L346 933.6L337.1 926L348.8 925.1z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M255.4 919L261.1 932.6L275.7 933.8L264.6 943.4L268 957.7L255.4 950L242.9 957.7L246.3 943.4L235.1 933.8L249.8 932.6z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M1131.2 870.4L1136.7 883.6L1151 884.7L1140.1 894.1L1143.4 908L1131.2 900.5L1119 908L1122.3 894.1L1111.5 884.7L1125.7 883.6z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M849.6 924.4Q851.8 936.8 864.2 939Q851.8 941.2 849.6 953.6Q847.4 941.2 834.9 939Q847.4 936.8 849.6 924.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M519.7 866.6Q522.4 881.6 537.4 884.2Q522.4 886.9 519.7 901.9Q517.1 886.9 502.1 884.2Q517.1 881.6 519.7 866.6z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M519.9 866.7L525.1 879.2L538.6 880.3L528.3 889.1L531.4 902.3L519.9 895.2L508.3 902.3L511.5 889.1L501.2 880.3L514.7 879.2z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M553 870.3Q555.5 884.5 569.8 887Q555.5 889.5 553 903.7Q550.5 889.5 536.3 887Q550.5 884.5 553 870.3z\" fill=\"#ffffff\" opacity=\"0.95\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Hör zu – spiel nach",
+        "font": "nunito",
+        "size": 60,
+        "color": "#3b5bdb",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "echo",
+        "inst": {
+          "skin": "glockenspiel",
+          "voice": "glockenspiel",
+          "scale": "major",
+          "root": 0,
+          "octave": 5,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": false
+        },
+        "echo": {
+          "tones": 5,
+          "speed": "mid",
+          "start": 1,
+          "voice": true
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "echo-synth",
+    "title": "Tonfolgen: Synthesizer",
+    "hidden": true,
+    "paper": "#120c2e",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-synth\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#0b1026\"/><stop offset=\"1\" stop-color=\"#2a1050\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-synth)\"/><defs><linearGradient id=\"mu-sun\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffd43b\"/><stop offset=\"1\" stop-color=\"#f06595\"/></linearGradient></defs><circle cx=\"1170\" cy=\"150\" r=\"105\" fill=\"url(#mu-sun)\" opacity=\"0.9\"/><rect x=\"1050\" y=\"170\" width=\"240\" height=\"4\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"188\" width=\"240\" height=\"5.5\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"206\" width=\"240\" height=\"7\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"224\" width=\"240\" height=\"8.5\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"242\" width=\"240\" height=\"10\" fill=\"#1a1140\"/><path d=\"M0 820H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 826.8H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 843.5H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 868.8H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 901.9H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 942.4H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 990H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M300 820L-1200 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M340 820L-1010 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M380 820L-820 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M420 820L-630 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M460 820L-440 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M500 820L-250 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M540 820L-60 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M580 820L130 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M620 820L320 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M660 820L510 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M700 820L700 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M740 820L890 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M780 820L1080 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M820 820L1270 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M860 820L1460 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M900 820L1650 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M940 820L1840 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M980 820L2030 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M1020 820L2220 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M1060 820L2410 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M1100 820L2600 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><circle cx=\"0.1\" cy=\"736.6\" r=\"1.6\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"294.8\" cy=\"583.5\" r=\"2.1\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"461\" cy=\"601.6\" r=\"2.5\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"760\" cy=\"547.6\" r=\"2.3\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"1143.5\" cy=\"193.6\" r=\"1.7\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"991.1\" cy=\"558.4\" r=\"1.1\" fill=\"#ffffff\" opacity=\"0.3\"/><circle cx=\"957.5\" cy=\"374.3\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"1130.4\" cy=\"98.3\" r=\"2\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"1292.4\" cy=\"550.8\" r=\"2.3\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"808.4\" cy=\"729.6\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"521.1\" cy=\"268.3\" r=\"2.7\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"465.2\" cy=\"122.1\" r=\"1.6\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"599.9\" cy=\"235.9\" r=\"2.9\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"780.3\" cy=\"583.4\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"82.1\" cy=\"218.8\" r=\"2.1\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"712.3\" cy=\"337.2\" r=\"1.4\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"1272.6\" cy=\"43.9\" r=\"1.7\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"481.8\" cy=\"531.5\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"720.8\" cy=\"132.4\" r=\"1.8\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"397\" cy=\"291.6\" r=\"1.8\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"465.6\" cy=\"425.3\" r=\"2.2\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"326.5\" cy=\"725.2\" r=\"1.9\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"1208.2\" cy=\"508.1\" r=\"2.3\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"722.7\" cy=\"404\" r=\"2.4\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"1315.4\" cy=\"317.4\" r=\"2.4\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"351.6\" cy=\"469.5\" r=\"1.7\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"462.8\" cy=\"313.1\" r=\"2.6\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"1228.6\" cy=\"88.9\" r=\"2.6\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"108.8\" cy=\"325.4\" r=\"1.3\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"109\" cy=\"797\" r=\"1.4\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"885.3\" cy=\"115.4\" r=\"1.9\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"830.1\" cy=\"110.2\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"1238.4\" cy=\"712.5\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"1270.9\" cy=\"608.9\" r=\"1.6\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"14.7\" cy=\"198.6\" r=\"1.2\" fill=\"#ffffff\" opacity=\"0.3\"/><circle cx=\"2.2\" cy=\"493.5\" r=\"1.5\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"1037.6\" cy=\"391.5\" r=\"2.4\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"333.3\" cy=\"705.7\" r=\"1.5\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"523.5\" cy=\"715.4\" r=\"1.2\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"685\" cy=\"2.4\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Hör zu – spiel nach",
+        "font": "nunito",
+        "size": 60,
+        "color": "#f8f0fc",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "echo",
+        "inst": {
+          "skin": "synth",
+          "voice": "synth",
+          "scale": "all",
+          "root": 0,
+          "octave": 4,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": false
+        },
+        "echo": {
+          "tones": 5,
+          "speed": "mid",
+          "start": 1,
+          "voice": true
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "echo-custom",
+    "title": "Tonfolgen-Spiel einstellen",
+    "hidden": false,
+    "generator": "echo",
+    "paper": "#f3fff6",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-tubes\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f4fce3\"/><stop offset=\"1\" stop-color=\"#e6fcf5\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-tubes)\"/><rect x=\"20.1\" y=\"126.5\" width=\"18.2\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(52 20.1 126.5)\"/><rect x=\"1328.9\" y=\"158.9\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(55 1328.9 158.9)\"/><rect x=\"851.7\" y=\"143.8\" width=\"18.3\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(53 851.7 143.8)\"/><rect x=\"225.4\" y=\"167.8\" width=\"17.5\" height=\"8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(40 225.4 167.8)\"/><rect x=\"1111.5\" y=\"87.4\" width=\"17\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(31 1111.5 87.4)\"/><circle cx=\"1225.1\" cy=\"128.7\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"1358.8\" cy=\"150.3\" r=\"7.4\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"1282.1\" cy=\"118.5\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"20.2\" cy=\"147.5\" r=\"5.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><circle cx=\"701.3\" cy=\"81.2\" r=\"4.9\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"1154.5\" cy=\"156.3\" r=\"7.3\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"859.2\" cy=\"105.4\" r=\"6.1\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"325\" y=\"145\" width=\"18.8\" height=\"8.5\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(61 325 145)\"/><rect x=\"1039.2\" y=\"51.7\" width=\"17.7\" height=\"8.1\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(44 1039.2 51.7)\"/><circle cx=\"556.6\" cy=\"139\" r=\"7.8\" fill=\"#fcc419\" opacity=\"0.5\"/><rect x=\"1305.1\" y=\"51.7\" width=\"15\" height=\"7\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(0 1305.1 51.7)\"/><rect x=\"761.5\" y=\"121\" width=\"19.6\" height=\"8.9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(74 761.5 121)\"/><rect x=\"306.3\" y=\"33.7\" width=\"15.7\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(12 306.3 33.7)\"/><circle cx=\"931.8\" cy=\"44.7\" r=\"6.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"930.6\" y=\"143\" width=\"17.9\" height=\"8.1\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(46 930.6 143)\"/><rect x=\"1054.3\" y=\"103.8\" width=\"17.1\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(34 1054.3 103.8)\"/><circle cx=\"220.5\" cy=\"144\" r=\"7.4\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"645.4\" cy=\"46.9\" r=\"6.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"1323.9\" y=\"96.4\" width=\"19.9\" height=\"9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(79 1323.9 96.4)\"/><rect x=\"838.8\" y=\"151.9\" width=\"18.9\" height=\"8.5\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(62 838.8 151.9)\"/><rect x=\"71.4\" y=\"54.9\" width=\"16.5\" height=\"7.6\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(24 71.4 54.9)\"/><rect x=\"1243.6\" y=\"21.9\" width=\"17.6\" height=\"8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(42 1243.6 21.9)\"/><rect x=\"876.5\" y=\"50.9\" width=\"19.5\" height=\"8.8\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(72 876.5 50.9)\"/><rect x=\"410.6\" y=\"47.6\" width=\"15.7\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(11 410.6 47.6)\"/><rect x=\"605.3\" y=\"168.9\" width=\"15.5\" height=\"7.2\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(8 605.3 168.9)\"/><rect x=\"62.9\" y=\"167.3\" width=\"15.6\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(10 62.9 167.3)\"/><rect x=\"934.7\" y=\"122.7\" width=\"20\" height=\"9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(80 934.7 122.7)\"/><rect x=\"505.6\" y=\"160.9\" width=\"15\" height=\"7\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(0 505.6 160.9)\"/><circle cx=\"564.2\" cy=\"167.7\" r=\"4.7\" fill=\"#e03131\" opacity=\"0.5\"/><rect x=\"20.2\" y=\"949.4\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(55 20.2 949.4)\"/><rect x=\"1104\" y=\"942.3\" width=\"17.2\" height=\"7.9\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(36 1104 942.3)\"/><rect x=\"1107.7\" y=\"961.6\" width=\"15.5\" height=\"7.2\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(8 1107.7 961.6)\"/><rect x=\"1230.1\" y=\"960.8\" width=\"18.3\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(53 1230.1 960.8)\"/><rect x=\"191.9\" y=\"963.5\" width=\"19.1\" height=\"8.6\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(65 191.9 963.5)\"/><circle cx=\"26.7\" cy=\"956.4\" r=\"5\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"724.6\" cy=\"945.5\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><rect x=\"938.2\" y=\"940.5\" width=\"18.2\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(51 938.2 940.5)\"/><rect x=\"543.4\" y=\"978.3\" width=\"15.6\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(10 543.4 978.3)\"/><rect x=\"178.6\" y=\"942.9\" width=\"19.2\" height=\"8.7\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(67 178.6 942.9)\"/><circle cx=\"666.6\" cy=\"978.3\" r=\"7.7\" fill=\"#fcc419\" opacity=\"0.5\"/><rect x=\"1117.4\" y=\"960.5\" width=\"15.8\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(13 1117.4 960.5)\"/><rect x=\"1046.6\" y=\"974.4\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(56 1046.6 974.4)\"/><rect x=\"306.6\" y=\"948\" width=\"17\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(33 306.6 948)\"/><circle cx=\"407.9\" cy=\"972.3\" r=\"4.6\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"340.5\" cy=\"969.5\" r=\"4.3\" fill=\"#e03131\" opacity=\"0.5\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Hör zu – spiel nach",
+        "font": "nunito",
+        "size": 60,
+        "color": "#0ca678",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "echo",
+        "inst": {
+          "skin": "tubes",
+          "voice": "tube",
+          "scale": "major",
+          "root": 0,
+          "octave": 4,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": true
+        },
+        "echo": {
+          "tones": 3,
+          "speed": "mid",
+          "start": 1,
+          "voice": true
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "seq-beat",
+    "title": "Beat-Baukasten",
+    "hidden": false,
+    "paper": "#14101f",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-drums\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#1b1030\"/><stop offset=\"1\" stop-color=\"#0b0814\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-drums)\"/><path d=\"M230 0H290L520 990H0Z\" fill=\"#ffd43b\" opacity=\"0.08\"/><ellipse cx=\"260\" cy=\"8\" rx=\"46\" ry=\"18\" fill=\"#ffd43b\" opacity=\"0.5\"/><path d=\"M670 0H730L960 990H440Z\" fill=\"#ffffff\" opacity=\"0.08\"/><ellipse cx=\"700\" cy=\"8\" rx=\"46\" ry=\"18\" fill=\"#ffffff\" opacity=\"0.5\"/><path d=\"M1110 0H1170L1400 990H880Z\" fill=\"#74c0fc\" opacity=\"0.08\"/><ellipse cx=\"1140\" cy=\"8\" rx=\"46\" ry=\"18\" fill=\"#74c0fc\" opacity=\"0.5\"/><rect x=\"0\" y=\"930\" width=\"1400\" height=\"60\" fill=\"#2b1d12\" opacity=\"0.8\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Beat-Baukasten",
+        "font": "nunito",
+        "size": 60,
+        "color": "#fff4e6",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 880,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 215,
+        "w": 1300,
+        "h": 700,
+        "kind": "sequencer",
+        "seq": {
+          "steps": 16,
+          "bpm": 100,
+          "tracks": [
+            {
+              "label": "",
+              "color": "#e03131",
+              "drum": "crash",
+              "steps": [
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#f08c00",
+              "drum": "hihat",
+              "steps": [
+                true,
+                false,
+                true,
+                false,
+                true,
+                false,
+                true,
+                false,
+                true,
+                false,
+                true,
+                false,
+                true,
+                false,
+                true,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#2f9e44",
+              "drum": "snare",
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#1c7ed6",
+              "drum": "clap",
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#7048e8",
+              "drum": "kick",
+              "steps": [
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#e64980",
+              "drum": "cowbell",
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            }
+          ]
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "seq-melody",
+    "title": "Melodie-Baukasten",
+    "hidden": false,
+    "paper": "#fff9db",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-xylo\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff9db\"/><stop offset=\"1\" stop-color=\"#e7f5ff\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-xylo)\"/><path d=\"M1030 260A330 330 0 0 1 1690 260\" fill=\"none\" stroke=\"#e03131\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1058 260A302 302 0 0 1 1662 260\" fill=\"none\" stroke=\"#fd7e14\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1086 260A274 274 0 0 1 1634 260\" fill=\"none\" stroke=\"#fcc419\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1114 260A246 246 0 0 1 1606 260\" fill=\"none\" stroke=\"#40c057\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1142 260A218 218 0 0 1 1578 260\" fill=\"none\" stroke=\"#228be6\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1170 260A190 190 0 0 1 1550 260\" fill=\"none\" stroke=\"#7048e8\" stroke-width=\"24\" opacity=\"0.55\"/><circle cx=\"1120\" cy=\"250\" r=\"40\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"1170\" cy=\"232\" r=\"52\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"1230\" cy=\"252\" r=\"38\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"20\" cy=\"897.4\" r=\"9.2\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"531.3\" cy=\"921.8\" r=\"13.9\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"211.9\" cy=\"854.4\" r=\"6.5\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1113.5\" cy=\"868.1\" r=\"12.7\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"690.3\" cy=\"862.4\" r=\"7.9\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"821.2\" cy=\"851.6\" r=\"6.3\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"224.3\" cy=\"874.1\" r=\"9\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"102\" cy=\"942\" r=\"15.5\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"752.4\" cy=\"919.7\" r=\"9.3\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"1328\" cy=\"879.8\" r=\"7.2\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1014.1\" cy=\"884.4\" r=\"15.4\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"213.7\" cy=\"875\" r=\"17.8\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"1241.2\" cy=\"882.3\" r=\"17.7\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"150.6\" cy=\"938.9\" r=\"17.4\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"248.5\" cy=\"881.2\" r=\"17.5\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"316.6\" cy=\"957.4\" r=\"13.8\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"1132.7\" cy=\"887.1\" r=\"9.6\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"609.1\" cy=\"935.6\" r=\"15.9\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"125.8\" cy=\"909.9\" r=\"11.5\" fill=\"#fcc419\" opacity=\"0.45\"/><circle cx=\"962.4\" cy=\"937.3\" r=\"8.2\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"991\" cy=\"911.6\" r=\"12.6\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"1321.7\" cy=\"965.2\" r=\"11.8\" fill=\"#fcc419\" opacity=\"0.45\"/><circle cx=\"1105.9\" cy=\"882.7\" r=\"16.1\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"320.9\" cy=\"910.3\" r=\"7.8\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1150.5\" cy=\"939\" r=\"13.1\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"554.9\" cy=\"948.8\" r=\"7.8\" fill=\"#e03131\" opacity=\"0.45\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Melodie-Baukasten",
+        "font": "nunito",
+        "size": 60,
+        "color": "#e8590c",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 880,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 215,
+        "w": 1300,
+        "h": 700,
+        "kind": "sequencer",
+        "seq": {
+          "steps": 16,
+          "bpm": 96,
+          "tracks": [
+            {
+              "label": "",
+              "color": "#fcc419",
+              "note": 76,
+              "voice": "xylophone",
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#fd7e14",
+              "note": 74,
+              "voice": "xylophone",
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#e03131",
+              "note": 72,
+              "voice": "xylophone",
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#4263eb",
+              "note": 69,
+              "voice": "xylophone",
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#0ca678",
+              "note": 67,
+              "voice": "xylophone",
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#fcc419",
+              "note": 64,
+              "voice": "xylophone",
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#fd7e14",
+              "note": 62,
+              "voice": "xylophone",
+              "steps": [
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#e03131",
+              "note": 60,
+              "voice": "xylophone",
+              "steps": [
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            }
+          ],
+          "key": {
+            "scale": "penta",
+            "root": 0
+          }
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "seq-sounds",
+    "title": "Klang-Baukasten",
+    "hidden": false,
+    "paper": "#101a3a",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-pads\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#14204a\"/><stop offset=\"1\" stop-color=\"#0a0f24\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-pads)\"/><circle cx=\"0.3\" cy=\"806.4\" r=\"226\" fill=\"#7048e8\" opacity=\"0.1\"/><circle cx=\"421.2\" cy=\"445.7\" r=\"136\" fill=\"#fcc419\" opacity=\"0.1\"/><circle cx=\"510\" cy=\"680.2\" r=\"191.9\" fill=\"#228be6\" opacity=\"0.1\"/><circle cx=\"148.5\" cy=\"120.3\" r=\"90.1\" fill=\"#e03131\" opacity=\"0.1\"/><circle cx=\"137.2\" cy=\"2.6\" r=\"168.1\" fill=\"#40c057\" opacity=\"0.1\"/><circle cx=\"505.8\" cy=\"458.7\" r=\"115.7\" fill=\"#fd7e14\" opacity=\"0.1\"/><circle cx=\"166.7\" cy=\"929\" r=\"97.1\" fill=\"#e03131\" opacity=\"0.1\"/><circle cx=\"1283\" cy=\"79.5\" r=\"237.2\" fill=\"#7048e8\" opacity=\"0.1\"/><circle cx=\"754.4\" cy=\"278.1\" r=\"186.7\" fill=\"#228be6\" opacity=\"0.1\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Klang-Baukasten",
+        "font": "nunito",
+        "size": 60,
+        "color": "#f8f9fa",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 880,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 215,
+        "w": 1300,
+        "h": 700,
+        "kind": "sequencer",
+        "seq": {
+          "steps": 16,
+          "bpm": 96,
+          "tracks": [
+            {
+              "label": "",
+              "color": "#1c7ed6",
+              "rec": true,
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#7048e8",
+              "rec": true,
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#e64980",
+              "rec": true,
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#0ca678",
+              "rec": true,
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#7048e8",
+              "drum": "clap",
+              "steps": [
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false
+              ]
+            },
+            {
+              "label": "",
+              "color": "#e64980",
+              "drum": "kick",
+              "steps": [
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ]
+            }
+          ]
+        },
+        "locked": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 990,
+        "y": 20,
+        "w": 340,
+        "h": 170,
+        "kind": "recorder",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "nq-names",
+    "title": "Noten-Trainer: Namen",
+    "hidden": false,
+    "paper": "#fbf5ea",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-piano\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fdf8ef\"/><stop offset=\"1\" stop-color=\"#f0e2cc\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-piano)\"/><path d=\"M420 122C700 52 980 162 1350 82\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 138C700 68 980 178 1350 98\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 154C700 84 980 194 1350 114\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 170C700 100 980 210 1350 130\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 186C700 116 980 226 1350 146\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><g opacity=\"0.8\"><ellipse cx=\"560\" cy=\"118\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 560 118)\" fill=\"#b08d57\"/><path d=\"M571 116V66c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"720\" cy=\"136\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 720 136)\" fill=\"#b08d57\"/><ellipse cx=\"758\" cy=\"126\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 758 126)\" fill=\"#b08d57\"/><path d=\"M731 134V84L769 74V124\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M731 84L769 74\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"940\" cy=\"132\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 940 132)\" fill=\"#b08d57\"/><path d=\"M951 130V80c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"1100\" cy=\"112\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1100 112)\" fill=\"#b08d57\"/><ellipse cx=\"1138\" cy=\"102\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1138 102)\" fill=\"#b08d57\"/><path d=\"M1111 110V60L1149 50V100\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M1111 60L1149 50\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"1270\" cy=\"96\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1270 96)\" fill=\"#b08d57\"/><path d=\"M1281 94V44c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><rect x=\"0\" y=\"920\" width=\"1400\" height=\"70\" fill=\"#e5d2b4\" opacity=\"0.6\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Welche Note ist das?",
+        "font": "nunito",
+        "size": 60,
+        "color": "#5b3a1e",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 215,
+        "w": 1300,
+        "h": 720,
+        "kind": "notequiz",
+        "nq": {
+          "clef": "treble",
+          "ledger": false,
+          "answer": "names",
+          "rounds": 10
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "nq-keys",
+    "title": "Noten-Trainer: Klaviertasten",
+    "hidden": false,
+    "paper": "#fbf5ea",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-piano\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fdf8ef\"/><stop offset=\"1\" stop-color=\"#f0e2cc\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-piano)\"/><path d=\"M420 122C700 52 980 162 1350 82\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 138C700 68 980 178 1350 98\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 154C700 84 980 194 1350 114\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 170C700 100 980 210 1350 130\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 186C700 116 980 226 1350 146\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><g opacity=\"0.8\"><ellipse cx=\"560\" cy=\"118\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 560 118)\" fill=\"#b08d57\"/><path d=\"M571 116V66c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"720\" cy=\"136\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 720 136)\" fill=\"#b08d57\"/><ellipse cx=\"758\" cy=\"126\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 758 126)\" fill=\"#b08d57\"/><path d=\"M731 134V84L769 74V124\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M731 84L769 74\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"940\" cy=\"132\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 940 132)\" fill=\"#b08d57\"/><path d=\"M951 130V80c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"1100\" cy=\"112\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1100 112)\" fill=\"#b08d57\"/><ellipse cx=\"1138\" cy=\"102\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1138 102)\" fill=\"#b08d57\"/><path d=\"M1111 110V60L1149 50V100\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M1111 60L1149 50\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"1270\" cy=\"96\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1270 96)\" fill=\"#b08d57\"/><path d=\"M1281 94V44c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><rect x=\"0\" y=\"920\" width=\"1400\" height=\"70\" fill=\"#e5d2b4\" opacity=\"0.6\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Welche Note ist das?",
+        "font": "nunito",
+        "size": 60,
+        "color": "#5b3a1e",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 215,
+        "w": 1300,
+        "h": 720,
+        "kind": "notequiz",
+        "nq": {
+          "clef": "treble",
+          "ledger": false,
+          "answer": "keys",
+          "rounds": 10
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "nq-bass",
+    "title": "Noten-Trainer: Bassschlüssel",
+    "hidden": false,
+    "paper": "#fbf5ea",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-piano\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fdf8ef\"/><stop offset=\"1\" stop-color=\"#f0e2cc\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-piano)\"/><path d=\"M420 122C700 52 980 162 1350 82\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 138C700 68 980 178 1350 98\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 154C700 84 980 194 1350 114\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 170C700 100 980 210 1350 130\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 186C700 116 980 226 1350 146\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><g opacity=\"0.8\"><ellipse cx=\"560\" cy=\"118\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 560 118)\" fill=\"#b08d57\"/><path d=\"M571 116V66c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"720\" cy=\"136\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 720 136)\" fill=\"#b08d57\"/><ellipse cx=\"758\" cy=\"126\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 758 126)\" fill=\"#b08d57\"/><path d=\"M731 134V84L769 74V124\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M731 84L769 74\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"940\" cy=\"132\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 940 132)\" fill=\"#b08d57\"/><path d=\"M951 130V80c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"1100\" cy=\"112\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1100 112)\" fill=\"#b08d57\"/><ellipse cx=\"1138\" cy=\"102\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1138 102)\" fill=\"#b08d57\"/><path d=\"M1111 110V60L1149 50V100\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M1111 60L1149 50\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"1270\" cy=\"96\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1270 96)\" fill=\"#b08d57\"/><path d=\"M1281 94V44c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><rect x=\"0\" y=\"920\" width=\"1400\" height=\"70\" fill=\"#e5d2b4\" opacity=\"0.6\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Welche Note ist das?",
+        "font": "nunito",
+        "size": 60,
+        "color": "#5b3a1e",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 215,
+        "w": 1300,
+        "h": 720,
+        "kind": "notequiz",
+        "nq": {
+          "clef": "bass",
+          "ledger": false,
+          "answer": "names",
+          "rounds": 10
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "fall-tubes",
+    "title": "Notenregen: Klangrohre",
+    "hidden": false,
+    "paper": "#f3fff6",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-tubes\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f4fce3\"/><stop offset=\"1\" stop-color=\"#e6fcf5\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-tubes)\"/><rect x=\"20.1\" y=\"126.5\" width=\"18.2\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(52 20.1 126.5)\"/><rect x=\"1328.9\" y=\"158.9\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(55 1328.9 158.9)\"/><rect x=\"851.7\" y=\"143.8\" width=\"18.3\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(53 851.7 143.8)\"/><rect x=\"225.4\" y=\"167.8\" width=\"17.5\" height=\"8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(40 225.4 167.8)\"/><rect x=\"1111.5\" y=\"87.4\" width=\"17\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(31 1111.5 87.4)\"/><circle cx=\"1225.1\" cy=\"128.7\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"1358.8\" cy=\"150.3\" r=\"7.4\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"1282.1\" cy=\"118.5\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"20.2\" cy=\"147.5\" r=\"5.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><circle cx=\"701.3\" cy=\"81.2\" r=\"4.9\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"1154.5\" cy=\"156.3\" r=\"7.3\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"859.2\" cy=\"105.4\" r=\"6.1\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"325\" y=\"145\" width=\"18.8\" height=\"8.5\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(61 325 145)\"/><rect x=\"1039.2\" y=\"51.7\" width=\"17.7\" height=\"8.1\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(44 1039.2 51.7)\"/><circle cx=\"556.6\" cy=\"139\" r=\"7.8\" fill=\"#fcc419\" opacity=\"0.5\"/><rect x=\"1305.1\" y=\"51.7\" width=\"15\" height=\"7\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(0 1305.1 51.7)\"/><rect x=\"761.5\" y=\"121\" width=\"19.6\" height=\"8.9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(74 761.5 121)\"/><rect x=\"306.3\" y=\"33.7\" width=\"15.7\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(12 306.3 33.7)\"/><circle cx=\"931.8\" cy=\"44.7\" r=\"6.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"930.6\" y=\"143\" width=\"17.9\" height=\"8.1\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(46 930.6 143)\"/><rect x=\"1054.3\" y=\"103.8\" width=\"17.1\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(34 1054.3 103.8)\"/><circle cx=\"220.5\" cy=\"144\" r=\"7.4\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"645.4\" cy=\"46.9\" r=\"6.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"1323.9\" y=\"96.4\" width=\"19.9\" height=\"9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(79 1323.9 96.4)\"/><rect x=\"838.8\" y=\"151.9\" width=\"18.9\" height=\"8.5\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(62 838.8 151.9)\"/><rect x=\"71.4\" y=\"54.9\" width=\"16.5\" height=\"7.6\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(24 71.4 54.9)\"/><rect x=\"1243.6\" y=\"21.9\" width=\"17.6\" height=\"8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(42 1243.6 21.9)\"/><rect x=\"876.5\" y=\"50.9\" width=\"19.5\" height=\"8.8\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(72 876.5 50.9)\"/><rect x=\"410.6\" y=\"47.6\" width=\"15.7\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(11 410.6 47.6)\"/><rect x=\"605.3\" y=\"168.9\" width=\"15.5\" height=\"7.2\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(8 605.3 168.9)\"/><rect x=\"62.9\" y=\"167.3\" width=\"15.6\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(10 62.9 167.3)\"/><rect x=\"934.7\" y=\"122.7\" width=\"20\" height=\"9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(80 934.7 122.7)\"/><rect x=\"505.6\" y=\"160.9\" width=\"15\" height=\"7\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(0 505.6 160.9)\"/><circle cx=\"564.2\" cy=\"167.7\" r=\"4.7\" fill=\"#e03131\" opacity=\"0.5\"/><rect x=\"20.2\" y=\"949.4\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(55 20.2 949.4)\"/><rect x=\"1104\" y=\"942.3\" width=\"17.2\" height=\"7.9\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(36 1104 942.3)\"/><rect x=\"1107.7\" y=\"961.6\" width=\"15.5\" height=\"7.2\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(8 1107.7 961.6)\"/><rect x=\"1230.1\" y=\"960.8\" width=\"18.3\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(53 1230.1 960.8)\"/><rect x=\"191.9\" y=\"963.5\" width=\"19.1\" height=\"8.6\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(65 191.9 963.5)\"/><circle cx=\"26.7\" cy=\"956.4\" r=\"5\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"724.6\" cy=\"945.5\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><rect x=\"938.2\" y=\"940.5\" width=\"18.2\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(51 938.2 940.5)\"/><rect x=\"543.4\" y=\"978.3\" width=\"15.6\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(10 543.4 978.3)\"/><rect x=\"178.6\" y=\"942.9\" width=\"19.2\" height=\"8.7\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(67 178.6 942.9)\"/><circle cx=\"666.6\" cy=\"978.3\" r=\"7.7\" fill=\"#fcc419\" opacity=\"0.5\"/><rect x=\"1117.4\" y=\"960.5\" width=\"15.8\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(13 1117.4 960.5)\"/><rect x=\"1046.6\" y=\"974.4\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(56 1046.6 974.4)\"/><rect x=\"306.6\" y=\"948\" width=\"17\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(33 306.6 948)\"/><circle cx=\"407.9\" cy=\"972.3\" r=\"4.6\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"340.5\" cy=\"969.5\" r=\"4.3\" fill=\"#e03131\" opacity=\"0.5\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Notenregen",
+        "font": "nunito",
+        "size": 60,
+        "color": "#0ca678",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "fall",
+        "inst": {
+          "skin": "tubes",
+          "voice": "tube",
+          "scale": "major",
+          "root": 0,
+          "octave": 4,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": true
+        },
+        "fall": {
+          "song": "entchen",
+          "mode": "wait",
+          "speed": "mid",
+          "guide": false
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "fall-piano",
+    "title": "Notenregen: Klavier",
+    "hidden": false,
+    "paper": "#fbf5ea",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-piano\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fdf8ef\"/><stop offset=\"1\" stop-color=\"#f0e2cc\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-piano)\"/><path d=\"M420 122C700 52 980 162 1350 82\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 138C700 68 980 178 1350 98\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 154C700 84 980 194 1350 114\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 170C700 100 980 210 1350 130\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 186C700 116 980 226 1350 146\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><g opacity=\"0.8\"><ellipse cx=\"560\" cy=\"118\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 560 118)\" fill=\"#b08d57\"/><path d=\"M571 116V66c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"720\" cy=\"136\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 720 136)\" fill=\"#b08d57\"/><ellipse cx=\"758\" cy=\"126\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 758 126)\" fill=\"#b08d57\"/><path d=\"M731 134V84L769 74V124\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M731 84L769 74\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"940\" cy=\"132\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 940 132)\" fill=\"#b08d57\"/><path d=\"M951 130V80c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"1100\" cy=\"112\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1100 112)\" fill=\"#b08d57\"/><ellipse cx=\"1138\" cy=\"102\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1138 102)\" fill=\"#b08d57\"/><path d=\"M1111 110V60L1149 50V100\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M1111 60L1149 50\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"1270\" cy=\"96\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1270 96)\" fill=\"#b08d57\"/><path d=\"M1281 94V44c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><rect x=\"0\" y=\"920\" width=\"1400\" height=\"70\" fill=\"#e5d2b4\" opacity=\"0.6\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Notenregen",
+        "font": "nunito",
+        "size": 60,
+        "color": "#5b3a1e",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "fall",
+        "inst": {
+          "skin": "piano",
+          "voice": "piano",
+          "scale": "all",
+          "root": 0,
+          "octave": 4,
+          "octaves": 2,
+          "labels": "letters",
+          "colors": true
+        },
+        "fall": {
+          "song": "entchen",
+          "mode": "wait",
+          "speed": "mid",
+          "guide": false
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "fall-xylophone",
+    "title": "Notenregen: Xylophon",
+    "hidden": false,
+    "paper": "#fff9db",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-xylo\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fff9db\"/><stop offset=\"1\" stop-color=\"#e7f5ff\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-xylo)\"/><path d=\"M1030 260A330 330 0 0 1 1690 260\" fill=\"none\" stroke=\"#e03131\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1058 260A302 302 0 0 1 1662 260\" fill=\"none\" stroke=\"#fd7e14\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1086 260A274 274 0 0 1 1634 260\" fill=\"none\" stroke=\"#fcc419\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1114 260A246 246 0 0 1 1606 260\" fill=\"none\" stroke=\"#40c057\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1142 260A218 218 0 0 1 1578 260\" fill=\"none\" stroke=\"#228be6\" stroke-width=\"24\" opacity=\"0.55\"/><path d=\"M1170 260A190 190 0 0 1 1550 260\" fill=\"none\" stroke=\"#7048e8\" stroke-width=\"24\" opacity=\"0.55\"/><circle cx=\"1120\" cy=\"250\" r=\"40\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"1170\" cy=\"232\" r=\"52\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"1230\" cy=\"252\" r=\"38\" fill=\"#ffffff\" opacity=\"0.9\"/><circle cx=\"20\" cy=\"897.4\" r=\"9.2\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"531.3\" cy=\"921.8\" r=\"13.9\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"211.9\" cy=\"854.4\" r=\"6.5\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1113.5\" cy=\"868.1\" r=\"12.7\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"690.3\" cy=\"862.4\" r=\"7.9\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"821.2\" cy=\"851.6\" r=\"6.3\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"224.3\" cy=\"874.1\" r=\"9\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"102\" cy=\"942\" r=\"15.5\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"752.4\" cy=\"919.7\" r=\"9.3\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"1328\" cy=\"879.8\" r=\"7.2\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1014.1\" cy=\"884.4\" r=\"15.4\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"213.7\" cy=\"875\" r=\"17.8\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"1241.2\" cy=\"882.3\" r=\"17.7\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"150.6\" cy=\"938.9\" r=\"17.4\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"248.5\" cy=\"881.2\" r=\"17.5\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"316.6\" cy=\"957.4\" r=\"13.8\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"1132.7\" cy=\"887.1\" r=\"9.6\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"609.1\" cy=\"935.6\" r=\"15.9\" fill=\"#228be6\" opacity=\"0.45\"/><circle cx=\"125.8\" cy=\"909.9\" r=\"11.5\" fill=\"#fcc419\" opacity=\"0.45\"/><circle cx=\"962.4\" cy=\"937.3\" r=\"8.2\" fill=\"#fd7e14\" opacity=\"0.45\"/><circle cx=\"991\" cy=\"911.6\" r=\"12.6\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"1321.7\" cy=\"965.2\" r=\"11.8\" fill=\"#fcc419\" opacity=\"0.45\"/><circle cx=\"1105.9\" cy=\"882.7\" r=\"16.1\" fill=\"#7048e8\" opacity=\"0.45\"/><circle cx=\"320.9\" cy=\"910.3\" r=\"7.8\" fill=\"#e03131\" opacity=\"0.45\"/><circle cx=\"1150.5\" cy=\"939\" r=\"13.1\" fill=\"#40c057\" opacity=\"0.45\"/><circle cx=\"554.9\" cy=\"948.8\" r=\"7.8\" fill=\"#e03131\" opacity=\"0.45\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Notenregen",
+        "font": "nunito",
+        "size": 60,
+        "color": "#e8590c",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "fall",
+        "inst": {
+          "skin": "xylophone",
+          "voice": "xylophone",
+          "scale": "major",
+          "root": 0,
+          "octave": 4,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": true
+        },
+        "fall": {
+          "song": "entchen",
+          "mode": "wait",
+          "speed": "mid",
+          "guide": false
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "fall-glockenspiel",
+    "title": "Notenregen: Glockenspiel",
+    "hidden": true,
+    "paper": "#eef2ff",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-glock\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f3f0ff\"/><stop offset=\"1\" stop-color=\"#dbe4ff\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-glock)\"/><path d=\"M40.1 85.3Q42.5 99.1 56.3 101.5Q42.5 103.9 40.1 117.7Q37.7 103.9 23.9 101.5Q37.7 99.1 40.1 85.3z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M99.6 149.5Q102.3 164.9 117.8 167.7Q102.3 170.4 99.6 185.8Q96.9 170.4 81.4 167.7Q96.9 164.9 99.6 149.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M723.1 85.4Q726 101.9 742.5 104.8Q726 107.7 723.1 124.2Q720.2 107.7 703.6 104.8Q720.2 101.9 723.1 85.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M411.7 43.5L417.4 57.2L432.1 58.3L420.9 67.9L424.3 82.3L411.7 74.6L399.2 82.3L402.6 67.9L391.4 58.3L406.1 57.2z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M225.6 71.4L230.8 83.8L244.1 84.8L233.9 93.5L237 106.5L225.6 99.6L214.2 106.5L217.3 93.5L207.2 84.8L220.5 83.8z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1131.2 79.5Q1133 89.5 1142.9 91.2Q1133 93 1131.2 102.9Q1129.5 93 1119.6 91.2Q1129.5 89.5 1131.2 79.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M327.2 128.2L332.3 140.6L345.7 141.6L335.5 150.4L338.6 163.4L327.2 156.4L315.7 163.4L318.9 150.4L308.7 141.6L322 140.6z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M771.9 91.9Q774.1 104.4 786.6 106.6Q774.1 108.8 771.9 121.3Q769.7 108.8 757.2 106.6Q769.7 104.4 771.9 91.9z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M446.3 147.2Q447.9 155.9 456.6 157.4Q447.9 158.9 446.3 167.6Q444.8 158.9 436.1 157.4Q444.8 155.9 446.3 147.2z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M294.9 100.7L300.6 114.4L315.3 115.5L304.1 125.1L307.5 139.5L294.9 131.8L282.3 139.5L285.7 125.1L274.5 115.5L289.2 114.4z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M57.9 67.3L64.3 82.7L80.9 84L68.2 94.8L72.1 111L57.9 102.4L43.6 111L47.5 94.8L34.9 84L51.5 82.7z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M729.2 25.7L734.4 38.3L748 39.4L737.6 48.3L740.8 61.5L729.2 54.4L717.6 61.5L720.7 48.3L710.4 39.4L724 38.3z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1305.9 56.9L1312.4 72.4L1329.1 73.7L1316.4 84.7L1320.3 101L1305.9 92.3L1291.6 101L1295.5 84.7L1282.7 73.7L1299.5 72.4z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M64.7 121.9L70.8 136.4L86.5 137.7L74.5 148L78.2 163.3L64.7 155.1L51.2 163.3L54.9 148L42.9 137.7L58.7 136.4z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1293 62.6Q1295 73.9 1306.4 75.9Q1295 77.9 1293 89.2Q1291 77.9 1279.7 75.9Q1291 73.9 1293 62.6z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M1095.4 160L1101.1 173.8L1116 175L1104.7 184.7L1108.2 199.2L1095.4 191.4L1082.6 199.2L1086.1 184.7L1074.8 175L1089.7 173.8z\" fill=\"#fab005\" opacity=\"0.55\"/><path d=\"M1359.7 139.5Q1362.5 155.3 1378.4 158.1Q1362.5 160.9 1359.7 176.7Q1357 160.9 1341.1 158.1Q1357 155.3 1359.7 139.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M376.7 118Q378.2 126.9 387.1 128.5Q378.2 130.1 376.7 139Q375.1 130.1 366.2 128.5Q375.1 126.9 376.7 118z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M40.1 910.3L45 922.3L58 923.4L48.1 931.8L51.2 944.5L40.1 937.7L28.9 944.5L32 931.8L22.1 923.4L35.1 922.3z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M427.1 918Q428.8 928 438.8 929.7Q428.8 931.5 427.1 941.5Q425.3 931.5 415.4 929.7Q425.3 928 427.1 918z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M350.5 888.4Q353.1 902.9 367.6 905.5Q353.1 908.1 350.5 922.6Q347.9 908.1 333.4 905.5Q347.9 902.9 350.5 888.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M929 936.2L933.3 946.6L944.5 947.5L936 954.9L938.6 965.8L929 959.9L919.4 965.8L922 954.9L913.4 947.5L924.6 946.6z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M244.4 870.7Q246.6 883.3 259.2 885.6Q246.6 887.8 244.4 900.4Q242.1 887.8 229.6 885.6Q242.1 883.3 244.4 870.7z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M896 891.3Q897.6 900.4 906.7 902Q897.6 903.6 896 912.7Q894.4 903.6 885.3 902Q894.4 900.4 896 891.3z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M1250.5 888.5Q1252.3 898.3 1262.1 900.1Q1252.3 901.8 1250.5 911.7Q1248.8 901.8 1239 900.1Q1248.8 898.3 1250.5 888.5z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M612.7 937.9L617.2 948.8L629 949.7L620 957.4L622.8 968.9L612.7 962.7L602.6 968.9L605.4 957.4L596.4 949.7L608.2 948.8z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M344.7 908.8Q347.4 924.4 363 927.1Q347.4 929.9 344.7 945.4Q342 929.9 326.4 927.1Q342 924.4 344.7 908.8z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M395.9 862.1L399.9 871.7L410.2 872.5L402.3 879.3L404.7 889.4L395.9 884L387 889.4L389.4 879.3L381.5 872.5L391.9 871.7z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M768.1 927.4Q770.5 940.6 783.7 943Q770.5 945.3 768.1 958.6Q765.8 945.3 752.5 943Q765.8 940.6 768.1 927.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M353.3 914.3L357.8 925.1L369.4 926L360.5 933.6L363.2 945L353.3 938.9L343.3 945L346 933.6L337.1 926L348.8 925.1z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M255.4 919L261.1 932.6L275.7 933.8L264.6 943.4L268 957.7L255.4 950L242.9 957.7L246.3 943.4L235.1 933.8L249.8 932.6z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M1131.2 870.4L1136.7 883.6L1151 884.7L1140.1 894.1L1143.4 908L1131.2 900.5L1119 908L1122.3 894.1L1111.5 884.7L1125.7 883.6z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M849.6 924.4Q851.8 936.8 864.2 939Q851.8 941.2 849.6 953.6Q847.4 941.2 834.9 939Q847.4 936.8 849.6 924.4z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M519.7 866.6Q522.4 881.6 537.4 884.2Q522.4 886.9 519.7 901.9Q517.1 886.9 502.1 884.2Q517.1 881.6 519.7 866.6z\" fill=\"#ffffff\" opacity=\"0.95\"/><path d=\"M519.9 866.7L525.1 879.2L538.6 880.3L528.3 889.1L531.4 902.3L519.9 895.2L508.3 902.3L511.5 889.1L501.2 880.3L514.7 879.2z\" fill=\"#748ffc\" opacity=\"0.4\"/><path d=\"M553 870.3Q555.5 884.5 569.8 887Q555.5 889.5 553 903.7Q550.5 889.5 536.3 887Q550.5 884.5 553 870.3z\" fill=\"#ffffff\" opacity=\"0.95\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Notenregen",
+        "font": "nunito",
+        "size": 60,
+        "color": "#3b5bdb",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "fall",
+        "inst": {
+          "skin": "glockenspiel",
+          "voice": "glockenspiel",
+          "scale": "major",
+          "root": 0,
+          "octave": 4,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": false
+        },
+        "fall": {
+          "song": "entchen",
+          "mode": "wait",
+          "speed": "mid",
+          "guide": false
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "fall-synth",
+    "title": "Notenregen: Synthesizer",
+    "hidden": true,
+    "paper": "#120c2e",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-synth\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#0b1026\"/><stop offset=\"1\" stop-color=\"#2a1050\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-synth)\"/><defs><linearGradient id=\"mu-sun\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#ffd43b\"/><stop offset=\"1\" stop-color=\"#f06595\"/></linearGradient></defs><circle cx=\"1170\" cy=\"150\" r=\"105\" fill=\"url(#mu-sun)\" opacity=\"0.9\"/><rect x=\"1050\" y=\"170\" width=\"240\" height=\"4\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"188\" width=\"240\" height=\"5.5\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"206\" width=\"240\" height=\"7\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"224\" width=\"240\" height=\"8.5\" fill=\"#1a1140\"/><rect x=\"1050\" y=\"242\" width=\"240\" height=\"10\" fill=\"#1a1140\"/><path d=\"M0 820H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 826.8H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 843.5H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 868.8H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 901.9H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 942.4H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M0 990H1400\" stroke=\"#e64980\" stroke-width=\"2\" opacity=\"0.4\"/><path d=\"M300 820L-1200 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M340 820L-1010 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M380 820L-820 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M420 820L-630 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M460 820L-440 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M500 820L-250 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M540 820L-60 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M580 820L130 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M620 820L320 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M660 820L510 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M700 820L700 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M740 820L890 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M780 820L1080 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M820 820L1270 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M860 820L1460 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M900 820L1650 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M940 820L1840 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M980 820L2030 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M1020 820L2220 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M1060 820L2410 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><path d=\"M1100 820L2600 990\" stroke=\"#4dabf7\" stroke-width=\"2\" opacity=\"0.35\"/><circle cx=\"0.1\" cy=\"736.6\" r=\"1.6\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"294.8\" cy=\"583.5\" r=\"2.1\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"461\" cy=\"601.6\" r=\"2.5\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"760\" cy=\"547.6\" r=\"2.3\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"1143.5\" cy=\"193.6\" r=\"1.7\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"991.1\" cy=\"558.4\" r=\"1.1\" fill=\"#ffffff\" opacity=\"0.3\"/><circle cx=\"957.5\" cy=\"374.3\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"1130.4\" cy=\"98.3\" r=\"2\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"1292.4\" cy=\"550.8\" r=\"2.3\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"808.4\" cy=\"729.6\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"521.1\" cy=\"268.3\" r=\"2.7\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"465.2\" cy=\"122.1\" r=\"1.6\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"599.9\" cy=\"235.9\" r=\"2.9\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"780.3\" cy=\"583.4\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"82.1\" cy=\"218.8\" r=\"2.1\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"712.3\" cy=\"337.2\" r=\"1.4\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"1272.6\" cy=\"43.9\" r=\"1.7\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"481.8\" cy=\"531.5\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"720.8\" cy=\"132.4\" r=\"1.8\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"397\" cy=\"291.6\" r=\"1.8\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"465.6\" cy=\"425.3\" r=\"2.2\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"326.5\" cy=\"725.2\" r=\"1.9\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"1208.2\" cy=\"508.1\" r=\"2.3\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"722.7\" cy=\"404\" r=\"2.4\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"1315.4\" cy=\"317.4\" r=\"2.4\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"351.6\" cy=\"469.5\" r=\"1.7\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"462.8\" cy=\"313.1\" r=\"2.6\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"1228.6\" cy=\"88.9\" r=\"2.6\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"108.8\" cy=\"325.4\" r=\"1.3\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"109\" cy=\"797\" r=\"1.4\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"885.3\" cy=\"115.4\" r=\"1.9\" fill=\"#ffffff\" opacity=\"0.5\"/><circle cx=\"830.1\" cy=\"110.2\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/><circle cx=\"1238.4\" cy=\"712.5\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.7\"/><circle cx=\"1270.9\" cy=\"608.9\" r=\"1.6\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"14.7\" cy=\"198.6\" r=\"1.2\" fill=\"#ffffff\" opacity=\"0.3\"/><circle cx=\"2.2\" cy=\"493.5\" r=\"1.5\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"1037.6\" cy=\"391.5\" r=\"2.4\" fill=\"#ffffff\" opacity=\"0.6\"/><circle cx=\"333.3\" cy=\"705.7\" r=\"1.5\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"523.5\" cy=\"715.4\" r=\"1.2\" fill=\"#ffffff\" opacity=\"0.4\"/><circle cx=\"685\" cy=\"2.4\" r=\"2.8\" fill=\"#ffffff\" opacity=\"0.8\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Notenregen",
+        "font": "nunito",
+        "size": 60,
+        "color": "#f8f0fc",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "fall",
+        "inst": {
+          "skin": "synth",
+          "voice": "synth",
+          "scale": "all",
+          "root": 0,
+          "octave": 4,
+          "octaves": 2,
+          "labels": "letters",
+          "colors": false
+        },
+        "fall": {
+          "song": "entchen",
+          "mode": "wait",
+          "speed": "mid",
+          "guide": false
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "fall-custom",
+    "title": "Notenregen einstellen",
+    "hidden": false,
+    "generator": "fall",
+    "paper": "#f3fff6",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-tubes\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f4fce3\"/><stop offset=\"1\" stop-color=\"#e6fcf5\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-tubes)\"/><rect x=\"20.1\" y=\"126.5\" width=\"18.2\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(52 20.1 126.5)\"/><rect x=\"1328.9\" y=\"158.9\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(55 1328.9 158.9)\"/><rect x=\"851.7\" y=\"143.8\" width=\"18.3\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(53 851.7 143.8)\"/><rect x=\"225.4\" y=\"167.8\" width=\"17.5\" height=\"8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(40 225.4 167.8)\"/><rect x=\"1111.5\" y=\"87.4\" width=\"17\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(31 1111.5 87.4)\"/><circle cx=\"1225.1\" cy=\"128.7\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"1358.8\" cy=\"150.3\" r=\"7.4\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"1282.1\" cy=\"118.5\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"20.2\" cy=\"147.5\" r=\"5.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><circle cx=\"701.3\" cy=\"81.2\" r=\"4.9\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"1154.5\" cy=\"156.3\" r=\"7.3\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"859.2\" cy=\"105.4\" r=\"6.1\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"325\" y=\"145\" width=\"18.8\" height=\"8.5\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(61 325 145)\"/><rect x=\"1039.2\" y=\"51.7\" width=\"17.7\" height=\"8.1\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(44 1039.2 51.7)\"/><circle cx=\"556.6\" cy=\"139\" r=\"7.8\" fill=\"#fcc419\" opacity=\"0.5\"/><rect x=\"1305.1\" y=\"51.7\" width=\"15\" height=\"7\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(0 1305.1 51.7)\"/><rect x=\"761.5\" y=\"121\" width=\"19.6\" height=\"8.9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(74 761.5 121)\"/><rect x=\"306.3\" y=\"33.7\" width=\"15.7\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(12 306.3 33.7)\"/><circle cx=\"931.8\" cy=\"44.7\" r=\"6.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"930.6\" y=\"143\" width=\"17.9\" height=\"8.1\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(46 930.6 143)\"/><rect x=\"1054.3\" y=\"103.8\" width=\"17.1\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(34 1054.3 103.8)\"/><circle cx=\"220.5\" cy=\"144\" r=\"7.4\" fill=\"#fcc419\" opacity=\"0.5\"/><circle cx=\"645.4\" cy=\"46.9\" r=\"6.6\" fill=\"#fd7e14\" opacity=\"0.5\"/><rect x=\"1323.9\" y=\"96.4\" width=\"19.9\" height=\"9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(79 1323.9 96.4)\"/><rect x=\"838.8\" y=\"151.9\" width=\"18.9\" height=\"8.5\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(62 838.8 151.9)\"/><rect x=\"71.4\" y=\"54.9\" width=\"16.5\" height=\"7.6\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(24 71.4 54.9)\"/><rect x=\"1243.6\" y=\"21.9\" width=\"17.6\" height=\"8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(42 1243.6 21.9)\"/><rect x=\"876.5\" y=\"50.9\" width=\"19.5\" height=\"8.8\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(72 876.5 50.9)\"/><rect x=\"410.6\" y=\"47.6\" width=\"15.7\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(11 410.6 47.6)\"/><rect x=\"605.3\" y=\"168.9\" width=\"15.5\" height=\"7.2\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(8 605.3 168.9)\"/><rect x=\"62.9\" y=\"167.3\" width=\"15.6\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(10 62.9 167.3)\"/><rect x=\"934.7\" y=\"122.7\" width=\"20\" height=\"9\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(80 934.7 122.7)\"/><rect x=\"505.6\" y=\"160.9\" width=\"15\" height=\"7\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(0 505.6 160.9)\"/><circle cx=\"564.2\" cy=\"167.7\" r=\"4.7\" fill=\"#e03131\" opacity=\"0.5\"/><rect x=\"20.2\" y=\"949.4\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(55 20.2 949.4)\"/><rect x=\"1104\" y=\"942.3\" width=\"17.2\" height=\"7.9\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(36 1104 942.3)\"/><rect x=\"1107.7\" y=\"961.6\" width=\"15.5\" height=\"7.2\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(8 1107.7 961.6)\"/><rect x=\"1230.1\" y=\"960.8\" width=\"18.3\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(53 1230.1 960.8)\"/><rect x=\"191.9\" y=\"963.5\" width=\"19.1\" height=\"8.6\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(65 191.9 963.5)\"/><circle cx=\"26.7\" cy=\"956.4\" r=\"5\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"724.6\" cy=\"945.5\" r=\"4.8\" fill=\"#e03131\" opacity=\"0.5\"/><rect x=\"938.2\" y=\"940.5\" width=\"18.2\" height=\"8.3\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(51 938.2 940.5)\"/><rect x=\"543.4\" y=\"978.3\" width=\"15.6\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(10 543.4 978.3)\"/><rect x=\"178.6\" y=\"942.9\" width=\"19.2\" height=\"8.7\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(67 178.6 942.9)\"/><circle cx=\"666.6\" cy=\"978.3\" r=\"7.7\" fill=\"#fcc419\" opacity=\"0.5\"/><rect x=\"1117.4\" y=\"960.5\" width=\"15.8\" height=\"7.3\" rx=\"2\" fill=\"#40c057\" opacity=\"0.6\" transform=\"rotate(13 1117.4 960.5)\"/><rect x=\"1046.6\" y=\"974.4\" width=\"18.5\" height=\"8.4\" rx=\"2\" fill=\"#7048e8\" opacity=\"0.6\" transform=\"rotate(56 1046.6 974.4)\"/><rect x=\"306.6\" y=\"948\" width=\"17\" height=\"7.8\" rx=\"2\" fill=\"#228be6\" opacity=\"0.6\" transform=\"rotate(33 306.6 948)\"/><circle cx=\"407.9\" cy=\"972.3\" r=\"4.6\" fill=\"#e03131\" opacity=\"0.5\"/><circle cx=\"340.5\" cy=\"969.5\" r=\"4.3\" fill=\"#e03131\" opacity=\"0.5\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Notenregen",
+        "font": "nunito",
+        "size": 60,
+        "color": "#0ca678",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 205,
+        "w": 1300,
+        "h": 720,
+        "kind": "fall",
+        "inst": {
+          "skin": "tubes",
+          "voice": "tube",
+          "scale": "major",
+          "root": 0,
+          "octave": 4,
+          "octaves": 1,
+          "labels": "letters",
+          "colors": true
+        },
+        "fall": {
+          "song": "entchen",
+          "mode": "wait",
+          "speed": "mid",
+          "guide": false
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "hoerspiel",
+    "title": "Hörspiel-Studio",
+    "hidden": false,
+    "paper": "#f3f0ff",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-studio\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f8f6ff\"/><stop offset=\"1\" stop-color=\"#e5dbff\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-studio)\"/><path d=\"M0 956 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0\" fill=\"none\" stroke=\"#7950f2\" stroke-width=\"5\" stroke-linecap=\"round\" opacity=\"0.35\"/><path d=\"M0 940 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0\" fill=\"none\" stroke=\"#f08c00\" stroke-width=\"5\" stroke-linecap=\"round\" opacity=\"0.35\"/><path d=\"M0 924 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0\" fill=\"none\" stroke=\"#2f9e44\" stroke-width=\"5\" stroke-linecap=\"round\" opacity=\"0.35\"/><circle cx=\"0.4\" cy=\"389.1\" r=\"177.6\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"1126.5\" cy=\"835\" r=\"177.3\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"1300.4\" cy=\"825.1\" r=\"162.1\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"451.4\" cy=\"716.3\" r=\"95.5\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"97.4\" cy=\"413.3\" r=\"83\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"1004.8\" cy=\"512\" r=\"97.9\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"1008.1\" cy=\"733.1\" r=\"74\" fill=\"#7950f2\" opacity=\"0.05\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Mein Hörspiel",
+        "font": "nunito",
+        "size": 60,
+        "color": "#5f3dc4",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 880,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 215,
+        "w": 1300,
+        "h": 700,
+        "kind": "hoerspiel",
+        "hs": {
+          "len": 60,
+          "clips": []
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "recorder",
+    "title": "Kassettenrekorder",
+    "hidden": false,
+    "paper": "#f3f0ff",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-studio\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f8f6ff\"/><stop offset=\"1\" stop-color=\"#e5dbff\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-studio)\"/><path d=\"M0 956 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0\" fill=\"none\" stroke=\"#7950f2\" stroke-width=\"5\" stroke-linecap=\"round\" opacity=\"0.35\"/><path d=\"M0 940 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0 q17.5 -14 35 0 t35 0\" fill=\"none\" stroke=\"#f08c00\" stroke-width=\"5\" stroke-linecap=\"round\" opacity=\"0.35\"/><path d=\"M0 924 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0 q17.5 14 35 0 t35 0\" fill=\"none\" stroke=\"#2f9e44\" stroke-width=\"5\" stroke-linecap=\"round\" opacity=\"0.35\"/><circle cx=\"0.4\" cy=\"389.1\" r=\"177.6\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"1126.5\" cy=\"835\" r=\"177.3\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"1300.4\" cy=\"825.1\" r=\"162.1\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"451.4\" cy=\"716.3\" r=\"95.5\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"97.4\" cy=\"413.3\" r=\"83\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"1004.8\" cy=\"512\" r=\"97.9\" fill=\"#7950f2\" opacity=\"0.05\"/><circle cx=\"1008.1\" cy=\"733.1\" r=\"74\" fill=\"#7950f2\" opacity=\"0.05\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Kassettenrekorder",
+        "font": "nunito",
+        "size": 60,
+        "color": "#5f3dc4",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 150,
+        "y": 270,
+        "w": 1100,
+        "h": 550,
+        "kind": "recorder",
+        "mic": true,
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "metronome",
+    "title": "Metronom",
+    "hidden": false,
+    "paper": "#fbf5ea",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"mu-bg-piano\" x1=\"0\" y1=\"0\" x2=\"0.3\" y2=\"1\"><stop offset=\"0\" stop-color=\"#fdf8ef\"/><stop offset=\"1\" stop-color=\"#f0e2cc\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#mu-bg-piano)\"/><path d=\"M420 122C700 52 980 162 1350 82\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 138C700 68 980 178 1350 98\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 154C700 84 980 194 1350 114\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 170C700 100 980 210 1350 130\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><path d=\"M420 186C700 116 980 226 1350 146\" fill=\"none\" stroke=\"#d8c3a2\" stroke-width=\"3\"/><g opacity=\"0.8\"><ellipse cx=\"560\" cy=\"118\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 560 118)\" fill=\"#b08d57\"/><path d=\"M571 116V66c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"720\" cy=\"136\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 720 136)\" fill=\"#b08d57\"/><ellipse cx=\"758\" cy=\"126\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 758 126)\" fill=\"#b08d57\"/><path d=\"M731 134V84L769 74V124\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M731 84L769 74\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"940\" cy=\"132\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 940 132)\" fill=\"#b08d57\"/><path d=\"M951 130V80c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><g opacity=\"0.8\"><ellipse cx=\"1100\" cy=\"112\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1100 112)\" fill=\"#b08d57\"/><ellipse cx=\"1138\" cy=\"102\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1138 102)\" fill=\"#b08d57\"/><path d=\"M1111 110V60L1149 50V100\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linejoin=\"round\"/><path d=\"M1111 60L1149 50\" stroke=\"#b08d57\" stroke-width=\"8.4\"/></g><g opacity=\"0.8\"><ellipse cx=\"1270\" cy=\"96\" rx=\"12.4\" ry=\"8.8\" transform=\"rotate(-22 1270 96)\" fill=\"#b08d57\"/><path d=\"M1281 94V44c4 14 22 16 18 36\" fill=\"none\" stroke=\"#b08d57\" stroke-width=\"3.2\" stroke-linecap=\"round\"/></g><rect x=\"0\" y=\"920\" width=\"1400\" height=\"70\" fill=\"#e5d2b4\" opacity=\"0.6\"/></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Metronom",
+        "font": "nunito",
+        "size": 60,
+        "color": "#5b3a1e",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 46,
+        "w": 900,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 160,
+        "y": 250,
+        "w": 1080,
+        "h": 600,
+        "kind": "metronome",
+        "bpm": 90,
+        "meter": "4/4",
+        "click": "wood",
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "playlist",
+    "title": "Playlist",
+    "hidden": false,
+    "paper": "#14161f",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><rect x=\"60\" y=\"60\" width=\"420\" height=\"420\" rx=\"22\" fill=\"#1f2230\" stroke=\"#1db954\" stroke-width=\"3\"/><rect x=\"540\" y=\"90\" width=\"800\" height=\"92\" rx=\"16\" fill=\"#1f2230\"/><circle cx=\"590\" cy=\"136\" r=\"26\" fill=\"#1db954\"/><path d=\"M582 122l22 14-22 14z\" fill=\"#14161f\"/><text x=\"650\" y=\"148\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"30\" font-weight=\"700\" fill=\"#9aa0b4\" text-anchor=\"middle\">1</text><rect x=\"540\" y=\"198\" width=\"800\" height=\"92\" rx=\"16\" fill=\"#1f2230\"/><circle cx=\"590\" cy=\"244\" r=\"26\" fill=\"#1db954\"/><path d=\"M582 230l22 14-22 14z\" fill=\"#14161f\"/><text x=\"650\" y=\"256\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"30\" font-weight=\"700\" fill=\"#9aa0b4\" text-anchor=\"middle\">2</text><rect x=\"540\" y=\"306\" width=\"800\" height=\"92\" rx=\"16\" fill=\"#1f2230\"/><circle cx=\"590\" cy=\"352\" r=\"26\" fill=\"#1db954\"/><path d=\"M582 338l22 14-22 14z\" fill=\"#14161f\"/><text x=\"650\" y=\"364\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"30\" font-weight=\"700\" fill=\"#9aa0b4\" text-anchor=\"middle\">3</text><rect x=\"540\" y=\"414\" width=\"800\" height=\"92\" rx=\"16\" fill=\"#1f2230\"/><circle cx=\"590\" cy=\"460\" r=\"26\" fill=\"#1db954\"/><path d=\"M582 446l22 14-22 14z\" fill=\"#14161f\"/><text x=\"650\" y=\"472\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"30\" font-weight=\"700\" fill=\"#9aa0b4\" text-anchor=\"middle\">4</text><rect x=\"540\" y=\"522\" width=\"800\" height=\"92\" rx=\"16\" fill=\"#1f2230\"/><circle cx=\"590\" cy=\"568\" r=\"26\" fill=\"#1db954\"/><path d=\"M582 554l22 14-22 14z\" fill=\"#14161f\"/><text x=\"650\" y=\"580\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"30\" font-weight=\"700\" fill=\"#9aa0b4\" text-anchor=\"middle\">5</text><rect x=\"540\" y=\"630\" width=\"800\" height=\"92\" rx=\"16\" fill=\"#1f2230\"/><circle cx=\"590\" cy=\"676\" r=\"26\" fill=\"#1db954\"/><path d=\"M582 662l22 14-22 14z\" fill=\"#14161f\"/><text x=\"650\" y=\"688\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"30\" font-weight=\"700\" fill=\"#9aa0b4\" text-anchor=\"middle\">6</text><rect x=\"540\" y=\"738\" width=\"800\" height=\"92\" rx=\"16\" fill=\"#1f2230\"/><circle cx=\"590\" cy=\"784\" r=\"26\" fill=\"#1db954\"/><path d=\"M582 770l22 14-22 14z\" fill=\"#14161f\"/><text x=\"650\" y=\"796\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"30\" font-weight=\"700\" fill=\"#9aa0b4\" text-anchor=\"middle\">7</text><rect x=\"540\" y=\"846\" width=\"800\" height=\"92\" rx=\"16\" fill=\"#1f2230\"/><circle cx=\"590\" cy=\"892\" r=\"26\" fill=\"#1db954\"/><path d=\"M582 878l22 14-22 14z\" fill=\"#14161f\"/><text x=\"650\" y=\"904\" font-family=\"Arial, Helvetica, sans-serif\" font-size=\"30\" font-weight=\"700\" fill=\"#9aa0b4\" text-anchor=\"middle\">8</text></svg>",
+    "items": [
+      {
+        "type": "image",
+        "fit": "cover",
+        "frame": "none",
+        "x": 70,
+        "y": 70,
+        "w": 400,
+        "h": 400,
+        "placeholder": "Cover",
+        "rot": 0
+      },
+      {
+        "type": "text",
+        "html": "",
+        "font": "nunito",
+        "size": 44,
+        "color": "#ffffff",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 60,
+        "y": 510,
+        "w": 420,
+        "h": 70,
+        "bold": true,
+        "placeholder": "Meine Playlist",
+        "rot": 0
+      },
+      {
+        "type": "text",
+        "html": "",
+        "font": "nunito",
+        "size": 26,
+        "color": "#c3c7d6",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 60,
+        "y": 590,
+        "w": 420,
+        "h": 200,
+        "placeholder": "Wann hörst du diese Lieder?",
+        "rot": 0
+      },
+      {
+        "type": "text",
+        "html": "",
+        "font": "nunito",
+        "size": 28,
+        "color": "#ffffff",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 690,
+        "y": 108,
+        "w": 630,
+        "h": 56,
+        "placeholder": "Titel – Interpret",
+        "rot": 0
+      },
+      {
+        "type": "text",
+        "html": "",
+        "font": "nunito",
+        "size": 28,
+        "color": "#ffffff",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 690,
+        "y": 216,
+        "w": 630,
+        "h": 56,
+        "placeholder": "Titel – Interpret",
+        "rot": 0
+      },
+      {
+        "type": "text",
+        "html": "",
+        "font": "nunito",
+        "size": 28,
+        "color": "#ffffff",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 690,
+        "y": 324,
+        "w": 630,
+        "h": 56,
+        "placeholder": "Titel – Interpret",
+        "rot": 0
+      },
+      {
+        "type": "text",
+        "html": "",
+        "font": "nunito",
+        "size": 28,
+        "color": "#ffffff",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 690,
+        "y": 432,
+        "w": 630,
+        "h": 56,
+        "placeholder": "Titel – Interpret",
+        "rot": 0
+      },
+      {
+        "type": "text",
+        "html": "",
+        "font": "nunito",
+        "size": 28,
+        "color": "#ffffff",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 690,
+        "y": 540,
+        "w": 630,
+        "h": 56,
+        "placeholder": "Titel – Interpret",
+        "rot": 0
+      },
+      {
+        "type": "text",
+        "html": "",
+        "font": "nunito",
+        "size": 28,
+        "color": "#ffffff",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 690,
+        "y": 648,
+        "w": 630,
+        "h": 56,
+        "placeholder": "Titel – Interpret",
+        "rot": 0
+      },
+      {
+        "type": "text",
+        "html": "",
+        "font": "nunito",
+        "size": 28,
+        "color": "#ffffff",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 690,
+        "y": 756,
+        "w": 630,
+        "h": 56,
+        "placeholder": "Titel – Interpret",
+        "rot": 0
+      },
+      {
+        "type": "text",
+        "html": "",
+        "font": "nunito",
+        "size": 28,
+        "color": "#ffffff",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 690,
+        "y": 864,
+        "w": 630,
+        "h": 56,
+        "placeholder": "Titel – Interpret",
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "tuner",
+    "title": "Stimmgerät",
+    "hidden": false,
+    "paper": "#f1f3f5",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"><defs><linearGradient id=\"tn-page\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f8f9fa\"/><stop offset=\"1\" stop-color=\"#e9ecef\"/></linearGradient></defs><rect width=\"1400\" height=\"990\" fill=\"url(#tn-page)\"/><g transform=\"translate(1180 60) scale(1.4)\" opacity=\"0.12\" fill=\"#495057\"><ellipse cx=\"0\" cy=\"40\" rx=\"16\" ry=\"12\" transform=\"rotate(-20 0 40)\"/><rect x=\"12\" y=\"-30\" width=\"5\" height=\"70\"/><path d=\"M17 -30c18 6 26 16 22 34c-4-12-12-16-22-18z\"/></g><g transform=\"translate(1290 110) scale(1)\" opacity=\"0.1\" fill=\"#495057\"><ellipse cx=\"0\" cy=\"40\" rx=\"16\" ry=\"12\" transform=\"rotate(-20 0 40)\"/><rect x=\"12\" y=\"-30\" width=\"5\" height=\"70\"/><path d=\"M17 -30c18 6 26 16 22 34c-4-12-12-16-22-18z\"/></g><g transform=\"translate(80 900) scale(1.2)\" opacity=\"0.1\" fill=\"#495057\"><ellipse cx=\"0\" cy=\"40\" rx=\"16\" ry=\"12\" transform=\"rotate(-20 0 40)\"/><rect x=\"12\" y=\"-30\" width=\"5\" height=\"70\"/><path d=\"M17 -30c18 6 26 16 22 34c-4-12-12-16-22-18z\"/></g></svg>",
+    "items": [
+      {
+        "type": "text",
+        "html": "Stimmgerät",
+        "font": "nunito",
+        "size": 56,
+        "color": "#1f2937",
+        "align": "left",
+        "shape": "none",
+        "fill": "#ffffff",
+        "stroke": "#1f2937",
+        "tail": "bl",
+        "x": 70,
+        "y": 40,
+        "w": 1000,
+        "h": 90,
+        "bold": true,
+        "rot": 0
+      },
+      {
+        "type": "widget",
+        "x": 50,
+        "y": 170,
+        "w": 1300,
+        "h": 720,
+        "kind": "tuner",
+        "tuner": {
+          "inst": "chromatic",
+          "a4": 440
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  },
+  {
+    "id": "karaoke",
+    "title": "Karaoke-Liedblatt",
+    "hidden": false,
+    "generator": "karaoke",
+    "paper": "#1e1035",
+    "background": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1400 990\"></svg>",
+    "items": [
+      {
+        "type": "widget",
+        "x": 0,
+        "y": 0,
+        "w": 1400,
+        "h": 990,
+        "kind": "karaoke",
+        "karaoke": {
+          "title": "Alle Vögel sind schon da",
+          "credit": "Text: Hoffmann von Fallersleben (1835) · Melodie: volkstümlich",
+          "text": "Alle Vögel sind schon da,\nalle Vögel, alle!\nWelch ein Singen, Musiziern,\nPfeifen, Zwitschern, Tiriliern!\nFrühling will nun einmarschiern,\nkommt mit Sang und Schalle.",
+          "font": "grund",
+          "size": 84,
+          "syllables": false,
+          "follow": false,
+          "design": "stage",
+          "pics": {},
+          "picsOn": true,
+          "secs": 4,
+          "intro": 3,
+          "repeat": 1,
+          "mode": "auto",
+          "rec": "room",
+          "song": "alle-voegel"
+        },
+        "locked": true,
+        "rot": 0
+      }
+    ]
+  }
+]

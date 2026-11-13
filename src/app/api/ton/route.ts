@@ -4,6 +4,7 @@ import { currentChild } from '@/lib/child-auth';
 import { BookError, getBook, storeAudio } from '@/lib/notebooks.mjs';
 import { grantImages } from '@/lib/classes.mjs';
 import { boundedBody } from '@/lib/http';
+import { musicInvitesAudio } from '@/lib/learning/music-validation.mjs';
 export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   if (!fromOwnOrigin(request)) return jsonError('Anfrage nicht erlaubt.', 403);
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
             (el) =>
               el.id === elementId &&
               ((el.type === 'audio' && typeof el.placeholder === 'string') ||
-                (el.type === 'widget' && ['recorder', 'soundstudio', 'karaoke'].includes(el.widgetKind || ''))),
+                (el.type === 'widget' && (['recorder', 'soundstudio', 'karaoke'].includes(el.widgetKind || '') || musicInvitesAudio(el.settings)))),
           ),
         );
       if ((!data.book.allowChildAudio && !child.features.includes('audio') && !invited) || data.book.trashed)

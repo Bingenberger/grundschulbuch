@@ -26,13 +26,15 @@ test('Lernwerkzeuge nach Fächern, Vorlagen nur gestalterisch, einstellbare Arbe
   await expect(dialog.getByRole('button', { name: 'Silben klatschen', exact: true })).toBeVisible();
   await dialog.getByLabel('Lernwerkzeug suchen').fill('');
 
-  // A preset (Xylophon) is kept when setting it up; “Andere Auswahl” goes back.
-  await dialog.getByRole('button', { name: 'Xylophon', exact: true }).click();
-  await expect(dialog.getByRole('heading', { name: 'Xylophon' })).toBeVisible();
+  // A block with settings (Timer) opens them first; “Andere Auswahl” goes back.
+  // (Music presets such as Xylophon come as finished pages, see music-reference.spec.)
+  await subjects.getByRole('button', { name: /^Klassenführung · / }).click();
+  await dialog.getByRole('button', { name: 'Timer', exact: true }).click();
+  await expect(dialog.getByRole('heading', { name: 'Timer' })).toBeVisible();
   await expect(dialog.getByRole('button', { name: 'Mit KI entwerfen' })).toHaveCount(0);
   await dialog.getByRole('button', { name: 'Andere Auswahl' }).click();
   await expect(subjects).toBeVisible();
-  await dialog.getByRole('button', { name: 'Xylophon', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Timer', exact: true }).click();
   await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
   await expect(page.locator('.interaction-surface .learning-widget')).toHaveCount(1);
 

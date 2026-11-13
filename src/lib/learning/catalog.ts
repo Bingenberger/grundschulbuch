@@ -74,6 +74,11 @@ export type JsonValue =
   | { [key: string]: JsonValue };
 export type LearningMedia = { image?: string; audio?: string; hideText?: boolean };
 export type LearningSettings = {
+  /** Music pages rebuilt from the supplied reference; existing widgets keep their settings. */
+  musicTemplate?: string;
+  /** Several library songs inserted as separate pages (new karaoke tools only). */
+  musicSongs?: string[];
+  musicConfig?: JsonValue;
   /** Mathe-Werkzeug: boat, abacus, ruler or calc, and its size (5/10/20, 2/10, cm). */
   mathTool?: 'boat' | 'abacus' | 'ruler' | 'calc';
   mathSize?: number;

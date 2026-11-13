@@ -1102,6 +1102,7 @@ export default function Editor({
               >
                 <LearningRuntime
                   drawing={drawing}
+                  onConfigure={id => { const tool = page.elements.find(el => el.id === id); if (tool) setLearning(tool); }}
                   uploadAudio={(id, file) => uploadAudio(file, s.book!.id, id)}
                   interactive={boardPointer === 'none' && (s.tool === 'select' || (board && !boardDraw))}
                   allowExternal

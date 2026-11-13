@@ -14,6 +14,11 @@ import SyllableOptions from './SyllableOptions';
 import GeometryOptions from './GeometryOptions';
 import { geometryCustom } from '@/lib/learning/geometry';
 import KaraokeOptions from './KaraokeOptions';
+import MusicOptions from './MusicOptions';
+import NoteSheetDialog from '../sheets/NoteSheetDialog';
+import { musicPage } from '@/lib/learning/music';
+import { decodeMusicConfig, encodeMusicConfig } from '@/lib/learning/music-settings';
+import { cleanKaraokeSettings } from '@/lib/reference/music-runtime';
 import { karaokeLines, validKaraokeTimes } from '@/lib/learning/karaoke';
 import { assemblyWords } from '@/lib/learning/syllable-assembly';
 import { guessWords, validGuessWord } from '@/lib/learning/letter-guess';
@@ -22,7 +27,8 @@ import { synthesisPairs } from '@/lib/learning/synthesis';
 import { practiceWords } from '@/lib/learning/alphabet';
 import WordBank from './WordBank';
 import { effectWav, soundEffects } from '@/lib/learning/audio';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { completeKaraokePictures, type PictureCache } from '@/lib/learning/karaoke-pictures';
 import {
   activityCatalog,
   defaultSettings,
@@ -103,10 +109,14 @@ export default function LearningDialog({
     element?.widgetKind || element?.activityKind || 'timer',
   );
   const [settings, setSettings] = useState<LearningSettings>(
-    element?.settings || defaultSettings(kind),
+    element?.settings?.musicTemplate ? { ...element.settings, musicConfig: element.response?.musicConfig || element.settings.musicConfig } : element?.settings || defaultSettings(kind),
   );
+  const [showNotes, setShowNotes] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [musicProgress, setMusicProgress] = useState('');
+  const musicRequest = useRef<AbortController | null>(null);
+  useEffect(() => () => musicRequest.current?.abort(), []);
   const [query, setQuery] = useState('');
   const [showAI, setShowAI] = useState(false);
   const [effect, setEffect] = useState<keyof typeof soundEffects>('rain');
@@ -118,6 +128,7 @@ export default function LearningDialog({
     setSettings((s) => ({ ...s, ...values }));
   function choose(block: LearningBlock) {
     if (busy) return;
+    if (block.generator === 'notes') { setShowNotes(true); return; }
     if (block.pages) {
       onPages?.(block.pages('landscape'));
       onClose();
@@ -207,6 +218,7 @@ export default function LearningDialog({
       />
     </label>
   );
+  if (showNotes) return <NoteSheetDialog onClose={() => setShowNotes(false)} onInsert={async pages => { onPages?.(pages); onClose(); }} />;
   return (
     <div className="modal-backdrop">
       <section
@@ -274,12 +286,15 @@ export default function LearningDialog({
                     <h3>
                       <Icon name={subjectIcons[c]} size={20} /> {c}
                     </h3>
-                    <div className="learning-grid">
+                    <div className={`learning-grid${c === 'Musik' ? ' learning-grid-music' : ''}`}>
                       {found
                         .filter((b) => b.subject === c)
                         .map((b) => (
                           <button key={b.id} type="button" className="learning-block" aria-label={b.title} onClick={() => choose(b)}>
-                            <Icon name={blockIcon(b)} size={34} />
+                            {b.preview ? <span className="learning-block-preview">
+                              {/* eslint-disable-next-line @next/next/no-img-element -- Static previews of the actual tools. */}
+                              <img src={b.preview} alt={`Vorschau: ${b.title}`} width={480} height={340} loading="lazy" decoding="async" />
+                            </span> : <Icon name={blockIcon(b)} size={34} />}
                             <span>{b.title}</span>
                           </button>
                         ))}
@@ -292,20 +307,50 @@ export default function LearningDialog({
           {stage === 'configure' && (
           <form
             className="learning-options"
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
+              if (busy) return;
+              let readySettings = settings;
+              if (settings.musicTemplate === 'karaoke') {
+                const config = decodeMusicConfig(settings.musicConfig);
+                readySettings = { ...settings, musicConfig: encodeMusicConfig({ ...config, karaoke: cleanKaraokeSettings(config.karaoke) }) };
+              }
               if (kind === 'alphabet' && settings.words?.some(word => word.length > 80)) { setError('Ein Übungswort darf höchstens 80 Zeichen haben.'); return; }
               if (kind === 'alphabet' && settings.alphabetPractice && !practiceWords(settings).length) { setError('Bitte mindestens ein Übungswort hinterlegen.'); return; }
               if (kind === 'synthesis' && (!synthesisPairs(settings).length || settings.synthesisPairs?.some(p => !p.left.trim() || !p.right.trim() || p.left.length > 80 || p.right.length > 80))) { setError('Bitte gültige Laute oder Verbindungen auswählen. Jeder Teil darf höchstens 80 Zeichen haben.'); return; }
               if (kind === 'synthesis' && settings.synthesisPronunciations?.some(p => !p.text.trim() || !p.speak.trim() || p.text.length > 80 || p.speak.length > 80)) { setError('Bitte jede Aussprachekorrektur vollständig und mit höchstens 80 Zeichen je Teil eingeben.'); return; }
               if (kind === 'clapping' && (!clappingWords(settings).length || (settings.words || []).length > 16 || settings.words?.some(word => word.length > 80 || word.split('-').filter(Boolean).length > 12))) { setError('Bitte eine bis 16 Wörter mit höchstens 80 Zeichen und zwölf Silben je Wort eingeben.'); return; }
               if (kind === 'geometry' && geometryCustom(settings) && (!settings.path || settings.path.length < 2 || settings.path.length > 30 || settings.path.some((p, i, points) => !Number.isFinite(p.x) || !Number.isFinite(p.y) || p.x < 0 || p.y < 0 || p.x > 100 || p.y > 100 || i > 0 && p.x === points[i - 1].x && p.y === points[i - 1].y))) { setError('Bitte zwei bis 30 gültige Eckpunkte der eigenen Form eingeben.'); return; }
-              if (kind === 'karaoke' && (!karaokeLines(settings.text).length || (settings.text || '').replace(/\r\n?/g, '\n').split('\n').length > 300 || (settings.karaokeTimes !== undefined && !validKaraokeTimes(settings.karaokeTimes, karaokeLines(settings.text).length)))) { setError('Bitte einen Liedtext mit bis zu 300 Zeilen und aufsteigenden Startzeiten hinterlegen.'); return; }
+              if (kind === 'karaoke' && !settings.musicTemplate && (!karaokeLines(settings.text).length || (settings.text || '').replace(/\r\n?/g, '\n').split('\n').length > 300 || (settings.karaokeTimes !== undefined && !validKaraokeTimes(settings.karaokeTimes, karaokeLines(settings.text).length)))) { setError('Bitte einen Liedtext mit bis zu 300 Zeilen und aufsteigenden Startzeiten hinterlegen.'); return; }
               if (kind === 'syllables' && (!assemblyWords(settings).length || (settings.words || []).length > 30 || settings.words?.some(word => word.trim() && !assemblyWords({ words: [word] }).length))) { setError('Bitte bis 30 Wörter mit höchstens 80 Zeichen und zwölf Silben eingeben.'); return; }
               if (kind === 'letterguess' && (!guessWords(settings).length || (settings.words || []).length > 20 || settings.words?.some(word => word.trim() && !validGuessWord(word)))) { setError('Bitte eine bis 20 gültige Wörter oder kurze Ausdrücke mit höchstens 40 Zeichen eingeben.'); return; }
               const taskContent = (text: string, media?: { image?: string; audio?: string }) => !!text.trim() || !!media?.image || !!media?.audio;
               if (kind === 'quiz' && (!settings.questions?.length || settings.questions.some(q => !taskContent(q.text, q.media) || q.answers.length < 2 || q.answers.some((answer, i) => !taskContent(answer, q.answerMedia?.[i]))))) { setError('Bitte jede Frage und Antwort mit Text, Bild oder Ton ausfüllen.'); return; }
               if ((kind === 'matching' || kind === 'memory') && (!settings.pairs?.length || settings.pairs.some(pair => !taskContent(pair.left, pair.leftMedia) || !taskContent(pair.right, pair.rightMedia)))) { setError('Bitte beide Seiten jedes Paars mit Text, Bild oder Ton ausfüllen.'); return; }
+              if (settings.musicTemplate === 'karaoke' && !(settings.musicConfig as { karaoke?: { text?: string } })?.karaoke?.text?.trim()) { setError('Bitte einen Liedtext eingeben oder ein Lied auswählen.'); return; }
+              if (settings.musicTemplate === 'karaoke') {
+                const controller = new AbortController(), cache: PictureCache = new Map(); musicRequest.current = controller; setBusy(true); setError('');
+                const fillPictures = async (base: LearningSettings, prefix = '') => {
+                  const config = decodeMusicConfig(base.musicConfig), result = await completeKaraokePictures(config.karaoke as Record<string, unknown>, {
+                    signal: controller.signal, cache,
+                    onProgress: (done, total) => setMusicProgress(total ? `${prefix}Bilder werden ergänzt … ${done} von ${total}` : prefix),
+                  });
+                  return { ...base, musicConfig: encodeMusicConfig({ ...config, karaoke: cleanKaraokeSettings(result.karaoke) }) };
+                };
+                try {
+                  if (!element && onPages) {
+                    const pages = musicPage(readySettings);
+                    for (const [index, page] of pages.entries()) page.elements[0].settings = await fillPictures(page.elements[0].settings!, pages.length > 1 ? `Lied ${index + 1} von ${pages.length}: ` : '');
+                    if (controller.signal.aborted) return;
+                    onPages(pages); onClose(); return;
+                  }
+                  readySettings = await fillPictures(readySettings);
+                } catch (error) { if (!controller.signal.aborted) setError((error as Error).message); return; }
+                finally { setBusy(false); setMusicProgress(''); if (musicRequest.current === controller) musicRequest.current = null; }
+              }
+              if (settings.musicTemplate && !element && onPages) {
+                onPages(musicPage(readySettings)); onClose(); return;
+              }
               if (kind === 'checkout') {
                 const raw = settings.checkout as { items?: { name?: string }[] } | undefined;
                 if (!raw?.items?.some((item) => item.name?.trim())) { setError('Lege mindestens eine Ware mit Namen an.'); return; }
@@ -360,8 +405,11 @@ export default function LearningDialog({
                   type === 'widget' ? (kind as WidgetKind) : undefined,
                 activityKind:
                   type === 'activity' ? (kind as ActivityKind) : undefined,
-                settings: kind === 'checkout' ? { ...settings, checkout: shopConfig(settings.checkout) as unknown as JsonValue } : settings,
+                settings: kind === 'checkout' ? { ...settings, checkout: shopConfig(settings.checkout) as unknown as JsonValue } : readySettings,
               };
+              if (settings.musicTemplate && JSON.stringify(element?.settings?.musicConfig) !== JSON.stringify(readySettings.musicConfig) && learning.response) {
+                const { musicConfig: previousMusic, ...response } = learning.response; void previousMusic; learning.response = response;
+              }
               onSave(learning);
               onClose();
             }}
@@ -395,6 +443,7 @@ export default function LearningDialog({
                 onChange={(e) => patch({ title: e.target.value })}
               />
             </label>
+            {settings.musicTemplate ? <MusicOptions settings={settings} onChange={patch} upload={media} busy={busy} editing={!!element} /> : <>
             {kind === 'karaoke' && <KaraokeOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
             {kind === 'syllables' && <SyllableOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
             {kind === 'letterguess' && <LetterGuessOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
@@ -563,7 +612,7 @@ export default function LearningDialog({
                 </label>
               </>
             )}
-            {kind === 'piano' && (
+            {!settings.musicTemplate && kind === 'piano' && (
               <>
                 <Picker label="Tonleiter" value={settings.mode || 'major'} onChange={(value) => patch({ mode: value })}
                   options={[{ value: 'all', label: 'Alle Töne', icon: 'music' as const }, { value: 'major', label: 'Dur', icon: <TextGlyph text="Dur" tone="green" /> }, { value: 'minor', label: 'Moll', icon: <TextGlyph text="Moll" tone="violet" /> }, { value: 'penta', label: 'Pentatonik', icon: <TextGlyph text="5" tone="green" /> }, { value: 'pentaMinor', label: 'Moll-Pentatonik', icon: <TextGlyph text="5" tone="violet" /> }, { value: 'blues', label: 'Blues', icon: <TextGlyph text="♪" tone="blue" /> }]} />
@@ -1254,6 +1303,8 @@ export default function LearningDialog({
             ].includes(kind) && (
               <WordBank onSelect={(words) => patch({ words: kind === 'alphabet' ? words.slice(0, 40) : words })} />
             )}
+            </>}
+            {musicProgress && <p role="status">{musicProgress} <button type="button" onClick={() => musicRequest.current?.abort()}>Bildsuche abbrechen</button></p>}
             {error && (
               <p className="fehler" role="alert">
                 {error}

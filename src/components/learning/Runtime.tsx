@@ -7,6 +7,8 @@ type Runtime = {
   allowExternal?: boolean;
   onResponse?: (id: string, response: LearningResponse) => void;
   onRecord?: (id: string) => void;
+  /** Present only in the teacher editor. */
+  onConfigure?: (id: string) => void;
   /** Saves a recording made right in a learning tool; returns its address. */
   uploadAudio?: (id: string, file: Blob) => Promise<string>;
   reportScore?: (score: number) => void;

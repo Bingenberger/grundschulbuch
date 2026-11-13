@@ -1,3 +1,4 @@
+import { findMusicPreset, validateMusicConfig } from './music-validation.mjs';
 export const WIDGET_KINDS = [
   'timer',
   'multitimer',
@@ -93,7 +94,7 @@ export const PAGE_FRAMES = [
   'bunting',
   'confetti',
 ];
-export function boundedJson(value, depth = 0) {
+export function boundedJson(value, depth = 0, music = false) {
   if (depth > 9)
     throw new Error('Die Einstellungen sind zu tief verschachtelt.');
   if (value === null || typeof value === 'boolean') return value;
@@ -109,8 +110,8 @@ export function boundedJson(value, depth = 0) {
     !/^data:(image|audio|video)/i.test(value)
   )
     return value;
-  if (Array.isArray(value) && value.length <= 2000)
-    return value.map((v) => boundedJson(v, depth + 1));
+  if (Array.isArray(value) && value.length <= (music ? 4000 : 2000))
+    return value.map((v) => boundedJson(v, depth + 1, music));
   if (value && typeof value === 'object' && Object.keys(value).length <= 80) {
     const result = {};
     for (const [key, item] of Object.entries(value)) {
@@ -126,7 +127,7 @@ export function boundedJson(value, depth = 0) {
         !/^\/api\/medien\/[a-f0-9]{64}\.[a-z0-9]+$/.test(item)
       )
         throw new Error('Medien müssen auf dem Schulserver liegen.');
-      result[key] = boundedJson(item, depth + 1);
+      result[key] = boundedJson(item, depth + 1, music || key === 'musicConfig');
     }
     return result;
   }
@@ -145,7 +146,8 @@ export function learningSettings(value) {
 }
 export function learningResponse(value) {
   const result = learningSettings(value);
-  if (JSON.stringify(result).length > 50000)
+  if (result.musicConfig !== undefined) validateMusicConfig(result.musicConfig);
+  if (JSON.stringify(result).length > (result.musicConfig ? 200000 : 50000))
     throw new Error('Die Antwort ist zu groß.');
   for (const [key, min, max] of [
     ['index', 0, 1000000],
@@ -292,6 +294,10 @@ const track = (value) =>
   optional(value, 'volume', (v) => finite(v, 0, 1));
 export function widgetSettings(value) {
   const result = learningSettings(value);
+  if (result.musicTemplate !== undefined) {
+    if (!findMusicPreset(result.musicTemplate)) throw Error('Unbekannte Musikvorlage.');
+    validateMusicConfig(result.musicConfig);
+  }
   const check = (key, predicate) => {
     if (!optional(result, key, predicate))
       throw new Error(`Ungültige Einstellung: ${key}.`);

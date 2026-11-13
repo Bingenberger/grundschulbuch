@@ -8,6 +8,7 @@ import { blueprintPages, blueprints, type Blueprint } from './templates';
 import { defaultSettings } from './catalog';
 import type { MathToolKind } from './mathtool';
 import { geoConfig } from './geodraw';
+import { musicPresets, musicKind, musicSettings, musicPage } from './music';
 
 export const SUBJECTS = [
   'Deutsch',
@@ -35,7 +36,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   notequiz: 'Musik', falling: 'Musik', playlist: 'Musik', soundstudio: 'Musik', karaoke: 'Musik',
   // Medien & Präsentation
   slideshow: 'Medien & Präsentation', pitch: 'Medien & Präsentation', animation: 'Medien & Präsentation',
-  recorder: 'Medien & Präsentation',
+  recorder: 'Musik',
   // Klassenführung
   timer: 'Klassenführung', multitimer: 'Klassenführung', noise: 'Klassenführung', applause: 'Klassenführung',
   timetable: 'Klassenführung',
@@ -60,6 +61,9 @@ export type LearningBlock = {
   words: string;
   /** Fully set up by its preset: inserted right away, without the settings step. */
   direct?: boolean;
+  generator?: 'notes';
+  /** Static preview of the actual tool; no interactive controls in the chooser. */
+  preview?: string;
 };
 
 /** Duplicates of a variant with the same default (e.g. “Klavier” = “Klavier & Klanginstrumente”). */
@@ -151,6 +155,7 @@ function fromBlueprint(meta: Blueprint): LearningBlock | null {
       words: `${meta.title} kommunikation tafel uk`,
     };
   const kind = meta.widget || meta.activity;
+  if (kind && ['piano', 'drums', 'sequencer', 'metronome', 'tuner', 'echo', 'notequiz', 'falling', 'recorder', 'playlist', 'soundstudio', 'karaoke'].includes(kind)) return null;
   if (!kind) return null;
   const element = blueprintPages(meta, 'landscape')[0].elements[0];
   const label = meta.widget ? widgetCatalog[meta.widget][0] : activityCatalog[meta.activity!];
@@ -274,7 +279,14 @@ toolBlocks.push({
   words: 'Rechnen mit dem Taschenrechner Kassenzettel Rückgeld Wechselgeld Summe Seite',
 });
 
-export const learningBlocks: LearningBlock[] = [...toolBlocks, ...blueprints.map(fromBlueprint)]
+const musicBlocks: LearningBlock[] = [{ id: 'music-notes', title: 'Noten lernen', subject: 'Musik', type: 'widget', kind: 'notequiz', generator: 'notes', preview: '/previews/music/notes.webp', words: 'Musik Noten lernen Notennamen Notenwerte Notenrätsel' }, ...musicPresets.map((preset): LearningBlock => ({
+  id: `music-${preset.id}`, title: preset.title, preview: `/previews/music/${preset.id}.webp`, subject: 'Musik', type: 'widget', kind: musicKind(preset),
+  preset: musicSettings(preset),
+  ...(!preset.generator ? { pages: () => musicPage(musicSettings(preset)) } : {}),
+  words: `${preset.title} Musik Instrument Noten Rhythmus Klang`,
+}))];
+
+export const learningBlocks: LearningBlock[] = [...toolBlocks, ...musicBlocks, ...blueprints.map(fromBlueprint)]
   .filter((b): b is LearningBlock => !!b)
   .sort((a, b) => SUBJECTS.indexOf(a.subject) - SUBJECTS.indexOf(b.subject));
 

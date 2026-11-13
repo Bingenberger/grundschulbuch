@@ -3,6 +3,7 @@
 // devices of children never talk to other servers, a private gallery's token
 // stays here, and chosen pictures are copied into the own media store.
 import fs from 'node:fs/promises';
+import { wordVariants, concreteWord, rankPictures, stopWords, compoundVariants } from './reference/karaoke-pictures.mjs';
 
 const TIMEOUT = 8000;
 const MAX_IMAGE = 12 * 1024 * 1024;
@@ -42,9 +43,12 @@ async function galleryHeaders() {
 }
 
 /** Fetch with time and size limits; redirects are not followed. */
-export async function fetchLimited(url, { headers = {}, max = MAX_IMAGE } = {}) {
+export async function fetchLimited(url, { headers = {}, max = MAX_IMAGE, signal } = {}) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), TIMEOUT);
+  const abort = () => controller.abort();
+  signal?.addEventListener('abort', abort, { once: true });
+  if (signal?.aborted) abort();
+  const timer = setTimeout(abort, TIMEOUT);
   try {
     const response = await fetch(url, {
       headers: { 'User-Agent': AGENT, ...headers },
@@ -76,11 +80,12 @@ export async function fetchLimited(url, { headers = {}, max = MAX_IMAGE } = {}) 
     throw new SourceError('Die Bildquelle ist gerade nicht erreichbar. Bitte später noch einmal versuchen.');
   } finally {
     clearTimeout(timer);
+    signal?.removeEventListener('abort', abort);
   }
 }
 
-async function json(url, headers) {
-  const { buffer } = await fetchLimited(url, { headers, max: MAX_JSON });
+async function json(url, headers, signal) {
+  const { buffer } = await fetchLimited(url, { headers, max: MAX_JSON, signal });
   try {
     return JSON.parse(buffer.toString('utf8'));
   } catch {
@@ -226,4 +231,54 @@ export async function loadImage(source, url) {
   const result = await fetchLimited(url, { headers: source === 'galerie' ? await galleryHeaders() : {} });
   if (!RASTER.test(result.type)) throw new SourceError('Das ist kein unterstütztes Bild.', 415);
   return result;
+}
+
+// Karaoke uses the reference's morphology and keyword ranking, rather than the
+// first generic search hit. Only public ARASAAC results are cached here.
+const karaokeResults = new Map();
+let karaokeVocabulary, vocabularyRequest, vocabularyFailedAt = 0;
+async function pictureVocabulary() {
+  if (karaokeVocabulary) return karaokeVocabulary;
+  if (Date.now() - vocabularyFailedAt < 60000) return null;
+  if (!vocabularyRequest) vocabularyRequest = json('https://api.arasaac.org/v1/keywords/de').then(data => {
+    karaokeVocabulary = new Set((data.words || []).map(word => String(word).trim().toLocaleLowerCase('de-DE')).filter(word => word.length > 1 && word.length <= 30 && !/\s/.test(word)));
+    return karaokeVocabulary;
+  }).catch(() => { vocabularyFailedAt = Date.now(); vocabularyRequest = null; return null; });
+  return vocabularyRequest;
+}
+export async function findKaraokeImage(word, term = '', signal) {
+  const text = String(word || '').trim().slice(0, 80), lower = text.toLocaleLowerCase('de-DE'), hint = String(term || '').trim().slice(0, 80).toLocaleLowerCase('de-DE');
+  const controller = new AbortController(), abort = () => controller.abort();
+  signal?.addEventListener('abort', abort, { once: true }); if (signal?.aborted) abort();
+  const timer = setTimeout(abort, 15000);
+  const check = () => { if (controller.signal.aborted) throw new SourceError('Die Bildsuche wurde abgebrochen oder hat zu lange gedauert.'); };
+  async function search(query) {
+    check(); const cached = karaokeResults.get(query); if (cached) return cached;
+    let data;
+    try { data = await json(`https://api.arasaac.org/v1/pictograms/de/search/${encodeURIComponent(query)}`, undefined, controller.signal); }
+    catch (error) { if (error instanceof SourceError && error.status === 404) data = []; else throw error; }
+    const list = (Array.isArray(data) ? data : []).filter(item => Number.isInteger(item?._id));
+    if (karaokeResults.size > 3000) karaokeResults.delete(karaokeResults.keys().next().value);
+    karaokeResults.set(query, list); return list;
+  }
+  function result(picture, query) {
+    return { id: String(picture._id), title: query, thumb: `https://static.arasaac.org/pictograms/${picture._id}/${picture._id}_300.png`, full: `https://static.arasaac.org/pictograms/${picture._id}/${picture._id}_300.png`, credit: ARASAAC_CREDIT, pageUrl: `https://arasaac.org/pictograms/de/${picture._id}` };
+  }
+  try {
+    check();
+    if (hint) {
+      const list = await search(hint), match = rankPictures(list, hint, null)[0] || (hint !== lower ? list.find(picture => !picture.violence && !picture.sex) : null);
+      if (match) return result(match, hint);
+    }
+    if (!concreteWord(lower)) return null;
+    const noun = text === text.toLocaleUpperCase('de-DE') && text !== lower ? null : /^[A-ZÄÖÜ]/.test(text);
+    let variants;
+    if (/\s/.test(lower)) variants = [lower];
+    else { const vocabulary = await pictureVocabulary(); check(); const all = wordVariants(lower, noun); variants = vocabulary ? [...all.filter(candidate => vocabulary.has(candidate)), ...(noun === false ? [] : compoundVariants(lower, vocabulary))] : all.slice(0, 5); }
+    for (const candidate of variants.slice(0, 5)) {
+      check(); if (stopWords.has(candidate) || !concreteWord(candidate)) return null;
+      const picture = rankPictures(await search(candidate), candidate, noun)[0]; if (picture) return result(picture, candidate);
+    }
+    return null;
+  } finally { clearTimeout(timer); signal?.removeEventListener('abort', abort); }
 }

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { useDecorative } from '../Decorative';
 
 /** Microphone drawn inline (works in the HTML export without icon files). */
 export function MicGlyph() {
@@ -58,6 +59,14 @@ type KeyProps = {
 };
 /** Big round toy-like key with a short label below. */
 function Key({ colour, symbol, label, disabled, pressed, onClick }: KeyProps) {
+  // Only a picture of the key in thumbnails (no button inside a button).
+  if (useDecorative())
+    return (
+      <span className={`tape-key ${colour} ${pressed ? 'pressed' : ''}`}>
+        <span className="tape-key-cap" aria-hidden="true">{symbol}</span>
+        <span className="tape-key-label">{label}</span>
+      </span>
+    );
   return (
     <button
       type="button"
@@ -102,8 +111,11 @@ export function CassetteRecorder({
   interactive,
   onSave,
   onOpen,
+  capture,
 }: {
   title: string;
+  /** Record instrument audio, optionally mixed with the microphone. */
+  capture?: (microphone: boolean) => { stream: MediaStream; release: () => void } | Promise<{ stream: MediaStream; release: () => void }>;
   src?: string;
   interactive: boolean;
   /** Saves a recording made with the record key. */
@@ -118,8 +130,11 @@ export function CassetteRecorder({
   const [mode, setMode] = useState<'idle' | 'starting' | 'recording' | 'saving'>('idle');
   const [seconds, setSeconds] = useState(0);
   const [message, setMessage] = useState('');
+  const [microphone, setMicrophone] = useState(false);
+  const decorative = useDecorative();
   const recorder = useRef<{ stop: () => void; cancel: () => void } | null>(null);
-  useEffect(() => () => recorder.current?.cancel(), []);
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; recorder.current?.cancel(); }; }, []);
 
   const wind = (delta: number) => {
     const a = audio.current;
@@ -134,14 +149,18 @@ export function CassetteRecorder({
     setMessage('');
     setMode('starting');
     let stream: MediaStream;
+    let release: (() => void) | undefined;
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+      if (capture) { const source = await capture(microphone); stream = source.stream; release = source.release; }
+      else stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
     } catch {
       setMode('idle');
-      setMessage('Das Mikrofon ist nicht erlaubt.');
+      setMessage(!capture || microphone ? 'Die Aufnahme konnte nicht gestartet werden. Bitte den Mikrofonzugriff erlauben und erneut versuchen.' : 'Die Instrumentaufnahme konnte nicht gestartet werden.');
       return;
     }
-    const media = new MediaRecorder(stream);
+    if (!mounted.current) { release?.(); stream.getTracks().forEach(t => t.stop()); return; }
+    let media: MediaRecorder;
+    try { media = new MediaRecorder(stream); } catch { release?.(); stream.getTracks().forEach(t => t.stop()); setMode('idle'); setMessage('Dieser Browser unterstützt keine Audioaufnahme.'); return; }
     const chunks: Blob[] = [];
     const began = Date.now();
     const timer = setInterval(() => {
@@ -152,6 +171,7 @@ export function CassetteRecorder({
     let cancelled = false;
     const finish = () => {
       clearInterval(timer);
+      release?.();
       stream.getTracks().forEach((t) => t.stop());
     };
     media.ondataavailable = (e) => {
@@ -178,7 +198,7 @@ export function CassetteRecorder({
         else finish();
       },
     };
-    media.start(250);
+    try { media.start(250); } catch { finish(); recorder.current = null; setMode('idle'); setMessage('Die Aufnahme konnte nicht gestartet werden.'); return; }
     setSeconds(0);
     setMode('recording');
   }
@@ -188,7 +208,7 @@ export function CassetteRecorder({
   const status = recording
     ? `Aufnahme ${clock(seconds)}`
     : mode === 'starting'
-      ? 'Mikrofon startet …'
+      ? 'Aufnahme startet …'
       : mode === 'saving'
         ? 'Wird gespeichert …'
         : src
@@ -261,7 +281,11 @@ export function CassetteRecorder({
           />
           <Key colour="yellow" symbol={<Twin />} label="Vor" disabled={!src || recording} onClick={() => wind(5)} />
         </div>
-        <div className="tape-extras">
+        {!decorative && <div className="tape-extras">
+          {capture && <label className="tape-microphone" title="Mikrofon und Instrumente gemeinsam aufnehmen">
+            <input type="checkbox" checked={microphone} disabled={!interactive || recording || busy} onChange={event => setMicrophone(event.target.checked)} />
+            Mikrofon dazu
+          </label>}
           {onOpen && (
             <button type="button" className="tape-small" disabled={!interactive || recording || busy} onClick={onOpen}>
               Datei öffnen
@@ -272,7 +296,7 @@ export function CassetteRecorder({
               Speichern
             </a>
           ) : null}
-        </div>
+        </div>}
         {message && (
           <p className="tape-message" role="alert">
             {message}

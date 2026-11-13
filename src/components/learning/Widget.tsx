@@ -18,8 +18,10 @@ import MonsterReader from './MonsterReader';
 import SyllableJoin from './SyllableJoin';
 import AnlautKeyboard from './AnlautKeyboard';
 import ClapSyllables from './ClapSyllables';
+import MusicTemplate from './MusicTemplate';
 export default function Widget({ element }: { element: PageElement }) {
   const kind = element.widgetKind!;
+  if (element.settings?.musicTemplate) return <MusicTemplate element={element} />;
   if (kind === 'mathtool') return <MathTool element={element} />;
   if (kind === 'receipt') return <Receipt element={element} />;
   if (kind === 'geodraw') return <GeoDraw element={element} />;

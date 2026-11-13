@@ -18,7 +18,7 @@ export class SourceError extends Error {
 export function galleryOrigin(): string;
 export function fetchLimited(
   url: string,
-  options?: { headers?: Record<string, string>; max?: number },
+  options?: { headers?: Record<string, string>; max?: number; signal?: AbortSignal },
 ): Promise<{ buffer: Buffer; type: string }>;
 export function searchImages(
   source: string,
@@ -27,3 +27,5 @@ export function searchImages(
 ): Promise<{ items: ImageHit[]; page: number; more: boolean }>;
 export function allowedImageUrl(source: string, url: string): boolean;
 export function loadImage(source: string, url: string): Promise<{ buffer: Buffer; type: string }>;
+
+export function findKaraokeImage(word: string, term?: string, signal?: AbortSignal): Promise<ImageHit | null>;
