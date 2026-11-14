@@ -182,9 +182,8 @@ test('Formen, Bildgestaltung, Vorlagenkategorien, Zoom und Tastatur sind verfüg
   await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
   const learning = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
   await learning.getByRole('navigation', { name: 'Fächer' }).getByRole('button', { name: /^Unterstützte Kommunikation · \d+$/ }).click();
+  // A board of the reference: a page with six (still empty) keys and the sentence strip.
   await learning.getByRole('button', { name: '6 Felder', exact: true }).click();
-  await learning.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
-  await expect(
-    page.locator('.interaction-surface .communication-grid button'),
-  ).toHaveCount(6);
+  await expect(learning).toHaveCount(0);
+  await expect(page.locator('.interaction-surface .lh-talk-card')).toHaveCount(6);
 });

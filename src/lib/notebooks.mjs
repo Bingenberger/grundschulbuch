@@ -560,6 +560,8 @@ export async function addPage(owner, bookId, input, afterId) {
   await checkMedia(owner, page);
   return withLock(`heft-${id(bookId)}`, async () => {
     const book = await owned(owner, bookId);
+    // Pages that link to each other (communication book) keep their ids, if free.
+    if (typeof input?.id === 'string' && UUID.test(input.id) && !book.pageIds.includes(input.id)) page.id = input.id;
     if (book.pageIds.length >= 300)
       throw new BookError('Höchstens 300 Seiten pro Heft.');
     const index = afterId

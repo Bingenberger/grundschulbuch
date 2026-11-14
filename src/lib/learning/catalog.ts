@@ -59,6 +59,8 @@ export const widgetCatalog = {
   stundenplan: ['Bilder-Stundenplan', 'Schule'],
   kalenderblatt: ['Das sprechende Kalenderblatt', 'Schule'],
   karte: ['Karte', 'Schule'],
+  sprechtaste: ['Sprechtaste', 'Kommunikation'],
+  satzleiste: ['Satzleiste', 'Kommunikation'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -136,6 +138,8 @@ export type LearningSettings = {
   tt?: JsonValue;
   /** Karte der Vorlage (see learning/karte.ts): centre, zoom, design, markers, paths, picture. */
   map?: JsonValue;
+  /** Sprechtaste der Vorlage (see learning/uk.ts). */
+  talk?: JsonValue;
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';

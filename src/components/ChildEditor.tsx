@@ -119,6 +119,7 @@ export default function ChildEditor({
       const i = s.book?.pageIds.indexOf(id) ?? -1;
       return i < 0 ? undefined : i + 1;
     },
+    currentPage: () => page?.id,
   };
   const railActive: RailItem = selectedElements.length ? 'select' : panel ?? (s.tool === 'marker' ? 'pen' : s.tool);
   const stampActive = !!stamp && panel === 'insert';

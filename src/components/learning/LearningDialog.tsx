@@ -7,6 +7,7 @@ import MultiTimerOptions from './MultiTimerOptions';
 import ApplauseOptions from './ApplauseOptions';
 import TimetableOptions from './TimetableOptions';
 import MapOptions from './MapOptions';
+import TalkOptions from './TalkOptions';
 import { karte, pictureKey } from '@/lib/learning/karte';
 import { mapPicture } from '@/lib/reference/class-runtime';
 import { defaultTimetable, timetable } from '@/lib/learning/stundenplan';
@@ -82,7 +83,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -99,6 +100,9 @@ function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) 
   if (kind === 'mathtool') return pageSize(mathTool(settings));
   if (kind === 'zeit') return zeitSize(zeitConfig(settings.zeit));
   if (kind === 'phasen') return MULTI_TIMER_SIZE;
+  // Key and strip in the sizes of the reference's boards.
+  if (kind === 'sprechtaste') return { width: 50, height: 50 };
+  if (kind === 'satzleiste') return { width: 280, height: 32 };
   // The Schule templates of the reference: 1300 × 720 of 1400 page width.
   if (kind === 'ampel') return { width: 276, height: 153 };
   if (kind === 'placevalue' || kind === 'dienes') return { width: 220, height: 160 };
@@ -777,6 +781,7 @@ export default function LearningDialog({
             })()}
             {kind === 'zuordnung' && <ZuordnungOptions value={settings.dnd} title={settings.title || ''} onChange={(dnd) => patch({ dnd })} upload={media} busy={busy} />}
             {kind === 'zeit' && <TimeOptions value={settings.zeit} onChange={(zeit) => patch({ zeit })} />}
+            {kind === 'sprechtaste' && <TalkOptions value={settings.talk} onChange={(talk) => patch({ talk })} upload={media} busy={busy} />}
             {kind === 'karte' && <MapOptions value={settings.map} isNew={!element} onChange={(map) => patch({ map })} />}
             {kind === 'stundenplan' && <TimetableOptions value={settings.tt ?? (defaultTimetable() as unknown as JsonValue)} onChange={(tt) => patch({ tt })} upload={media} busy={busy} />}
             {kind === 'ampel' && <ApplauseOptions value={settings.applause} onChange={(applause) => patch({ applause })} />}

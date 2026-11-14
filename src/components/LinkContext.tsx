@@ -9,6 +9,8 @@ import type { ElementLink, PageElement } from '@/lib/notebook-model';
 export const LinkContext = createContext<{
   openPage?: (pageId: string) => void;
   pageNumber?: (pageId: string) => number | undefined;
+  /** The page shown now (for keys that go back to the board one came from). */
+  currentPage?: () => string | undefined;
 }>({});
 
 export function linkLabel(link: ElementLink, pageNumber?: (id: string) => number | undefined) {

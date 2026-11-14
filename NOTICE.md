@@ -18,7 +18,7 @@ ihre Urheber werden hier genannt.
     - Generatoren der einstellbaren Vorlagen: Buchstaben üben, Mathe-Aufgaben, Uhrzeiten üben, Rechnen mit Geld, Ziffern üben, Labyrinth, Noten lernen (`src/lib/sheets/reference-sheets.ts`).
     - Zeichnungen der Stickerbibliothek (`src/lib/sheets/letter-pictures.json`).
     - Laut- und Silbenaufnahmen (`public/laute/`, `src/lib/reference/recordings.json`).
-  - **Unverändert übernommen (Regal › Zeit):** Uhr, Timer, Datum, Multi-Timer, Lärmampel, Applausometer, Bilder-Stundenplan, Karte und Das sprechende Kalenderblatt mit seinen Zeichnungen (`public/kalender/`; `src/lib/reference/class-runtime.ts`, erzeugt von `scripts/extract-class-reference.mjs`); das Wetter kommt von Open-Meteo.com (Daten CC BY 4.0) über den Schulserver.
+  - **Unverändert übernommen (Regal › Zeit):** Uhr, Timer, Datum, Multi-Timer, Lärmampel, Applausometer, Bilder-Stundenplan, Karte, Sprechtaste, Satzleiste und die Kommunikationstafeln, Das sprechende Kalenderblatt mit seinen Zeichnungen (`public/kalender/`; `src/lib/reference/class-runtime.ts`, erzeugt von `scripts/extract-class-reference.mjs`); das Wetter kommt von Open-Meteo.com (Daten CC BY 4.0) über den Schulserver.
   - **Nachgebaut:** Gliederung und Abläufe weiterer Lernwerkzeuge, u. a. Einkaufen an der Kasse, Rechnen mit dem Taschenrechner und Mathe-Werkzeuge. Auch die Idee des digitalen Heftes stammt von hier.
 
 ### Textsachen – Lernsachen.blog
@@ -58,7 +58,8 @@ Dateiköpfen aus den veröffentlichten Apps gewonnen.
 - Lizenz: CC BY-NC-SA 4.0
 - Verwendet: Bilder der Anlaut-Tastatur (`public/anlaut/`), Anlaut- und
   Mengenbilder (`public/bilder/`), Geld und Waren der Kasse (`public/kasse/`),
-  Fächer des Bilder-Stundenplans (`public/stundenplan/`).
+  Fächer des Bilder-Stundenplans (`public/stundenplan/`), Kommunikationstafeln
+  (`public/uk/`).
   Bilder, die zur Laufzeit über die Bildsuche geladen werden, erhalten ihren
   Bildnachweis automatisch.
 

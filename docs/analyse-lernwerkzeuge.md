@@ -434,6 +434,24 @@ Zwischenspeicher; Nominatim höchstens einmal pro Sekunde); die Geräte sprechen
 OpenStreetMap nicht direkt an. Die frühere „Karte & Wege“ ist nicht mehr
 auswählbar.
 
+**Unterstützte Kommunikation (14.11.2026):** Wie in der Vorlage ist jede
+Sprechtaste ein eigenes Element (`TalkKey.tsx`, gezeichnet und ausgelöst vom
+Code der Vorlage): Bild und Wort in der Farbe der Wortart, spricht beim Antippen
+(oder spielt die eigene Aufnahme), legt ihr Wort in die Satzleiste derselben
+Seite; Tasten mit Link (Ordner-Ecke) und die Zurück-Taste blättern nach dem
+Sprechen zur Tafel. Die Satzleiste (`SentenceStrip.tsx`) liest den Satz vor,
+nimmt das letzte Wort zurück oder leert alles. Einzeln einfügbar: Sprechtaste
+(Einstellungen `TalkOptions.tsx`: Wort, Satz, Farbe, Bild über ARASAAC oder
+eigenes, eigene Aufnahme, ohne Wort, Zurück-Taste; Verknüpfung mit „Link“),
+Satzleiste, Zurück-Taste. Tafeln mit 2–20 Feldern, Satzleiste + 15 Felder, die
+zehn Themen-Tafeln und das Kommunikationsbuch (Startseite mit einer Taste je
+Tafel, jede Tafel mit Zurück-Taste) entstehen als Seiten aus solchen Tasten, mit
+dem Layout der Vorlage (`lib/learning/uk.ts`); die 121 ARASAAC-Bilder liegen in
+`public/uk/`. Damit die Links der Buchseiten gültig bleiben, behält der Server
+beim Einfügen eine mitgeschickte freie Seiten-ID. Die frühere eigene
+Kommunikationstafel ist nicht mehr auswählbar; vorhandene Seiten damit
+funktionieren weiter.
+
 **Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Musik und Für alle Fächer (fertig), Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).

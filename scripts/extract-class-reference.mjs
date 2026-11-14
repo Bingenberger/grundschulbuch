@@ -3,7 +3,9 @@
 // Lärmampel, Applausometer and the Bilder-Stundenplan (with the ARASAAC
 // pictures of its subjects, CC BY-NC-SA 4.0, saved to public/stundenplan/), and
 // Das sprechende Kalenderblatt (with its drawings, saved to public/kalender/),
-// and the Karte (tiles and address search through /api/karte).
+// the Karte (tiles and address search through /api/karte), and the keys,
+// sentence strip and boards of Unterstützte Kommunikation (with the ARASAAC
+// pictures of the boards, saved to public/uk/).
 // Individual top-level declarations are resolved like in
 // extract-music-reference.mjs, so no editor or application code comes along.
 //
@@ -44,7 +46,7 @@ if (!head.includes('.lh-wg-digits') || !head.includes('.lh-wg-timer.is-ringing')
 
 code += `
 ${classTime}
-var CLASS_CSS = ${head}\` + Ra + Sne + Kne + lce;
+var CLASS_CSS = ${head}\` + Ra + Sne + Kne + lce + Ece;
 /* Tapping a widget (Xle of the reference, the cases of Regal › Zeit). */
 function classTap(e, t) {
   if (e.kind === \`timer\`) { Vr(); pi(); }
@@ -110,6 +112,7 @@ const aliases = {
   YT: 'renderCalendar', sce: 'tapCalendar', cce: 'calendarLabel', eE: 'restartCalendar',
   Aw: 'renderMap', jw: 'mapLabel', gse: 'mapConfig', uw: 'mapStart', QC: 'mapDesign', ZC: 'MAP_DESIGNS', GC: 'MAP_SYMBOLS', JC: 'mapSymbol', zC: 'PATH_KINDS', BC: 'PATH_COLORS',
   rw: 'mapTiles', $C: 'toWorld', ew: 'fromWorld', tw: 'toView', nw: 'fromView', yw: 'mapMarks', vw: 'labelBoxes', ow: 'distanceText', aw: 'pathLength', iw: 'distance', U6: 'mapPicture', lDe: 'searchAddress', WC: 'tileUrl', VC: 'MAP_W', HC: 'MAP_DATA', UC: 'MAP_CREDIT',
+  yce: 'renderTalk', Sce: 'tapTalk', pE: 'renderStrip', Tce: 'tapStrip', Cce: 'addToStrip', wce: 'clearStrip', kk: 'TALK_BOARDS', Ak: 'TALK_BACK', jk: 'TALK_GRIDS', Ok: 'WORD_CLASSES', pue: 'TALK_BOOK_ICONS', Ik: 'talkLayout', Rk: 'bookCells', Nk: 'STRIP_BOX',
   CLASS_CSS: 'CLASS_CSS',
 };
 let runtime = extract(Object.keys(aliases));
@@ -172,3 +175,16 @@ for (const [name, pic] of Object.entries(JSON.parse(calendar[1]))) {
 }
 await fs.writeFile('src/lib/reference/calendar-pictures.json', JSON.stringify(sizes, null, 1) + '\n');
 console.log('Calendar pictures:', Object.keys(sizes).length);
+
+// The pictures of the communication boards (pack “talk-pictos”: ARASAAC id → WebP).
+const talk = html.match(/<script type="text\/plain" id="lh-pack-talk-pictos">([^<]*)<\/script>/);
+if (!talk) throw Error('Picture pack talk-pictos not found.');
+await fs.mkdir('public/uk', { recursive: true });
+let talkPictures = 0;
+for (const [id, url] of Object.entries(JSON.parse(talk[1]))) {
+  const m = /^data:image\/webp;base64,([A-Za-z0-9+/=]+)$/.exec(url);
+  if (!/^\d+$/.test(id) || !m) throw Error('Unexpected picture ' + id);
+  await fs.writeFile(`public/uk/${id}.webp`, Buffer.from(m[1], 'base64'));
+  talkPictures++;
+}
+console.log('Communication pictures:', talkPictures);

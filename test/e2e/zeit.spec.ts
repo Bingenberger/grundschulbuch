@@ -163,6 +163,41 @@ test('Karte nur über den Schulserver und nur angemeldet', async ({ page }) => {
   expect((await page.request.get('/api/karte?suche=R')).status()).toBe(400);
 });
 
+test('Unterstützte Kommunikation: Tafel mit Satzleiste und Kommunikationsbuch mit Zurück-Taste', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'UK', pages: [newPage('blanko', 'landscape')] } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  const open = async (title: string) => {
+    await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
+    await dialog.getByRole('navigation', { name: 'Fächer' }).getByRole('button', { name: /^Unterstützte Kommunikation · / }).click();
+    await dialog.getByRole('button', { name: title, exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+  };
+  // Eine Themen-Tafel: Tasten mit Bild und Wort, darüber die Satzleiste.
+  await open('Erste Wörter');
+  const surface = page.locator('.interaction-surface');
+  await expect(surface.locator('.lh-talk-card')).toHaveCount(6);
+  await surface.getByRole('button', { name: 'Ja.', exact: true }).click();
+  await surface.getByRole('button', { name: 'Mehr, bitte.', exact: true }).click();
+  await expect(surface.locator('.lh-wg-strip')).toContainText('Ja');
+  await expect(surface.locator('.lh-wg-strip')).toContainText('Mehr');
+  await page.screenshot({ path: test.info().outputPath('uk-tafel.png') });
+  // Das Kommunikationsbuch: Tafel öffnen und mit der Zurück-Taste zurück.
+  await open('Kommunikationsbuch mit allen Tafeln');
+  // The book comes after the board: its first page has a key for each board.
+  await page.getByLabel('Seite 2 öffnen', { exact: true }).click();
+  await expect(surface.locator('.lh-talk.is-folder')).toHaveCount(10);
+  await surface.locator('.lh-talk.is-folder').filter({ hasText: 'Gefühle' }).locator('.lh-talk-card').click();
+  await expect(surface.locator('.lh-talk-card').filter({ hasText: 'zurück' })).toHaveCount(1, { timeout: 10000 });
+  await page.screenshot({ path: test.info().outputPath('uk-gefuehle.png') });
+  await surface.locator('.lh-talk-card').filter({ hasText: 'zurück' }).click();
+  await expect(surface.locator('.lh-talk.is-folder')).toHaveCount(10, { timeout: 10000 });
+  expect(errors).toEqual([]);
+});
+
 test('Wetter nur über den Schulserver und nur angemeldet', async ({ page }) => {
   expect((await page.request.get('/api/wetter?art=ort&name=Regensburg')).status()).toBe(401);
   await login(page);

@@ -5019,3 +5019,6 @@ input[type='checkbox'] {
 .map-sym.is-active { border-color: #4054d6; }
 .map-color { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #cbd5e1; cursor: pointer; }
 .map-color[aria-checked="true"] { box-shadow: 0 0 0 3px #1f2937; }
+
+/* Sprechtaste and Satzleiste of the reference (Unterstützte Kommunikation). */
+.talk-key { position: relative; width: 100%; height: 100%; }

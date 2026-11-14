@@ -43,7 +43,8 @@ test('Lernwerkzeuge nach Fächern, Vorlagen nur gestalterisch, einstellbare Arbe
   await subjects.getByRole('button', { name: /^Unterstützte Kommunikation · / }).click();
   await dialog.getByRole('button', { name: 'Kommunikationsbuch mit allen Tafeln', exact: true }).click();
   await expect(dialog).toHaveCount(0);
-  await expect(page.locator('.page-thumbnail')).toHaveCount(11);
+  // A first page with a key for each board, then the ten boards.
+  await expect(page.locator('.page-thumbnail')).toHaveCount(12);
 
   // Templates: design only, plus the settable worksheets.
   await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Neue Seite', exact: true }).click();
@@ -64,6 +65,6 @@ test('Lernwerkzeuge nach Fächern, Vorlagen nur gestalterisch, einstellbare Arbe
   await page.screenshot({ path: test.info().outputPath('uhrzeiten-dialog.png') });
   await clock.getByRole('button', { name: '1 Seite einfügen' }).click();
   await expect(clock).toHaveCount(0, { timeout: 20000 });
-  await expect(page.locator('.page-thumbnail')).toHaveCount(12);
+  await expect(page.locator('.page-thumbnail')).toHaveCount(13);
   await page.screenshot({ path: test.info().outputPath('uhrzeiten-seite.png') });
 });

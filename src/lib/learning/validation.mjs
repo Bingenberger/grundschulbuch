@@ -46,6 +46,8 @@ export const WIDGET_KINDS = [
   'stundenplan',
   'kalenderblatt',
   'karte',
+  'sprechtaste',
+  'satzleiste',
   'shop',
   'geometry',
   'monster',

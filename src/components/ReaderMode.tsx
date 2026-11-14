@@ -265,6 +265,7 @@ export default function ReaderMode({
                       const i = pages.findIndex((p) => p.id === id);
                       return i < 0 ? undefined : i + 1;
                     },
+                    currentPage: () => page.id,
                   }}
                 >
                   <PageView page={page} />

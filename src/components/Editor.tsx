@@ -1,4 +1,5 @@
 'use client';
+import { relink } from '@/lib/learning/uk';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useEditor, flushEditor } from '@/lib/editor-store';
 import { api } from '@/lib/client-api';
@@ -176,6 +177,7 @@ export default function Editor({
       const i = useEditor.getState().book?.pageIds.indexOf(id) ?? -1;
       return i < 0 ? undefined : i + 1;
     },
+    currentPage: () => page?.id,
   };
   const railActive: RailItem = selected.length
     ? 'select'
@@ -1468,6 +1470,8 @@ export default function Editor({
             void run(async () => {
               // A notebook with just one empty page gets the first page right there.
               if (s.pages.length === 1 && !page.elements.length) {
+                // Links to the first page (e.g. back keys of the communication book) go to this page.
+                pages = relink(pages, pages[0].id, page.id);
                 s.edit(() => ({ ...pages[0], id: page.id, revision: page.revision }));
                 for (const extra of pages.slice(1)) await add(extra);
               } else for (const p of pages) await add(p);

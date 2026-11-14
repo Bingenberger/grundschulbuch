@@ -10,6 +10,8 @@ import { defaultTs } from './textsachen';
 import { defaultDnd } from './zuordnung';
 import { defaultQuiz } from './quiz';
 import { defaultZeit } from './zeit';
+import { BOARDS, bookPages, boardPages, GRIDS, picto } from './uk';
+import { TALK_BACK } from '../reference/class-runtime';
 import type { MathToolKind } from './mathtool';
 import { geoConfig } from './geodraw';
 import { musicPresets, musicKind, musicSettings, musicPage } from './music';
@@ -32,7 +34,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -137,6 +139,9 @@ const SKIP = new Set([
   // Replaced by the map of the reference.
   'widget-map',
   'widget-karte',
+  // Offered as Sprechtaste, Satzleiste and Zurück-Taste below.
+  'widget-sprechtaste',
+  'widget-satzleiste',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -194,6 +199,8 @@ function title(meta: Blueprint) {
 
 function fromBlueprint(meta: Blueprint): LearningBlock | null {
   if (SKIP.has(meta.id)) return null;
+  // Replaced by the keys, boards and book of the reference (see below); existing pages keep working.
+  if (meta.widget === 'communication' || meta.layout === 'communication-book') return null;
   if (meta.layout === 'communication-book')
     return {
       id: meta.id,
@@ -339,6 +346,17 @@ for (const [id, mode, title, words] of [
   ['ampel-applause', 'applause', 'Applausometer', 'Applausometer Applaus klatschen jubeln messen Mikrofon laut'],
 ] as const)
   toolBlocks.push({ id, title, subject: 'Klassenführung', type: 'widget', kind: 'ampel', preset: { ...defaultSettings('ampel'), applause: (mode === 'noise' ? { mode, secs: 5, sens: 3, limit: 3, chime: false } : { mode }) as JsonValue, title }, words });
+// Unterstützte Kommunikation as in the reference: single keys, the sentence
+// strip, the back key, boards with 2 to 20 fields, theme boards and the book.
+const back = TALK_BACK as [string, number, string];
+toolBlocks.push(
+  { id: 'uk-key', title: 'Sprechtaste', subject: 'Unterstützte Kommunikation', type: 'widget', kind: 'sprechtaste', preset: { ...defaultSettings('sprechtaste'), title: 'Sprechtaste', talk: { label: '', color: '#ffffff' } }, words: 'Sprechtaste Taste Bild Wort sprechen UK Talker' },
+  { id: 'uk-strip', title: 'Satzleiste', subject: 'Unterstützte Kommunikation', type: 'widget', kind: 'satzleiste', preset: { ...defaultSettings('satzleiste'), title: 'Satzleiste' }, direct: true, words: 'Satzleiste Satz Wörter sammeln vorlesen UK' },
+  { id: 'uk-back', title: 'Zurück-Taste', subject: 'Unterstützte Kommunikation', type: 'widget', kind: 'sprechtaste', preset: { ...defaultSettings('sprechtaste'), title: 'Zurück-Taste', talk: { label: back[0], color: '#f1f3f5', img: picto(back[1]), back: true } }, direct: true, words: 'Zurück Taste Tafel zurück UK' },
+  ...GRIDS.map((g): LearningBlock => ({ id: `uk-${g.id}`, title: g.label, subject: 'Unterstützte Kommunikation', type: 'widget', kind: 'sprechtaste', pages: () => boardPages(g.id), words: `${g.label} Kommunikationstafel Tafel Felder UK` })),
+  ...BOARDS.map((b): LearningBlock => ({ id: `uk-${b.id}`, title: b.label, subject: 'Unterstützte Kommunikation', type: 'widget', kind: 'sprechtaste', pages: () => boardPages(b.id), words: `${b.label} ${b.keywords ?? ''} Kommunikationstafel Tafel UK` })),
+  { id: 'uk-book', title: 'Kommunikationsbuch mit allen Tafeln', subject: 'Unterstützte Kommunikation', type: 'widget', kind: 'sprechtaste', pages: () => bookPages(), words: 'Kommunikationsbuch alle Tafeln UK Buch' },
+);
 toolBlocks.push({ id: 'karte', title: 'Karte', subject: 'Sachunterricht', type: 'widget', kind: 'karte', preset: { ...defaultSettings('karte'), title: 'Meine Karte' }, words: 'Karte Stadtplan Ort Schulweg Weg Markierung Entfernung messen OpenStreetMap Heimatort' });
 toolBlocks.push({ id: 'kalenderblatt', title: 'Das sprechende Kalenderblatt', subject: 'Sachunterricht', type: 'widget', kind: 'kalenderblatt', preset: { ...defaultSettings('kalenderblatt'), title: 'Das sprechende Kalenderblatt' }, pages: () => fullPageWidget('kalenderblatt', { ...defaultSettings('kalenderblatt'), title: 'Das sprechende Kalenderblatt' }), words: 'Kalender Kalenderblatt Datum Wochentag Monat Jahr Jahreszeit Morgenkreis heute sprechen' });
 toolBlocks.push({ id: 'stundenplan', title: 'Bilder-Stundenplan', subject: 'Klassenführung', type: 'widget', kind: 'stundenplan', preset: { ...defaultSettings('stundenplan'), title: 'Bilder-Stundenplan' }, words: 'Stundenplan Bilder Fächer Woche Pausen Nach der Schule Tagesablauf Piktogramme' });

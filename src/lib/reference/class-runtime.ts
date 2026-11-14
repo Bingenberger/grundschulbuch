@@ -2534,9 +2534,180 @@ var lce = `
 @keyframes lh-cal-breathe{50%{transform:scale(1.05)}}
 @keyframes lh-cal-pop{from{transform:scale(.4);opacity:0}}
 `;
+var tE = (e17) => `${Math.round(e17 * 100) / 100}px`;
+var uce = (e17, t10, n10, r10) => {
+  let i10 = Math.min(e17 / n10, t10 / r10);
+  return { x: (e17 - n10 * i10) / 2, y: (t10 - r10 * i10) / 2, w: n10 * i10, h: r10 * i10 };
+};
+var dce = (e17) => `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(e17);
+var nE = (e17, t10, n10, r10) => {
+  let i10 = Math.max(8, Math.round(t10)), a10 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${i10}" height="${i10}" fill="none" stroke="${n10}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${e17.replace(/currentColor/g, n10)}</svg>`, o10 = document.createElement(`img`);
+  return o10.alt = ``, o10.draggable = false, o10.src = r10.stickerUrl ? r10.stickerUrl(a10) : dce(a10), o10.style.width = o10.style.height = tE(i10), o10;
+};
+var fce = `<path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>`;
+var pce = `<path d="M21 5H9l-6 7 6 7h12z"/><path d="m17 9-6 6M11 9l6 6"/>`;
+var mce = `<path d="M18 6 6 18M6 6l12 12"/>`;
+var hce = `<path d="M12 5v14M5 12h14"/>`;
+var gce = `<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>`;
+var _ce = `<path d="M5 12h14M13 6l6 6-6 6"/>`;
+var vce = `<path d="M19 12H5M11 6l-6 6 6 6"/>`;
+function yce(e17, t10, n10) {
+  t10.classList.add(`lh-talk`);
+  let r10 = Math.min(e17.w, e17.h), i10 = document.createElement(n10.interactive ? `button` : `div`);
+  i10.className = `lh-talk-card`, i10 instanceof HTMLButtonElement && (i10.type = `button`, i10.setAttribute(`aria-label`, e17.say || e17.label || `Leere Taste`)), i10.style.background = e17.color || `#ffffff`, i10.style.borderWidth = tE(Math.max(2, r10 * 0.022)), i10.style.borderRadius = tE(r10 * 0.12), t10.appendChild(i10);
+  let a10 = e17.asset ? n10.assets[e17.asset] : void 0, o10 = e17.noLabel ? `` : e17.label;
+  if (!a10 && !e17.label) {
+    if (t10.classList.add(`is-placeholder`), n10.placeholders) {
+      let e18 = document.createElement(`div`);
+      e18.className = `lh-talk-ph`, e18.style.fontSize = tE(Math.max(12, Math.min(28, r10 * 0.12))), e18.appendChild(nE(hce, r10 * 0.28, `#64748b`, n10));
+      let t11 = document.createElement(`span`);
+      t11.textContent = `Bild und Wort`, e18.appendChild(t11), i10.appendChild(e18);
+    }
+    return;
+  }
+  let s10 = r10 * 0.07, c10 = o10 ? a10 ? Math.max(18, e17.h * 0.24) : e17.h - 2 * s10 : 0;
+  if (a10) {
+    let t11 = { w: e17.w - 2 * s10, h: e17.h - 2 * s10 - (o10 ? c10 : 0) }, r11 = uce(t11.w, t11.h, a10.width || t11.w, a10.height || t11.h), l10 = document.createElement(`img`);
+    l10.className = `lh-talk-pic`, l10.alt = ``, l10.draggable = false, l10.src = n10.assetUrl ? n10.assetUrl(a10) : a10.dataUrl, l10.style.left = tE(s10 + r11.x), l10.style.top = tE(s10 + r11.y), l10.style.width = tE(r11.w), l10.style.height = tE(r11.h), i10.appendChild(l10);
+  }
+  if (o10) {
+    let t11 = document.createElement(`div`);
+    t11.className = `lh-talk-label`, t11.style.fontFamily = Ve(`andika`), t11.style.top = tE(a10 ? e17.h - s10 * 0.6 - c10 : s10), t11.style.height = tE(c10);
+    let n11 = Math.min(c10 * (a10 ? 0.62 : 0.34), e17.w * 0.15), r11 = e17.w * 0.9, l10 = Math.min(n11, r11 / Math.max(3, o10.length * 0.56)), u10 = [...o10.matchAll(/ (?![…?!.])/g)].map((e18) => e18.index).sort((e18, t12) => Math.abs(e18 - o10.length / 2) - Math.abs(t12 - o10.length / 2))[0], d10 = u10 === void 0 ? null : [o10.slice(0, u10), o10.slice(u10 + 1)], f10 = d10 ? Math.min(n11, r11 / Math.max(3, Math.max(...d10.map((e18) => e18.length)) * 0.56), c10 * 0.92 / 2.1) : 0, p10 = !!d10 && f10 > l10 * 1.12;
+    t11.style.fontSize = tE(Math.max(10, p10 ? f10 : l10)), p10 && d10 ? (t11.classList.add(`is-wrap`), t11.append(d10[0], document.createElement(`br`), d10[1])) : t11.textContent = o10, i10.appendChild(t11);
+  }
+  if (e17.sound) {
+    let e18 = document.createElement(`span`);
+    e18.className = `lh-talk-snd`;
+    let t11 = Math.max(16, r10 * 0.14);
+    e18.style.width = e18.style.height = tE(t11), e18.style.right = e18.style.top = tE(r10 * 0.04), e18.appendChild(nE(gce, t11 * 0.6, `#fff`, n10)), i10.appendChild(e18);
+  }
+  if (e17.back || e17.link) {
+    t10.classList.add(`is-folder`);
+    let a11 = document.createElement(`span`);
+    a11.className = `lh-talk-go`;
+    let o11 = Math.max(18, r10 * 0.17);
+    a11.style.width = a11.style.height = tE(o11), a11.style.left = a11.style.top = tE(r10 * 0.04), a11.appendChild(nE(e17.back ? vce : _ce, o11 * 0.62, `#fff`, n10)), i10.appendChild(a11);
+  }
+}
+var rE = [];
+var iE = 0;
+var bce = (e17) => new Promise((t10) => window.setTimeout(t10, e17));
+function xce(e17, t10) {
+  if (e17.back) {
+    let n10 = rE.pop() ?? e17.link?.page;
+    n10 ? t10.go(n10) : t10.previous();
+  } else e17.link?.page ? (rE.push(t10.current()), rE.length > 50 && rE.shift(), t10.go(e17.link.page)) : e17.link?.url && window.open(e17.link.url, `_blank`, `noopener`);
+}
+var aE = null;
+var oE = null;
+function Sce(e17, t10, n10, r10) {
+  let i10 = e17.sound ? n10[e17.sound] : void 0, a10 = i10 && typeof Audio < `u` ? Fr(`talk`, () => oE?.stop()) : null;
+  dc(), oE?.stop(), oE = null, t10 && (t10.classList.remove(`is-pressed`), t10.offsetWidth, t10.classList.add(`is-pressed`), window.setTimeout(() => t10.classList.remove(`is-pressed`), 260));
+  let o10 = Promise.resolve();
+  if (i10 && a10) aE ??= new Audio(), o10 = new Promise((e18) => {
+    let t11 = oE = Xr(aE, i10.dataUrl, { onEnd: () => {
+      oE === t11 && (oE = null), a10.release(), e18();
+    } });
+  });
+  else {
+    let t11 = (e17.say || e17.label).trim();
+    t11 && (o10 = lc(t11));
+  }
+  if (e17.back || e17.link) {
+    if (!r10) return;
+    let t11 = ++iE;
+    Promise.race([o10, bce(2500)]).then(() => t11 === iE && xce(e17, r10));
+    return;
+  }
+  let s10 = (e17.label || e17.say || ``).trim();
+  if (!t10 || !s10) return;
+  let c10 = t10.querySelector(`img.lh-talk-pic`)?.src;
+  t10.parentElement?.querySelector(`.lh-wg-strip[data-strip-id]`) && Cce({ word: s10, pic: c10 });
+}
 var sE = { entries: [], v: 0 };
 var cE = (e17) => sE;
+var lE = /* @__PURE__ */ new WeakMap();
+var uE = /* @__PURE__ */ new WeakMap();
+function Cce(e17) {
+  sE.entries = [...sE.entries, e17].slice(-30), sE.v++, dE();
+}
+function dE(e17) {
+  document.querySelectorAll(`.lh-wg-strip[data-strip-id]`).forEach((e18) => {
+    let t10 = lE.get(e18);
+    t10 && (delete e18.dataset.k, pE(e18, t10, true, {}));
+  });
+}
+function fE(e17, t10, n10, r10, i10, a10, o10, s10, c10, l10) {
+  let u10 = document.createElement(`div`);
+  return u10.className = `lh-strip-btn ${e17}`, u10.setAttribute(`data-strip`, t10), u10.setAttribute(`role`, `button`), u10.setAttribute(`aria-label`, n10), u10.style.left = tE(r10), u10.style.top = tE((a10 - i10) / 2), u10.style.width = u10.style.height = tE(i10), u10.style.background = c10, u10.appendChild(nE(o10, i10 * 0.5, s10, l10)), u10;
+}
+function pE(e17, t10, n10, r10) {
+  r10.stickerUrl && uE.set(e17, r10);
+  let i10 = r10.stickerUrl ? r10 : uE.get(e17) ?? r10, a10 = n10 ? cE(t10.id) : { entries: [], v: 0 }, o10 = `${n10}|${a10.v}|${t10.w}x${t10.h}`;
+  if (e17.dataset.k === o10) return;
+  e17.dataset.k = o10, n10 && (e17.dataset.stripId = t10.id, lE.set(e17, t10));
+  let s10 = t10.h, c10 = document.createElement(`div`);
+  c10.className = `lh-strip`, c10.style.borderRadius = tE(Math.min(28, s10 * 0.2)), c10.style.borderWidth = tE(Math.max(2, s10 * 0.025));
+  let l10 = s10 * 0.62, u10 = s10 * 0.12, d10 = 3 * l10 + 4 * u10, f10 = document.createElement(`div`);
+  f10.className = `lh-strip-words`, f10.setAttribute(`data-strip`, `speak`), f10.style.left = tE(u10), f10.style.top = tE(s10 * 0.08), f10.style.width = tE(Math.max(10, t10.w - d10 - u10)), f10.style.height = tE(s10 * 0.84), c10.appendChild(f10);
+  let p10 = s10 * 0.84, m10 = Math.max(1, Math.floor((t10.w - d10 - u10) / (p10 + u10 * 0.5))), h10 = a10.entries.slice(-m10);
+  if (!h10.length) {
+    let e18 = document.createElement(`span`);
+    e18.className = `lh-strip-hint`, e18.style.fontSize = tE(Math.max(12, s10 * 0.2)), e18.style.fontFamily = Ve(`andika`), e18.textContent = `Tippe auf die Bilder \u2013 hier entsteht dein Satz.`, f10.appendChild(e18);
+  }
+  h10.forEach((e18, t11) => {
+    let n11 = document.createElement(`div`);
+    if (n11.className = `lh-strip-word`, n11.style.left = tE(t11 * (p10 + u10 * 0.5)), n11.style.width = tE(p10), n11.style.height = tE(s10 * 0.84), e18.pic) {
+      let t12 = document.createElement(`img`);
+      t12.alt = ``, t12.draggable = false, t12.src = e18.pic, t12.style.left = tE(p10 * 0.12), t12.style.top = tE(s10 * 0.03), t12.style.width = tE(p10 * 0.76), t12.style.height = tE(s10 * 0.84 * 0.62), n11.appendChild(t12);
+    }
+    let r11 = document.createElement(`span`);
+    r11.className = `lh-strip-label`, r11.style.fontFamily = Ve(`andika`), r11.style.fontSize = tE(Math.max(9, Math.min(s10 * 0.16, p10 * 0.95 / Math.max(3, e18.word.length * 0.55)))), r11.style.top = tE(e18.pic ? s10 * 0.84 * 0.66 : 0), r11.style.height = tE(e18.pic ? s10 * 0.84 * 0.32 : s10 * 0.84), r11.textContent = e18.word, n11.appendChild(r11), f10.appendChild(n11);
+  });
+  let g10 = t10.w - d10 + u10;
+  c10.appendChild(fE(`is-speak`, `speak`, `Satz vorlesen`, g10, l10, s10, fce, `#fff`, `#16a34a`, i10)), g10 += l10 + u10, c10.appendChild(fE(`is-back`, `back`, `Letztes Wort l\xF6schen`, g10, l10, s10, pce, `#1f2937`, `#f1f5f9`, i10)), g10 += l10 + u10, c10.appendChild(fE(`is-clear`, `clear`, `Satz l\xF6schen`, g10, l10, s10, mce, `#b91c1c`, `#fee2e2`, i10)), e17.replaceChildren(c10), e17.setAttribute(`aria-label`, a10.entries.length ? `Satzleiste: ${a10.entries.map((e18) => e18.word).join(` `)}` : `Satzleiste, leer`);
+}
+function wce(e17) {
+  let t10 = cE(e17);
+  t10.entries = [], t10.v++, dE(e17);
+}
 var mE = (e17) => cE(e17).entries.map((e18) => e18.word).join(` `);
+function Tce(e17, t10, n10) {
+  let r10 = n10?.closest(`[data-strip]`)?.dataset.strip ?? `speak`, i10 = cE(e17.id);
+  if (r10 === `back` || r10 === `clear`) {
+    dc(), i10.entries = r10 === `back` ? i10.entries.slice(0, -1) : [], i10.v++, dE(e17.id);
+    return;
+  }
+  let a10 = mE(e17.id);
+  a10 && lc(a10, void 0, { onVoice: () => t10?.classList.add(`is-reading`) }).then(() => t10?.classList.remove(`is-reading`));
+}
+var Ece = `
+.lh-talk{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.lh-page:not(.lh-edit) .lh-talk{touch-action:pinch-zoom}
+.lh-talk-card{position:absolute;left:0;top:0;width:100%;height:100%;display:block;border-style:solid;border-color:#334155;overflow:hidden;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 3px 8px rgba(15,23,42,.12);transition:transform .08s,box-shadow .08s}
+.lh-talk.is-pressed .lh-talk-card{transform:scale(.94);box-shadow:0 0 0 6px rgba(250,204,21,.75)}
+.lh-talk-pic{position:absolute;display:block;max-width:none;pointer-events:none;-webkit-user-select:none;user-select:none}
+.lh-talk-label{position:absolute;left:4%;right:4%;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;line-height:1.05;color:#1f2937;overflow:hidden;white-space:nowrap;pointer-events:none}
+.lh-talk-label.is-wrap{flex-direction:column}
+.lh-talk.is-placeholder .lh-talk-card{border-style:dashed;border-color:#94a3b8;box-shadow:none}
+.lh-talk-ph{position:absolute;left:0;top:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3em;color:#64748b;font-family:"Nunito",system-ui,sans-serif;font-weight:700;pointer-events:none}
+.lh-talk-ph img{display:block}
+.lh-talk-snd{position:absolute;border-radius:50%;background:#7c3aed;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.lh-talk-go{position:absolute;border-radius:50%;background:#1f2937;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.lh-talk-go img{display:block}
+.lh-talk.is-folder .lh-talk-card{box-shadow:4px 4px 0 rgba(51,65,85,.35),0 3px 8px rgba(15,23,42,.12)}
+.lh-talk-snd img{display:block}
+.lh-strip{position:absolute;left:0;top:0;width:100%;height:100%;background:#fff;border-style:solid;border-color:#334155;box-shadow:0 4px 12px rgba(15,23,42,.12);overflow:hidden}
+.lh-strip > div{position:absolute}
+.lh-strip-words{overflow:hidden;cursor:pointer}
+.lh-strip-word{position:absolute;top:0}
+.lh-strip-word img{position:absolute;display:block;object-fit:contain}
+.lh-strip-label{position:absolute;left:0;width:100%;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;color:#1f2937;white-space:nowrap;overflow:hidden}
+.lh-strip-hint{position:absolute;left:0;top:0;height:100%;display:flex;align-items:center;color:#94a3b8;font-weight:700;white-space:nowrap}
+.lh-strip-btn{border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 6px rgba(15,23,42,.18)}
+.lh-strip-btn img{display:block}
+`;
 var ble = (e17) => `Sequenzer mit ${(e17.seq?.tracks ?? []).map((t10) => $c(t10, e17.seq?.key) || (t10.drum ? Fo[t10.drum] : ``)).join(`, `)}.`;
 var WD = (e17) => e17 ? e17.label?.trim() || e17.url.replace(/^https?:\/\//i, ``).replace(/\/$/, ``) : ``;
 var qD = [`2/4`, `3/4`, `4/4`, `5/4`, `6/8`];
@@ -2777,6 +2948,38 @@ function VO(e17, t10, n10, r10, i10) {
   let a10 = document.createElement(`img`);
   return a10.className = `lh-wg-pic`, a10.alt = ``, a10.draggable = false, a10.src = n10.stickerUrl ? n10.stickerUrl(e17) : mO(e17), a10.style.width = gO(r10), a10.style.height = gO(i10), a10;
 }
+function YO(e17 = ``) {
+  let t10 = crypto.getRandomValues(new Uint32Array(2));
+  return e17 + t10[0].toString(36) + t10[1].toString(36);
+}
+function Ek(e17) {
+  return { id: YO(`wg`), type: `widget`, ...e17, rot: e17.rot ?? 0 };
+}
+function Dk(e17) {
+  return { id: YO(`tk`), type: `talk`, label: ``, color: `#ffffff`, ...e17, rot: e17.rot ?? 0 };
+}
+var Ok = { P: { label: `Personen`, color: `#fff3bf` }, V: { label: `Tun-W\xF6rter`, color: `#d3f9d8` }, A: { label: `Wie-W\xF6rter`, color: `#d0ebff` }, N: { label: `Dinge, Orte`, color: `#ffe8cc` }, S: { label: `Soziales`, color: `#ffdeeb` }, F: { label: `Fragen`, color: `#e5dbff` }, K: { label: `Kleine W\xF6rter`, color: `#f1f3f5` }, W: { label: `Wei\xDF`, color: `#ffffff` } };
+var kk = [{ id: `talk-basis`, label: `Erste W\xF6rter`, keywords: `basal basis ja nein mehr fertig stopp hilfe erste w\xF6rter`, cols: 3, rows: 2, cells: [[`Ja`, 5584, `S`, `Ja.`], [`Nein`, 5526, `S`, `Nein.`], [`Mehr`, 5508, `K`, `Mehr, bitte.`], [`Fertig`, 28429, `V`, `Ich bin fertig.`], [`Stopp`, 7196, `S`, `Stopp!`], [`Hilfe`, 32648, `V`, `Hilf mir bitte.`]] }, { id: `talk-brauche`, label: `Ich brauche \u2026`, keywords: `bed\xFCrfnisse pers\xF6nlich brauche toilette trinken essen pause hilfe schmerzen m\xFCde kalt warm`, cols: 4, rows: 3, cells: [[`Toilette`, 5921, `N`, `Ich muss auf die Toilette.`], [`trinken`, 6061, `V`, `Ich m\xF6chte etwas trinken.`], [`essen`, 6456, `V`, `Ich m\xF6chte etwas essen.`], [`Pause`, 24503, `N`, `Ich brauche eine Pause.`], [`Hilfe`, 32648, `V`, `Ich brauche Hilfe.`], [`Schmerzen`, 2367, `N`, `Mir tut etwas weh.`], [`m\xFCde`, 35537, `A`, `Ich bin m\xFCde.`], [`kalt`, 35583, `A`, `Mir ist kalt.`], [`warm`, 35721, `A`, `Mir ist warm.`], [`Ruhe`, 5936, `N`, `Ich brauche Ruhe.`], [`Taschentuch`, 17284, `N`, `Ich brauche ein Taschentuch.`], [`kuscheln`, 6023, `V`, `Ich m\xF6chte kuscheln.`]] }, { id: `talk-gefuehle`, label: `Gef\xFChle`, keywords: `gef\xFChle gef\xFChl fr\xF6hlich traurig w\xFCtend angst krank gut schlecht emotionen wie geht es dir`, cols: 4, rows: 3, cells: [[`fr\xF6hlich`, 35547, `A`, `Ich bin fr\xF6hlich.`], [`traurig`, 35545, `A`, `Ich bin traurig.`], [`w\xFCtend`, 35539, `A`, `Ich bin w\xFCtend.`], [`Angst`, 10261, `N`, `Ich habe Angst.`], [`m\xFCde`, 35537, `A`, `Ich bin m\xFCde.`], [`krank`, 3308, `A`, `Ich bin krank.`], [`gut`, 38564, `A`, `Mir geht es gut.`], [`schlecht`, 39951, `A`, `Mir geht es schlecht.`], [`\xFCberrascht`, 35529, `A`, `Ich bin \xFCberrascht.`], [`aufgeregt`, 30391, `A`, `Ich bin aufgeregt.`], [`ruhig`, 31310, `A`, `Ich bin ruhig.`], [`gelangweilt`, 35531, `A`, `Mir ist langweilig.`]] }, { id: `talk-schule`, short: `Schule`, label: `In der Schule`, keywords: `schule schulisch unterricht klasse stift schere kleber buch heft tafel lesen schreiben rechnen malen pause`, cols: 5, rows: 4, cells: [[`Lehrerin`, 6556, `P`], [`Mitsch\xFCler`, 37658, `P`], [`Stift`, 2440, `N`], [`Buntstifte`, 17016, `N`], [`Schere`, 2591, `N`], [`Kleber`, 2709, `N`], [`Buch`, 25191, `N`], [`Heft`, 2359, `N`], [`Arbeitsblatt`, 37405, `N`], [`Tafel`, 2526, `N`], [`Computer`, 7190, `N`], [`Tablet`, 28099, `N`], [`lesen`, 7141, `V`], [`schreiben`, 2380, `V`], [`rechnen`, 8518, `V`], [`malen`, 5574, `V`], [`Pause`, 24503, `N`, `Ich brauche eine Pause.`], [`fertig`, 28429, `V`, `Ich bin fertig.`], [`Hilfe`, 32648, `V`, `Kannst du mir helfen?`], [`Toilette`, 5921, `N`, `Ich muss auf die Toilette.`]] }, { id: `talk-zuhause`, short: `Zuhause`, label: `Zuhause und Familie`, keywords: `privat zuhause familie mama papa bruder schwester oma opa baby schlafen baden hund katze`, cols: 4, rows: 3, cells: [[`Mama`, 2458, `P`], [`Papa`, 31146, `P`], [`Bruder`, 2423, `P`], [`Schwester`, 2422, `P`], [`Oma`, 23710, `P`], [`Opa`, 23718, `P`], [`Baby`, 6060, `P`], [`Zuhause`, 6964, `N`], [`schlafen`, 6479, `V`], [`baden`, 6058, `V`], [`Hund`, 7202, `N`], [`Katze`, 7114, `N`]] }, { id: `talk-freizeit`, short: `Freizeit`, label: `Freizeit und Hobbys`, keywords: `freizeit hobbys hobby spielen fu\xDFball malen musik singen tanzen fahrrad schwimmen fernsehen spielplatz freunde`, cols: 4, rows: 4, cells: [[`spielen`, 23392, `V`], [`Fu\xDFball`, 16743, `N`], [`malen`, 5574, `V`], [`Musik h\xF6ren`, 2746, `V`], [`singen`, 6960, `V`], [`tanzen`, 35747, `V`], [`Fahrrad fahren`, 36945, `V`], [`schwimmen`, 6568, `V`], [`fernsehen`, 29123, `V`], [`Videospiel`, 37464, `N`], [`lesen`, 7141, `V`], [`drau\xDFen`, 5475, `A`], [`Spielplatz`, 33064, `N`], [`Freunde`, 2255, `P`], [`Puzzle`, 2540, `N`], [`basteln`, 7794, `V`]] }, { id: `talk-essen`, short: `Essen`, label: `Essen und Trinken`, keywords: `essen trinken fr\xFChst\xFCck pause wasser saft milch brot apfel banane nudeln pizza`, cols: 4, rows: 4, cells: [[`Wasser`, 32464, `N`], [`Saft`, 11461, `N`], [`Milch`, 2445, `N`], [`Kakao`, 4940, `N`], [`Brot`, 2494, `N`], [`Brezel`, 39058, `N`], [`Apfel`, 2462, `N`], [`Banane`, 2530, `N`], [`Nudeln`, 8652, `N`], [`Pizza`, 2527, `N`], [`Kartoffeln`, 2503, `N`], [`Joghurt`, 2618, `N`], [`K\xE4se`, 2541, `N`], [`Cornflakes`, 2328, `N`], [`Keks`, 8312, `N`], [`Eis`, 3348, `N`]] }, { id: `talk-kern`, short: `Kernw\xF6rter`, label: `Kernw\xF6rter mit Satzleiste`, keywords: `kernvokabular kernw\xF6rter kern satzleiste s\xE4tze bauen ich du wir m\xF6chte haben machen gehen nicht mehr`, cols: 6, rows: 4, strip: true, cells: [[`ich`, 6632, `P`], [`m\xF6chte`, 5441, `V`], [`haben`, 32761, `V`], [`ist`, 36480, `V`], [`gut`, 38564, `A`], [`ja`, 5584, `S`], [`du`, 6625, `P`], [`machen`, 32751, `V`], [`gehen`, 8142, `V`], [`spielen`, 23392, `V`], [`schlecht`, 39951, `A`], [`nein`, 5526, `S`], [`wir`, 7183, `P`], [`essen`, 6456, `V`], [`trinken`, 6061, `V`], [`helfen`, 32648, `V`], [`fertig`, 28429, `A`], [`mehr`, 5508, `K`], [`was`, 22620, `F`], [`wo`, 7764, `F`], [`hier`, 5382, `K`], [`nicht`, 5525, `K`], [`auch`, 11591, `K`], [`noch mal`, 37163, `K`]] }, { id: `talk-gespraech`, short: `Gespr\xE4ch`, label: `Gespr\xE4ch und Fragen`, keywords: `gespr\xE4ch fragen hallo tsch\xFCss danke bitte wie geht es dir wer was wo wann warum wie sozial`, cols: 4, rows: 3, cells: [[`Hallo`, 6522, `S`, `Hallo!`], [`Tsch\xFCss`, 6028, `S`, `Tsch\xFCss!`], [`Danke`, 8129, `S`, `Danke!`], [`Bitte`, 8195, `S`, `Bitte.`], [`Wie geht es dir?`, 11597, `S`], [`Mir geht es gut`, 13630, `S`, `Mir geht es gut.`], [`Wer?`, 9853, `F`], [`Was?`, 22620, `F`], [`Wo?`, 7764, `F`], [`Wann?`, 32874, `F`], [`Warum?`, 36719, `F`], [`Wie?`, 22619, `F`]] }, { id: `talk-orte`, label: `Orte`, keywords: `orte ort wohin schule zuhause klassenzimmer turnhalle spielplatz supermarkt arzt garten schwimmbad bus auto b\xE4ckerei`, cols: 4, rows: 3, cells: [[`Schule`, 32446, `N`], [`Zuhause`, 6964, `N`], [`Klassenzimmer`, 33072, `N`], [`Turnhalle`, 33076, `N`], [`Spielplatz`, 33064, `N`], [`Supermarkt`, 3389, `N`], [`Arzt`, 6561, `P`], [`Garten`, 2434, `N`], [`Schwimmbad`, 30516, `N`], [`Bus`, 2263, `N`], [`Auto`, 2339, `N`], [`B\xE4ckerei`, 6576, `N`]] }];
+var Ak = [`zur\xFCck`, 39494, `K`];
+var pue = { "talk-basis": 5584, "talk-brauche": 32648, "talk-gefuehle": 35547, "talk-schule": 32446, "talk-zuhause": 6964, "talk-freizeit": 23392, "talk-essen": 6456, "talk-kern": 5441, "talk-gespraech": 6522, "talk-orte": 3389 };
+var jk = [{ id: `talk-grid-2`, label: `2 Felder`, cols: 2, rows: 1 }, { id: `talk-grid-4`, label: `4 Felder`, cols: 2, rows: 2 }, { id: `talk-grid-6`, label: `6 Felder`, cols: 3, rows: 2 }, { id: `talk-grid-9`, label: `9 Felder`, cols: 3, rows: 3 }, { id: `talk-grid-12`, label: `12 Felder`, cols: 4, rows: 3 }, { id: `talk-grid-20`, label: `20 Felder`, cols: 5, rows: 4 }, { id: `talk-grid-strip`, label: `Satzleiste + 15 Felder`, cols: 5, rows: 3, strip: true }];
+var Mk = 40;
+var Nk = { x: Mk, y: 34, w: 1320, h: 150 };
+function mue(e17, t10, n10, r10) {
+  let i10 = e17 * t10 <= 6 ? 30 : e17 * t10 <= 16 ? 20 : 16, a10 = n10 || r10 ? Nk.y + Nk.h + 26 : Mk, o10 = (1320 - (e17 - 1) * i10) / e17, s10 = (950 - a10 - (t10 - 1) * i10) / t10, c10 = [];
+  for (let n11 = 0; n11 < t10; n11++) for (let t11 = 0; t11 < e17; t11++) c10.push({ x: Math.round(Mk + t11 * (o10 + i10)), y: Math.round(a10 + n11 * (s10 + i10)), w: Math.round(o10), h: Math.round(s10) });
+  return c10;
+}
+var Pk = (e17) => `arasaac-${e17}-t`;
+var Fk = (e17, t10, n10) => Dk({ x: e17, y: t10, w: n10, h: n10, label: Ak[0], back: true, asset: Pk(Ak[1]), color: Ok[Ak[2]].color, locked: true });
+function Ik(e17, t10, n10, r10, i10 = {}) {
+  let a10 = [], o10 = Nk.h;
+  return i10.back && a10.push(Fk(Mk, Nk.y, o10)), n10 && a10.push(Ek({ ...Nk, ...i10.back ? { x: Mk + o10 + 20, w: Nk.w - o10 - 20 } : {}, kind: `strip`, locked: true })), mue(e17, t10, n10, i10.back).forEach((e18, t11) => {
+    let n11 = r10?.[t11];
+    a10.push(Dk({ ...e18, locked: true, ...n11 ? { label: n11[0], asset: Pk(n11[1]), color: Ok[n11[2]].color, ...n11[3] ? { say: n11[3] } : {} } : {} }));
+  }), a10;
+}
+var Rk = () => kk.map((e17) => [e17.short ?? e17.label, pue[e17.id], `W`, (e17.short ?? e17.label).replace(/ …$/, ``)]);
 var LP = 0.85;
 var GP;
 function Zpe() {
@@ -2900,7 +3103,7 @@ var CLASS_CSS = `
 .lh-wg-weather img{display:block;flex:none}
 .lh-wg-timer.is-ringing .lh-wg-pic{animation:lh-wg-ring .4s ease-in-out 8}
 @keyframes lh-wg-ring{25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
-` + Ra + Sne + Kne + lce;
+` + Ra + Sne + Kne + lce + Ece;
 function classTap(e, t) {
   if (e.kind === `timer`) { Vr(); pi(); }
   if (e.kind === `timer` && e.timer !== `fixed`) {
@@ -2921,4 +3124,4 @@ function classTick(t, e) {
 }
 function classReset(e) { e.timer === `fixed` ? wO(e) : SO.delete(e.id); }
 function classStart(e) { e.kind === `timer` && e.timer === `fixed` && !SO.has(e.id) && wO(e); }
-export { classTime as renderTime, classTap as tapTime, classTick as tickTime, classStart as startTime, classReset as resetTimer, xO as timeSpeech, yO as dateText, CO as timerState, Ule as searchPlace, Hle as loadWeather, BO as weatherWord, Ia as renderMultiTimer, Ki as multiTimerConfig, La as multiTimerLabel, Ea as onMultiTimerChange, sa as stopMultiTimer, Hi as MULTI_TIMER_SOUNDS, Ui as MULTI_TIMER_START, Bi as MULTI_TIMER_COLORS, zi as MULTI_TIMER_NEXT_COLORS, Vi as MULTI_TIMER_ICONS, xne as renderApplause, um as applauseConfig, Rm as applauseLabel, Sm as applausePicture, om as APPLAUSE_WORDS, sm as APPLAUSE_SECONDS, une as NOISE_LIMITS, lNe as MIC_SENSITIVITY, bne as stopApplause, Wne as renderTimetable, Nh as timetableLabel, Gne as timetableSay, jh as timetableHtml, wh as timetableConfig, Ch as timetableStart, Eh as timetableTimes, Th as clockText, h6 as TIMETABLE_SUBJECTS, g6 as TIMETABLE_AFTER, yh as TIMETABLE_DESIGNS, gh as TIMETABLE_FONTS, Be as fontOf, YT as renderCalendar, sce as tapCalendar, cce as calendarLabel, eE as restartCalendar, Aw as renderMap, jw as mapLabel, gse as mapConfig, uw as mapStart, QC as mapDesign, ZC as MAP_DESIGNS, GC as MAP_SYMBOLS, JC as mapSymbol, zC as PATH_KINDS, BC as PATH_COLORS, rw as mapTiles, $C as toWorld, ew as fromWorld, tw as toView, nw as fromView, yw as mapMarks, vw as labelBoxes, ow as distanceText, aw as pathLength, iw as distance, U6 as mapPicture, lDe as searchAddress, WC as tileUrl, VC as MAP_W, HC as MAP_DATA, UC as MAP_CREDIT, CLASS_CSS };
+export { classTime as renderTime, classTap as tapTime, classTick as tickTime, classStart as startTime, classReset as resetTimer, xO as timeSpeech, yO as dateText, CO as timerState, Ule as searchPlace, Hle as loadWeather, BO as weatherWord, Ia as renderMultiTimer, Ki as multiTimerConfig, La as multiTimerLabel, Ea as onMultiTimerChange, sa as stopMultiTimer, Hi as MULTI_TIMER_SOUNDS, Ui as MULTI_TIMER_START, Bi as MULTI_TIMER_COLORS, zi as MULTI_TIMER_NEXT_COLORS, Vi as MULTI_TIMER_ICONS, xne as renderApplause, um as applauseConfig, Rm as applauseLabel, Sm as applausePicture, om as APPLAUSE_WORDS, sm as APPLAUSE_SECONDS, une as NOISE_LIMITS, lNe as MIC_SENSITIVITY, bne as stopApplause, Wne as renderTimetable, Nh as timetableLabel, Gne as timetableSay, jh as timetableHtml, wh as timetableConfig, Ch as timetableStart, Eh as timetableTimes, Th as clockText, h6 as TIMETABLE_SUBJECTS, g6 as TIMETABLE_AFTER, yh as TIMETABLE_DESIGNS, gh as TIMETABLE_FONTS, Be as fontOf, YT as renderCalendar, sce as tapCalendar, cce as calendarLabel, eE as restartCalendar, Aw as renderMap, jw as mapLabel, gse as mapConfig, uw as mapStart, QC as mapDesign, ZC as MAP_DESIGNS, GC as MAP_SYMBOLS, JC as mapSymbol, zC as PATH_KINDS, BC as PATH_COLORS, rw as mapTiles, $C as toWorld, ew as fromWorld, tw as toView, nw as fromView, yw as mapMarks, vw as labelBoxes, ow as distanceText, aw as pathLength, iw as distance, U6 as mapPicture, lDe as searchAddress, WC as tileUrl, VC as MAP_W, HC as MAP_DATA, UC as MAP_CREDIT, yce as renderTalk, Sce as tapTalk, pE as renderStrip, Tce as tapStrip, Cce as addToStrip, wce as clearStrip, kk as TALK_BOARDS, Ak as TALK_BACK, jk as TALK_GRIDS, Ok as WORD_CLASSES, pue as TALK_BOOK_ICONS, Ik as talkLayout, Rk as bookCells, Nk as STRIP_BOX, CLASS_CSS };
