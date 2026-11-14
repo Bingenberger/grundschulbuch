@@ -34,7 +34,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', diaschau: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -146,6 +146,9 @@ const SKIP = new Set([
   'widget-pitch',
   'widget-elevator',
   'widget-medienseite',
+  // Replaced by the Diaschau of the reference.
+  'widget-slideshow',
+  'widget-diaschau',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -367,6 +370,7 @@ for (const [art, title, words] of [
   ['qr', 'QR-Plakat', 'QR-Code QR-Plakat Plakat scannen Link Adresse'],
 ] as const)
   toolBlocks.push({ id: `medien-${art}`, title, subject: 'Medien & Präsentation', type: 'widget', kind: 'medienseite', preset: { ...defaultSettings('medienseite'), title, medien: { art, url: '', title: '', caption: '' } }, words });
+toolBlocks.push({ id: 'diaschau', title: 'Diaschau', subject: 'Medien & Präsentation', type: 'widget', kind: 'diaschau', preset: { ...defaultSettings('diaschau'), title: 'Meine Diaschau' }, words: 'Diaschau Fotos Bilder Präsentation Übergang Musik Vollbild Fotoschau' });
 toolBlocks.push({ id: 'elevator', title: 'Elevator Pitch', subject: 'Medien & Präsentation', type: 'widget', kind: 'elevator', preset: { ...defaultSettings('elevator'), title: 'Elevator Pitch' }, words: 'Elevator Pitch Kurzvortrag Vortrag Zeit Fahrstuhl Präsentation sprechen' });
 toolBlocks.push({ id: 'karte', title: 'Karte', subject: 'Sachunterricht', type: 'widget', kind: 'karte', preset: { ...defaultSettings('karte'), title: 'Meine Karte' }, words: 'Karte Stadtplan Ort Schulweg Weg Markierung Entfernung messen OpenStreetMap Heimatort' });
 toolBlocks.push({ id: 'kalenderblatt', title: 'Das sprechende Kalenderblatt', subject: 'Sachunterricht', type: 'widget', kind: 'kalenderblatt', preset: { ...defaultSettings('kalenderblatt'), title: 'Das sprechende Kalenderblatt' }, pages: () => fullPageWidget('kalenderblatt', { ...defaultSettings('kalenderblatt'), title: 'Das sprechende Kalenderblatt' }), words: 'Kalender Kalenderblatt Datum Wochentag Monat Jahr Jahreszeit Morgenkreis heute sprechen' });

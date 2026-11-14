@@ -5022,3 +5022,10 @@ input[type='checkbox'] {
 
 /* Sprechtaste and Satzleiste of the reference (Unterstützte Kommunikation). */
 .talk-key { position: relative; width: 100%; height: 100%; }
+
+/* Diaschau editor. */
+.show-list { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.show-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.show-row input.text-input { flex: 1; min-width: 140px; }
+.show-no { width: 24px; text-align: right; font-weight: 700; color: #6b7280; }
+.show-thumb { width: 64px; height: 44px; object-fit: cover; border-radius: 6px; background: #f1f5f9; }

@@ -115,7 +115,7 @@ const aliases = {
   rw: 'mapTiles', $C: 'toWorld', ew: 'fromWorld', tw: 'toView', nw: 'fromView', yw: 'mapMarks', vw: 'labelBoxes', ow: 'distanceText', aw: 'pathLength', iw: 'distance', U6: 'mapPicture', lDe: 'searchAddress', WC: 'tileUrl', VC: 'MAP_W', HC: 'MAP_DATA', UC: 'MAP_CREDIT',
   yce: 'renderTalk', Sce: 'tapTalk', pE: 'renderStrip', Tce: 'tapStrip', Cce: 'addToStrip', wce: 'clearStrip', kk: 'TALK_BOARDS', Ak: 'TALK_BACK', jk: 'TALK_GRIDS', Ok: 'WORD_CLASSES', pue: 'TALK_BOOK_ICONS', Ik: 'talkLayout', Rk: 'bookCells', Nk: 'STRIP_BOX',
   mh: 'renderPitch', hh: 'pitchLabel', Vm: 'pitchConfig', zm: 'PITCH_SECONDS', Hm: 'secondsText', Lne: 'stopPitch', Bm: 'PITCH_START',
-  tte: 'renderSlideshow', nte: 'slideshowLabel', Qd: 'showStart', Xd: 'SHOW_DESIGNS', Zd: 'showDesign',
+  tte: 'renderSlideshow', nte: 'slideshowLabel', Qd: 'showStart', Xd: 'SHOW_DESIGNS', Zd: 'showDesign', Gd: 'SHOW_TRANSITIONS', Kd: 'SHOW_CAPTIONS', Fu: 'SHOW_MOODS', af: 'playSlideshow',
   pte: 'renderAnimation', Vf: 'animationLabel', df: 'animationStart',
   CLASS_CSS: 'CLASS_CSS',
 };

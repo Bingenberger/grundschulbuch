@@ -228,6 +228,26 @@ test('Medien: Elevator Pitch, Video mit Titel und QR-Plakat als eigene Seiten', 
   expect(errors).toEqual([]);
 });
 
+test('Diaschau: Fotos hochladen, beschriften, Design, als eigene Seite', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  const dialog = await openBlock(page, 'Medien & Präsentation', 'Diaschau');
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
+  await dialog.getByLabel('Fotos für die Diaschau').setInputFiles([{ name: 'a.png', mimeType: 'image/png', buffer: png }, { name: 'b.png', mimeType: 'image/png', buffer: png }]);
+  await expect(dialog.getByText('Fotos: 2 von höchstens 30')).toBeVisible({ timeout: 15000 });
+  await dialog.getByLabel('Beschriftung von Foto 1').fill('Am Strand');
+  await dialog.getByRole('radiogroup', { name: 'Design' }).getByRole('radio').nth(1).click();
+  await dialog.getByLabel('Titel des Lernwerkzeugs').fill('Klassenfahrt');
+  await page.screenshot({ path: test.info().outputPath('diaschau-dialog.png'), fullPage: true });
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  const sheet = page.locator('.interaction-surface .lh-wg-slideshow');
+  await expect(sheet).toHaveAttribute('aria-label', 'Diaschau „Klassenfahrt“ mit 2 Fotos');
+  await expect(page.locator('.interaction-surface .map-title')).toHaveText('Klassenfahrt');
+  await page.screenshot({ path: test.info().outputPath('diaschau-seite.png') });
+  expect(errors).toEqual([]);
+});
+
 test('Wetter nur über den Schulserver und nur angemeldet', async ({ page }) => {
   expect((await page.request.get('/api/wetter?art=ort&name=Regensburg')).status()).toBe(401);
   await login(page);

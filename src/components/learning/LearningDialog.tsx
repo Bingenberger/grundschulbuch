@@ -9,6 +9,7 @@ import TimetableOptions from './TimetableOptions';
 import MapOptions from './MapOptions';
 import TalkOptions from './TalkOptions';
 import PitchOptions from './PitchOptions';
+import SlideshowOptions from './SlideshowOptions';
 import MediaPageOptions from './MediaPageOptions';
 import { mediaConfig, mediaPages } from '@/lib/learning/medien';
 import { karte, pictureKey } from '@/lib/learning/karte';
@@ -86,7 +87,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', elevator: 'podium_with_speaker', medienseite: 'camcorder_pro', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', elevator: 'podium_with_speaker', medienseite: 'camcorder_pro', diaschau: 'stack_of_photos', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -111,7 +112,7 @@ function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) 
   if (kind === 'placevalue' || kind === 'dienes') return { width: 220, height: 160 };
   if (kind === 'numberline') return { width: 250, height: 80 };
   if (kind === 'hundredfield') return { width: 200, height: 150 };
-  if (kind === 'checkout' || kind === 'monsternames' || kind === 'syllablejoin' || kind === 'anlaut' || kind === 'clapsyllables' || kind === 'textsachen' || kind === 'zuordnung' || kind === 'quizsachen' || kind === 'stundenplan' || kind === 'kalenderblatt' || kind === 'karte' || kind === 'elevator') return { width: 297, height: 210 };
+  if (kind === 'checkout' || kind === 'monsternames' || kind === 'syllablejoin' || kind === 'anlaut' || kind === 'clapsyllables' || kind === 'textsachen' || kind === 'zuordnung' || kind === 'quizsachen' || kind === 'stundenplan' || kind === 'kalenderblatt' || kind === 'karte' || kind === 'elevator' || kind === 'diaschau') return { width: 297, height: 210 };
   return {
     width: kind === 'receipt' ? 120 : 180,
     height: kind === 'receipt' ? 126 : kind === 'alphabet' ? 210 : kind === 'synthesis' || kind === 'clapping' || kind === 'letterguess' || kind === 'syllables' || kind === 'geometry' ? 180 : 140,
@@ -445,6 +446,11 @@ export default function LearningDialog({
                   setError((e as Error).message);
                   return;
                 }
+                onClose();
+                return;
+              }
+              if (kind === 'diaschau' && !element && onPages) {
+                onPages(fullPageWidget('diaschau', readySettings));
                 onClose();
                 return;
               }
@@ -802,6 +808,7 @@ export default function LearningDialog({
             {kind === 'zuordnung' && <ZuordnungOptions value={settings.dnd} title={settings.title || ''} onChange={(dnd) => patch({ dnd })} upload={media} busy={busy} />}
             {kind === 'zeit' && <TimeOptions value={settings.zeit} onChange={(zeit) => patch({ zeit })} />}
             {kind === 'medienseite' && <MediaPageOptions value={settings.medien} onChange={(medien) => patch({ medien })} />}
+            {kind === 'diaschau' && <SlideshowOptions value={settings.show} title={settings.title || ''} onChange={(show) => patch({ show })} upload={media} busy={busy} />}
             {kind === 'elevator' && <PitchOptions value={settings.pitch} onChange={(pitch) => patch({ pitch })} />}
             {kind === 'sprechtaste' && <TalkOptions value={settings.talk} onChange={(talk) => patch({ talk })} upload={media} busy={busy} />}
             {kind === 'karte' && <MapOptions value={settings.map} isNew={!element} onChange={(map) => patch({ map })} />}

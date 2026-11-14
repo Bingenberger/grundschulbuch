@@ -50,6 +50,7 @@ export const WIDGET_KINDS = [
   'satzleiste',
   'elevator',
   'medienseite',
+  'diaschau',
   'shop',
   'geometry',
   'monster',
