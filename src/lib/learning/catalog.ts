@@ -56,6 +56,7 @@ export const widgetCatalog = {
   zeit: ['Uhr, Timer und Datum', 'Schule'],
   phasen: ['Multi-Timer', 'Schule'],
   ampel: ['Lärmampel und Applausometer', 'Schule'],
+  stundenplan: ['Bilder-Stundenplan', 'Schule'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -129,6 +130,8 @@ export type LearningSettings = {
   multi?: JsonValue;
   /** Lärmampel und Applausometer der Vorlage: mode, secs, sens, limit, chime, words. */
   applause?: JsonValue;
+  /** Bilder-Stundenplan der Vorlage (see learning/stundenplan.ts). */
+  tt?: JsonValue;
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';

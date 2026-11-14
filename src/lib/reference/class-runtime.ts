@@ -1426,10 +1426,178 @@ var Hm = (e17) => e17 < 120 ? `${e17} Sekunden` : `${e17 / 60} Minuten`;
 function hh(e17) {
   return `Elevator Pitch: ${Hm(Vm(e17.pitch).secs)} Zeit. Tippe auf \u201ELos!\u201C \u2013 der Fahrstuhl f\xE4hrt nach oben, oben ist die Zeit um.`;
 }
+var gh = [`nunito`, `andika`, `druck`, `grund`, `lexend`];
+var _h = [`Montag`, `Dienstag`, `Mittwoch`, `Donnerstag`, `Freitag`, `Samstag`, `Sonntag`];
+var vh = [`Mo`, `Di`, `Mi`, `Do`, `Fr`, `Sa`, `So`];
+var Bne = [`erste`, `zweite`, `dritte`, `vierte`, `f\xFCnfte`, `sechste`, `siebte`, `achte`, `neunte`, `zehnte`];
+var yh = [{ id: `formal`, label: `Sachlich` }, { id: `clear`, label: `Klar` }, { id: `colorful`, label: `Bunt` }, { id: `playful`, label: `Verspielt` }, { id: `chalk`, label: `Tafel` }];
+var bh = [`#e03131`, `#f76707`, `#f59f00`, `#2f9e44`, `#1c7ed6`, `#7048e8`, `#d6336c`];
+var Vne = /^#[0-9a-f]{6}$/i;
+var xh = (e17, t10, n10 = ``) => typeof e17 == `string` ? e17.slice(0, t10) : n10;
+var Sh = (e17, t10, n10, r10) => typeof e17 == `number` && Number.isFinite(e17) ? Math.round(Math.min(n10, Math.max(t10, e17))) : r10;
+function Ch() {
+  return { title: `Mein Stundenplan`, days: 5, lessons: 6, start: 480, len: 45, breaks: [{ after: 3, min: 30, label: `Pause` }], times: true, show: `both`, design: `clear`, font: `nunito`, today: true, subjects: [], plan: [], after: { on: true, label: `Nach der Schule`, options: [], plan: [] } };
+}
+function wh(e17, t10 = (e18) => typeof e18 == `string` ? e18 : void 0) {
+  let n10 = e17 && typeof e17 == `object` ? e17 : {}, r10 = Ch(), i10 = (e18) => {
+    let n11 = /* @__PURE__ */ new Set();
+    return (Array.isArray(e18) ? e18 : []).filter((e19) => !!e19 && typeof e19 == `object`).map((e19) => {
+      let n12 = xh(e19.id, 40), r11 = t10(e19.img);
+      return { id: n12, name: xh(e19.name, 40).trim(), color: typeof e19.color == `string` && Vne.test(e19.color) ? e19.color : `#868e96`, ...r11 ? { img: r11 } : {} };
+    }).filter((e19) => e19.id && !n11.has(e19.id) && (n11.add(e19.id), true)).slice(0, 60);
+  }, a10 = i10(n10.subjects), o10 = n10.after && typeof n10.after == `object` ? n10.after : {}, s10 = i10(o10.options), c10 = new Set([...a10, ...s10].map((e18) => e18.id)), l10 = (e18) => Array.isArray(e18) ? e18.filter((e19) => typeof e19 == `string` && c10.has(e19)).slice(0, 2) : [], u10 = n10.days === 6 || n10.days === 7 ? n10.days : 5, d10 = Sh(n10.lessons, 1, 10, r10.lessons), f10 = Array.from({ length: 7 }, (e18, t11) => {
+    let r11 = Array.isArray(n10.plan) ? n10.plan[t11] : void 0;
+    return Array.from({ length: 10 }, (e19, t12) => l10(Array.isArray(r11) ? r11[t12] : void 0));
+  }), p10 = (Array.isArray(n10.breaks) ? n10.breaks : []).filter((e18) => !!e18 && typeof e18 == `object`).map((e18) => ({ after: Sh(e18.after, 1, 9, 3), min: Sh(e18.min, 5, 120, 15), label: xh(e18.label, 30, `Pause`).trim() || `Pause`, ...typeof e18.sub == `string` && c10.has(e18.sub) ? { sub: e18.sub } : {} })).slice(0, 6);
+  return { title: xh(n10.title, 80, r10.title), days: u10, lessons: d10, start: Sh(n10.start, 300, 840, r10.start), len: Sh(n10.len, 20, 120, r10.len), breaks: Array.isArray(n10.breaks) ? p10 : r10.breaks, times: n10.times !== false, show: n10.show === `text` || n10.show === `pic` ? n10.show : `both`, design: yh.some((e18) => e18.id === n10.design) ? n10.design : r10.design, font: gh.includes(String(n10.font)) ? n10.font : `nunito`, today: n10.today !== false, subjects: a10, plan: f10, after: { on: o10.on !== false, label: xh(o10.label, 40, r10.after.label), options: s10, plan: Array.from({ length: 7 }, (e18, t11) => l10(Array.isArray(o10.plan) ? o10.plan[t11] : void 0)) } };
+}
+var Th = (e17) => `${Math.floor(e17 / 60)}:${String(e17 % 60).padStart(2, `0`)}`;
+function Eh(e17) {
+  let t10 = [], n10 = [], r10 = e17.start;
+  for (let i10 = 0; i10 < e17.lessons; i10++) {
+    t10.push({ from: r10, to: r10 + e17.len }), r10 += e17.len;
+    for (let t11 of e17.breaks) t11.after === i10 + 1 && i10 + 1 < e17.lessons && (n10.push({ after: i10 + 1, from: r10, to: r10 + t11.min, b: t11 }), r10 += t11.min);
+  }
+  return { lessons: t10, breaks: n10 };
+}
+function Une(e17, t10) {
+  let n10 = parseInt(e17.slice(1), 16), r10 = (e18) => Math.round(255 - (255 - e18) * t10).toString(16).padStart(2, `0`);
+  return `#${r10(n10 >> 16 & 255)}${r10(n10 >> 8 & 255)}${r10(n10 & 255)}`;
+}
+var Dh = (e17) => e17.replace(/&/g, `&amp;`).replace(/</g, `&lt;`).replace(/>/g, `&gt;`).replace(/"/g, `&quot;`);
+var Oh = (e17) => `${Math.round(e17 * 10) / 10}px`;
+var kh = (e17, t10, n10) => {
+  let r10 = Math.max(3, ...e17.split(/\s+/).map((e18) => [...e18].length));
+  return Math.max(8, Math.min(n10, t10 * 0.94 / (0.58 * r10)));
+};
+function Ah(e17, t10, n10, r10) {
+  if (!e17) return ``;
+  let i10 = e17.img ? r10(e17.img) : void 0, a10 = t10 !== `text` && i10, o10 = t10 !== `pic` || !i10, s10 = a10 ? o10 ? n10.h * 0.58 : n10.h * 0.84 : 0, c10 = a10 ? Math.min(n10.w * 0.86, o10 ? n10.h * 0.58 * 1.25 : n10.h * 0.84 * 1.25) : 0, l10 = kh(e17.name, n10.w, a10 ? n10.h * 0.235 : n10.h * 0.32);
+  return `<div class="lh-tt-sub" style="--c:${e17.color}">` + (a10 ? `<img src="${Dh(i10)}" alt="" draggable="false" style="max-width:${Oh(c10)};max-height:${Oh(s10)}">` : ``) + (o10 ? `<span class="lh-tt-name" style="font-size:${Oh(l10)}">${Dh(e17.name)}</span>` : ``) + `</div>`;
+}
+function jh(e17, t10, n10, r10) {
+  let i10 = Eh(e17), a10 = new Map([...e17.subjects, ...e17.after.options].map((e18) => [e18.id, e18])), o10 = Math.min(t10, n10) * 0.022, s10 = Math.min(t10, n10) * (e17.design === `formal` ? 0 : 8e-3), c10 = e17.title.trim() ? n10 * 0.085 : 0, l10 = n10 * 0.065, u10 = n10 * 0.048, d10 = e17.after.on, f10 = e17.lessons + +!!d10, p10 = 2 * o10 + c10 + l10 + i10.breaks.length * u10 + (f10 + i10.breaks.length) * s10, m10 = Math.max(20, (n10 - p10) / f10), h10 = e17.times || d10 ? t10 * (e17.times ? 0.105 : 0.085) : 0, g10 = (t10 - 2 * o10 - h10 - e17.days * s10) / e17.days, _10 = Ve(e17.font).replace(/"/g, `'`), v10 = `<div class="lh-tt lh-tt-${e17.design}${r10.editing ? ` is-editing` : ``}" style="width:${Oh(t10)};height:${Oh(n10)};padding:${Oh(o10)};font-family:${_10};--g:${Oh(s10)}">`;
+  c10 && (v10 += `<div class="lh-tt-title" style="height:${Oh(c10)};font-size:${Oh(Math.min(c10 * 0.62, t10 * 0.9 / (0.56 * Math.max(4, [...e17.title].length))))}">${Dh(e17.title)}</div>`);
+  let y10 = `${h10 ? `${Oh(h10)} ` : ``}repeat(${e17.days}, ${Oh(g10)})`, b10 = [Oh(l10)], x10 = h10 ? `<div class="lh-tt-corner"></div>` : ``, S10 = Math.min(l10 * 0.46, kh(`Donnerstag`, g10, l10 * 0.46)), C10 = g10 / S10 > 6.4;
+  for (let t11 = 0; t11 < e17.days; t11++) {
+    let e18 = r10.today === t11;
+    x10 += `<div class="lh-tt-day${e18 ? ` is-today` : ``}" style="--dc:${bh[t11]};font-size:${Oh(S10)}">${C10 ? _h[t11] : vh[t11]}</div>`;
+  }
+  let w10 = (t11, n11, i11, o11) => {
+    let s11 = { w: g10, h: m10 }, c11 = t11.length === 2 ? `<div class="lh-tt-split">${Ah(a10.get(t11[0]), e17.show, { w: g10 / 2 - 4, h: s11.h }, r10.src)}<i></i>${Ah(a10.get(t11[1]), e17.show, { w: g10 / 2 - 4, h: s11.h }, r10.src)}</div>` : Ah(a10.get(t11[0]), e17.show, s11, r10.src), l11 = a10.get(t11[0]), u11 = t11.map((e18) => a10.get(e18)?.name ?? ``).filter(Boolean);
+    return `<div class="lh-tt-cell${t11.length ? `` : ` is-empty`}${i11 === `after` ? ` is-after` : ``}${r10.today === n11 ? ` is-today` : ``}" data-d="${n11}" data-l="${i11}" data-say="${Dh(`${o11}: ${u11.length ? u11.join(` oder `) : `frei`}`)}" style="--c:${l11?.color ?? `#adb5bd`};--tc:${Une(l11?.color ?? `#adb5bd`, 0.16)};--dc:${bh[n11]}">${c11}</div>`;
+  }, T10 = 0;
+  for (let t11 = 0; t11 < e17.lessons; t11++) {
+    b10.push(Oh(m10));
+    let n11 = i10.lessons[t11];
+    if (h10) {
+      let r11 = Math.min(m10 * 0.3, h10 * 0.3);
+      x10 += `<div class="lh-tt-time"><b style="font-size:${Oh(r11)}">${t11 + 1}.</b>${e17.times ? `<span style="font-size:${Oh(Math.min(m10 * 0.16, h10 * 0.17))}">${Th(n11.from)}<br>${Th(n11.to)}</span>` : ``}</div>`;
+    }
+    for (let r11 = 0; r11 < e17.days; r11++) x10 += w10(e17.plan[r11]?.[t11] ?? [], r11, t11, `${_h[r11]}, ${Bne[t11] ?? `${t11 + 1}.`} Stunde${e17.times ? `, ${Th(n11.from)} Uhr` : ``}`);
+    for (; T10 < i10.breaks.length && i10.breaks[T10].after === t11 + 1; T10++) {
+      let t12 = i10.breaks[T10];
+      b10.push(Oh(u10));
+      let n12 = t12.b.sub ? a10.get(t12.b.sub) : void 0, o11 = n12?.img && e17.show !== `text` ? r10.src(n12.img) : void 0, s11 = u10 * 0.48;
+      h10 && (x10 += `<div class="lh-tt-time is-break" style="font-size:${Oh(Math.min(u10 * 0.4, h10 * 0.17))}">${e17.times ? `${Th(t12.from)}\u2013${Th(t12.to)}` : ``}</div>`), x10 += `<div class="lh-tt-break" style="grid-column:span ${e17.days};font-size:${Oh(s11)}" data-say="${Dh(`${t12.b.label}${e17.times ? `, ${Th(t12.from)} bis ${Th(t12.to)} Uhr` : ``}`)}">` + (o11 ? `<img src="${Dh(o11)}" alt="" style="height:${Oh(u10 * 0.86)}">` : ``) + `<span>${Dh(t12.b.label)}</span>${e17.times ? `<small>${t12.b.min} Min.</small>` : ``}</div>`;
+    }
+  }
+  if (d10) {
+    b10.push(Oh(m10)), h10 && (x10 += `<div class="lh-tt-time is-afterlabel" style="font-size:${Oh(kh(e17.after.label, h10, m10 * 0.16))}">${Dh(e17.after.label)}</div>`);
+    for (let t11 = 0; t11 < e17.days; t11++) x10 += w10(e17.after.plan[t11] ?? [], t11, `after`, `${_h[t11]}, ${e17.after.label}`);
+  }
+  return v10 += `<div class="lh-tt-grid" style="grid-template-columns:${y10};grid-template-rows:${b10.join(` `)}">${x10}</div>`, v10 + `</div>`;
+}
+var Mh = () => ((/* @__PURE__ */ new Date()).getDay() + 6) % 7;
+function Wne(e17, t10, n10, r10) {
+  let i10 = t10.tt ? wh(t10.tt) : Ch(), a10 = Math.max(1, Math.round(t10.w)), o10 = Math.max(1, Math.round(t10.h)), s10 = n10 && i10.today && Mh() < i10.days ? Mh() : void 0, c10 = `${a10}x${o10}|${n10}|${s10}|${JSON.stringify(t10.tt ?? null)}`;
+  if (e17.dataset.k === c10) return;
+  e17.dataset.k = c10, e17.setAttribute(`aria-label`, Nh(t10));
+  let l10 = r10.assets ?? {};
+  e17.innerHTML = jh(i10, a10, o10, { src: (e18) => {
+    let t11 = l10[e18];
+    return t11 ? r10.assetUrl ? r10.assetUrl(t11) : t11.dataUrl : void 0;
+  }, today: s10 });
+}
 function Nh(e17) {
   let t10 = e17.tt;
   return t10 ? `Stundenplan${t10.title ? `: ${t10.title}` : ``}. Tippe auf eine Stunde, dann wird sie vorgelesen.` : `Stundenplan`;
 }
+var Gne = (e17) => e17?.closest?.(`[data-say]`)?.getAttribute(`data-say`) ?? null;
+var Kne = `
+.lh-tt{box-sizing:border-box;display:flex;flex-direction:column;color:#212529;background:#fff;line-height:1.1;overflow:hidden}
+.lh-tt *{box-sizing:border-box}
+.lh-tt-title{display:flex;align-items:center;justify-content:center;font-weight:800;text-align:center;white-space:nowrap;overflow:hidden}
+.lh-tt-grid{display:grid;gap:var(--g)}
+.lh-tt-day{display:flex;align-items:center;justify-content:center;font-weight:800;text-align:center;overflow:hidden}
+.lh-tt-time{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;font-variant-numeric:tabular-nums;overflow:hidden}
+.lh-tt-time b{font-weight:800}
+.lh-tt-time span{opacity:.75;line-height:1.15}
+.lh-tt-time.is-afterlabel{font-weight:700;padding:0 4px;overflow-wrap:anywhere}
+.lh-tt-cell{position:relative;display:flex;align-items:stretch;justify-content:center;overflow:hidden;min-width:0;min-height:0}
+.lh-tt-sub{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3%;padding:3% 4%;text-align:center}
+.lh-tt-sub img{display:block;width:auto;height:auto;flex:none}
+.lh-tt-name{font-weight:700;line-height:1.05;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto;max-width:100%}
+.lh-tt-split{flex:1;display:flex;min-width:0}
+.lh-tt-split>i{flex:none;width:0;border-left:2px dashed currentColor;opacity:.35;margin:8% 0}
+.lh-tt-break{display:flex;align-items:center;justify-content:center;gap:12px;font-weight:700;overflow:hidden}
+.lh-tt-break img{display:block;width:auto}
+.lh-tt-break small{font-size:.7em;font-weight:600;opacity:.7}
+.lh-tt.is-editing .lh-tt-cell{cursor:pointer}
+.lh-tt.is-editing .lh-tt-cell:hover{outline:3px solid #2160c4;outline-offset:-3px}
+.lh-tt.is-editing .lh-tt-cell.is-empty::after{content:"+";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;color:#adb5bd}
+.lh-widget.is-live .lh-tt-cell,.lh-widget.is-live .lh-tt-break{cursor:pointer}
+/* Sachlich: lines, a stripe of the subject colour */
+.lh-tt-formal .lh-tt-title{justify-content:flex-start;color:#212529}
+.lh-tt-formal .lh-tt-grid{border-top:2px solid #495057;border-left:1px solid #ced4da}
+.lh-tt-formal .lh-tt-grid>*{border-right:1px solid #ced4da;border-bottom:1px solid #ced4da}
+.lh-tt-formal .lh-tt-day{background:#f1f3f5;border-bottom:2px solid #495057}
+.lh-tt-formal .lh-tt-corner{background:#f1f3f5;border-bottom:2px solid #495057}
+.lh-tt-formal .lh-tt-time{background:#f8f9fa}
+.lh-tt-formal .lh-tt-cell:not(.is-empty){border-left:6px solid var(--c)}
+.lh-tt-formal .lh-tt-break{background:#f8f9fa;color:#495057;font-weight:600}
+.lh-tt-formal .lh-tt-day.is-today{background:#e7f5ff}
+/* Klar: blue head, tinted cells */
+.lh-tt-clear{background:#f8fafc}
+.lh-tt-clear .lh-tt-title{color:#1864ab}
+.lh-tt-clear .lh-tt-day{background:#1c7ed6;color:#fff;border-radius:10px}
+.lh-tt-clear .lh-tt-time{background:#e9ecef;border-radius:10px;color:#343a40}
+.lh-tt-clear .lh-tt-cell{background:#fff;border:2px solid #dee2e6;border-radius:10px}
+.lh-tt-clear .lh-tt-cell:not(.is-empty){background:var(--tc);border-color:var(--c)}
+.lh-tt-clear .lh-tt-break{background:#fff3bf;border-radius:10px;color:#5c4813}
+.lh-tt-clear .lh-tt-day.is-today{box-shadow:0 0 0 4px #fab005}
+.lh-tt-clear .lh-tt-cell.is-today{border-width:3px}
+/* Bunt: colourful days, full colours */
+.lh-tt-colorful{background:#fff9db}
+.lh-tt-colorful .lh-tt-title{color:#e8590c}
+.lh-tt-colorful .lh-tt-day{background:var(--dc);color:#fff;border-radius:14px}
+.lh-tt-colorful .lh-tt-time{background:#fff;border-radius:14px;color:#495057}
+.lh-tt-colorful .lh-tt-cell{background:#fff;border-radius:14px}
+.lh-tt-colorful .lh-tt-cell:not(.is-empty){background:var(--c);color:#fff}
+.lh-tt-colorful .lh-tt-cell:not(.is-empty) .lh-tt-sub img{background:#fff;border-radius:12px;padding:4%}
+.lh-tt-colorful .lh-tt-break{background:#ffe066;border-radius:14px;color:#5c4813}
+.lh-tt-colorful .lh-tt-day.is-today{box-shadow:0 0 0 4px #212529}
+/* Verspielt: cards on a soft background, round heads */
+.lh-tt-playful{background:linear-gradient(160deg,#e7f5ff,#fff0f6 55%,#fff9db)}
+.lh-tt-playful .lh-tt-title{color:#7048e8;letter-spacing:.02em}
+.lh-tt-playful .lh-tt-day{background:#fff;color:var(--dc);border:4px solid var(--dc);border-radius:999px}
+.lh-tt-playful .lh-tt-time{background:#fff;border-radius:20px;color:#7048e8;border:3px dashed #d0bfff}
+.lh-tt-playful .lh-tt-cell{background:#fff;border-radius:22px;border:4px solid #e9ecef;box-shadow:0 4px 0 rgba(0,0,0,.08)}
+.lh-tt-playful .lh-tt-cell:not(.is-empty){border-color:var(--c)}
+.lh-tt-playful .lh-tt-cell:not(.is-empty) .lh-tt-name{color:var(--c)}
+.lh-tt-playful .lh-tt-break{background:#fff;border-radius:999px;border:3px dotted #fcc419;color:#e67700}
+.lh-tt-playful .lh-tt-day.is-today{background:var(--dc);color:#fff}
+/* Tafel: chalk on green */
+.lh-tt-chalk{background:#2b4a3a;color:#f8f9fa}
+.lh-tt-chalk .lh-tt-title{color:#fff}
+.lh-tt-chalk .lh-tt-day{border-bottom:3px solid rgba(255,255,255,.7);color:#fff}
+.lh-tt-chalk .lh-tt-time{color:#e9ecef}
+.lh-tt-chalk .lh-tt-cell{border:2px dashed rgba(255,255,255,.35);border-radius:8px}
+.lh-tt-chalk .lh-tt-cell:not(.is-empty){border:3px solid var(--c);background:rgba(255,255,255,.06)}
+.lh-tt-chalk .lh-tt-cell:not(.is-empty) .lh-tt-sub img{background:#fff;border-radius:10px;padding:4%}
+.lh-tt-chalk .lh-tt-break{border-top:2px dashed rgba(255,255,255,.5);border-bottom:2px dashed rgba(255,255,255,.5);color:#ffe066}
+.lh-tt-chalk .lh-tt-day.is-today{color:#ffe066;border-bottom-color:#ffe066}
+`;
 function Xg(e17) {
   let t10 = e17.anlaut?.practice;
   return t10 ? `Anlaut-Tastatur: ${t10.words.length === 1 ? `ein Wort` : `${t10.words.length} W\xF6rter`} zum Schreiben \u2013 tippe auf die Bilder.` : `Anlaut-Tastatur \u2013 tippe auf die Bilder und schreibe ein Wort.`;
@@ -1953,6 +2121,8 @@ function VO(e17, t10, n10, r10, i10) {
   let a10 = document.createElement(`img`);
   return a10.className = `lh-wg-pic`, a10.alt = ``, a10.draggable = false, a10.src = n10.stickerUrl ? n10.stickerUrl(e17) : mO(e17), a10.style.width = gO(r10), a10.style.height = gO(i10), a10;
 }
+var h6 = [{ name: `Deutsch`, color: `#e03131`, arasaac: 37740 }, { name: `Mathe`, color: `#1c7ed6`, arasaac: 10260 }, { name: `Sachunterricht`, color: `#2f9e44`, arasaac: 35437 }, { name: `Englisch`, color: `#7048e8`, arasaac: 32705 }, { name: `Kunst`, color: `#f76707`, arasaac: 11245 }, { name: `Musik`, color: `#d6336c`, arasaac: 24791 }, { name: `Sport`, color: `#0ca678`, arasaac: 7010 }, { name: `Schwimmen`, color: `#1098ad`, arasaac: 6568 }, { name: `Religion`, color: `#a5734d`, arasaac: 24471 }, { name: `Ethik`, color: `#868e96`, arasaac: 34709 }, { name: `Werken`, color: `#e8590c`, arasaac: 9805 }, { name: `Textiles Gestalten`, color: `#c2255c`, arasaac: 7068 }, { name: `Kochen`, color: `#f59f00`, arasaac: 5485 }, { name: `Lesen`, color: `#9c36b5`, arasaac: 2447 }, { name: `Schreiben`, color: `#364fc7`, arasaac: 2380 }, { name: `Computer`, color: `#495057`, arasaac: 22801 }, { name: `Morgenkreis`, color: `#fab005`, arasaac: 27575 }, { name: `F\xF6rderung`, color: `#5c940d`, arasaac: 37810 }, { name: `Logop\xE4die`, color: `#e64980`, arasaac: 6142 }, { name: `Ergotherapie`, color: `#20c997`, arasaac: 24821 }, { name: `Physiotherapie`, color: `#15aabf`, arasaac: 8725 }, { name: `Klassenrat`, color: `#845ef7`, arasaac: 38789 }, { name: `B\xFCcherei`, color: `#a61e4d`, arasaac: 32450 }, { name: `Garten`, color: `#37b24d`, arasaac: 2434 }, { name: `Spielen`, color: `#ff922b`, arasaac: 23392 }, { name: `Basteln`, color: `#fd7e14`, arasaac: 7794 }, { name: `Theater`, color: `#be4bdb`, arasaac: 32412 }, { name: `Ausflug`, color: `#40c057`, arasaac: 4670 }, { name: `Hausaufgaben`, color: `#343a40`, arasaac: 32556 }, { name: `Fr\xFChst\xFCck`, color: `#f08c00`, arasaac: 4626 }, { name: `Pause`, color: `#fab005`, arasaac: 33064 }, { name: `Mittagessen`, color: `#e67700`, arasaac: 4611 }];
+var g6 = [{ name: `Tagesst\xE4tte`, color: `#1c7ed6`, arasaac: 25692 }, { name: `Hort`, color: `#7048e8`, arasaac: 25693 }, { name: `Mittagsbetreuung`, color: `#f08c00`, arasaac: 4611 }, { name: `Bus`, color: `#e03131`, arasaac: 2263 }, { name: `Taxi`, color: `#fab005`, arasaac: 2580 }, { name: `Abholung`, color: `#2f9e44`, arasaac: 35060 }, { name: `Nach Hause`, color: `#495057`, arasaac: 32940 }];
 var lNe = [`wenig`, `etwas weniger`, `mittel`, `mehr`, `sehr`];
 function classTime(e17, t10, n10, r10) {
   let i10 = /* @__PURE__ */ new Date(), a10 = Math.max(1, Math.round(t10.w)), o10 = Math.max(1, Math.round(t10.h));
@@ -2010,7 +2180,7 @@ var CLASS_CSS = `
 .lh-wg-weather img{display:block;flex:none}
 .lh-wg-timer.is-ringing .lh-wg-pic{animation:lh-wg-ring .4s ease-in-out 8}
 @keyframes lh-wg-ring{25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
-` + Ra + Sne;
+` + Ra + Sne + Kne;
 function classTap(e, t) {
   if (e.kind === `timer`) { Vr(); pi(); }
   if (e.kind === `timer` && e.timer !== `fixed`) {
@@ -2031,4 +2201,4 @@ function classTick(t, e) {
 }
 function classReset(e) { e.timer === `fixed` ? wO(e) : SO.delete(e.id); }
 function classStart(e) { e.kind === `timer` && e.timer === `fixed` && !SO.has(e.id) && wO(e); }
-export { classTime as renderTime, classTap as tapTime, classTick as tickTime, classStart as startTime, classReset as resetTimer, xO as timeSpeech, yO as dateText, CO as timerState, Ule as searchPlace, Hle as loadWeather, BO as weatherWord, Ia as renderMultiTimer, Ki as multiTimerConfig, La as multiTimerLabel, Ea as onMultiTimerChange, sa as stopMultiTimer, Hi as MULTI_TIMER_SOUNDS, Ui as MULTI_TIMER_START, Bi as MULTI_TIMER_COLORS, zi as MULTI_TIMER_NEXT_COLORS, Vi as MULTI_TIMER_ICONS, xne as renderApplause, um as applauseConfig, Rm as applauseLabel, Sm as applausePicture, om as APPLAUSE_WORDS, sm as APPLAUSE_SECONDS, une as NOISE_LIMITS, lNe as MIC_SENSITIVITY, bne as stopApplause, CLASS_CSS };
+export { classTime as renderTime, classTap as tapTime, classTick as tickTime, classStart as startTime, classReset as resetTimer, xO as timeSpeech, yO as dateText, CO as timerState, Ule as searchPlace, Hle as loadWeather, BO as weatherWord, Ia as renderMultiTimer, Ki as multiTimerConfig, La as multiTimerLabel, Ea as onMultiTimerChange, sa as stopMultiTimer, Hi as MULTI_TIMER_SOUNDS, Ui as MULTI_TIMER_START, Bi as MULTI_TIMER_COLORS, zi as MULTI_TIMER_NEXT_COLORS, Vi as MULTI_TIMER_ICONS, xne as renderApplause, um as applauseConfig, Rm as applauseLabel, Sm as applausePicture, om as APPLAUSE_WORDS, sm as APPLAUSE_SECONDS, une as NOISE_LIMITS, lNe as MIC_SENSITIVITY, bne as stopApplause, Wne as renderTimetable, Nh as timetableLabel, Gne as timetableSay, jh as timetableHtml, wh as timetableConfig, Ch as timetableStart, Eh as timetableTimes, Th as clockText, h6 as TIMETABLE_SUBJECTS, g6 as TIMETABLE_AFTER, yh as TIMETABLE_DESIGNS, gh as TIMETABLE_FONTS, Be as fontOf, CLASS_CSS };

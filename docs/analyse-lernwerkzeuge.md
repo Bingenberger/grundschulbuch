@@ -397,6 +397,19 @@ vorgelesen werden. Gemessen wird nur die Lautstärke. Einstellungsseite
 (`ApplauseOptions.tsx`) wie der Dialog der Vorlage mit Vorschau. Die eigenen
 Bausteine Lärmampel und Applaus messen sind nicht mehr auswählbar.
 
+**Bilder-Stundenplan (14.11.2026):** Darstellung und Daten unverändert aus der
+Vorlage (gleiches Skript; die 38 ARASAAC-Bilder der Standardfächer liegen in
+`public/stundenplan/` und kommen beim Export mit). `TimetableWidget.tsx`
+hebt live den heutigen Tag hervor und liest eine angetippte Stunde vor. Der
+Editor (`TimetableOptions.tsx`) folgt dem Dialog der Vorlage mit den Reitern
+Plan (Fach wählen, Stunden antippen, Leeren, geteilte Stunde), Tage & Zeiten
+(Tage, Stunden, Beginn, Länge, Zeitleiste, Pausen mit Bild), Fächer und Nach der
+Schule (Name, Farbe, Bild über ARASAAC-Suche oder eigenes Foto, Standardliste)
+und Aussehen (Überschrift, fünf Designs, Anzeige, Schrift, heutiger Tag). Statt
+Auswahllisten gibt es Auswahlknöpfe. Nicht übernommen: Laden und Speichern als
+Datei. Der Stundenplan kommt auf eine eigene Seite; der frühere eigene ist nicht
+mehr auswählbar.
+
 **Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Musik und Für alle Fächer (fertig), Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).

@@ -32,7 +32,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', stundenplan: 'Klassenführung', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -128,6 +128,9 @@ const SKIP = new Set([
   'widget-noise',
   'widget-applause',
   'widget-ampel',
+  // Replaced by the Bilder-Stundenplan of the reference.
+  'widget-timetable',
+  'widget-stundenplan',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -330,6 +333,7 @@ for (const [id, mode, title, words] of [
   ['ampel-applause', 'applause', 'Applausometer', 'Applausometer Applaus klatschen jubeln messen Mikrofon laut'],
 ] as const)
   toolBlocks.push({ id, title, subject: 'Klassenführung', type: 'widget', kind: 'ampel', preset: { ...defaultSettings('ampel'), applause: (mode === 'noise' ? { mode, secs: 5, sens: 3, limit: 3, chime: false } : { mode }) as JsonValue, title }, words });
+toolBlocks.push({ id: 'stundenplan', title: 'Bilder-Stundenplan', subject: 'Klassenführung', type: 'widget', kind: 'stundenplan', preset: { ...defaultSettings('stundenplan'), title: 'Bilder-Stundenplan' }, words: 'Stundenplan Bilder Fächer Woche Pausen Nach der Schule Tagesablauf Piktogramme' });
 toolBlocks.push({ id: 'zeit-multitimer', title: 'Multi-Timer', subject: 'Klassenführung', type: 'widget', kind: 'phasen', preset: { ...defaultSettings('phasen'), title: 'Multi-Timer' }, words: 'Multi-Timer Phasen Think Pair Share Arbeitszeit Uhr Ringe' });
 // Quiz of Quizsachen and Memory of Textsachen, as in Lernsachen-Heft (Interaktive Übungen).
 toolBlocks.push(

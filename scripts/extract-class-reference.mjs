@@ -1,6 +1,7 @@
 // Takes the tools for time and the classroom out of Lernsachen-Heft.html,
 // unchanged: Uhr, Timer and Datum (Regal › Zeit), the Multi-Timer, and
-// Lärmampel and Applausometer.
+// Lärmampel, Applausometer and the Bilder-Stundenplan (with the ARASAAC
+// pictures of its subjects, CC BY-NC-SA 4.0, saved to public/stundenplan/).
 // Individual top-level declarations are resolved like in
 // extract-music-reference.mjs, so no editor or application code comes along.
 //
@@ -41,7 +42,7 @@ if (!head.includes('.lh-wg-digits') || !head.includes('.lh-wg-timer.is-ringing')
 
 code += `
 ${classTime}
-var CLASS_CSS = ${head}\` + Ra + Sne;
+var CLASS_CSS = ${head}\` + Ra + Sne + Kne;
 /* Tapping a widget (Xle of the reference, the cases of Regal › Zeit). */
 function classTap(e, t) {
   if (e.kind === \`timer\`) { Vr(); pi(); }
@@ -103,6 +104,7 @@ const aliases = {
   Ule: 'searchPlace', Hle: 'loadWeather', BO: 'weatherWord',
   Ia: 'renderMultiTimer', Ki: 'multiTimerConfig', La: 'multiTimerLabel', Ea: 'onMultiTimerChange', sa: 'stopMultiTimer', Hi: 'MULTI_TIMER_SOUNDS', Ui: 'MULTI_TIMER_START', Bi: 'MULTI_TIMER_COLORS', zi: 'MULTI_TIMER_NEXT_COLORS', Vi: 'MULTI_TIMER_ICONS',
   xne: 'renderApplause', um: 'applauseConfig', Rm: 'applauseLabel', Sm: 'applausePicture', om: 'APPLAUSE_WORDS', sm: 'APPLAUSE_SECONDS', une: 'NOISE_LIMITS', lNe: 'MIC_SENSITIVITY', bne: 'stopApplause',
+  Wne: 'renderTimetable', Nh: 'timetableLabel', Gne: 'timetableSay', jh: 'timetableHtml', wh: 'timetableConfig', Ch: 'timetableStart', Eh: 'timetableTimes', Th: 'clockText', h6: 'TIMETABLE_SUBJECTS', g6: 'TIMETABLE_AFTER', yh: 'TIMETABLE_DESIGNS', gh: 'TIMETABLE_FONTS', Be: 'fontOf',
   CLASS_CSS: 'CLASS_CSS',
 };
 let runtime = extract(Object.keys(aliases));
@@ -129,3 +131,16 @@ ${runtime}
 export { ${Object.entries(aliases).map(([a, b]) => a === b ? a : a + ' as ' + b).join(', ')} };
 `);
 console.log('Class reference:', runtime.length, 'bytes');
+
+// The pictures of the timetable subjects (pack “timetable-pictos”: ARASAAC id → WebP).
+const pack = html.match(/<script type="text\/plain" id="lh-pack-timetable-pictos">([^<]*)<\/script>/);
+if (!pack) throw Error('Picture pack timetable-pictos not found.');
+await fs.mkdir('public/stundenplan', { recursive: true });
+let pictures = 0;
+for (const [id, url] of Object.entries(JSON.parse(pack[1]))) {
+  const m = /^data:image\/webp;base64,([A-Za-z0-9+/=]+)$/.exec(url);
+  if (!/^\d+$/.test(id) || !m) throw Error('Unexpected picture ' + id);
+  await fs.writeFile(`public/stundenplan/${id}.webp`, Buffer.from(m[1], 'base64'));
+  pictures++;
+}
+console.log('Timetable pictures:', pictures);

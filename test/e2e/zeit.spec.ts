@@ -76,6 +76,35 @@ test('Lärmampel und Applausometer wie in der Vorlage', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test('Bilder-Stundenplan: Fächer eintragen, Pause, eigene Seite, Vorlesen', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  const dialog = await openBlock(page, 'Klassenführung', 'Bilder-Stundenplan');
+  // Plan: Mathe in die erste Stunde am Montag, Deutsch geteilt dazu.
+  await dialog.getByRole('group', { name: 'Fächer zum Eintragen' }).getByRole('button', { name: 'Mathe', exact: true }).click();
+  await dialog.locator('.tt-grid .lh-tt-cell[data-d="0"][data-l="0"]').click();
+  await dialog.getByText('Geteilte Stunde', { exact: true }).click();
+  await expect(dialog.getByRole('switch', { name: /Geteilte Stunde/ })).toBeChecked();
+  await dialog.getByRole('group', { name: 'Fächer zum Eintragen' }).getByRole('button', { name: 'Deutsch', exact: true }).click();
+  await dialog.locator('.tt-grid .lh-tt-cell[data-d="0"][data-l="0"]').click();
+  await expect(dialog.locator('.tt-grid .lh-tt-cell[data-d="0"][data-l="0"]')).toHaveAttribute('data-say', /Mathe oder Deutsch/);
+  await dialog.getByRole('tab', { name: 'Tage & Zeiten' }).click();
+  await dialog.getByRole('radio', { name: 'Montag bis Samstag', exact: true }).click();
+  await expect(dialog.locator('.tt-preview-all .lh-tt-day')).toHaveCount(6);
+  await dialog.getByRole('tab', { name: 'Aussehen' }).click();
+  await dialog.getByLabel('Überschrift').fill('Stundenplan der 2b');
+  await page.screenshot({ path: test.info().outputPath('stundenplan-dialog.png') });
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  const plan = page.locator('.interaction-surface .lh-wg-timetable');
+  await expect(plan).toHaveAttribute('aria-label', /Stundenplan: Stundenplan der 2b/);
+  await expect(plan.locator('.lh-tt-cell[data-d="0"][data-l="0"] img')).toHaveCount(2);
+  await expect(plan.locator('.lh-tt-break')).toContainText('Pause');
+  await page.screenshot({ path: test.info().outputPath('stundenplan-seite.png') });
+  expect(errors).toEqual([]);
+});
+
 test('Wetter nur über den Schulserver und nur angemeldet', async ({ page }) => {
   expect((await page.request.get('/api/wetter?art=ort&name=Regensburg')).status()).toBe(401);
   await login(page);

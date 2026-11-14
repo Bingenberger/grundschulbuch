@@ -43,6 +43,7 @@ export const WIDGET_KINDS = [
   'zeit',
   'phasen',
   'ampel',
+  'stundenplan',
   'shop',
   'geometry',
   'monster',
