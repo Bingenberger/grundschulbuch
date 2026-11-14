@@ -2,6 +2,8 @@ import { test, expect, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { unzipSync, strFromU8 } from 'fflate';
 import { PDFDocument } from 'pdf-lib';
+import { defaultSettings } from '../../src/lib/learning/catalog';
+import { newPage, uuid, type PageElement } from '../../src/lib/notebook-model';
 async function login(page: Page) {
   await page.goto('/anmelden');
   await page.getByLabel('Name', { exact: true }).fill('Frau Beispiel');
@@ -22,15 +24,13 @@ test('Interaktive Aufgaben sind im Kinderheft bedienbar und bleiben im Entwurf g
   page,
   browser,
 }) => {
-  const id = await notebook(page, 'Interaktive Übung');
-  await page
-    .getByRole('button', { name: 'Lernwerkzeuge', exact: true })
-    .click();
-  const dialog = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
-  await dialog.getByRole('button', { name: 'Quiz', exact: true }).click();
-  await dialog
-    .getByRole('button', { name: 'Auf die Seite übernehmen' })
-    .click();
+  // A page with the former own quiz (no longer in the catalogue since the quiz
+  // of Quizsachen, but existing pages keep working).
+  await login(page);
+  const quiz = { id: uuid(), type: 'activity', activityKind: 'quiz', x: 15, y: 35, width: 180, height: 140, rotation: 0, locked: false, color: '#253c42', settings: defaultSettings('quiz') } as PageElement;
+  const made = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Interaktive Übung', pages: [{ ...newPage('blanko', 'landscape'), elements: [quiz] }] } })).json();
+  const id: string = made.book.id;
+  await page.goto(`/heft/${id}`);
   await page
     .locator('.interaction-surface .learning-widget')
     .getByRole('button', { name: 'Antwort B: Vier', exact: true })

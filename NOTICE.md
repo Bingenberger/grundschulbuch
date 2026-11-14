@@ -37,7 +37,16 @@ ihre Urheber werden hier genannt.
   - der Spieler der Zuordnungen (DnDPlayer, `src/lib/reference/schiebesachen-player.ts`);
   - der Übungsbaukasten des Dialogs „Neue Übung“ (`src/lib/reference/schiebesachen-builder.ts`): Bild und Wort, Sortieren, Artikel, Reihenfolge, Paare, Buchstabieren, Silbenlesen.
 
-Die drei Lernsachen-Teile werden mit `scripts/extract-players.mjs`,
+### Quizsachen – Lernsachen.blog
+
+- Projekt: <https://majort0m0.github.io/Quizsachen/Quizsachen.html>
+- Urheber: Lernsachen.blog (<https://lernsachen.blog>)
+- Lizenz: CC BY-NC-SA 4.0
+- Verwendet, jeweils unverändert:
+  - der Spieler der Quizze (QuizPlayer, `src/lib/reference/quizsachen-player.ts`);
+  - die Vorlagen von „Neues Quiz“ (Bunte Kacheln, Bilderrätsel, Bilder auswählen, Hör-Quiz, Richtig oder falsch?, Reihenfolge, Zeitstrahl, Leicht lesen) und das Einlesen von „Fragen per Text eingeben“ samt Beispiel (`src/lib/reference/quizsachen-builder.ts`). Die Einstellungsseite folgt dem Ablauf-Menü von Quizsachen.
+
+Die Lernsachen-Teile werden mit `scripts/extract-players.mjs`,
 `scripts/extract-music-reference.mjs` und den Erläuterungen in den
 Dateiköpfen aus den veröffentlichten Apps gewonnen.
 

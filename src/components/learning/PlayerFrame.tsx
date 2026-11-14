@@ -1,17 +1,19 @@
 'use client';
-// The frame in which the players of Textsachen and Schiebesachen run, built
+// The frame in which the players of Textsachen, Schiebesachen and Quizsachen run, built
 // like the one of Lernsachen-Heft: player script, task, last state, fitting the
 // exercise into the frame; changes and results come back as messages.
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-export type PlayerKind = 'TSPlayer' | 'DnDPlayer';
+export type PlayerKind = 'TSPlayer' | 'DnDPlayer' | 'QuizPlayer';
 const STATE = 'grundschulbuch-player-state', RESULT = 'grundschulbuch-player-result';
 
 const scripts: Partial<Record<PlayerKind, Promise<string>>> = {};
 export const loadPlayer = (kind: PlayerKind) =>
   (scripts[kind] ??= kind === 'TSPlayer'
     ? import('@/lib/reference/textsachen-player').then((m) => m.TSPLAYER)
-    : import('@/lib/reference/schiebesachen-player').then((m) => m.DNDPLAYER));
+    : kind === 'QuizPlayer'
+      ? import('@/lib/reference/quizsachen-player').then((m) => m.QUIZPLAYER)
+      : import('@/lib/reference/schiebesachen-player').then((m) => m.DNDPLAYER));
 
 const pictures = new Map<string, Promise<string | null>>();
 /** Pictures go into the task as data addresses, as in a file saved by the apps. */

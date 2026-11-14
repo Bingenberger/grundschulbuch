@@ -63,8 +63,8 @@ test('Alle Lernwerkzeuge und Übungen lassen sich im Heft öffnen', async ({
       await expect(page.frameLocator('.interaction-surface .textsachen-frame iframe').locator('#lh-root')).not.toBeEmpty();
       continue;
     }
-    // Zuordnung: built in its settings – without them a note to set it up.
-    if (catalogue[i].kind === 'zuordnung') {
+    // Zuordnung and Quiz: built in their settings – without them a note to set them up.
+    if (catalogue[i].kind === 'zuordnung' || catalogue[i].kind === 'quizsachen') {
       await expect(page.locator('.interaction-surface .textsachen-frame.is-still')).toContainText('bitte einstellen');
       continue;
     }

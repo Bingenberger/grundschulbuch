@@ -24,6 +24,7 @@ import NumberLine from './NumberLine';
 import HundredField from './HundredField';
 import TextsachenFrame from './TextsachenFrame';
 import ZuordnungFrame from './ZuordnungFrame';
+import QuizFrame from './QuizFrame';
 import MusicTemplate from './MusicTemplate';
 export default function Widget({ element }: { element: PageElement }) {
   const kind = element.widgetKind!;
@@ -42,6 +43,7 @@ export default function Widget({ element }: { element: PageElement }) {
   if (kind === 'hundredfield') return <HundredField element={element} />;
   if (kind === 'textsachen') return <TextsachenFrame element={element} />;
   if (kind === 'zuordnung') return <ZuordnungFrame element={element} />;
+  if (kind === 'quizsachen') return <QuizFrame element={element} />;
   if (kind === 'geometry') return <GeometryWidget element={element} />;
   if (kind === 'slideshow') return <SlideshowWidget element={element} />;
   if (kind === 'karaoke') return <KaraokeWidget element={element} />;

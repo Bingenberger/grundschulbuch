@@ -39,6 +39,7 @@ export const WIDGET_KINDS = [
   'hundredfield',
   'textsachen',
   'zuordnung',
+  'quizsachen',
   'shop',
   'geometry',
   'monster',

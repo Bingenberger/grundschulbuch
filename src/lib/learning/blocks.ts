@@ -8,6 +8,7 @@ import { blueprintPages, blueprints, type Blueprint } from './templates';
 import { defaultSettings, type JsonValue } from './catalog';
 import { defaultTs } from './textsachen';
 import { defaultDnd } from './zuordnung';
+import { defaultQuiz } from './quiz';
 import type { MathToolKind } from './mathtool';
 import { geoConfig } from './geodraw';
 import { musicPresets, musicKind, musicSettings, musicPage } from './music';
@@ -30,7 +31,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -110,6 +111,12 @@ const SKIP = new Set([
   'widget-zuordnung',
   'activity-matching',
   'activity-syllables',
+  // Replaced by the quiz of Quizsachen; Memory and Maus & Käse are the ones of
+  // Textsachen now (as in Lernsachen-Heft).
+  'widget-quizsachen',
+  'activity-quiz',
+  'activity-memory',
+  'activity-maze',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -299,6 +306,11 @@ for (const [id, mode, title, words] of [
   ['ts-wordle', 'wordle', 'Wordle', 'Wordle Worträtsel Wort erraten Buchstaben Textsachen'],
 ] as const)
   toolBlocks.push({ id, title, subject: 'Deutsch', type: 'widget', kind: 'textsachen', preset: { ...defaultSettings('textsachen'), ts: defaultTs(mode) as unknown as JsonValue, title }, words });
+// Quiz of Quizsachen and Memory of Textsachen, as in Lernsachen-Heft (Interaktive Übungen).
+toolBlocks.push(
+  { id: 'qz-quiz', title: 'Quiz', subject: 'Für alle Fächer', type: 'widget', kind: 'quizsachen', preset: { ...defaultSettings('quizsachen'), qz: defaultQuiz() as unknown as JsonValue, title: 'Quiz' }, words: 'Quiz Quizsachen Fragen Antworten Einfachauswahl Mehrfachauswahl richtig falsch Reihenfolge Bilderrätsel Hör-Quiz' },
+  { id: 'ts-memory-all', title: 'Memory', subject: 'Für alle Fächer', type: 'widget', kind: 'textsachen', preset: { ...defaultSettings('textsachen'), ts: defaultTs('memory') as unknown as JsonValue, title: 'Memory' }, words: 'Memory Paare Bild Wort Ton Textsachen' },
+);
 // Zuordnungen of Schiebesachen, as in Lernsachen-Heft; the formats for reading
 // and writing are also offered under Deutsch.
 for (const [id, subject, format, title, words] of [

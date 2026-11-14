@@ -123,6 +123,9 @@ die unter CC BY-NC-SA 4.0 stehen. Herzlichen Dank an ihre Urheber:
 - **[Schiebesachen](https://majort0m0.github.io/Schiebesachen/Schiebesachen.html)**
   von [Lernsachen.blog](https://lernsachen.blog): Spieler und Übungsbaukasten der
   Zuordnungen (u. a. Silbenlesen, Buchstabieren, Artikel) sind unverändert übernommen.
+- **[Quizsachen](https://majort0m0.github.io/Quizsachen/Quizsachen.html)** von
+  [Lernsachen.blog](https://lernsachen.blog): Der Spieler der Quizze, die Vorlagen
+  von „Neues Quiz“ und das Einlesen von „Fragen per Text eingeben“ sind unverändert übernommen.
 - **[ARASAAC](https://arasaac.org)**-Piktogramme von Sergio Palao (Eigentum der
   Regierung von Aragón) für Anlautbilder, Wortbilder und die Kasse.
 

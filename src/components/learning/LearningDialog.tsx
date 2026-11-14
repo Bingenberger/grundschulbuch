@@ -1,6 +1,8 @@
 'use client';
 import TextsachenOptions from './TextsachenOptions';
 import ZuordnungOptions from './ZuordnungOptions';
+import QuizOptions from './QuizOptions';
+import { quizConfig } from '@/lib/learning/quiz';
 import { dndConfig } from '@/lib/learning/zuordnung';
 import { tsConfig, tsProblems } from '@/lib/learning/textsachen';
 import Icon, { type IconName } from '../Icon';
@@ -71,7 +73,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -89,7 +91,7 @@ function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) 
   if (kind === 'placevalue' || kind === 'dienes') return { width: 220, height: 160 };
   if (kind === 'numberline') return { width: 250, height: 80 };
   if (kind === 'hundredfield') return { width: 200, height: 150 };
-  if (kind === 'checkout' || kind === 'monsternames' || kind === 'syllablejoin' || kind === 'anlaut' || kind === 'clapsyllables' || kind === 'textsachen' || kind === 'zuordnung') return { width: 297, height: 210 };
+  if (kind === 'checkout' || kind === 'monsternames' || kind === 'syllablejoin' || kind === 'anlaut' || kind === 'clapsyllables' || kind === 'textsachen' || kind === 'zuordnung' || kind === 'quizsachen') return { width: 297, height: 210 };
   return {
     width: kind === 'receipt' ? 120 : 180,
     height: kind === 'receipt' ? 126 : kind === 'alphabet' ? 210 : kind === 'synthesis' || kind === 'clapping' || kind === 'letterguess' || kind === 'syllables' || kind === 'geometry' ? 180 : 140,
@@ -385,6 +387,15 @@ export default function LearningDialog({
                 if (!dnd.exercise) { setError('Die Übung ist noch nicht fertig: Sie wird gerade gebaut oder es fehlt noch etwas (siehe Hinweis unter dem Inhalt).'); return; }
                 if (!element && onPages) {
                   onPages(fullPageWidget('zuordnung', settings));
+                  onClose();
+                  return;
+                }
+              }
+              if (kind === 'quizsachen') {
+                if (!quizConfig(settings.qz).quiz) { setError('Das Quiz ist noch nicht fertig: Es wird gerade gebaut oder es fehlt noch etwas (siehe Hinweis unter den Fragen).'); return; }
+                // Like in Lernsachen-Heft, the quiz comes on its own page.
+                if (!element && onPages) {
+                  onPages(fullPageWidget('quizsachen', settings));
                   onClose();
                   return;
                 }
@@ -720,6 +731,7 @@ export default function LearningDialog({
               );
             })()}
             {kind === 'zuordnung' && <ZuordnungOptions value={settings.dnd} title={settings.title || ''} onChange={(dnd) => patch({ dnd })} upload={media} busy={busy} />}
+            {kind === 'quizsachen' && <QuizOptions value={settings.qz} title={settings.title || ''} onChange={(qz) => patch({ qz })} upload={media} busy={busy} />}
             {kind === 'textsachen' && <TextsachenOptions value={settings.ts} onChange={(ts) => patch({ ts })} upload={media} busy={busy} />}
             {kind === 'clapsyllables' && <ClapOptions value={settings.clap} onChange={(clap) => patch({ clap: clap as unknown as JsonValue })} />}
             {kind === 'anlaut' && <AnlautOptions value={settings.anlaut} onChange={(anlaut) => patch({ anlaut: anlaut as unknown as JsonValue })} />}

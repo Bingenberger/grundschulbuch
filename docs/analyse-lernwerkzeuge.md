@@ -210,7 +210,7 @@ Umbau Stück für Stück geprüft.
   Bilder-Stundenplan
 - **Unterstützte Kommunikation:** Sprechtaste, Satzleiste, Zurück-Taste,
   Kommunikationstafeln (2–20 Felder, Themen-Tafeln)
-- **Für alle Fächer:** Quiz, Zuordnungen, Memory
+- **Für alle Fächer:** Quiz, Zuordnungen, Memory (Quiz von Quizsachen, Memory von Textsachen)
 
 ## 5. Umsetzung
 
@@ -348,6 +348,28 @@ und Silben klatschen zeigen ihre Auswahl jetzt wie die neueren Seiten – Schalt
 statt Ja/Nein-Kacheln, Schieberegler für Anzahlen, Auswahlknöpfe mit Überschrift
 (`OptionControls.tsx`).
 
-**Schritt 2 – Fach für Fach (offen):** Mathematik (fertig), Deutsch, Sachunterricht/Zeit,
-Klassenführung, Unterstützte Kommunikation, Musik, Medien – jeweils an der Vorlage
+**Quiz (Quizsachen, 14.11.2026):** Wie im Lernsachen-Heft läuft das Quiz mit
+dem Originalspieler von Quizsachen (QuizPlayer), ohne Internet.
+`scripts/extract-players.mjs` übernimmt ihn unverändert
+(`reference/quizsachen-player.ts`), dazu per Scope-Analyse die Vorlagen von
+„Neues Quiz“ und das Einlesen von „Fragen per Text eingeben“
+(`reference/quizsachen-builder.ts`; Quizsachen-Format, GIFT, Aiken). Der Dialog
+(`QuizOptions.tsx`) bietet: Vorlage (Bunte Kacheln, Bilderrätsel, Bilder
+auswählen, Hör-Quiz, Richtig oder falsch?, Reihenfolge, Zeitstrahl, Leicht
+lesen, Schlicht), Fragen als Text mit Beispiel und „So geht's“, Bilder zu
+`[Bild: …]` (ARASAAC-Suche oder eigenes Bild) und den Ablauf wie in Quizsachen
+(Rückmeldung, Versuche, Lösung, Töne, Teilpunkte, Bestanden ab, Mischen,
+Fortschritt, Startkarte, Vorlesen, Abschlusskarte), dazu eine Vorschau. Das Quiz
+wird beim Einstellen gebaut und gespeichert (`lib/learning/quiz.ts`), der
+Spielstand gilt je Kind. Es kommt auf eine eigene Seite. Unter „Für alle Fächer“
+stehen jetzt Quiz, Zuordnungen, Memory (von Textsachen) und Vier in einer Reihe;
+das frühere eigene Quiz, Memory und Labyrinth · Maus & Käse sind nicht mehr
+auswählbar, vorhandene Seiten damit funktionieren weiter.
+
+Hinweis zum Skript: Schiebesachen wurde inzwischen neu gebaut, die
+Kurznamen in `BUILDER` passen nicht mehr. Das Skript lässt den Baukasten dann
+unverändert und meldet das (ebenso für Quizsachen).
+
+**Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Musik und Für alle Fächer (fertig), Sachunterricht/Zeit,
+Klassenführung, Unterstützte Kommunikation, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).
