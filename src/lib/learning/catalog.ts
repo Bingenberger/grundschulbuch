@@ -55,6 +55,7 @@ export const widgetCatalog = {
   quizsachen: ['Quiz', 'Interaktive Übungen'],
   zeit: ['Uhr, Timer und Datum', 'Schule'],
   phasen: ['Multi-Timer', 'Schule'],
+  ampel: ['Lärmampel und Applausometer', 'Schule'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -126,6 +127,8 @@ export type LearningSettings = {
   zeit?: JsonValue;
   /** Multi-Timer der Vorlage: phases, delay, sound. */
   multi?: JsonValue;
+  /** Lärmampel und Applausometer der Vorlage: mode, secs, sens, limit, chime, words. */
+  applause?: JsonValue;
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';

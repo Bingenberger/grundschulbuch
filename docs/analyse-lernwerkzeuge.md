@@ -390,6 +390,13 @@ Uhr und Datum stehen unter Sachunterricht, Timer und Multi-Timer unter
 Klassenführung. Die frühere Lernuhr, der eigene Timer und Multi-Timer sind nicht
 mehr auswählbar; vorhandene Seiten damit funktionieren weiter.
 
+**Lärmampel und Applausometer (14.11.2026):** ebenfalls unverändert aus der
+Vorlage (gleiches Skript, `ApplauseWidget.tsx`): Ampel mit Leise-Zeit und
+Hinweiston, Applausometer mit „Messen!“, Countdown, acht Stufen mit Wörtern, die
+vorgelesen werden. Gemessen wird nur die Lautstärke. Einstellungsseite
+(`ApplauseOptions.tsx`) wie der Dialog der Vorlage mit Vorschau. Die eigenen
+Bausteine Lärmampel und Applaus messen sind nicht mehr auswählbar.
+
 **Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Musik und Für alle Fächer (fertig), Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).

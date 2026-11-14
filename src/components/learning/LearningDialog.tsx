@@ -4,6 +4,7 @@ import ZuordnungOptions from './ZuordnungOptions';
 import QuizOptions from './QuizOptions';
 import TimeOptions from './TimeOptions';
 import MultiTimerOptions from './MultiTimerOptions';
+import ApplauseOptions from './ApplauseOptions';
 import { MULTI_TIMER_SIZE, zeitConfig, zeitSize } from '@/lib/learning/zeit';
 import { quizConfig } from '@/lib/learning/quiz';
 import { dndConfig } from '@/lib/learning/zuordnung';
@@ -76,7 +77,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -93,6 +94,8 @@ function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) 
   if (kind === 'mathtool') return pageSize(mathTool(settings));
   if (kind === 'zeit') return zeitSize(zeitConfig(settings.zeit));
   if (kind === 'phasen') return MULTI_TIMER_SIZE;
+  // The Schule templates of the reference: 1300 × 720 of 1400 page width.
+  if (kind === 'ampel') return { width: 276, height: 153 };
   if (kind === 'placevalue' || kind === 'dienes') return { width: 220, height: 160 };
   if (kind === 'numberline') return { width: 250, height: 80 };
   if (kind === 'hundredfield') return { width: 200, height: 150 };
@@ -737,6 +740,7 @@ export default function LearningDialog({
             })()}
             {kind === 'zuordnung' && <ZuordnungOptions value={settings.dnd} title={settings.title || ''} onChange={(dnd) => patch({ dnd })} upload={media} busy={busy} />}
             {kind === 'zeit' && <TimeOptions value={settings.zeit} onChange={(zeit) => patch({ zeit })} />}
+            {kind === 'ampel' && <ApplauseOptions value={settings.applause} onChange={(applause) => patch({ applause })} />}
             {kind === 'phasen' && <MultiTimerOptions value={settings.multi} onChange={(multi) => patch({ multi })} />}
             {kind === 'quizsachen' && <QuizOptions value={settings.qz} title={settings.title || ''} onChange={(qz) => patch({ qz })} upload={media} busy={busy} />}
             {kind === 'textsachen' && <TextsachenOptions value={settings.ts} onChange={(ts) => patch({ ts })} upload={media} busy={busy} />}

@@ -4937,3 +4937,8 @@ input[type='checkbox'] {
 .mt-colors { display: flex; flex-wrap: wrap; gap: 6px; }
 .mt-colors button { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #cbd5e1; cursor: pointer; }
 .mt-colors button[aria-checked="true"] { box-shadow: 0 0 0 3px #1f2937; }
+
+/* Lärmampel and Applausometer of the reference. */
+.applause-preview { display: flex; justify-content: center; padding: 12px; background: #f8fafc; border-radius: 12px; }
+.applause-preview svg { max-width: 100%; height: auto; }
+.applause-words { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 6px; margin: 6px 0; }

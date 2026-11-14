@@ -259,6 +259,13 @@ function $r() {
   } catch {
   }
 }
+function ni() {
+  Qr++, $r();
+  let e17 = false;
+  return () => {
+    e17 || (e17 = true, Qr--, $r());
+  };
+}
 var ri = [];
 function ai() {
   qr(), Hr.clear();
@@ -313,6 +320,15 @@ function hi() {
   for (let [n10, r10] of [[784, 0], [988, 0.32], [1175, 0.64], [784, 1.7], [988, 2.02], [1175, 2.34]]) {
     let i10 = e17.createOscillator(), a10 = e17.createGain();
     i10.type = `sine`, i10.frequency.value = n10, a10.gain.setValueAtTime(1e-4, t10 + r10), a10.gain.exponentialRampToValueAtTime(0.28, t10 + r10 + 0.02), a10.gain.exponentialRampToValueAtTime(1e-4, t10 + r10 + 1.3), i10.connect(a10).connect(e17.destination), i10.start(t10 + r10), i10.stop(t10 + r10 + 1.4);
+  }
+}
+function vi() {
+  let e17 = Vr();
+  if (!e17) return;
+  let t10 = e17.currentTime + 0.02;
+  for (let [n10, r10] of [[988, 0], [1319, 0.09], [1760, 0.18]]) {
+    let i10 = e17.createOscillator(), a10 = e17.createGain();
+    i10.type = `triangle`, i10.frequency.value = n10, a10.gain.setValueAtTime(1e-4, t10 + r10), a10.gain.exponentialRampToValueAtTime(0.22, t10 + r10 + 0.015), a10.gain.exponentialRampToValueAtTime(1e-4, t10 + r10 + 0.35), i10.connect(a10).connect(e17.destination), i10.start(t10 + r10), i10.stop(t10 + r10 + 0.4);
   }
 }
 var bi = /* @__PURE__ */ new WeakMap();
@@ -1129,11 +1145,47 @@ function Vf(e17) {
   let n10 = t10.objects.filter((e18) => e18.kind === `text` && e18.text?.trim()).map((e18) => e18.text.replace(/\n/g, ` `).trim());
   return [`Animation: ${t10.title}`, `${t10.len} Sekunden`, ...n10].join(`. `);
 }
+var _te = 1200;
 var Hf = [{ id: `chromatic`, label: `Chromatisch`, strings: [], fmin: 30, fmax: 2e3 }, { id: `guitar`, label: `Gitarre`, strings: [40, 45, 50, 55, 59, 64], fmin: 60, fmax: 1400 }, { id: `ukulele`, label: `Ukulele`, strings: [67, 60, 64, 69], fmin: 180, fmax: 1100 }, { id: `bass`, label: `Bass`, strings: [28, 33, 38, 43], fmin: 30, fmax: 500 }, { id: `violin`, label: `Violine`, strings: [55, 62, 69, 76], fmin: 170, fmax: 3e3 }, { id: `cello`, label: `Cello`, strings: [36, 43, 50, 57], fmin: 55, fmax: 1e3 }];
 var Uf = { inst: `chromatic`, a4: 440 };
 var Wf = (e17) => Hf.find((t10) => t10.id === e17) ?? Hf[0];
 var vte = [`C`, `C\u266F`, `D`, `D\u266F`, `E`, `F`, `F\u266F`, `G`, `G\u266F`, `A`, `A\u266F`, `H`];
 var Kf = (e17) => vte[(Math.round(e17) % 12 + 12) % 12];
+var yte = (e17) => Math.floor(Math.round(e17) / 12) - 1;
+var Jf = 650;
+var Yf = 790;
+var Qf = /* @__PURE__ */ new Map();
+var $f = /* @__PURE__ */ new Map();
+var ep = /* @__PURE__ */ new Map();
+var tp = null;
+var np = /* @__PURE__ */ new Set();
+var rp = (e17) => {
+  let t10 = ep.get(e17)?.tuner ?? Uf;
+  return { ...t10, inst: Qf.get(e17) ?? t10.inst };
+};
+function ip(e17) {
+  let t10 = tp?.id === e17 ? tp : null, n10 = Wf(rp(e17).inst), r10 = t10?.reading && performance.now() - t10.reading.at < _te ? t10.reading : null, i10 = !!r10 && Math.abs(r10.cents) <= 5, a10 = r10 ? i10 ? `#69db7c` : `#ffd43b` : `#5c7c66`;
+  for (let o10 of $f.get(e17) ?? []) {
+    if (!o10.isConnected) continue;
+    let s10 = (e18) => o10.querySelector(e18);
+    s10(`.tn-needle`)?.setAttribute(`transform`, `rotate(${(t10?.needle ?? 0).toFixed(2)} ${Jf} ${Yf})`), s10(`.tn-needle`)?.setAttribute(`opacity`, r10 ? `1` : `0.45`);
+    let c10 = s10(`.tn-note`), l10 = s10(`.tn-oct`), u10 = r10 ? r10.string >= 0 ? n10.strings[r10.string] : Math.round(r10.m) : 0;
+    c10 && (c10.textContent = r10 ? Kf(u10) : `\u2013`, c10.setAttribute(`fill`, a10)), l10 && (l10.textContent = r10 ? String(yte(u10)) : ``, l10.setAttribute(`fill`, a10));
+    let d10 = s10(`.tn-freq`);
+    d10 && (d10.textContent = r10 ? `${r10.f.toFixed(1).replace(`.`, `,`)} Hz` : ``, d10.setAttribute(`fill`, a10));
+    let f10 = s10(`.tn-hint`), p10 = s10(`.tn-cents`);
+    f10 && (f10.textContent = t10 ? r10 ? i10 ? `Gestimmt \u2713` : r10.cents < 0 ? r10.cents < -50 ? `Viel zu tief` : `Zu tief` : r10.cents > 50 ? `Viel zu hoch` : `Zu hoch` : `Spiel einen Ton` : np.has(e17) ? `Kein Mikrofon` : `Mikrofon an`, f10.setAttribute(`fill`, r10 ? i10 ? `#69db7c` : `#ffd43b` : `#e9ecef`)), p10 && (p10.textContent = r10 ? `${r10.cents > 0 ? `+` : r10.cents < 0 ? `\u2212` : `\xB1`}${Math.abs(Math.round(r10.cents))} Cent${r10.string >= 0 ? ` \xB7 Saite ${r10.string + 1}` : ``}` : np.has(e17) && !t10 ? `im Browser erlauben` : ``);
+    let m10 = s10(`.tn-status`), h10 = s10(`.tn-status2`);
+    m10 && (m10.textContent = t10 ? `H\xF6rt zu` : `Start`), h10 && (h10.textContent = t10 ? `Tippen: aus` : `Mikrofon an`), s10(`.tn-micbtn`)?.setAttribute(`fill`, t10 ? `#e03131` : `#2f9e44`), o10.querySelectorAll(`.tn-string`).forEach((e18) => {
+      let t11 = !!r10 && r10.string === Number(e18.dataset.s), n11 = e18.querySelector(`.tn-strbg`);
+      n11?.setAttribute(`fill`, t11 ? i10 ? `#2f9e44` : `#e8c27a` : `#2b313c`), n11?.setAttribute(`stroke`, t11 ? `#ffffff` : `#4a5363`);
+    });
+  }
+}
+function op() {
+  let e17 = tp;
+  e17 && (tp = null, cancelAnimationFrame(e17.raf), e17.src.disconnect(), e17.stream.getTracks().forEach((e18) => e18.stop()), e17.end(), ip(e17.id));
+}
 function up(e17) {
   let t10 = Wf((e17.tuner ?? Uf).inst);
   return `Stimmger\xE4t${t10.strings.length ? ` f\xFCr ${t10.label}: ${t10.strings.map(Kf).join(` `)}` : `, chromatisch`}. Tippe auf das Mikrofon und spiel einen Ton.`;
@@ -1144,6 +1196,7 @@ function am(e17) {
 }
 var om = [`Fl\xFCsterflausch`, `Kicherkr\xFCmel`, `Klatschkeks`, `Jubeljuchu`, `Hurraholla`, `Donnerdackel`, `Krawummbumm`, `Supertornado!`];
 var sm = [3, 5, 8, 10];
+var une = [{ v: 1, label: `Fl\xFCstern` }, { v: 2, label: `Leise` }, { v: 3, label: `Gruppenarbeit` }, { v: 4, label: `Lebhaft` }, { v: 5, label: `Laut` }];
 var lm = (e17, t10, n10, r10) => typeof e17 == `number` && Number.isFinite(e17) ? Math.round(Math.min(n10, Math.max(t10, e17))) : r10;
 function um(e17) {
   let t10 = e17 && typeof e17 == `object` ? e17 : {}, n10 = Array.from({ length: 8 }, (e18, n11) => {
@@ -1152,9 +1205,217 @@ function um(e17) {
   }), r10 = typeof t10.secs == `number` && sm.includes(t10.secs) ? t10.secs : 5;
   return { mode: t10.mode === `noise` ? `noise` : `applause`, secs: r10, sens: lm(t10.sens, 1, 5, 3), limit: lm(t10.limit, 1, 5, 3), chime: t10.chime === true, words: n10 };
 }
+var dm = [-4, -9, -14, -19, -24];
+var fm = 46;
+var dne = (e17, t10) => {
+  let n10 = 20 * Math.log10(Math.max(e17, 1e-6)), r10 = dm[t10 - 1] ?? dm[2];
+  return Math.min(1, Math.max(0, (n10 - (r10 - fm)) / fm));
+};
+var pm = [0.28, 0.38, 0.48, 0.58, 0.68];
+var mm = (e17) => {
+  let t10 = pm[e17.limit - 1] ?? pm[2];
+  return { y: t10, r: Math.min(0.96, t10 + 0.14) };
+};
+var fne = (e17) => Math.min(7, Math.max(0, Math.ceil(e17 * 8) - 1));
+var hm = 1300;
+var gm = 720;
+var _m = `Verdana, Arial, sans-serif`;
+var pne = [`#40c057`, `#82c91e`, `#fab005`, `#fd7e14`, `#fa5252`, `#e64980`, `#be4bdb`, `#7950f2`];
+var mne = (e17) => e17.replace(/&/g, `&amp;`).replace(/</g, `&lt;`).replace(/>/g, `&gt;`);
+var vm = (e17, t10, n10) => Math.max(14, Math.min(n10, Math.floor(t10 / (0.64 * Math.max(1, [...e17].length)))));
+var ym = (e17) => ({ x: 600, y: 604 - 72 * e17, w: 300 + 50 * e17, h: 60 });
+var bm = (e17, t10, n10) => `<g transform="translate(${e17} ${t10}) scale(${n10})" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"><rect x="-14" y="-34" width="28" height="48" rx="14" fill="#ffffff"/><path d="M-26 -6a26 26 0 0 0 52 0M0 20v14M-14 36h28"/></g>`;
+function hne(e17, t10) {
+  let n10 = `<defs><linearGradient id="lh-ap-body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7950f2"/><stop offset="1" stop-color="#5f3dc4"/></linearGradient></defs>`;
+  n10 += `<rect width="${hm}" height="${gm}" rx="56" fill="url(#lh-ap-body)"/>`, n10 += `<rect x="18" y="18" width="1264" height="684" rx="44" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="4" stroke-dasharray="2 14" stroke-linecap="round"/>`, n10 += `<rect x="60" y="46" width="470" height="112" rx="28" fill="#ffd43b" stroke="#f08c00" stroke-width="6"/>`;
+  let r10 = 0, i10 = (e18, t11) => `<circle class="lh-ap-bulb lh-ap-b${r10++ % 2}" cx="${e18}" cy="${t11}" r="8" fill="#fff3bf" stroke="#f08c00" stroke-width="2"/>`;
+  for (let e18 = 92; e18 <= 500; e18 += 34) n10 += i10(e18, 46) + i10(e18, 158);
+  n10 += i10(60, 102) + i10(530, 102), n10 += `<text x="295" y="120" font-size="48" font-family="${_m}" font-weight="700" text-anchor="middle" fill="#5f3dc4">Applausometer</text>`, n10 += `<rect x="80" y="190" width="430" height="190" rx="22" fill="#1c1d3b" stroke="#2b2d5c" stroke-width="6"/>`;
+  let a10 = t10 ? `Bereit?` : `Klatscht!`;
+  n10 += `<text class="lh-ap-word" x="295" y="290" font-size="${vm(a10, 390, 54)}" font-family="${_m}" font-weight="700" text-anchor="middle" fill="#ffe066">${a10}</text>`, n10 += `<text class="lh-ap-sub" x="295" y="344" font-size="26" font-family="${_m}" text-anchor="middle" fill="#99e9f2">Tippe auf \u201EMessen!\u201C</text>`, n10 += `<rect x="80" y="396" width="430" height="18" rx="9" fill="#2b2d5c"/><rect class="lh-ap-live" x="80" y="396" width="${t10 ? 0 : 260}" height="18" rx="9" fill="#69db7c"/>`, n10 += `<g class="lh-key lh-ap-go" data-a="go"><circle cx="295" cy="566" r="114" fill="#c92a2a"/><circle class="lh-ap-gobg" cx="295" cy="558" r="104" fill="#fa5252"/>` + bm(295, 528, 1.05) + `<text class="lh-ap-golabel" x="295" y="624" font-size="40" font-family="${_m}" font-weight="700" text-anchor="middle" fill="#ffffff">Messen!</text><circle class="lh-kdown" cx="295" cy="558" r="110" fill="#000000" opacity="0"/><title>Messen</title></g>`;
+  for (let r11 = 0; r11 < 8; r11++) {
+    let i11 = ym(r11), a11 = pne[r11], o10 = !t10 && r11 < 5, s10 = e17.words[r11] ?? om[r11];
+    n10 += `<g class="lh-ap-bar" data-i="${r11}"><rect x="${i11.x}" y="${i11.y}" width="${i11.w}" height="${i11.h}" rx="14" fill="${a11}" fill-opacity="0.22" stroke="${a11}" stroke-width="4"/><rect class="lh-ap-on" x="${i11.x}" y="${i11.y}" width="${i11.w}" height="${i11.h}" rx="14" fill="${a11}" opacity="${+!!o10}"/><text class="lh-ap-txt" x="${i11.x + 22}" y="${i11.y + 41}" font-size="${vm(s10, i11.w - 64, 30)}" font-family="${_m}" font-weight="700" fill="${o10 ? `#1f1f3a` : `#ffffff`}" fill-opacity="${o10 ? 1 : 0.8}">${mne(s10)}</text></g>`;
+  }
+  return n10 += `<g class="lh-ap-best" opacity="0"><path d="M0 -20l6 13 14 2-10 10 2 14-12-7-12 7 2-14-10-10 14-2z" fill="#ffffff" stroke="#1f1f3a" stroke-width="2.5"/><title>Rekord</title></g>`, n10;
+}
+var gne = [{ l: `r`, cy: 160, dim: `#4a1d1d`, lit: `#ff6b6b` }, { l: `y`, cy: 360, dim: `#4a3f12`, lit: `#ffd43b` }, { l: `g`, cy: 560, dim: `#173d1f`, lit: `#51cf66` }];
+var _ne = { g: `<path d="M-38 16q38 40 76 0" fill="none" stroke="#1f2a1f" stroke-width="9" stroke-linecap="round"/>`, y: `<path d="M-32 28h64" fill="none" stroke="#3b3110" stroke-width="9" stroke-linecap="round"/>`, r: `<circle cx="0" cy="30" r="14" fill="none" stroke="#3b1515" stroke-width="8"/>` };
+var xm = (e17) => 648 - e17 * 576;
+function vne(e17, t10) {
+  let n10 = mm(e17), r10 = `<defs><linearGradient id="lh-ap-nbody" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c8599"/><stop offset="1" stop-color="#0b7285"/></linearGradient></defs>`;
+  r10 += `<rect width="${hm}" height="${gm}" rx="56" fill="url(#lh-ap-nbody)"/>`, r10 += `<rect x="18" y="18" width="1264" height="684" rx="44" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="4" stroke-dasharray="2 14" stroke-linecap="round"/>`, r10 += `<rect x="80" y="40" width="300" height="640" rx="70" fill="#25262b" stroke="#495057" stroke-width="8"/>`;
+  for (let e18 of gne) {
+    let n11 = !t10 && e18.l === `g`;
+    r10 += `<g class="lh-ap-lamp" data-l="${e18.l}" transform="translate(230 ${e18.cy})"><circle r="92" fill="${e18.dim}"/><g class="lh-ap-lit" opacity="${+!!n11}"><circle r="92" fill="${e18.lit}"/><circle cx="-30" cy="-22" r="11" fill="#212529" fill-opacity="0.8"/><circle cx="30" cy="-22" r="11" fill="#212529" fill-opacity="0.8"/>${_ne[e18.l]}</g></g>`;
+  }
+  r10 += `<rect x="440" y="60" width="90" height="600" rx="45" fill="#1c1d3b"/>`;
+  let i10 = t10 ? 0 : 0.3;
+  r10 += `<rect class="lh-ap-meter" x="452" y="${xm(i10)}" width="66" height="${648 - xm(i10)}" rx="22" fill="#51cf66"/>`;
+  for (let [e18, t11] of [[xm(n10.y), `#ffd43b`], [xm(n10.r), `#ff6b6b`]]) r10 += `<rect x="428" y="${e18 - 3}" width="114" height="6" rx="3" fill="${t11}"/>`;
+  let a10 = t10 ? `Ampel aus` : `Sch\xF6n leise!`;
+  return r10 += `<text class="lh-ap-word" x="900" y="230" font-size="${vm(a10, 600, 72)}" font-family="${_m}" font-weight="700" text-anchor="middle" fill="#ffffff">${a10}</text>`, r10 += `<text class="lh-ap-sub" x="900" y="300" font-size="30" font-family="${_m}" text-anchor="middle" fill="#c3fae8">${t10 ? `Tippe auf \u201EAmpel an\u201C.` : `Die Ampel h\xF6rt zu.`}</text>`, r10 += `<text class="lh-ap-green" x="900" y="390" font-size="34" font-family="${_m}" font-weight="700" text-anchor="middle" fill="#ffe066">Leise-Zeit 0:00</text>`, r10 += `<g class="lh-key lh-ap-go" data-a="go"><rect class="lh-ap-gobg" x="650" y="470" width="500" height="140" rx="70" fill="#2f9e44" stroke="#ffffff" stroke-opacity="0.6" stroke-width="5"/>` + bm(735, 540, 0.95) + `<text class="lh-ap-golabel" x="950" y="557" font-size="48" font-family="${_m}" font-weight="700" text-anchor="middle" fill="#ffffff">Ampel an</text><rect class="lh-kdown" x="650" y="470" width="500" height="140" rx="70" fill="#000000" opacity="0"/><title>Ampel an oder aus</title></g>`, r10;
+}
+function Sm(e17, t10, n10 = hm, r10 = gm) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${hm} ${gm}" width="${n10}" height="${r10}">${e17.mode === `noise` ? vne(e17, t10) : hne(e17, t10)}</svg>`;
+}
+var Cm = /* @__PURE__ */ new Map();
+var wm = (e17) => {
+  let t10 = Cm.get(e17);
+  return t10 || Cm.set(e17, t10 = { phase: `idle`, t0: 0, samples: [], peak: 0, result: -1, best: -1, record: false, light: null, redSince: 0, greenMs: 0, failed: false, party: 0 }), t10;
+};
+var Tm = /* @__PURE__ */ new Map();
+var Em = /* @__PURE__ */ new Map();
+var Dm = (e17) => um(Em.get(e17)?.applause);
+var Om = null;
+function km(e17, t10) {
+  let n10 = Vr();
+  if (n10) try {
+    let r10 = n10.currentTime, i10 = n10.createOscillator(), a10 = n10.createGain();
+    i10.frequency.value = e17, a10.gain.setValueAtTime(0, r10), a10.gain.linearRampToValueAtTime(0.18, r10 + 0.01), a10.gain.exponentialRampToValueAtTime(1e-3, r10 + t10 / 1e3), i10.connect(a10).connect(n10.destination), i10.start(r10), i10.stop(r10 + t10 / 1e3 + 0.05);
+  } catch {
+  }
+}
+var Am = 800;
+var yne = (e17) => {
+  let t10 = Math.floor(e17 / 1e3);
+  return `${Math.floor(t10 / 60)}:${String(t10 % 60).padStart(2, `0`)}`;
+};
+function jm(e17) {
+  let t10 = Dm(e17), n10 = wm(e17), r10 = Om?.id === e17 ? Om : null, i10 = performance.now();
+  for (let a10 of Tm.get(e17) ?? []) {
+    if (!a10.isConnected) continue;
+    let e18 = (e19) => a10.querySelector(e19), o10 = (t11, n11, r11, i11) => {
+      let a11 = e18(t11);
+      a11 && (a11.textContent !== n11 && (a11.textContent = n11), r11 && i11 && a11.setAttribute(`font-size`, String(vm(n11, r11, i11))));
+    };
+    if (a10.classList.toggle(`is-listening`, !!r10), a10.classList.toggle(`is-party`, n10.party > i10), t10.mode === `noise`) {
+      let i11 = mm(t10), s11 = r10?.shown ?? 0, c11 = e18(`.lh-ap-meter`);
+      c11 && (c11.setAttribute(`y`, xm(s11).toFixed(1)), c11.setAttribute(`height`, (648 - xm(s11)).toFixed(1)), c11.setAttribute(`fill`, s11 > i11.r ? `#ff6b6b` : s11 > i11.y ? `#ffd43b` : `#51cf66`)), a10.querySelectorAll(`.lh-ap-lamp`).forEach((e19) => e19.classList.toggle(`is-on`, !!r10 && n10.light === e19.dataset.l)), o10(`.lh-ap-word`, r10 ? n10.light === `r` ? `Psst! Zu laut!` : n10.light === `y` ? `Etwas leiser!` : `Sch\xF6n leise!` : n10.failed ? `Kein Mikrofon` : `Ampel aus`, 600, 72), o10(`.lh-ap-sub`, r10 ? `Die Ampel h\xF6rt zu.` : n10.failed ? `Erlaube das Mikrofon im Browser.` : `Tippe auf \u201EAmpel an\u201C.`), o10(`.lh-ap-green`, `Leise-Zeit ${yne(n10.greenMs)}`), o10(`.lh-ap-golabel`, r10 ? `Ampel aus` : `Ampel an`, 320, 48), e18(`.lh-ap-gobg`)?.setAttribute(`fill`, r10 ? `#e03131` : `#2f9e44`);
+      continue;
+    }
+    let s10 = n10.phase === `result` ? n10.result + 1 : r10 ? Math.round((r10.shown ?? 0) * 8) : 0;
+    a10.querySelectorAll(`.lh-ap-bar`).forEach((e19) => {
+      let t11 = Number(e19.dataset.i);
+      e19.classList.toggle(`is-lit`, t11 < s10), e19.classList.toggle(`is-hit`, n10.phase === `result` && t11 === n10.result);
+    }), e18(`.lh-ap-live`)?.setAttribute(`width`, String(Math.round((r10?.shown ?? 0) * 430)));
+    let c10 = e18(`.lh-ap-best`);
+    if (c10 && (c10.setAttribute(`opacity`, n10.best >= 0 ? `1` : `0`), n10.best >= 0)) {
+      let e19 = ym(n10.best);
+      c10.setAttribute(`transform`, `translate(${e19.x + e19.w - 32} ${e19.y + e19.h / 2})`);
+    }
+    let l10 = `Bereit?`, u10 = `Tippe auf \u201EMessen!\u201C`;
+    if (n10.failed && n10.phase === `idle`) l10 = `Kein Mikrofon`, u10 = `Erlaube es im Browser.`;
+    else if (n10.phase === `count`) {
+      let e19 = 3 - Math.floor((i10 - n10.t0) / Am);
+      l10 = String(Math.max(1, e19)), u10 = `Gleich geht es los \u2026`;
+    } else n10.phase === `measure` ? (l10 = `Klatscht!`, u10 = `noch ${Math.max(1, Math.ceil((t10.secs * 1e3 - (i10 - n10.t0)) / 1e3))} s`) : n10.phase === `result` && (l10 = t10.words[n10.result] ?? ``, u10 = `Stufe ${n10.result + 1} von 8${n10.record ? ` \xB7 Rekord!` : ``}`);
+    o10(`.lh-ap-word`, l10, 390, n10.phase === `count` ? 110 : 54), e18(`.lh-ap-word`)?.setAttribute(`y`, n10.phase === `count` ? `318` : `290`), o10(`.lh-ap-sub`, u10), o10(`.lh-ap-golabel`, n10.phase === `count` || n10.phase === `measure` ? `Stopp` : n10.phase === `result` ? `Nochmal!` : `Messen!`, 172, 40);
+  }
+}
+function Mm(e17) {
+  let t10 = wm(e17), n10 = Dm(e17);
+  t10.phase = `result`, t10.result = fne(t10.peak), t10.record = t10.best >= 0 && t10.result > t10.best, t10.best = Math.max(t10.best, t10.result), t10.party = performance.now() + 3200, Fm(), vi();
+  let r10 = n10.words[t10.result] ?? ``;
+  window.setTimeout(() => void lc(t10.record ? `${r10}! Neuer Rekord!` : `${r10}!`), 450), jm(e17), window.setTimeout(() => jm(e17), 3300);
+}
+function Nm() {
+  let e17 = Om;
+  if (!e17) return;
+  e17.raf = requestAnimationFrame(Nm);
+  let t10 = performance.now(), n10 = Math.min(200, t10 - (e17.last || t10));
+  e17.last = t10, e17.an.getFloatTimeDomainData(e17.buf);
+  let r10 = 0;
+  for (let t11 = 0; t11 < e17.buf.length; t11++) r10 += e17.buf[t11] * e17.buf[t11];
+  let i10 = Dm(e17.id), a10 = dne(Math.sqrt(r10 / e17.buf.length), i10.sens);
+  e17.shown += (a10 - e17.shown) * (a10 > e17.shown ? 0.55 : 0.12);
+  let o10 = wm(e17.id);
+  if (i10.mode === `noise`) {
+    e17.slow += (a10 - e17.slow) * Math.min(1, n10 / 900);
+    let r11 = mm(i10), s10 = o10.light;
+    e17.slow > r11.r ? (o10.light = `r`, o10.redSince = t10) : o10.light = o10.light === `r` && t10 - o10.redSince < 2e3 ? `r` : e17.slow > r11.y ? `y` : `g`, o10.light === `g` && (o10.greenMs += n10), o10.light === `r` && s10 !== `r` && i10.chime && (km(660, 200), window.setTimeout(() => km(495, 300), 210));
+  } else if (o10.phase === `count`) Math.floor((t10 - o10.t0) / Am) >= 3 && (o10.phase = `measure`, o10.t0 = t10, o10.samples = [], o10.peak = 0, km(1320, 260));
+  else if (o10.phase === `measure`) {
+    if (t10 - o10.t0 > 280) {
+      o10.samples.push([t10, a10]);
+      let e18 = 0, n11 = 0;
+      for (let r11 = o10.samples.length - 1; r11 >= 0 && t10 - o10.samples[r11][0] <= 400; r11--) n11 += o10.samples[r11][1], e18++;
+      e18 && (o10.peak = Math.max(o10.peak, n11 / e18));
+    }
+    t10 - o10.t0 >= i10.secs * 1e3 && Mm(e17.id);
+  }
+  jm(e17.id);
+}
+async function Pm(e17) {
+  if (Om?.id === e17) return true;
+  Fm(), op();
+  let t10 = wm(e17), n10 = Vr();
+  if (!n10 || !navigator.mediaDevices?.getUserMedia) return t10.failed = true, jm(e17), false;
+  pi();
+  let r10 = ni();
+  try {
+    let i10 = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } }), a10 = n10.createMediaStreamSource(i10), o10 = n10.createAnalyser();
+    return o10.fftSize = 2048, a10.connect(o10), t10.failed = false, Om = { id: e17, stream: i10, src: a10, an: o10, buf: new Float32Array(o10.fftSize), end: r10, raf: 0, last: 0, shown: 0, slow: 0 }, Nm(), true;
+  } catch (n11) {
+    return console.warn(`[applause] no microphone`, n11), r10(), t10.failed = true, jm(e17), false;
+  }
+}
+function Fm() {
+  let e17 = Om;
+  e17 && (Om = null, cancelAnimationFrame(e17.raf), e17.src.disconnect(), e17.stream.getTracks().forEach((e18) => e18.stop()), e17.end(), jm(e17.id));
+}
+async function Im(e17) {
+  let t10 = Dm(e17), n10 = wm(e17);
+  if (t10.mode === `noise`) Om?.id === e17 ? (Fm(), n10.light = null) : (n10.light = `g`, n10.redSince = 0, await Pm(e17) || (n10.light = null)), jm(e17);
+  else {
+    if (n10.phase === `measure`) return Mm(e17);
+    n10.phase === `count` ? (n10.phase = `idle`, Fm(), jm(e17)) : (n10.phase = `count`, n10.t0 = performance.now(), jm(e17), await Pm(e17) ? (n10.t0 = performance.now(), km(880, 140), window.setTimeout(() => n10.phase === `count` && km(880, 140), Am), window.setTimeout(() => n10.phase === `count` && km(880, 140), 2 * Am)) : (n10.phase = `idle`, jm(e17)));
+  }
+}
+function bne(e17) {
+  Om?.id === e17 && Fm(), Cm.delete(e17);
+}
+function xne(e17, t10, n10, r10) {
+  let i10 = Math.max(1, Math.round(t10.w)), a10 = Math.max(1, Math.round(t10.h)), o10 = um(t10.applause), s10 = `${i10}x${a10}|${n10}|${JSON.stringify(o10)}`;
+  if (e17.dataset.k === s10) return;
+  e17.dataset.k = s10, e17.setAttribute(`aria-label`, Rm(t10));
+  let c10 = Sm(o10, n10, i10, a10);
+  if (!n10) {
+    let t11 = document.createElement(`img`);
+    t11.className = `lh-wg-pic`, t11.alt = ``, t11.draggable = false, t11.src = r10.stickerUrl ? r10.stickerUrl(c10) : `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(c10), t11.style.width = `${i10}px`, t11.style.height = `${a10}px`, e17.replaceChildren(t11);
+    return;
+  }
+  Em.set(t10.id, t10);
+  let l10 = Tm.get(t10.id);
+  l10 || Tm.set(t10.id, l10 = /* @__PURE__ */ new Set());
+  for (let e18 of l10) e18.isConnected || l10.delete(e18);
+  l10.add(e17);
+  let u10 = document.createElement(`div`);
+  u10.className = `lh-wg-pic`, u10.innerHTML = c10.replace(/ width="[\d.]+" height="[\d.]+"/, ` width="100%" height="100%"`), e17.replaceChildren(u10), t10.locked && e17.classList.add(`is-armed`), e17.dataset.applauseId = t10.id, jm(t10.id), Si(e17, { slide: false, hit: (t11) => {
+    let n11 = e17.dataset.applauseId;
+    return n11 && t11.getAttribute(`data-a`) === `go` && Im(n11), null;
+  } });
+}
 function Rm(e17) {
   return um(e17.applause).mode === `noise` ? `L\xE4rmampel: zeigt Gr\xFCn, Gelb oder Rot \u2013 je nachdem, wie laut es ist. Tippe auf \u201EAmpel an\u201C.` : `Applausometer: tippe auf \u201EMessen\u201C und klatscht so laut ihr k\xF6nnt.`;
 }
+var Sne = `
+.lh-wg-applause .lh-key{cursor:pointer}
+.lh-edit .lh-wg-applause:not(.is-armed) .lh-key{cursor:inherit}
+.lh-wg-applause .lh-ap-on{opacity:0;transition:opacity .08s}
+.lh-wg-applause .lh-ap-txt{fill:#ffffff;fill-opacity:.8}
+.lh-wg-applause .lh-ap-bar.is-lit .lh-ap-on{opacity:1}
+.lh-wg-applause .lh-ap-bar.is-lit .lh-ap-txt{fill:#1f1f3a;fill-opacity:1}
+.lh-wg-applause .lh-ap-bar{transform-box:fill-box;transform-origin:left center}
+.lh-wg-applause .lh-ap-bar.is-hit{animation:lh-ap-hit .45s ease-in-out 8 alternate}
+.lh-wg-applause .lh-ap-bar.is-hit rect:first-child{stroke:#ffffff;stroke-width:7}
+.lh-wg-applause.is-listening .lh-ap-b0,.lh-wg-applause.is-party .lh-ap-b0{animation:lh-ap-bulb .5s steps(2,start) infinite}
+.lh-wg-applause.is-listening .lh-ap-b1,.lh-wg-applause.is-party .lh-ap-b1{animation:lh-ap-bulb .5s steps(2,start) .25s infinite}
+.lh-wg-applause .lh-ap-lit{opacity:0;transition:opacity .25s}
+.lh-wg-applause .lh-ap-lamp.is-on .lh-ap-lit{opacity:1}
+@keyframes lh-ap-hit{to{transform:scale(1.06)}}
+@keyframes lh-ap-bulb{to{fill:#ffd43b}}
+@media (prefers-reduced-motion:reduce){.lh-wg-applause .lh-ap-bar.is-hit,.lh-wg-applause .lh-ap-bulb{animation:none!important}}`;
 var zm = [60, 90, 120, 180];
 var Bm = { secs: 60, sound: true, title: `Elevator Pitch` };
 function Vm(e17) {
@@ -1692,6 +1953,7 @@ function VO(e17, t10, n10, r10, i10) {
   let a10 = document.createElement(`img`);
   return a10.className = `lh-wg-pic`, a10.alt = ``, a10.draggable = false, a10.src = n10.stickerUrl ? n10.stickerUrl(e17) : mO(e17), a10.style.width = gO(r10), a10.style.height = gO(i10), a10;
 }
+var lNe = [`wenig`, `etwas weniger`, `mittel`, `mehr`, `sehr`];
 function classTime(e17, t10, n10, r10) {
   let i10 = /* @__PURE__ */ new Date(), a10 = Math.max(1, Math.round(t10.w)), o10 = Math.max(1, Math.round(t10.h));
   switch (t10.kind) {
@@ -1748,7 +2010,7 @@ var CLASS_CSS = `
 .lh-wg-weather img{display:block;flex:none}
 .lh-wg-timer.is-ringing .lh-wg-pic{animation:lh-wg-ring .4s ease-in-out 8}
 @keyframes lh-wg-ring{25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
-` + Ra;
+` + Ra + Sne;
 function classTap(e, t) {
   if (e.kind === `timer`) { Vr(); pi(); }
   if (e.kind === `timer` && e.timer !== `fixed`) {
@@ -1769,4 +2031,4 @@ function classTick(t, e) {
 }
 function classReset(e) { e.timer === `fixed` ? wO(e) : SO.delete(e.id); }
 function classStart(e) { e.kind === `timer` && e.timer === `fixed` && !SO.has(e.id) && wO(e); }
-export { classTime as renderTime, classTap as tapTime, classTick as tickTime, classStart as startTime, classReset as resetTimer, xO as timeSpeech, yO as dateText, CO as timerState, Ule as searchPlace, Hle as loadWeather, BO as weatherWord, Ia as renderMultiTimer, Ki as multiTimerConfig, La as multiTimerLabel, Ea as onMultiTimerChange, sa as stopMultiTimer, Hi as MULTI_TIMER_SOUNDS, Ui as MULTI_TIMER_START, Bi as MULTI_TIMER_COLORS, zi as MULTI_TIMER_NEXT_COLORS, Vi as MULTI_TIMER_ICONS, CLASS_CSS };
+export { classTime as renderTime, classTap as tapTime, classTick as tickTime, classStart as startTime, classReset as resetTimer, xO as timeSpeech, yO as dateText, CO as timerState, Ule as searchPlace, Hle as loadWeather, BO as weatherWord, Ia as renderMultiTimer, Ki as multiTimerConfig, La as multiTimerLabel, Ea as onMultiTimerChange, sa as stopMultiTimer, Hi as MULTI_TIMER_SOUNDS, Ui as MULTI_TIMER_START, Bi as MULTI_TIMER_COLORS, zi as MULTI_TIMER_NEXT_COLORS, Vi as MULTI_TIMER_ICONS, xne as renderApplause, um as applauseConfig, Rm as applauseLabel, Sm as applausePicture, om as APPLAUSE_WORDS, sm as APPLAUSE_SECONDS, une as NOISE_LIMITS, lNe as MIC_SENSITIVITY, bne as stopApplause, CLASS_CSS };

@@ -1,5 +1,6 @@
 // Takes the tools for time and the classroom out of Lernsachen-Heft.html,
-// unchanged: Uhr, Timer and Datum (Regal › Zeit) and the Multi-Timer.
+// unchanged: Uhr, Timer and Datum (Regal › Zeit), the Multi-Timer, and
+// Lärmampel and Applausometer.
 // Individual top-level declarations are resolved like in
 // extract-music-reference.mjs, so no editor or application code comes along.
 //
@@ -40,7 +41,7 @@ if (!head.includes('.lh-wg-digits') || !head.includes('.lh-wg-timer.is-ringing')
 
 code += `
 ${classTime}
-var CLASS_CSS = ${head}\` + Ra;
+var CLASS_CSS = ${head}\` + Ra + Sne;
 /* Tapping a widget (Xle of the reference, the cases of Regal › Zeit). */
 function classTap(e, t) {
   if (e.kind === \`timer\`) { Vr(); pi(); }
@@ -101,6 +102,7 @@ const aliases = {
   classTime: 'renderTime', classTap: 'tapTime', classTick: 'tickTime', classStart: 'startTime', classReset: 'resetTimer', xO: 'timeSpeech', yO: 'dateText', CO: 'timerState',
   Ule: 'searchPlace', Hle: 'loadWeather', BO: 'weatherWord',
   Ia: 'renderMultiTimer', Ki: 'multiTimerConfig', La: 'multiTimerLabel', Ea: 'onMultiTimerChange', sa: 'stopMultiTimer', Hi: 'MULTI_TIMER_SOUNDS', Ui: 'MULTI_TIMER_START', Bi: 'MULTI_TIMER_COLORS', zi: 'MULTI_TIMER_NEXT_COLORS', Vi: 'MULTI_TIMER_ICONS',
+  xne: 'renderApplause', um: 'applauseConfig', Rm: 'applauseLabel', Sm: 'applausePicture', om: 'APPLAUSE_WORDS', sm: 'APPLAUSE_SECONDS', une: 'NOISE_LIMITS', lNe: 'MIC_SENSITIVITY', bne: 'stopApplause',
   CLASS_CSS: 'CLASS_CSS',
 };
 let runtime = extract(Object.keys(aliases));

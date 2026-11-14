@@ -58,6 +58,24 @@ test('Uhr, Datum, Timer und Multi-Timer wie im Regal der Vorlage', async ({ page
   expect(errors).toEqual([]);
 });
 
+test('Lärmampel und Applausometer wie in der Vorlage', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  let dialog = await openBlock(page, 'Klassenführung', 'Applausometer');
+  await dialog.getByLabel('Wort für Stufe 8').fill('Weltrekord!');
+  await expect(dialog.locator('.applause-preview svg')).toContainText('Weltrekord!');
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(page.locator('.interaction-surface .lh-wg-applause')).toHaveAttribute('aria-label', /^Applausometer/);
+  await expect(page.locator('.interaction-surface .lh-wg-applause svg')).toContainText('Weltrekord!');
+  dialog = await openBlock(page, 'Klassenführung', 'Lärmampel', false);
+  await dialog.getByRole('radio', { name: 'Flüstern', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(page.locator('.interaction-surface .lh-wg-applause[aria-label^="Lärmampel"]')).toHaveCount(1);
+  await page.screenshot({ path: test.info().outputPath('ampel-seite.png') });
+  expect(errors).toEqual([]);
+});
+
 test('Wetter nur über den Schulserver und nur angemeldet', async ({ page }) => {
   expect((await page.request.get('/api/wetter?art=ort&name=Regensburg')).status()).toBe(401);
   await login(page);
