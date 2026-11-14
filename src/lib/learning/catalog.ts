@@ -61,6 +61,8 @@ export const widgetCatalog = {
   karte: ['Karte', 'Schule'],
   sprechtaste: ['Sprechtaste', 'Kommunikation'],
   satzleiste: ['Satzleiste', 'Kommunikation'],
+  elevator: ['Elevator Pitch', 'Präsentation'],
+  medienseite: ['Video, Webseite, QR-Plakat', 'Präsentation'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -140,6 +142,10 @@ export type LearningSettings = {
   map?: JsonValue;
   /** Sprechtaste der Vorlage (see learning/uk.ts). */
   talk?: JsonValue;
+  /** Elevator Pitch der Vorlage: secs, title, sound. */
+  pitch?: JsonValue;
+  /** Video, Webseite, QR-Plakat (see learning/medien.ts); becomes a page of normal elements. */
+  medien?: JsonValue;
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';

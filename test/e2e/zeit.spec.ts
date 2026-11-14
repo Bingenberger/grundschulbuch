@@ -198,6 +198,36 @@ test('Unterstützte Kommunikation: Tafel mit Satzleiste und Kommunikationsbuch m
   expect(errors).toEqual([]);
 });
 
+test('Medien: Elevator Pitch, Video mit Titel und QR-Plakat als eigene Seiten', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  let dialog = await openBlock(page, 'Medien & Präsentation', 'Elevator Pitch');
+  await dialog.getByRole('radio', { name: '90 Sekunden', exact: true }).click();
+  await dialog.getByLabel('Text auf dem Vorhang').fill('Mein Lieblingstier');
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  const pitch = page.locator('.interaction-surface .lh-wg-pitch');
+  await expect(pitch).toHaveAttribute('aria-label', /90 Sekunden Zeit/);
+  await expect(pitch).toContainText('Mein Lieblingstier');
+  await page.screenshot({ path: test.info().outputPath('pitch.png') });
+
+  dialog = await openBlock(page, 'Medien & Präsentation', 'Video', false);
+  await dialog.getByLabel('Videolink').fill('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  await dialog.getByLabel('Überschrift').fill('Wie Bienen leben');
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(page.locator('.interaction-surface').getByText('Wie Bienen leben').first()).toBeVisible();
+  await expect(page.locator('.interaction-surface iframe[src*="youtube-nocookie.com/embed/dQw4w9WgXcQ"], .interaction-surface .page-element[data-type="embed"], .interaction-surface .embed-content').first()).toBeAttached();
+
+  dialog = await openBlock(page, 'Medien & Präsentation', 'QR-Plakat', false);
+  await dialog.getByLabel('Adresse der Webseite').fill('lernsachen.blog');
+  await dialog.getByLabel('Überschrift').fill('Unser Projekt');
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(page.locator('.interaction-surface').getByText('Unser Projekt').first()).toBeVisible();
+  await expect(page.locator('.interaction-surface').getByText('lernsachen.blog', { exact: true })).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath('qr-plakat.png') });
+  expect(errors).toEqual([]);
+});
+
 test('Wetter nur über den Schulserver und nur angemeldet', async ({ page }) => {
   expect((await page.request.get('/api/wetter?art=ort&name=Regensburg')).status()).toBe(401);
   await login(page);

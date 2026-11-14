@@ -5,7 +5,8 @@
 // Das sprechende Kalenderblatt (with its drawings, saved to public/kalender/),
 // the Karte (tiles and address search through /api/karte), and the keys,
 // sentence strip and boards of Unterstützte Kommunikation (with the ARASAAC
-// pictures of the boards, saved to public/uk/).
+// pictures of the boards, saved to public/uk/), Elevator Pitch, Diaschau and
+// Animation.
 // Individual top-level declarations are resolved like in
 // extract-music-reference.mjs, so no editor or application code comes along.
 //
@@ -46,7 +47,7 @@ if (!head.includes('.lh-wg-digits') || !head.includes('.lh-wg-timer.is-ringing')
 
 code += `
 ${classTime}
-var CLASS_CSS = ${head}\` + Ra + Sne + Kne + lce + Ece;
+var CLASS_CSS = ${head}\` + Ra + Sne + Kne + lce + Ece + zne + ite + mte;
 /* Tapping a widget (Xle of the reference, the cases of Regal › Zeit). */
 function classTap(e, t) {
   if (e.kind === \`timer\`) { Vr(); pi(); }
@@ -113,6 +114,9 @@ const aliases = {
   Aw: 'renderMap', jw: 'mapLabel', gse: 'mapConfig', uw: 'mapStart', QC: 'mapDesign', ZC: 'MAP_DESIGNS', GC: 'MAP_SYMBOLS', JC: 'mapSymbol', zC: 'PATH_KINDS', BC: 'PATH_COLORS',
   rw: 'mapTiles', $C: 'toWorld', ew: 'fromWorld', tw: 'toView', nw: 'fromView', yw: 'mapMarks', vw: 'labelBoxes', ow: 'distanceText', aw: 'pathLength', iw: 'distance', U6: 'mapPicture', lDe: 'searchAddress', WC: 'tileUrl', VC: 'MAP_W', HC: 'MAP_DATA', UC: 'MAP_CREDIT',
   yce: 'renderTalk', Sce: 'tapTalk', pE: 'renderStrip', Tce: 'tapStrip', Cce: 'addToStrip', wce: 'clearStrip', kk: 'TALK_BOARDS', Ak: 'TALK_BACK', jk: 'TALK_GRIDS', Ok: 'WORD_CLASSES', pue: 'TALK_BOOK_ICONS', Ik: 'talkLayout', Rk: 'bookCells', Nk: 'STRIP_BOX',
+  mh: 'renderPitch', hh: 'pitchLabel', Vm: 'pitchConfig', zm: 'PITCH_SECONDS', Hm: 'secondsText', Lne: 'stopPitch', Bm: 'PITCH_START',
+  tte: 'renderSlideshow', nte: 'slideshowLabel', Qd: 'showStart', Xd: 'SHOW_DESIGNS', Zd: 'showDesign',
+  pte: 'renderAnimation', Vf: 'animationLabel', df: 'animationStart',
   CLASS_CSS: 'CLASS_CSS',
 };
 let runtime = extract(Object.keys(aliases));

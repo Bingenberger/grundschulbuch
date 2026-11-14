@@ -48,6 +48,8 @@ export const WIDGET_KINDS = [
   'karte',
   'sprechtaste',
   'satzleiste',
+  'elevator',
+  'medienseite',
   'shop',
   'geometry',
   'monster',

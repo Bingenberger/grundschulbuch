@@ -33,6 +33,8 @@ import CalendarSheet from './CalendarSheet';
 import MapSheet from './MapSheet';
 import TalkKey from './TalkKey';
 import SentenceStrip from './SentenceStrip';
+import ElevatorPitch from './ElevatorPitch';
+import { StillFrame } from './TextsachenFrame';
 import MusicTemplate from './MusicTemplate';
 export default function Widget({ element }: { element: PageElement }) {
   const kind = element.widgetKind!;
@@ -60,6 +62,9 @@ export default function Widget({ element }: { element: PageElement }) {
   if (kind === 'karte') return <MapSheet element={element} />;
   if (kind === 'sprechtaste') return <TalkKey element={element} />;
   if (kind === 'satzleiste') return <SentenceStrip element={element} />;
+  if (kind === 'elevator') return <ElevatorPitch element={element} />;
+  // Video, Webseite and QR-Plakat become pages of normal elements; nothing to show here.
+  if (kind === 'medienseite') return <StillFrame icon="camcorder_pro" title={element.settings?.title || 'Video, Webseite, QR-Plakat'} text="Wird beim Einfügen zu einer Seite." />;
   if (kind === 'geometry') return <GeometryWidget element={element} />;
   if (kind === 'slideshow') return <SlideshowWidget element={element} />;
   if (kind === 'karaoke') return <KaraokeWidget element={element} />;
