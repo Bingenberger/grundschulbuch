@@ -6,6 +6,9 @@ import TimeOptions from './TimeOptions';
 import MultiTimerOptions from './MultiTimerOptions';
 import ApplauseOptions from './ApplauseOptions';
 import TimetableOptions from './TimetableOptions';
+import MapOptions from './MapOptions';
+import { karte, pictureKey } from '@/lib/learning/karte';
+import { mapPicture } from '@/lib/reference/class-runtime';
 import { defaultTimetable, timetable } from '@/lib/learning/stundenplan';
 import { MULTI_TIMER_SIZE, zeitConfig, zeitSize } from '@/lib/learning/zeit';
 import { quizConfig } from '@/lib/learning/quiz';
@@ -79,7 +82,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', stundenplan: 'planner', kalenderblatt: 'calendar', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -101,7 +104,7 @@ function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) 
   if (kind === 'placevalue' || kind === 'dienes') return { width: 220, height: 160 };
   if (kind === 'numberline') return { width: 250, height: 80 };
   if (kind === 'hundredfield') return { width: 200, height: 150 };
-  if (kind === 'checkout' || kind === 'monsternames' || kind === 'syllablejoin' || kind === 'anlaut' || kind === 'clapsyllables' || kind === 'textsachen' || kind === 'zuordnung' || kind === 'quizsachen' || kind === 'stundenplan' || kind === 'kalenderblatt') return { width: 297, height: 210 };
+  if (kind === 'checkout' || kind === 'monsternames' || kind === 'syllablejoin' || kind === 'anlaut' || kind === 'clapsyllables' || kind === 'textsachen' || kind === 'zuordnung' || kind === 'quizsachen' || kind === 'stundenplan' || kind === 'kalenderblatt' || kind === 'karte') return { width: 297, height: 210 };
   return {
     width: kind === 'receipt' ? 120 : 180,
     height: kind === 'receipt' ? 126 : kind === 'alphabet' ? 210 : kind === 'synthesis' || kind === 'clapping' || kind === 'letterguess' || kind === 'syllables' || kind === 'geometry' ? 180 : 140,
@@ -397,6 +400,32 @@ export default function LearningDialog({
                 if (!dnd.exercise) { setError('Die Übung ist noch nicht fertig: Sie wird gerade gebaut oder es fehlt noch etwas (siehe Hinweis unter dem Inhalt).'); return; }
                 if (!element && onPages) {
                   onPages(fullPageWidget('zuordnung', settings));
+                  onClose();
+                  return;
+                }
+              }
+              if (kind === 'karte') {
+                // The picture of the section, made like the reference does it
+                // (tiles of openstreetmap.de, else .org, through the school server).
+                let map = karte(settings.map);
+                const before = karte(element?.settings?.map);
+                if (!map.img || !element || pictureKey(map) !== pictureKey(before)) {
+                  setBusy(true); setError('');
+                  try {
+                    const pic: { dataUrl: string } = await mapPicture(map, 'de').catch(() => mapPicture(map, 'org'));
+                    const blob = await (await fetch(pic.dataUrl)).blob();
+                    const src = await uploadImage(new File([blob], 'karte.' + (blob.type.split('/')[1] || 'png'), { type: blob.type || 'image/png' }));
+                    map = { ...map, img: src };
+                  } catch {
+                    setBusy(false);
+                    setError('Die Karte konnte nicht geladen werden. Gibt es Internet?');
+                    return;
+                  }
+                  setBusy(false);
+                }
+                readySettings = { ...readySettings, map: map as unknown as JsonValue };
+                if (!element && onPages) {
+                  onPages(fullPageWidget('karte', readySettings));
                   onClose();
                   return;
                 }
@@ -748,6 +777,7 @@ export default function LearningDialog({
             })()}
             {kind === 'zuordnung' && <ZuordnungOptions value={settings.dnd} title={settings.title || ''} onChange={(dnd) => patch({ dnd })} upload={media} busy={busy} />}
             {kind === 'zeit' && <TimeOptions value={settings.zeit} onChange={(zeit) => patch({ zeit })} />}
+            {kind === 'karte' && <MapOptions value={settings.map} isNew={!element} onChange={(map) => patch({ map })} />}
             {kind === 'stundenplan' && <TimetableOptions value={settings.tt ?? (defaultTimetable() as unknown as JsonValue)} onChange={(tt) => patch({ tt })} upload={media} busy={busy} />}
             {kind === 'ampel' && <ApplauseOptions value={settings.applause} onChange={(applause) => patch({ applause })} />}
             {kind === 'phasen' && <MultiTimerOptions value={settings.multi} onChange={(multi) => patch({ multi })} />}

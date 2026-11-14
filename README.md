@@ -115,7 +115,7 @@ die unter CC BY-NC-SA 4.0 stehen. Herzlichen Dank an ihre Urheber:
 - **[Lernsachen-Heft](https://github.com/Majort0m0/Lernsachen-Heft)** von
   [Lernsachen.blog](https://lernsachen.blog). Von hier stammen:
   - die Idee des digitalen Heftes;
-  - unverändert übernommen: die Lernwerkzeuge Anlaut-Tastatur, Silben klatschen, Silben verbinden, Monsternamen lesen, die Musikwerkzeuge, Uhr, Timer, Datum, Multi-Timer, Lärmampel, Applausometer, Bilder-Stundenplan, das sprechende Kalenderblatt, die einstellbaren Vorlagen (Buchstaben, Mathe-Aufgaben, Uhrzeiten, Geld, Ziffern, Labyrinth, Noten), Sticker sowie Laut- und Silbenaufnahmen;
+  - unverändert übernommen: die Lernwerkzeuge Anlaut-Tastatur, Silben klatschen, Silben verbinden, Monsternamen lesen, die Musikwerkzeuge, Uhr, Timer, Datum, Multi-Timer, Lärmampel, Applausometer, Bilder-Stundenplan, Karte, das sprechende Kalenderblatt, die einstellbaren Vorlagen (Buchstaben, Mathe-Aufgaben, Uhrzeiten, Geld, Ziffern, Labyrinth, Noten), Sticker sowie Laut- und Silbenaufnahmen;
   - als Vorbild nachgebaut: weitere Werkzeuge wie die Kasse.
 - **[Textsachen](https://majort0m0.github.io/Textsachen/Textsachen.html)** von
   [Lernsachen.blog](https://lernsachen.blog): Der Spieler der Übungen Lesen &

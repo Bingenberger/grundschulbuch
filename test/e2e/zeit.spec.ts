@@ -127,6 +127,42 @@ test('Das sprechende Kalenderblatt: fragt nach dem Tag, das Kind tippt die Antwo
   expect(errors).toEqual([]);
 });
 
+test('Karte: Ort suchen, Markierung setzen, Kartenbild über den Schulserver', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  // No internet in the tests: tiles and the address search answer here.
+  const green = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
+  const asked: string[] = [];
+  await page.route(/\/api\/karte\?quelle=/, (route) => { asked.push(route.request().url()); return route.fulfill({ status: 200, contentType: 'image/png', body: green }); });
+  await page.route(/\/api\/karte\?suche=/, (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ display_name: 'Regensburg, Bayern, Deutschland', lat: '49.0134', lon: '12.1016' }]) }));
+  await login(page);
+  const dialog = await openBlock(page, 'Sachunterricht', 'Karte');
+  await dialog.getByLabel('Adresse suchen').fill('Regensburg');
+  await dialog.getByRole('button', { name: 'Suchen', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Markierung setzen', exact: true }).click();
+  await dialog.locator('.map-view').click({ position: { x: 200, y: 150 } });
+  await dialog.getByLabel('Beschriftung der Markierung').fill('Unsere Schule');
+  await dialog.getByRole('radiogroup', { name: 'Design' }).getByRole('radio', { name: /Schatzkarte/ }).click();
+  await dialog.getByLabel('Titel des Lernwerkzeugs').fill('Mein Schulweg');
+  await page.screenshot({ path: test.info().outputPath('karte-dialog.png') });
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(dialog).toHaveCount(0, { timeout: 15000 });
+  const map = page.locator('.interaction-surface .lh-wg-map');
+  await expect(map).toHaveAttribute('aria-label', 'Karte mit einer Markierung: Unsere Schule.');
+  await expect(page.locator('.interaction-surface .map-title')).toHaveText('Mein Schulweg');
+  expect(asked.length).toBeGreaterThan(3);
+  expect(asked.every((u) => new URL(u).origin === 'http://localhost:3100')).toBe(true);
+  await page.screenshot({ path: test.info().outputPath('karte-seite.png') });
+  expect(errors).toEqual([]);
+});
+
+test('Karte nur über den Schulserver und nur angemeldet', async ({ page }) => {
+  expect((await page.request.get('/api/karte?quelle=de&z=1&x=0&y=0')).status()).toBe(401);
+  await login(page);
+  expect((await page.request.get('/api/karte?quelle=de&z=2&x=4&y=0')).status()).toBe(400);
+  expect((await page.request.get('/api/karte?suche=R')).status()).toBe(400);
+});
+
 test('Wetter nur über den Schulserver und nur angemeldet', async ({ page }) => {
   expect((await page.request.get('/api/wetter?art=ort&name=Regensburg')).status()).toBe(401);
   await login(page);

@@ -2,7 +2,8 @@
 // unchanged: Uhr, Timer and Datum (Regal › Zeit), the Multi-Timer, and
 // Lärmampel, Applausometer and the Bilder-Stundenplan (with the ARASAAC
 // pictures of its subjects, CC BY-NC-SA 4.0, saved to public/stundenplan/), and
-// Das sprechende Kalenderblatt (with its drawings, saved to public/kalender/).
+// Das sprechende Kalenderblatt (with its drawings, saved to public/kalender/),
+// and the Karte (tiles and address search through /api/karte).
 // Individual top-level declarations are resolved like in
 // extract-music-reference.mjs, so no editor or application code comes along.
 //
@@ -107,6 +108,8 @@ const aliases = {
   xne: 'renderApplause', um: 'applauseConfig', Rm: 'applauseLabel', Sm: 'applausePicture', om: 'APPLAUSE_WORDS', sm: 'APPLAUSE_SECONDS', une: 'NOISE_LIMITS', lNe: 'MIC_SENSITIVITY', bne: 'stopApplause',
   Wne: 'renderTimetable', Nh: 'timetableLabel', Gne: 'timetableSay', jh: 'timetableHtml', wh: 'timetableConfig', Ch: 'timetableStart', Eh: 'timetableTimes', Th: 'clockText', h6: 'TIMETABLE_SUBJECTS', g6: 'TIMETABLE_AFTER', yh: 'TIMETABLE_DESIGNS', gh: 'TIMETABLE_FONTS', Be: 'fontOf',
   YT: 'renderCalendar', sce: 'tapCalendar', cce: 'calendarLabel', eE: 'restartCalendar',
+  Aw: 'renderMap', jw: 'mapLabel', gse: 'mapConfig', uw: 'mapStart', QC: 'mapDesign', ZC: 'MAP_DESIGNS', GC: 'MAP_SYMBOLS', JC: 'mapSymbol', zC: 'PATH_KINDS', BC: 'PATH_COLORS',
+  rw: 'mapTiles', $C: 'toWorld', ew: 'fromWorld', tw: 'toView', nw: 'fromView', yw: 'mapMarks', vw: 'labelBoxes', ow: 'distanceText', aw: 'pathLength', iw: 'distance', U6: 'mapPicture', lDe: 'searchAddress', WC: 'tileUrl', VC: 'MAP_W', HC: 'MAP_DATA', UC: 'MAP_CREDIT',
   CLASS_CSS: 'CLASS_CSS',
 };
 let runtime = extract(Object.keys(aliases));
@@ -119,6 +122,13 @@ for (const [from, to] of weather) {
   if (!runtime.includes(from)) throw Error('Weather address not found: ' + from);
   runtime = runtime.replace(from, to);
 }
+// Map tiles and the address search through the school server (see /api/karte).
+const tilesBefore = runtime.match(/`https:\/\/tile\.openstreetmap\.(?:org|de)\/\$\{/g)?.length ?? 0;
+if (tilesBefore !== 2) throw Error('Expected two tile addresses, found ' + tilesBefore);
+runtime = runtime.replace(/`https:\/\/tile\.openstreetmap\.(org|de)\/\$\{(\w+)\}\/\$\{(\w+)\}\/\$\{(\w+)\}\.png`/g, '`/api/karte?quelle=$1&z=${$2}&x=${$3}&y=${$4}`');
+if (!runtime.includes('`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&accept-language=de&q=${')) throw Error('Address search not found.');
+runtime = runtime.replace('`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&accept-language=de&q=${', '`/api/karte?suche=${');
+if (/https:\/\/(tile|nominatim)\.openstreetmap/.test(runtime)) throw Error('A direct map request is left.');
 const omit = runtime.match(/credentials: `omit`/g)?.length ?? 0;
 if (omit !== 2) throw Error('Expected two outside requests, found ' + omit);
 runtime = runtime.replaceAll('credentials: `omit`', 'credentials: `same-origin`');

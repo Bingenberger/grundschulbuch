@@ -1978,6 +1978,55 @@ function RC(e17) {
   }
   return t10.tool === `calc` ? `Taschenrechner: ${SC.get(e17.id)?.calc.shown ?? `0`}.` : `${xC(t10)}.`;
 }
+var zC = [{ id: `walk`, label: `Fu\xDFweg` }, { id: `bike`, label: `Radweg` }, { id: `bus`, label: `Busfahrt` }, { id: `train`, label: `Bahnstrecke` }, { id: `car`, label: `Autofahrt` }, { id: `boat`, label: `Schiff` }];
+var use = { walk: `<circle cx="13" cy="4" r="2.6" fill="C"/><path d="M12 8l-3 6 3 2-2 6M12 8l3 5 3 1M9 14l-4 2M12 16l4 6" fill="none" stroke="C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`, bike: `<circle cx="6" cy="16" r="4" fill="none" stroke="C" stroke-width="2.2"/><circle cx="18" cy="16" r="4" fill="none" stroke="C" stroke-width="2.2"/><path d="M6 16l4-8h6l2 8M10 8l2 8h-6M14 5h3" fill="none" stroke="C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`, bus: `<rect x="4" y="3" width="16" height="15" rx="3" fill="none" stroke="C" stroke-width="2.4"/><path d="M4 11h16M7 21v-3M17 21v-3" stroke="C" stroke-width="2.4" stroke-linecap="round"/>`, train: `<rect x="6" y="2" width="12" height="15" rx="3" fill="none" stroke="C" stroke-width="2.4"/><path d="M6 10h12M8 22l2-5M16 22l-2-5" stroke="C" stroke-width="2.4" stroke-linecap="round"/>`, car: `<path d="M3 15v-3l3-5h10l4 5h1v3zM6 12h14" fill="none" stroke="C" stroke-width="2.2" stroke-linejoin="round"/><circle cx="7.5" cy="16.5" r="2.3" fill="C"/><circle cx="17" cy="16.5" r="2.3" fill="C"/>`, boat: `<path d="M3 15h18l-3 5H6zM12 3v11M12 4l6 9h-6" fill="none" stroke="C" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>` };
+var BC = [`#e03131`, `#1c7ed6`, `#2f9e44`, `#f08c00`, `#7048e8`, `#212529`];
+var dse = { 1: 6, 2: 10, 3: 16 };
+var VC = 1300;
+var HC = `\xA9 OpenStreetMap-Mitwirkende`;
+var UC = `\xA9 OpenStreetMap-Mitwirkende, openstreetmap.de`;
+var WC = (e17, t10, n10, r10 = `de`) => r10 === `org` ? `/api/karte?quelle=org&z=${e17}&x=${t10}&y=${n10}` : `/api/karte?quelle=de&z=${e17}&x=${t10}&y=${n10}`;
+var GC = [{ id: `place`, label: `Ort`, color: `#e03131` }, { id: `home`, label: `Zuhause`, color: `#f08c00` }, { id: `school`, label: `Schule`, color: `#1c7ed6` }, { id: `church`, label: `Kirche`, color: `#7048e8` }, { id: `train`, label: `Bahnhof`, color: `#495057` }, { id: `bus`, label: `Bushaltestelle`, color: `#0ca678` }, { id: `playground`, label: `Spielplatz`, color: `#f76707` }, { id: `tree`, label: `Park, Wald`, color: `#2f9e44` }, { id: `water`, label: `See, Fluss`, color: `#1098ad` }, { id: `mountain`, label: `Berg`, color: `#795548` }, { id: `museum`, label: `Museum`, color: `#5f3dc4` }, { id: `shop`, label: `Einkaufen`, color: `#d6336c` }, { id: `food`, label: `Essen`, color: `#e8590c` }, { id: `hospital`, label: `Krankenhaus`, color: `#c92a2a` }, { id: `police`, label: `Polizei`, color: `#1864ab` }, { id: `fire`, label: `Feuerwehr`, color: `#e03131` }, { id: `sport`, label: `Sport`, color: `#2b8a3e` }, { id: `star`, label: `Stern`, color: `#f59f00` }, { id: `flag`, label: `Ziel`, color: `#212529` }, { id: `treasure`, label: `Schatz`, color: `#a61e4d` }];
+var KC = (e17) => GC.find((t10) => t10.id === e17) ?? GC[0];
+var fse = { place: `<circle cx="12" cy="12" r="5" fill="#fff"/>`, home: `<path d="M4 12l8-7 8 7M7 10v9h10v-9" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round"/>`, school: `<path d="M2 9l10-5 10 5-10 5zM6 11v5c3 3 9 3 12 0v-5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>`, church: `<path d="M12 2v6M9 5h6M6 21v-8l6-4 6 4v8zM10 21v-4h4v4" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>`, train: `<rect x="6" y="3" width="12" height="13" rx="3" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M6 10h12M8 21l2-5M16 21l-2-5" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>`, bus: `<rect x="5" y="3" width="14" height="15" rx="3" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M5 11h14M8 21v-3M16 21v-3" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>`, playground: `<path d="M4 21L9 4h6l5 17M7 13h10" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="9" r="1.6" fill="#fff"/>`, tree: `<path d="M12 2l7 10h-4l4 6H5l4-6H5zM12 18v4" fill="#fff" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>`, water: `<path d="M3 9q3-3 6 0t6 0 6 0M3 15q3-3 6 0t6 0 6 0" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>`, mountain: `<path d="M2 20l7-12 4 6 3-4 6 10z" fill="#fff"/>`, museum: `<path d="M3 9l9-5 9 5zM5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>`, shop: `<path d="M5 8h14l-1 13H6zM9 8a3 3 0 0 1 6 0" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/>`, food: `<path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M16 21V3c-2 1-3 4-3 8h3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`, hospital: `<path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z" fill="#fff"/>`, police: `<path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/><circle cx="12" cy="11" r="2.5" fill="#fff"/>`, fire: `<path d="M12 22c-4 0-7-3-6-7 1-3 4-4 3-9 4 2 6 6 5 9 2-1 2-3 2-4 2 2 3 4 3 6 0 3-3 5-7 5z" fill="#fff"/>`, sport: `<circle cx="12" cy="12" r="8" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M12 8l3.5 2.5-1.3 4h-4.4l-1.3-4z" fill="#fff"/>`, star: `<path d="M12 2l3 7 7 .6-5.4 4.8 1.7 7L12 17.8 5.7 21.4l1.7-7L2 9.6 9 9z" fill="#fff"/>`, flag: `<path d="M6 22V3M6 4h12l-3 4 3 4H6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`, treasure: `<path d="M5 5l14 14M19 5L5 19" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/>` };
+function qC(e17, t10 = 1) {
+  return `<g transform="scale(${t10})"><path d="M0 0C-4 -14 -21 -24 -21 -40a21 21 0 0 1 42 0c0 16-17 26-21 40z" fill="${KC(e17).color}" stroke="#ffffff" stroke-width="3"/><g transform="translate(-12 -52)">${fse[e17]}</g></g>`;
+}
+var JC = (e17) => `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-24 -66 48 70" width="48" height="70">${qC(e17)}</svg>`);
+var YC = 1400;
+var pse = 990;
+var XC = (e17, t10, n10) => `<defs><linearGradient id="${e17}" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="${t10}"/><stop offset="1" stop-color="${n10}"/></linearGradient></defs><rect width="${YC}" height="${pse}" fill="url(#${e17})"/>`;
+var mse = (e17, t10, n10, r10) => `<g transform="translate(${e17} ${t10})" opacity="0.55"><circle r="${n10}" fill="none" stroke="${r10}" stroke-width="3"/><path d="M0 ${-n10 * 1.25}L${n10 * 0.22} 0 0 ${n10 * 1.25} ${-n10 * 0.22} 0zM${-n10 * 1.25} 0L0 ${n10 * 0.22} ${n10 * 1.25} 0 0 ${-n10 * 0.22}z" fill="${r10}"/><text y="${-n10 * 1.4}" font-size="${n10 * 0.5}" font-family="Georgia, serif" font-weight="700" text-anchor="middle" fill="${r10}">N</text></g>`;
+var ZC = [{ id: `classic`, label: `Klassisch`, paper: `#ffffff`, title: `#1c3d5a`, page: () => XC(`mp-classic`, `#ffffff`, `#eef3f8`), frame: `#ffffff`, frameW: 10, tint: `none` }, { id: `treasure`, label: `Schatzkarte`, paper: `#f1e2c0`, title: `#5c3a12`, page: () => {
+  let e17 = XC(`mp-old`, `#f6e9cb`, `#e2c995`);
+  return e17 += `<rect x="12" y="12" width="1376" height="966" rx="26" fill="none" stroke="#8c5a2b" stroke-width="6" stroke-dasharray="20 12" opacity="0.55"/>`, e17 + mse(1300, 92, 36, `#7a4b1c`);
+}, frame: `#8c5a2b`, frameW: 8, tint: `sepia` }, { id: `colorful`, label: `Bunt`, paper: `#4dabf7`, title: `#ffffff`, page: () => XC(`mp-color`, `#4dabf7`, `#9775fa`) + `<circle cx="1260" cy="120" r="190" fill="#ffffff" opacity="0.12"/><circle cx="110" cy="900" r="230" fill="#ffffff" opacity="0.1"/>`, frame: `#ffffff`, frameW: 14, tint: `none` }, { id: `night`, label: `Nacht`, paper: `#14213d`, title: `#ffe066`, page: () => {
+  let e17 = XC(`mp-night`, `#1b2a4a`, `#0b1426`), t10 = 11, n10 = () => ((t10 = t10 * 16807 % 2147483647) - 1) / 2147483646;
+  for (let t11 = 0; t11 < 70; t11++) e17 += `<circle cx="${Math.round(n10() * YC)}" cy="${Math.round(n10() * 160)}" r="${(1 + n10() * 2).toFixed(1)}" fill="#ffffff" opacity="${(0.3 + n10() * 0.5).toFixed(2)}"/>`;
+  return e17;
+}, frame: `#ffe066`, frameW: 6, tint: `dark` }, { id: `nature`, label: `Natur`, paper: `#ebfbee`, title: `#1b4332`, page: () => XC(`mp-nature`, `#f4fce3`, `#d3f9d8`), frame: `#2f9e44`, frameW: 8, tint: `soft` }];
+var QC = (e17) => ZC.find((t10) => t10.id === e17) ?? ZC[0];
+function $C(e17, t10, n10) {
+  let r10 = 256 * 2 ** n10, i10 = Math.max(-85.05, Math.min(85.05, e17)) * Math.PI / 180;
+  return { x: (t10 + 180) / 360 * r10, y: (1 - Math.log(Math.tan(i10) + 1 / Math.cos(i10)) / Math.PI) / 2 * r10 };
+}
+function ew(e17, t10, n10) {
+  let r10 = 256 * 2 ** n10, i10 = e17 / r10 * 360 - 180;
+  return { lat: Math.atan(Math.sinh(Math.PI * (1 - 2 * t10 / r10))) * 180 / Math.PI, lon: ((i10 + 180) % 360 + 360) % 360 - 180 };
+}
+function tw(e17, t10, n10) {
+  let r10 = $C(e17.lat, e17.lon, e17.zoom), i10 = $C(t10, n10, e17.zoom), a10 = 256 * 2 ** e17.zoom, o10 = i10.x - r10.x;
+  return o10 > a10 / 2 && (o10 -= a10), o10 < -a10 / 2 && (o10 += a10), { x: VC / 2 + o10, y: 380 + (i10.y - r10.y) };
+}
+function nw(e17, t10, n10) {
+  let r10 = $C(e17.lat, e17.lon, e17.zoom);
+  return ew(r10.x + t10 - VC / 2, r10.y + n10 - 380, e17.zoom);
+}
+function rw(e17, t10 = VC, n10 = 760) {
+  let r10 = $C(e17.lat, e17.lon, e17.zoom), i10 = r10.x - t10 / 2, a10 = r10.y - n10 / 2, o10 = 2 ** e17.zoom, s10 = [];
+  for (let r11 = Math.floor(a10 / 256); r11 <= Math.floor((a10 + n10) / 256); r11++) if (!(r11 < 0 || r11 >= o10)) for (let n11 = Math.floor(i10 / 256); n11 <= Math.floor((i10 + t10) / 256); n11++) s10.push({ z: e17.zoom, x: (n11 % o10 + o10) % o10, y: r11, left: n11 * 256 - i10, top: r11 * 256 - a10 });
+  return s10;
+}
 function iw(e17, t10) {
   let n10 = Math.PI / 180, r10 = (t10[0] - e17[0]) * n10, i10 = (t10[1] - e17[1]) * n10, a10 = Math.sin(r10 / 2) ** 2 + Math.cos(e17[0] * n10) * Math.cos(t10[0] * n10) * Math.sin(i10 / 2) ** 2;
   return 127420176e-1 * Math.asin(Math.min(1, Math.sqrt(a10)));
@@ -1986,7 +2035,220 @@ var aw = (e17) => e17.reduce((t10, n10, r10) => r10 ? t10 + iw(e17[r10 - 1], n10
 function ow(e17) {
   return e17 < 1e3 ? `${Math.max(10, Math.round(e17 / 10) * 10)} m` : e17 < 1e4 ? `${(e17 / 1e3).toFixed(1).replace(`.`, `,`)} km` : `${Math.round(e17 / 1e3)} km`;
 }
+var sw = (e17, t10, n10, r10) => typeof e17 == `number` && Number.isFinite(e17) ? Math.min(r10, Math.max(n10, e17)) : t10;
+var cw = (e17, t10) => {
+  if (!t10 || typeof t10 != `object`) return {};
+  let n10 = t10;
+  return { [e17]: { label: typeof n10.label == `string` ? n10.label.slice(0, 60) : ``, ...lw(n10) } };
+};
+var lw = (e17) => typeof e17.lx == `number` && typeof e17.ly == `number` && Number.isFinite(e17.lx) && Number.isFinite(e17.ly) ? { lx: sw(e17.lx, 0, -1400, 1400), ly: sw(e17.ly, 0, -1e3, 1e3) } : {};
 var uw = (e17 = `classic`) => ({ lat: 51.1657, lon: 10.4515, zoom: 5, markers: [], design: e17 });
+function gse(e17, t10) {
+  let n10 = e17 && typeof e17 == `object` ? e17 : {}, r10 = (Array.isArray(n10.markers) ? n10.markers.slice(0, 40) : []).flatMap((e18) => {
+    let t11 = e18 && typeof e18 == `object` ? e18 : {};
+    return typeof t11.lat != `number` || typeof t11.lon != `number` || !Number.isFinite(t11.lat) || !Number.isFinite(t11.lon) ? [] : [{ lat: sw(t11.lat, 0, -85, 85), lon: sw(t11.lon, 0, -180, 180), sym: GC.some((e19) => e19.id === t11.sym) ? t11.sym : `place`, label: typeof t11.label == `string` ? t11.label.slice(0, 60) : ``, ...lw(t11) }];
+  }), i10 = t10(n10.img), a10 = (Array.isArray(n10.paths) ? n10.paths.slice(0, 20) : []).flatMap((e18) => {
+    let t11 = e18 && typeof e18 == `object` ? e18 : {}, n11 = (Array.isArray(t11.pts) ? t11.pts.slice(0, 400) : []).flatMap((e19) => Array.isArray(e19) && typeof e19[0] == `number` && typeof e19[1] == `number` && Number.isFinite(e19[0]) && Number.isFinite(e19[1]) ? [[sw(e19[0], 0, -85, 85), sw(e19[1], 0, -180, 180)]] : []);
+    return n11.length < 2 ? [] : [{ pts: n11, label: typeof t11.label == `string` ? t11.label.slice(0, 60) : ``, color: typeof t11.color == `string` && /^#[0-9a-f]{6}$/i.test(t11.color) ? t11.color : BC[0], width: t11.width === 1 || t11.width === 3 ? t11.width : 2, dash: t11.dash === true, dist: t11.dist !== false, ...lw(t11), ...zC.some((e19) => e19.id === t11.kind) ? { kind: t11.kind } : {}, ...cw(`start`, t11.start), ...cw(`end`, t11.end) }];
+  });
+  return { ...a10.length ? { paths: a10 } : {}, lat: sw(n10.lat, 51.1657, -85, 85), lon: sw(n10.lon, 10.4515, -180, 180), zoom: Math.round(sw(n10.zoom, 5, 2, 18)), markers: r10, design: ZC.some((e18) => e18.id === n10.design) ? n10.design : `classic`, ...i10 ? { img: i10 } : {} };
+}
+var dw = `Andika, Andika, Verdana, Arial, sans-serif`;
+var vse = (e17) => e17.replace(/&/g, `&amp;`).replace(/</g, `&lt;`).replace(/>/g, `&gt;`).replace(/"/g, `&quot;`);
+var yse = (e17) => `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(e17);
+var fw = `Verdana, Arial, Helvetica, sans-serif`;
+var pw = 21;
+var bse = 13;
+var mw;
+function hw(e17) {
+  if (mw === void 0) try {
+    mw = typeof document > `u` ? null : document.createElement(`canvas`).getContext(`2d`);
+  } catch {
+    mw = null;
+  }
+  return mw ? (mw.font = `700 ${pw}px ${fw}`, Math.max(mw.measureText(e17).width, e17.length * pw * 0.5)) : e17.length * pw * 0.66;
+}
+var xse = (e17, t10) => e17.x < t10.x + t10.w + 6 && t10.x < e17.x + e17.w + 6 && e17.y < t10.y + t10.h + 4 && t10.y < e17.y + e17.h + 4;
+var gw = (e17) => e17.x >= 8 && e17.y >= 8 && e17.x + e17.w <= 1292 && e17.y + e17.h <= 724;
+var Sse = (e17) => ({ ...e17, x: Math.min(1292 - e17.w, Math.max(8, e17.x)), y: Math.min(724 - e17.h, Math.max(8, e17.y)) });
+function _w(e17, t10) {
+  let n10 = e17.slice(1).map((t11, n11) => Math.hypot(t11.x - e17[n11].x, t11.y - e17[n11].y)), r10 = n10.reduce((e18, t11) => e18 + t11, 0) * t10;
+  for (let t11 = 0; t11 < n10.length; t11++) {
+    if (r10 <= n10[t11]) {
+      let i10 = n10[t11] ? r10 / n10[t11] : 0;
+      return { x: e17[t11].x + (e17[t11 + 1].x - e17[t11].x) * i10, y: e17[t11].y + (e17[t11 + 1].y - e17[t11].y) * i10 };
+    }
+    r10 -= n10[t11];
+  }
+  return e17[e17.length - 1];
+}
+function vw(e17, t10 = false) {
+  let n10 = pw * 1.6, r10 = e17.markers.map((t11) => {
+    let n11 = tw(e17, t11.lat, t11.lon);
+    return { x: n11.x - 22, y: n11.y - 62, w: 44, h: 62 };
+  }), i10 = [], a10 = (e18, n11, a11) => {
+    if (t10 && (e18.anchor.x < 0 || e18.anchor.y < 0 || e18.anchor.x > 1300 || e18.anchor.y > 760)) return;
+    if (a11 && a11.lx !== void 0 && a11.ly !== void 0) {
+      let t11 = { ...e18.base, x: e18.base.x + a11.lx, y: e18.base.y + a11.ly };
+      i10.push({ ...e18, box: t11, manual: true }), r10.push(t11);
+      return;
+    }
+    let o10 = n11.find((e19) => gw(e19) && !r10.some((t11) => xse(t11, e19))) ?? n11.find((e19) => gw(e19)) ?? (t10 ? n11[0] : Sse(n11[0]));
+    i10.push({ ...e18, box: o10, manual: false }), r10.push(o10);
+  };
+  for (let t11 of e17.paths ?? []) if (!(t11.pts.length < 2)) {
+    if (t11.start) {
+      let n11 = tw(e17, t11.pts[0][0], t11.pts[0][1]);
+      r10.push({ x: n11.x - 16, y: n11.y - 16, w: 32, h: 32 });
+    }
+    if (t11.end) {
+      let n11 = tw(e17, t11.pts[t11.pts.length - 1][0], t11.pts[t11.pts.length - 1][1]);
+      r10.push({ x: n11.x - 10, y: n11.y - 44, w: 40, h: 54 });
+    }
+  }
+  return (e17.paths ?? []).forEach((t11, r11) => {
+    if (t11.pts.length < 2) return;
+    let i11 = t11.pts.map(([t12, n11]) => tw(e17, t12, n11));
+    for (let e18 of [`start`, `end`]) {
+      let o11 = t11[e18];
+      if (!o11?.label) continue;
+      let s11 = e18 === `start` ? i11[0] : i11[i11.length - 1], c11 = hw(o11.label) + 26, l11 = { x: s11.x + 22, y: s11.y - n10 / 2, w: c11, h: n10 };
+      a10({ kind: e18, index: r11, text: o11.label, color: t11.color, base: l11, anchor: s11 }, [l11, { ...l11, x: s11.x - 22 - c11 }, { ...l11, x: s11.x - c11 / 2, y: s11.y - 24 - n10 }, { ...l11, x: s11.x - c11 / 2, y: s11.y + 24 }], o11);
+    }
+    let o10 = [t11.label || (t11.kind ? zC.find((e18) => e18.id === t11.kind)?.label ?? `` : ``), t11.dist ? `ca. ${ow(aw(t11.pts))}` : ``].filter(Boolean).join(` \xB7 `);
+    if (!o10) return;
+    let s10 = hw(o10) + 26 + (t11.kind ? 30 : 0), c10 = (e18, t12) => {
+      let r12 = _w(i11, e18);
+      return { x: r12.x - s10 / 2, y: r12.y + t12 - n10 / 2, w: s10, h: n10 };
+    }, l10 = _w(i11, 0.5), u10 = c10(0.5, -20);
+    a10({ kind: `path`, index: r11, text: o10, color: t11.color, base: u10, anchor: l10, ...t11.kind ? { icon: t11.kind } : {} }, [u10, c10(0.5, 30), c10(0.5, -64), c10(0.3, -20), c10(0.7, -20), c10(0.3, 30), c10(0.7, 30)], t11);
+  }), e17.markers.forEach((t11, r11) => {
+    if (!t11.label) return;
+    let i11 = tw(e17, t11.lat, t11.lon), o10 = hw(t11.label) + 26, s10 = { x: i11.x + 26, y: i11.y - 44 - n10 / 2, w: o10, h: n10 };
+    a10({ kind: `marker`, index: r11, text: t11.label, color: KC(t11.sym).color, base: s10, anchor: { x: i11.x, y: i11.y - 40 } }, [s10, { ...s10, x: i11.x - 26 - o10 }, { ...s10, x: i11.x - o10 / 2, y: i11.y - 70 - n10 }, { ...s10, x: i11.x - o10 / 2, y: i11.y + 8 }], t11);
+  }), i10;
+}
+var Cse = (e17, t10) => ({ x: Math.min(e17.x + e17.w, Math.max(e17.x, t10.x)), y: Math.min(e17.y + e17.h, Math.max(e17.y, t10.y)) });
+function yw(e17, t10 = false) {
+  let n10 = ``;
+  for (let t11 of e17.paths ?? []) {
+    let r11 = t11.pts.map(([t12, n11]) => tw(e17, t12, n11));
+    if (r11.length < 2) continue;
+    let i10 = r11.map((e18, t12) => `${t12 ? `L` : `M`}${e18.x.toFixed(1)} ${e18.y.toFixed(1)}`).join(``), a10 = dse[t11.width];
+    n10 += `<path d="${i10}" fill="none" stroke="#ffffff" stroke-width="${a10 + 6}" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>`, n10 += `<path d="${i10}" fill="none" stroke="${t11.color}" stroke-width="${a10}" stroke-linecap="round" stroke-linejoin="round"${t11.dash ? ` stroke-dasharray="${a10 * 2.2} ${a10 * 1.8}"` : ``}/>`;
+  }
+  for (let t11 of e17.paths ?? []) if (!(t11.pts.length < 2)) {
+    if (t11.start) {
+      let r11 = tw(e17, t11.pts[0][0], t11.pts[0][1]);
+      n10 += `<circle cx="${r11.x.toFixed(1)}" cy="${r11.y.toFixed(1)}" r="14" fill="${t11.color}" stroke="#ffffff" stroke-width="4"/><circle cx="${r11.x.toFixed(1)}" cy="${r11.y.toFixed(1)}" r="4.5" fill="#ffffff"/>`;
+    }
+    if (t11.end) {
+      let r11 = tw(e17, t11.pts[t11.pts.length - 1][0], t11.pts[t11.pts.length - 1][1]);
+      n10 += `<g transform="translate(${r11.x.toFixed(1)} ${r11.y.toFixed(1)})"><circle r="7" fill="${t11.color}" stroke="#ffffff" stroke-width="3"/><path d="M0 0V-38" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/><path d="M0 0V-38" stroke="#212529" stroke-width="3.5" stroke-linecap="round"/><path d="M1 -38h24l-6 8 6 8H1z" fill="${t11.color}" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/></g>`;
+    }
+  }
+  let r10 = vw(e17, t10);
+  for (let e18 of r10) {
+    let t11 = Cse(e18.box, e18.anchor);
+    if (Math.hypot(t11.x - e18.anchor.x, t11.y - e18.anchor.y) < (e18.kind === `marker` ? 40 : e18.kind === `path` ? 30 : 26)) continue;
+    let r11 = `M${e18.anchor.x.toFixed(1)} ${e18.anchor.y.toFixed(1)}L${t11.x.toFixed(1)} ${t11.y.toFixed(1)}`;
+    n10 += `<path d="${r11}" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/><path d="${r11}" stroke="${e18.color}" stroke-width="3.5" stroke-linecap="round"/><circle cx="${e18.anchor.x.toFixed(1)}" cy="${e18.anchor.y.toFixed(1)}" r="5" fill="${e18.color}" stroke="#ffffff" stroke-width="2"/>`;
+  }
+  for (let t11 of e17.markers) {
+    let r11 = tw(e17, t11.lat, t11.lon);
+    r11.x < -60 || r11.y < -10 || r11.x > 1360 || r11.y > 840 || (n10 += `<g transform="translate(${r11.x.toFixed(1)} ${r11.y.toFixed(1)})">${qC(t11.sym)}</g>`);
+  }
+  for (let e18 of r10) {
+    let t11 = e18.icon ? `<g transform="translate(${(e18.box.x + bse - 2).toFixed(1)} ${(e18.box.y + e18.box.h / 2 - 12).toFixed(1)})">${use[e18.icon].replace(/"C"/g, `"${e18.color}"`)}</g>` : ``, r11 = e18.box.x + (e18.icon ? 30 : 0) + (e18.box.w - (e18.icon ? 30 : 0)) / 2;
+    n10 += `<g><rect x="${e18.box.x.toFixed(1)}" y="${e18.box.y.toFixed(1)}" width="${e18.box.w.toFixed(1)}" height="${e18.box.h.toFixed(1)}" rx="10" fill="#ffffff" opacity="0.94" stroke="${e18.color}" stroke-width="2.5"/>${t11}<text x="${r11.toFixed(1)}" y="${(e18.box.y + e18.box.h / 2 + pw * 0.36).toFixed(1)}" font-size="${pw}" font-family="${fw}" font-weight="700" text-anchor="middle" fill="#212529">${vse(e18.text)}</text></g>`;
+  }
+  return n10;
+}
+var bw = `<rect width="${VC}" height="760" fill="#e9f5e1"/><path d="M0 520C200 460 340 600 560 540S900 420 1300 500V760H0z" fill="#a5d8ff"/><path d="M0 220Q300 170 520 260T1300 200" fill="none" stroke="#ffffff" stroke-width="26"/><path d="M640 0Q600 300 700 760" fill="none" stroke="#ffffff" stroke-width="20"/><circle cx="300" cy="380" r="70" fill="#b2f2bb"/><circle cx="980" cy="330" r="90" fill="#b2f2bb"/>`;
+function wse(e17, t10, n10, r10) {
+  let i10 = QC(e17.design), a10 = e17.img ? r10(e17.img) : void 0, o10 = i10.frameW, s10 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-o10} ${-o10} ${VC + 2 * o10} ${760 + 2 * o10}" width="${t10}" height="${n10}">`;
+  return s10 += `<rect x="${-o10}" y="${-o10}" width="${VC + 2 * o10}" height="${760 + 2 * o10}" rx="${o10 + 14}" fill="${i10.frame}"/>`, s10 += `<svg x="0" y="0" width="${VC}" height="760" viewBox="0 0 ${VC} 760">`, s10 += a10 ? `<image href="${a10}" x="0" y="0" width="${VC}" height="760" preserveAspectRatio="none"/>` : bw, s10 += yw(e17), s10 += `<rect x="908" y="730" width="392" height="30" fill="#ffffff" opacity="0.8"/><text x="1290" y="751" font-size="17" font-family="${dw}" text-anchor="end" fill="#343a40">${UC}</text>`, s10 + `</svg></svg>`;
+}
+var xw = /* @__PURE__ */ new Map();
+var Sw = /* @__PURE__ */ new Map();
+var Cw = /* @__PURE__ */ new Map();
+var ww = /* @__PURE__ */ new Map();
+var Tw = /* @__PURE__ */ new WeakSet();
+var Ew = 3;
+var Tse = `<defs><filter id="lh-map-sepia" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0.545 0.577 0.142 0 0 0.262 0.765 0.126 0 0 0.184 0.360 0.338 0 0 0 0 0 1 0"/></filter><filter id="lh-map-dark" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0"/><feColorMatrix type="hueRotate" values="180"/><feComponentTransfer><feFuncR type="linear" slope="0.85"/><feFuncG type="linear" slope="0.85"/><feFuncB type="linear" slope="0.85" intercept="0.07"/></feComponentTransfer></filter><filter id="lh-map-soft" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0.65"/><feComponentTransfer><feFuncR type="linear" slope="1.04" intercept="0.025"/><feFuncG type="linear" slope="1.04" intercept="0.025"/><feFuncB type="linear" slope="1.04" intercept="0.025"/></feComponentTransfer></filter></defs>`;
+var Dw = (e17) => `${e17.lat},${e17.lon},${e17.zoom}`;
+function Ow(e17, t10) {
+  let n10 = xw.get(e17.id);
+  return n10 && n10.z > 0 && n10.base === Dw(t10) ? n10 : { z: 0, lat: t10.lat, lon: t10.lon };
+}
+function Ese(e17, t10, n10, r10) {
+  if (t10 <= 0) return { z: 0, lat: e17.lat, lon: e17.lon };
+  let i10 = e17.zoom + t10, a10 = 2 ** t10, o10 = $C(e17.lat, e17.lon, i10), s10 = $C(n10, r10, i10), c10 = (VC * a10 - VC) / 2, l10 = (760 * a10 - 760) / 2;
+  return { z: t10, ...ew(Math.min(o10.x + c10, Math.max(o10.x - c10, s10.x)), Math.min(o10.y + l10, Math.max(o10.y - l10, s10.y)), i10) };
+}
+function Dse(e17, t10, n10) {
+  let r10 = QC(t10.design), i10 = r10.frameW, a10 = Ow(e17, t10), o10 = t10.zoom + a10.z, s10 = 2 ** a10.z, c10 = { ...t10, lat: a10.lat, lon: a10.lon, zoom: o10 }, l10 = t10.img ? n10(t10.img) : void 0, u10 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-i10} ${-i10} ${VC + 2 * i10} ${760 + 2 * i10}" width="100%" height="100%">${Tse}`;
+  if (u10 += `<rect x="${-i10}" y="${-i10}" width="${VC + 2 * i10}" height="${760 + 2 * i10}" rx="${i10 + 14}" fill="${r10.frame}"/>`, u10 += `<svg x="0" y="0" width="${VC}" height="760" viewBox="0 0 ${VC} 760" overflow="hidden"><rect width="${VC}" height="760" fill="#f2efe9"/><g class="lh-map-pan">`, l10) {
+    let e18 = $C(t10.lat, t10.lon, o10), n11 = $C(a10.lat, a10.lon, o10), r11 = VC / 2 + (e18.x - n11.x) - VC * s10 / 2, i11 = 380 + (e18.y - n11.y) - 760 * s10 / 2;
+    u10 += `<image href="${l10}" x="${r11.toFixed(1)}" y="${i11.toFixed(1)}" width="${VC * s10}" height="${760 * s10}" preserveAspectRatio="none"/>`;
+  } else u10 += bw;
+  if (a10.z > 0 && l10) {
+    let e18 = r10.tint === `none` ? `` : ` filter="url(#lh-map-${r10.tint})"`;
+    for (let t11 of rw(c10)) u10 += `<image href="${WC(t11.z, t11.x, t11.y)}" x="${t11.left.toFixed(1)}" y="${t11.top.toFixed(1)}" width="256" height="256"${e18}/>`;
+  }
+  u10 += yw(c10, a10.z > 0) + `</g>`, u10 += `<rect x="908" y="730" width="392" height="30" fill="#ffffff" opacity="0.8"/><text x="1290" y="751" font-size="17" font-family="${dw}" text-anchor="end" fill="#343a40">${UC}</text>`;
+  let d10 = (e18, t11, n11, r11, i11) => `<g class="lh-key${i11 ? ` is-off` : ``}" data-a="${e18}"><rect x="1224" y="${t11}" width="58" height="58" rx="14" fill="#ffffff" opacity="0.95" stroke="#adb5bd" stroke-width="2"/><path d="${n11}" fill="none" stroke="${i11 ? `#ced4da` : `#212529`}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><rect class="lh-kdown" x="1224" y="${t11}" width="58" height="58" rx="14" fill="#000000" opacity="0"/><title>${r11}</title></g>`;
+  return u10 += d10(`zin`, 18, `M1239 47h28M1253 33v28`, `N\xE4her heran`, a10.z >= Ew || o10 >= 18 || !l10), u10 += d10(`zout`, 84, `M1239 113h28`, `Weiter weg`, a10.z <= 0), a10.z > 0 && (u10 += d10(`reset`, 150, `M1240 179a13 13 0 1 0 4-9.5M1240 166v8h8`, `Ganze Karte`, false)), u10 + `</svg></svg>`;
+}
+function Ose(e17) {
+  let t10 = Cw.get(e17);
+  if (t10) for (let n10 of Sw.get(e17) ?? []) n10.isConnected && Aw(n10, t10, true, { assets: ww.get(e17) });
+}
+function kw(e17, t10, n10, r10) {
+  let i10 = Cw.get(e17), a10 = i10?.map;
+  if (!i10 || !a10) return;
+  let o10 = Ow(i10, a10), s10 = Ese(a10, Math.max(0, Math.min(Ew, 18 - a10.zoom, t10)), n10 ?? o10.lat, r10 ?? o10.lon);
+  xw.set(e17, { ...s10, base: Dw(a10) }), requestAnimationFrame(() => Ose(e17));
+}
+function Aw(e17, t10, n10, r10) {
+  let i10 = Math.max(1, Math.round(t10.w)), a10 = Math.max(1, Math.round(t10.h)), o10 = t10.map ?? uw();
+  n10 && r10.assets && ww.set(t10.id, r10.assets);
+  let s10 = r10.assets ?? (n10 ? ww.get(t10.id) : void 0) ?? {}, c10 = n10 ? Ow(t10, o10) : null, l10 = `${i10}x${a10}|${n10}|${c10 ? `${c10.z},${c10.lat.toFixed(6)},${c10.lon.toFixed(6)}` : ``}|${JSON.stringify(o10)}|${o10.img ? !!s10[o10.img] : ``}`;
+  if (e17.dataset.k === l10) return;
+  if (e17.dataset.k = l10, e17.setAttribute(`aria-label`, jw(t10)), !n10) {
+    let t11 = wse(o10, i10, a10, (e18) => s10[e18]?.dataUrl), n11 = document.createElement(`img`);
+    n11.className = `lh-wg-pic`, n11.alt = ``, n11.draggable = false, n11.src = r10.stickerUrl ? r10.stickerUrl(t11) : yse(t11), n11.style.width = `${i10}px`, n11.style.height = `${a10}px`, e17.replaceChildren(n11);
+    return;
+  }
+  Cw.set(t10.id, t10);
+  let u10 = Sw.get(t10.id);
+  u10 || Sw.set(t10.id, u10 = /* @__PURE__ */ new Set());
+  for (let e18 of u10) e18.isConnected || u10.delete(e18);
+  u10.add(e17);
+  let d10 = document.createElement(`div`);
+  d10.className = `lh-wg-pic`, d10.innerHTML = Dse(t10, o10, (e18) => s10[e18]?.dataUrl), e17.replaceChildren(d10), t10.locked && e17.classList.add(`is-armed`), e17.classList.add(`lh-map-live`), e17.classList.toggle(`is-zoomed`, !!c10 && c10.z > 0), e17.classList.toggle(`lh-swipe-ok`, !c10 || c10.z <= 0), e17.dataset.mapId = t10.id, Si(e17, { slide: false, silent: true, hit: (t11) => {
+    let n11 = e17.dataset.mapId, r11 = n11 ? Cw.get(n11) : void 0;
+    if (!n11 || !r11?.map) return null;
+    let i11 = t11.getAttribute(`data-a`), a11 = Ow(r11, r11.map).z;
+    return i11 === `zin` ? kw(n11, a11 + 1) : i11 === `zout` ? kw(n11, a11 - 1) : i11 === `reset` && kw(n11, 0), null;
+  } }), Tw.has(e17) || (Tw.add(e17), e17.addEventListener(`pointerdown`, (t11) => {
+    let n11 = e17.dataset.mapId, r11 = n11 ? Cw.get(n11) : void 0;
+    if (!n11 || !r11?.map || t11.button > 0 || t11.target.closest(`.lh-key`) || !Ti(e17)) return;
+    let i11 = Ow(r11, r11.map);
+    if (i11.z <= 0) return;
+    t11.preventDefault();
+    let a11 = e17.querySelector(`svg`), o11 = e17.querySelector(`.lh-map-pan`);
+    if (!a11 || !o11) return;
+    let s11 = (VC + 2 * QC(r11.map.design).frameW) / Math.max(1, a11.getBoundingClientRect().width), c11 = t11.clientX, l11 = t11.clientY, u11 = 0, d11 = 0, f10 = (e18) => {
+      e18.pointerId === t11.pointerId && (u11 = (e18.clientX - c11) * s11, d11 = (e18.clientY - l11) * s11, o11.setAttribute(`transform`, `translate(${u11.toFixed(1)} ${d11.toFixed(1)})`));
+    }, p10 = (e18) => {
+      if (e18.pointerId !== t11.pointerId || (window.removeEventListener(`pointermove`, f10), window.removeEventListener(`pointerup`, p10, true), window.removeEventListener(`pointercancel`, p10, true), Math.abs(u11) + Math.abs(d11) < 2)) return;
+      let a12 = r11.map.zoom + i11.z, o12 = $C(i11.lat, i11.lon, a12), s12 = ew(o12.x - u11, o12.y - d11, a12);
+      kw(n11, i11.z, s12.lat, s12.lon);
+    };
+    window.addEventListener(`pointermove`, f10), window.addEventListener(`pointerup`, p10, true), window.addEventListener(`pointercancel`, p10, true);
+  }));
+}
 function jw(e17) {
   let t10 = e17.map ?? uw(), n10 = t10.markers.filter((e18) => e18.label).map((e18) => e18.label), r10 = (t10.paths ?? []).map((e18) => [e18.label, e18.dist ? `ungef\xE4hr ${ow(aw(e18.pts))}` : ``].filter(Boolean).join(`, `)).filter(Boolean);
   return `Karte${t10.markers.length ? ` mit ${t10.markers.length === 1 ? `einer Markierung` : `${t10.markers.length} Markierungen`}` : ``}${n10.length ? `: ${n10.join(`, `)}` : ``}.${r10.length ? ` Wege: ${r10.join(`; `)}.` : ``}`;
@@ -2515,8 +2777,72 @@ function VO(e17, t10, n10, r10, i10) {
   let a10 = document.createElement(`img`);
   return a10.className = `lh-wg-pic`, a10.alt = ``, a10.draggable = false, a10.src = n10.stickerUrl ? n10.stickerUrl(e17) : mO(e17), a10.style.width = gO(r10), a10.style.height = gO(i10), a10;
 }
+var LP = 0.85;
+var GP;
+function Zpe() {
+  if (GP === void 0) try {
+    let e17 = document.createElement(`canvas`);
+    e17.width = e17.height = 1, GP = e17.toDataURL(`image/webp`).startsWith(`data:image/webp`);
+  } catch {
+    GP = false;
+  }
+  return GP;
+}
+function Qpe(e17, t10, n10) {
+  try {
+    let r10 = e17.getImageData(0, 0, t10, n10).data;
+    for (let e18 = 3; e18 < r10.length; e18 += 4) if (r10[e18] < 255) return true;
+    return false;
+  } catch {
+    return true;
+  }
+}
+function KP(e17, t10, n10) {
+  let r10 = e17.toDataURL(t10, n10);
+  if (r10.length < 32) throw Error(`Das Bild konnte nicht gespeichert werden (zu gro\xDF?).`);
+  return { dataUrl: r10, mime: r10.slice(5, r10.indexOf(`;`)) || t10 };
+}
+async function qP(e17, t10) {
+  let n10 = e17.getContext(`2d`), r10;
+  return r10 = Zpe() ? KP(e17, `image/webp`, LP) : t10 ?? Qpe(n10, e17.width, e17.height) ? KP(e17, `image/png`) : KP(e17, `image/jpeg`, LP), { ...r10, width: e17.width, height: e17.height };
+}
 var h6 = [{ name: `Deutsch`, color: `#e03131`, arasaac: 37740 }, { name: `Mathe`, color: `#1c7ed6`, arasaac: 10260 }, { name: `Sachunterricht`, color: `#2f9e44`, arasaac: 35437 }, { name: `Englisch`, color: `#7048e8`, arasaac: 32705 }, { name: `Kunst`, color: `#f76707`, arasaac: 11245 }, { name: `Musik`, color: `#d6336c`, arasaac: 24791 }, { name: `Sport`, color: `#0ca678`, arasaac: 7010 }, { name: `Schwimmen`, color: `#1098ad`, arasaac: 6568 }, { name: `Religion`, color: `#a5734d`, arasaac: 24471 }, { name: `Ethik`, color: `#868e96`, arasaac: 34709 }, { name: `Werken`, color: `#e8590c`, arasaac: 9805 }, { name: `Textiles Gestalten`, color: `#c2255c`, arasaac: 7068 }, { name: `Kochen`, color: `#f59f00`, arasaac: 5485 }, { name: `Lesen`, color: `#9c36b5`, arasaac: 2447 }, { name: `Schreiben`, color: `#364fc7`, arasaac: 2380 }, { name: `Computer`, color: `#495057`, arasaac: 22801 }, { name: `Morgenkreis`, color: `#fab005`, arasaac: 27575 }, { name: `F\xF6rderung`, color: `#5c940d`, arasaac: 37810 }, { name: `Logop\xE4die`, color: `#e64980`, arasaac: 6142 }, { name: `Ergotherapie`, color: `#20c997`, arasaac: 24821 }, { name: `Physiotherapie`, color: `#15aabf`, arasaac: 8725 }, { name: `Klassenrat`, color: `#845ef7`, arasaac: 38789 }, { name: `B\xFCcherei`, color: `#a61e4d`, arasaac: 32450 }, { name: `Garten`, color: `#37b24d`, arasaac: 2434 }, { name: `Spielen`, color: `#ff922b`, arasaac: 23392 }, { name: `Basteln`, color: `#fd7e14`, arasaac: 7794 }, { name: `Theater`, color: `#be4bdb`, arasaac: 32412 }, { name: `Ausflug`, color: `#40c057`, arasaac: 4670 }, { name: `Hausaufgaben`, color: `#343a40`, arasaac: 32556 }, { name: `Fr\xFChst\xFCck`, color: `#f08c00`, arasaac: 4626 }, { name: `Pause`, color: `#fab005`, arasaac: 33064 }, { name: `Mittagessen`, color: `#e67700`, arasaac: 4611 }];
 var g6 = [{ name: `Tagesst\xE4tte`, color: `#1c7ed6`, arasaac: 25692 }, { name: `Hort`, color: `#7048e8`, arasaac: 25693 }, { name: `Mittagsbetreuung`, color: `#f08c00`, arasaac: 4611 }, { name: `Bus`, color: `#e03131`, arasaac: 2263 }, { name: `Taxi`, color: `#fab005`, arasaac: 2580 }, { name: `Abholung`, color: `#2f9e44`, arasaac: 35060 }, { name: `Nach Hause`, color: `#495057`, arasaac: 32940 }];
+async function lDe(e17) {
+  let t10 = `/api/karte?suche=${encodeURIComponent(e17)}`, n10 = await fetch(t10, { headers: { Accept: `application/json` } });
+  if (!n10.ok) throw Error(String(n10.status));
+  return (await n10.json()).flatMap((e18) => e18.lat && e18.lon ? [{ name: e18.display_name ?? ``, lat: Number(e18.lat), lon: Number(e18.lon) }] : []).filter((e18) => Number.isFinite(e18.lat) && Number.isFinite(e18.lon));
+}
+function uDe(e17, t10) {
+  if (t10 === `none`) return;
+  let n10 = e17.getImageData(0, 0, VC, 760), r10 = n10.data;
+  for (let e18 = 0; e18 < r10.length; e18 += 4) {
+    let n11 = r10[e18], i10 = r10[e18 + 1], a10 = r10[e18 + 2];
+    if (t10 === `sepia`) {
+      let t11 = 0.393 * n11 + 0.769 * i10 + 0.189 * a10, o10 = 0.349 * n11 + 0.686 * i10 + 0.168 * a10, s10 = 0.272 * n11 + 0.534 * i10 + 0.131 * a10;
+      r10[e18] = Math.min(255, n11 * 0.25 + t11 * 0.75), r10[e18 + 1] = Math.min(255, i10 * 0.25 + o10 * 0.75), r10[e18 + 2] = Math.min(255, a10 * 0.25 + s10 * 0.75 * 0.9);
+    } else if (t10 === `dark`) {
+      let t11 = 255 - n11, o10 = 255 - i10, s10 = 255 - a10;
+      r10[e18] = Math.max(0, Math.min(255, (-0.574 * t11 + 1.43 * o10 + 0.144 * s10) * 0.85)), r10[e18 + 1] = Math.max(0, Math.min(255, (0.426 * t11 + 0.43 * o10 + 0.144 * s10) * 0.85)), r10[e18 + 2] = Math.max(0, Math.min(255, (0.426 * t11 + 1.43 * o10 - 0.856 * s10) * 0.85 + 18));
+    } else {
+      let t11 = 0.299 * n11 + 0.587 * i10 + 0.114 * a10;
+      r10[e18] = Math.min(255, (t11 + 0.65 * (n11 - t11)) * 1.04 + 6), r10[e18 + 1] = Math.min(255, (t11 + 0.65 * (i10 - t11)) * 1.04 + 6), r10[e18 + 2] = Math.min(255, (t11 + 0.65 * (a10 - t11)) * 1.04 + 6);
+    }
+  }
+  e17.putImageData(n10, 0, 0);
+}
+async function U6(e17, t10) {
+  let n10 = document.createElement(`canvas`);
+  n10.width = VC, n10.height = 760;
+  let r10 = n10.getContext(`2d`);
+  if (!r10) throw Error(`no canvas`);
+  return r10.fillStyle = `#f2efe9`, r10.fillRect(0, 0, VC, 760), await Promise.all(rw(e17).map(async (e18) => {
+    let n11 = await fetch(WC(e18.z, e18.x, e18.y, t10), { mode: `cors` });
+    if (!n11.ok) throw Error(`tile ${n11.status}`);
+    let i10 = await createImageBitmap(await n11.blob());
+    r10.drawImage(i10, Math.round(e18.left), Math.round(e18.top), 256, 256), i10.close?.();
+  })), uDe(r10, QC(e17.design).tint), qP(n10);
+}
 var lNe = [`wenig`, `etwas weniger`, `mittel`, `mehr`, `sehr`];
 function classTime(e17, t10, n10, r10) {
   let i10 = /* @__PURE__ */ new Date(), a10 = Math.max(1, Math.round(t10.w)), o10 = Math.max(1, Math.round(t10.h));
@@ -2595,4 +2921,4 @@ function classTick(t, e) {
 }
 function classReset(e) { e.timer === `fixed` ? wO(e) : SO.delete(e.id); }
 function classStart(e) { e.kind === `timer` && e.timer === `fixed` && !SO.has(e.id) && wO(e); }
-export { classTime as renderTime, classTap as tapTime, classTick as tickTime, classStart as startTime, classReset as resetTimer, xO as timeSpeech, yO as dateText, CO as timerState, Ule as searchPlace, Hle as loadWeather, BO as weatherWord, Ia as renderMultiTimer, Ki as multiTimerConfig, La as multiTimerLabel, Ea as onMultiTimerChange, sa as stopMultiTimer, Hi as MULTI_TIMER_SOUNDS, Ui as MULTI_TIMER_START, Bi as MULTI_TIMER_COLORS, zi as MULTI_TIMER_NEXT_COLORS, Vi as MULTI_TIMER_ICONS, xne as renderApplause, um as applauseConfig, Rm as applauseLabel, Sm as applausePicture, om as APPLAUSE_WORDS, sm as APPLAUSE_SECONDS, une as NOISE_LIMITS, lNe as MIC_SENSITIVITY, bne as stopApplause, Wne as renderTimetable, Nh as timetableLabel, Gne as timetableSay, jh as timetableHtml, wh as timetableConfig, Ch as timetableStart, Eh as timetableTimes, Th as clockText, h6 as TIMETABLE_SUBJECTS, g6 as TIMETABLE_AFTER, yh as TIMETABLE_DESIGNS, gh as TIMETABLE_FONTS, Be as fontOf, YT as renderCalendar, sce as tapCalendar, cce as calendarLabel, eE as restartCalendar, CLASS_CSS };
+export { classTime as renderTime, classTap as tapTime, classTick as tickTime, classStart as startTime, classReset as resetTimer, xO as timeSpeech, yO as dateText, CO as timerState, Ule as searchPlace, Hle as loadWeather, BO as weatherWord, Ia as renderMultiTimer, Ki as multiTimerConfig, La as multiTimerLabel, Ea as onMultiTimerChange, sa as stopMultiTimer, Hi as MULTI_TIMER_SOUNDS, Ui as MULTI_TIMER_START, Bi as MULTI_TIMER_COLORS, zi as MULTI_TIMER_NEXT_COLORS, Vi as MULTI_TIMER_ICONS, xne as renderApplause, um as applauseConfig, Rm as applauseLabel, Sm as applausePicture, om as APPLAUSE_WORDS, sm as APPLAUSE_SECONDS, une as NOISE_LIMITS, lNe as MIC_SENSITIVITY, bne as stopApplause, Wne as renderTimetable, Nh as timetableLabel, Gne as timetableSay, jh as timetableHtml, wh as timetableConfig, Ch as timetableStart, Eh as timetableTimes, Th as clockText, h6 as TIMETABLE_SUBJECTS, g6 as TIMETABLE_AFTER, yh as TIMETABLE_DESIGNS, gh as TIMETABLE_FONTS, Be as fontOf, YT as renderCalendar, sce as tapCalendar, cce as calendarLabel, eE as restartCalendar, Aw as renderMap, jw as mapLabel, gse as mapConfig, uw as mapStart, QC as mapDesign, ZC as MAP_DESIGNS, GC as MAP_SYMBOLS, JC as mapSymbol, zC as PATH_KINDS, BC as PATH_COLORS, rw as mapTiles, $C as toWorld, ew as fromWorld, tw as toView, nw as fromView, yw as mapMarks, vw as labelBoxes, ow as distanceText, aw as pathLength, iw as distance, U6 as mapPicture, lDe as searchAddress, WC as tileUrl, VC as MAP_W, HC as MAP_DATA, UC as MAP_CREDIT, CLASS_CSS };

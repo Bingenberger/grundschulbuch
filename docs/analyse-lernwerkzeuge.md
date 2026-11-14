@@ -418,6 +418,22 @@ Antwort, mit Hilfe-Knopf, Vorlesen, Jahreszeit und Neustart. Ohne
 Einstellungen, kommt sofort als eigene Seite (Sachunterricht). Der frühere
 „Sprechende Kalender“ ist nicht mehr auswählbar.
 
+**Karte (14.11.2026):** Darstellung, Geometrie, Markierungen, Wege, Designs und
+das Kartenbild sind die der Vorlage (gleiches Skript). `MapSheet.tsx` zeigt die
+Seite der Vorlage (Hintergrund und Titelfarbe des Designs, darunter die Karte);
+live zoomt + / − mit schärferen Kacheln, gezoomt lässt sich die Karte
+verschieben. Der Editor (`MapOptions.tsx`) folgt dem Kartendialog der Vorlage:
+Adresse suchen, verschieben und zoomen, Mitte setzen, Markierung setzen, Weg
+zeichnen, Messen (Luftlinie, auch als Linie auf die Karte), Design, Markierungen
+(Beschriftung, Symbol, Beschriftung verschieben) und Wege (Beschriftung, Art,
+Anfang/Ende, Farbe, Dicke, gestrichelt, Entfernung). Beim Übernehmen wird das
+Bild des Ausschnitts erzeugt und auf dem Schulserver gespeichert, nur wenn sich
+Ausschnitt oder Design geändert haben. Kartenbilder und Suche fragt der
+Schulserver ab (`/api/karte`: Kacheln von tile.openstreetmap.de, sonst .org, mit
+Zwischenspeicher; Nominatim höchstens einmal pro Sekunde); die Geräte sprechen
+OpenStreetMap nicht direkt an. Die frühere „Karte & Wege“ ist nicht mehr
+auswählbar.
+
 **Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Musik und Für alle Fächer (fertig), Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).
