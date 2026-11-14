@@ -40,6 +40,8 @@ export const WIDGET_KINDS = [
   'textsachen',
   'zuordnung',
   'quizsachen',
+  'zeit',
+  'phasen',
   'shop',
   'geometry',
   'monster',

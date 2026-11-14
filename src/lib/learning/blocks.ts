@@ -9,6 +9,7 @@ import { defaultSettings, type JsonValue } from './catalog';
 import { defaultTs } from './textsachen';
 import { defaultDnd } from './zuordnung';
 import { defaultQuiz } from './quiz';
+import { defaultZeit } from './zeit';
 import type { MathToolKind } from './mathtool';
 import { geoConfig } from './geodraw';
 import { musicPresets, musicKind, musicSettings, musicPage } from './music';
@@ -31,7 +32,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -117,6 +118,12 @@ const SKIP = new Set([
   'activity-quiz',
   'activity-memory',
   'activity-maze',
+  // Replaced by Uhr, Timer, Datum and Multi-Timer of the reference (Regal › Zeit).
+  'widget-clock',
+  'widget-timer',
+  'widget-multitimer',
+  'widget-zeit',
+  'widget-phasen',
 ]);
 
 /** Regal › Mathe of the reference. */
@@ -306,6 +313,15 @@ for (const [id, mode, title, words] of [
   ['ts-wordle', 'wordle', 'Wordle', 'Wordle Worträtsel Wort erraten Buchstaben Textsachen'],
 ] as const)
   toolBlocks.push({ id, title, subject: 'Deutsch', type: 'widget', kind: 'textsachen', preset: { ...defaultSettings('textsachen'), ts: defaultTs(mode) as unknown as JsonValue, title }, words });
+// Regal › Zeit of the reference: Uhr and Datum (Sachunterricht), Timer and
+// Multi-Timer (Klassenführung).
+for (const [id, subject, kind, title, words] of [
+  ['zeit-clock', 'Sachunterricht', 'clock', 'Uhr', 'Uhr Uhrzeit analog digital Zeit ansagen'],
+  ['zeit-date', 'Sachunterricht', 'date', 'Datum', 'Datum heute Wochentag Monat Wetter Kalender'],
+  ['zeit-timer', 'Klassenführung', 'timer', 'Timer', 'Timer Zeit Minuten Countdown Gong Eieruhr'],
+] as const)
+  toolBlocks.push({ id, title, subject, type: 'widget', kind: 'zeit', preset: { ...defaultSettings('zeit'), zeit: defaultZeit(kind) as unknown as JsonValue, title }, words });
+toolBlocks.push({ id: 'zeit-multitimer', title: 'Multi-Timer', subject: 'Klassenführung', type: 'widget', kind: 'phasen', preset: { ...defaultSettings('phasen'), title: 'Multi-Timer' }, words: 'Multi-Timer Phasen Think Pair Share Arbeitszeit Uhr Ringe' });
 // Quiz of Quizsachen and Memory of Textsachen, as in Lernsachen-Heft (Interaktive Übungen).
 toolBlocks.push(
   { id: 'qz-quiz', title: 'Quiz', subject: 'Für alle Fächer', type: 'widget', kind: 'quizsachen', preset: { ...defaultSettings('quizsachen'), qz: defaultQuiz() as unknown as JsonValue, title: 'Quiz' }, words: 'Quiz Quizsachen Fragen Antworten Einfachauswahl Mehrfachauswahl richtig falsch Reihenfolge Bilderrätsel Hör-Quiz' },

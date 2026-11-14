@@ -4912,3 +4912,28 @@ input[type='checkbox'] {
 .option-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .ts-part .property-label { font-size: 14px; font-weight: 700; color: #1f2937; }
 .ts-part .property-label textarea { font-size: 15px; }
+
+/* Uhr, Timer, Datum and Multi-Timer of the reference (Regal › Zeit). */
+.time-widget { position: relative; width: 100%; height: 100%; }
+.time-widget-face { position: relative; width: 100%; height: 100%; }
+.time-widget-face.is-live { cursor: pointer; }
+.time-widget-face.is-reading { filter: drop-shadow(0 0 6px #4054d6); }
+.time-widget-reset { position: absolute; left: 50%; bottom: -2.4em; transform: translateX(-50%); padding: 4px 12px; border: 1px solid #cbd5e1; border-radius: 999px; background: #fff; font: 600 14px/1.3 Nunito, sans-serif; cursor: pointer; white-space: nowrap; }
+.time-preview { display: flex; justify-content: center; padding: 12px; background: #f8fafc; border-radius: 12px; }
+.time-place { display: flex; align-items: center; gap: 10px; }
+.time-search { display: flex; gap: 8px; }
+.time-search input { flex: 1; }
+.time-found { display: flex; flex-direction: column; gap: 6px; }
+.time-found .knopf { justify-content: flex-start; text-align: left; }
+.mt-phase { border: 2px solid; border-radius: 12px; padding: 8px 12px 12px; margin: 0 0 10px; display: flex; flex-direction: column; gap: 8px; }
+.mt-phase legend { font-weight: 700; padding: 0 6px; }
+.mt-phase-row { display: flex; gap: 6px; align-items: center; }
+.mt-phase-row input { flex: 1; min-width: 0; }
+.mt-phase-icon { width: 44px; height: 44px; font-size: 24px; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; cursor: pointer; }
+.mt-icons { display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; padding: 6px; border: 1px solid #e5e7eb; border-radius: 10px; }
+.mt-icons small { display: block; color: #6b7280; }
+.mt-icons button { font-size: 22px; width: 40px; height: 40px; border: 0; background: none; border-radius: 8px; cursor: pointer; }
+.mt-icons button[aria-pressed="true"] { background: #e0e7ff; }
+.mt-colors { display: flex; flex-wrap: wrap; gap: 6px; }
+.mt-colors button { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #cbd5e1; cursor: pointer; }
+.mt-colors button[aria-checked="true"] { box-shadow: 0 0 0 3px #1f2937; }

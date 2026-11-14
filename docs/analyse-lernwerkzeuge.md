@@ -370,6 +370,26 @@ Hinweis zum Skript: Schiebesachen wurde inzwischen neu gebaut, die
 Kurznamen in `BUILDER` passen nicht mehr. Das Skript lässt den Baukasten dann
 unverändert und meldet das (ebenso für Quizsachen).
 
+**Zeit: Uhr, Timer, Datum, Multi-Timer (14.11.2026):** Die Widgets aus Regal ›
+Zeit und der Multi-Timer der Vorlage sind unverändert übernommen:
+`scripts/extract-class-reference.mjs` löst sie samt Abhängigkeiten aus
+`Lernsachen-Heft.html` (wie bei den Musikwerkzeugen) nach
+`reference/class-runtime.ts`. Vom Widget-Schalter der Vorlage (HO) werden nur
+die Fälle Uhr, Timer und Datum genommen; Antippen und Ticken folgen Xle/qle.
+`TimeWidget.tsx` zeigt Uhr (analog/digital, sagt die Uhrzeit an), Timer (fest:
+läuft beim Öffnen los; flexibel: jedes Antippen die nächsten 5 Minuten; Gong;
+„Neu starten“/„Ausschalten“ wie in der Werkzeugleiste der Vorlage) und Datum
+(heute, mit Wetter in einem Wort und Symbol). `MultiTimerWidget.tsx` zeigt den
+Multi-Timer mit echter Uhrzeit und Phasen als Ringen, Start, Pause, Vollbild und
+seiner eigenen „Timer Konfiguration“; Änderungen dort werden als Antwort des
+Elements gespeichert. Einstellungsseiten (`TimeOptions.tsx`,
+`MultiTimerOptions.tsx`) mit den Wahlmöglichkeiten der Dialoge der Vorlage.
+Das Wetter (Open-Meteo, CC BY 4.0) fragt der Schulserver ab (`/api/wetter`,
+nur angemeldet), die Geräte der Kinder sprechen keinen fremden Dienst an.
+Uhr und Datum stehen unter Sachunterricht, Timer und Multi-Timer unter
+Klassenführung. Die frühere Lernuhr, der eigene Timer und Multi-Timer sind nicht
+mehr auswählbar; vorhandene Seiten damit funktionieren weiter.
+
 **Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Musik und Für alle Fächer (fertig), Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).

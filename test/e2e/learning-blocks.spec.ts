@@ -36,7 +36,7 @@ test('Lernwerkzeuge nach Fächern, Vorlagen nur gestalterisch, einstellbare Arbe
   await expect(subjects).toBeVisible();
   await dialog.getByRole('button', { name: 'Timer', exact: true }).click();
   await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
-  await expect(page.locator('.interaction-surface .learning-widget')).toHaveCount(1);
+  await expect(page.locator('.interaction-surface .lh-wg-timer')).toHaveCount(1);
 
   // The communication book comes as whole pages.
   await rail.getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
