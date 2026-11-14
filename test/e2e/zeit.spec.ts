@@ -105,6 +105,28 @@ test('Bilder-Stundenplan: Fächer eintragen, Pause, eigene Seite, Vorlesen', asy
   expect(errors).toEqual([]);
 });
 
+test('Das sprechende Kalenderblatt: fragt nach dem Tag, das Kind tippt die Antwort', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Kalender', pages: [newPage('blanko', 'landscape')] } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
+  await dialog.getByRole('navigation', { name: 'Fächer' }).getByRole('button', { name: /^Sachunterricht · / }).click();
+  await dialog.getByRole('button', { name: 'Das sprechende Kalenderblatt', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  const sheet = page.locator('.interaction-surface .lh-wg-calendar');
+  await expect(sheet).toHaveAttribute('aria-label', /Welcher Tag ist heute\?/);
+  await sheet.click();
+  await expect(sheet).toHaveAttribute('aria-label', /Welchen Tag haben wir\?/);
+  const today = weekdays[new Date().getDay()];
+  await sheet.locator(`[data-cal="pick"][data-v="${today}"]`).click();
+  await expect(sheet).toHaveAttribute('aria-label', /Welches Datum haben wir\?/, { timeout: 15000 });
+  await page.screenshot({ path: test.info().outputPath('kalenderblatt.png') });
+  expect(errors).toEqual([]);
+});
+
 test('Wetter nur über den Schulserver und nur angemeldet', async ({ page }) => {
   expect((await page.request.get('/api/wetter?art=ort&name=Regensburg')).status()).toBe(401);
   await login(page);

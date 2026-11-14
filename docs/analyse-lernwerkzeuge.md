@@ -410,6 +410,14 @@ Auswahllisten gibt es Auswahlknöpfe. Nicht übernommen: Laden und Speichern als
 Datei. Der Stundenplan kommt auf eine eigene Seite; der frühere eigene ist nicht
 mehr auswählbar.
 
+**Das sprechende Kalenderblatt (14.11.2026):** unverändert aus der Vorlage
+(gleiches Skript; die 23 Zeichnungen von Lernsachen.blog liegen in
+`public/kalender/`, ihre Größen in `reference/calendar-pictures.json`).
+`CalendarSheet.tsx`: fragt nach Tag, Datum, Monat und Jahr, das Kind tippt die
+Antwort, mit Hilfe-Knopf, Vorlesen, Jahreszeit und Neustart. Ohne
+Einstellungen, kommt sofort als eigene Seite (Sachunterricht). Der frühere
+„Sprechende Kalender“ ist nicht mehr auswählbar.
+
 **Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Musik und Für alle Fächer (fertig), Sachunterricht/Zeit,
 Klassenführung, Unterstützte Kommunikation, Medien – jeweils an der Vorlage
 angleichen und fehlende Bausteine ergänzen (siehe 3.2).

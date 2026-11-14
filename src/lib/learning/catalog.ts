@@ -57,6 +57,7 @@ export const widgetCatalog = {
   phasen: ['Multi-Timer', 'Schule'],
   ampel: ['Lärmampel und Applausometer', 'Schule'],
   stundenplan: ['Bilder-Stundenplan', 'Schule'],
+  kalenderblatt: ['Das sprechende Kalenderblatt', 'Schule'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],

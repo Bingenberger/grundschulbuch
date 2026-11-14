@@ -73,6 +73,10 @@ test('Alle Lernwerkzeuge und Übungen lassen sich im Heft öffnen', async ({
       await expect(page.locator('.interaction-surface .time-widget-face.lh-widget')).toHaveAttribute('aria-label', /^(Uhr|Multi-Timer)/);
       continue;
     }
+    if (catalogue[i].kind === 'kalenderblatt') {
+      await expect(page.locator('.interaction-surface .lh-wg-calendar')).toHaveAttribute('aria-label', /Kalenderblatt/);
+      continue;
+    }
     if (catalogue[i].kind === 'stundenplan') {
       await expect(page.locator('.interaction-surface .lh-wg-timetable')).toHaveAttribute('aria-label', /^Stundenplan/);
       continue;

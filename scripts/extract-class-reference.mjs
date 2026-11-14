@@ -1,7 +1,8 @@
 // Takes the tools for time and the classroom out of Lernsachen-Heft.html,
 // unchanged: Uhr, Timer and Datum (Regal › Zeit), the Multi-Timer, and
 // Lärmampel, Applausometer and the Bilder-Stundenplan (with the ARASAAC
-// pictures of its subjects, CC BY-NC-SA 4.0, saved to public/stundenplan/).
+// pictures of its subjects, CC BY-NC-SA 4.0, saved to public/stundenplan/), and
+// Das sprechende Kalenderblatt (with its drawings, saved to public/kalender/).
 // Individual top-level declarations are resolved like in
 // extract-music-reference.mjs, so no editor or application code comes along.
 //
@@ -42,7 +43,7 @@ if (!head.includes('.lh-wg-digits') || !head.includes('.lh-wg-timer.is-ringing')
 
 code += `
 ${classTime}
-var CLASS_CSS = ${head}\` + Ra + Sne + Kne;
+var CLASS_CSS = ${head}\` + Ra + Sne + Kne + lce;
 /* Tapping a widget (Xle of the reference, the cases of Regal › Zeit). */
 function classTap(e, t) {
   if (e.kind === \`timer\`) { Vr(); pi(); }
@@ -105,6 +106,7 @@ const aliases = {
   Ia: 'renderMultiTimer', Ki: 'multiTimerConfig', La: 'multiTimerLabel', Ea: 'onMultiTimerChange', sa: 'stopMultiTimer', Hi: 'MULTI_TIMER_SOUNDS', Ui: 'MULTI_TIMER_START', Bi: 'MULTI_TIMER_COLORS', zi: 'MULTI_TIMER_NEXT_COLORS', Vi: 'MULTI_TIMER_ICONS',
   xne: 'renderApplause', um: 'applauseConfig', Rm: 'applauseLabel', Sm: 'applausePicture', om: 'APPLAUSE_WORDS', sm: 'APPLAUSE_SECONDS', une: 'NOISE_LIMITS', lNe: 'MIC_SENSITIVITY', bne: 'stopApplause',
   Wne: 'renderTimetable', Nh: 'timetableLabel', Gne: 'timetableSay', jh: 'timetableHtml', wh: 'timetableConfig', Ch: 'timetableStart', Eh: 'timetableTimes', Th: 'clockText', h6: 'TIMETABLE_SUBJECTS', g6: 'TIMETABLE_AFTER', yh: 'TIMETABLE_DESIGNS', gh: 'TIMETABLE_FONTS', Be: 'fontOf',
+  YT: 'renderCalendar', sce: 'tapCalendar', cce: 'calendarLabel', eE: 'restartCalendar',
   CLASS_CSS: 'CLASS_CSS',
 };
 let runtime = extract(Object.keys(aliases));
@@ -144,3 +146,19 @@ for (const [id, url] of Object.entries(JSON.parse(pack[1]))) {
   pictures++;
 }
 console.log('Timetable pictures:', pictures);
+
+// The drawings of the calendar sheet (pack “calendar-pics”: name → {url, w, h}).
+const calendar = html.match(/<script type="text\/plain" id="lh-pack-calendar-pics">([^<]*)<\/script>/);
+if (!calendar) throw Error('Picture pack calendar-pics not found.');
+await fs.mkdir('public/kalender', { recursive: true });
+const slug = (name) => name.toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const sizes = {};
+for (const [name, pic] of Object.entries(JSON.parse(calendar[1]))) {
+  const m = /^data:image\/webp;base64,([A-Za-z0-9+/=]+)$/.exec(pic.url);
+  if (!m || !Number.isFinite(pic.w) || !Number.isFinite(pic.h)) throw Error('Unexpected picture ' + name);
+  const src = `/kalender/${slug(name)}.webp`;
+  await fs.writeFile('public' + src, Buffer.from(m[1], 'base64'));
+  sizes[name] = { src, w: pic.w, h: pic.h };
+}
+await fs.writeFile('src/lib/reference/calendar-pictures.json', JSON.stringify(sizes, null, 1) + '\n');
+console.log('Calendar pictures:', Object.keys(sizes).length);

@@ -1,0 +1,117 @@
+{
+ "Baum_Frühling": {
+  "src": "/kalender/baum-fruehling.webp",
+  "w": 380,
+  "h": 320
+ },
+ "Baum_Herbst": {
+  "src": "/kalender/baum-herbst.webp",
+  "w": 380,
+  "h": 328
+ },
+ "Baum_Sommer": {
+  "src": "/kalender/baum-sommer.webp",
+  "w": 380,
+  "h": 307
+ },
+ "Baum_Winter": {
+  "src": "/kalender/baum-winter.webp",
+  "w": 380,
+  "h": 294
+ },
+ "Monat_April": {
+  "src": "/kalender/monat-april.webp",
+  "w": 164,
+  "h": 159
+ },
+ "Monat_August": {
+  "src": "/kalender/monat-august.webp",
+  "w": 165,
+  "h": 159
+ },
+ "Monat_Dezember": {
+  "src": "/kalender/monat-dezember.webp",
+  "w": 164,
+  "h": 160
+ },
+ "Monat_Februar": {
+  "src": "/kalender/monat-februar.webp",
+  "w": 164,
+  "h": 159
+ },
+ "Monat_Januar": {
+  "src": "/kalender/monat-januar.webp",
+  "w": 165,
+  "h": 159
+ },
+ "Monat_Juli": {
+  "src": "/kalender/monat-juli.webp",
+  "w": 164,
+  "h": 160
+ },
+ "Monat_Juni": {
+  "src": "/kalender/monat-juni.webp",
+  "w": 164,
+  "h": 160
+ },
+ "Monat_Mai": {
+  "src": "/kalender/monat-mai.webp",
+  "w": 164,
+  "h": 159
+ },
+ "Monat_März": {
+  "src": "/kalender/monat-maerz.webp",
+  "w": 165,
+  "h": 159
+ },
+ "Monat_November": {
+  "src": "/kalender/monat-november.webp",
+  "w": 164,
+  "h": 159
+ },
+ "Monat_Oktober": {
+  "src": "/kalender/monat-oktober.webp",
+  "w": 164,
+  "h": 159
+ },
+ "Monat_September": {
+  "src": "/kalender/monat-september.webp",
+  "w": 164,
+  "h": 159
+ },
+ "Tag_Dienstag": {
+  "src": "/kalender/tag-dienstag.webp",
+  "w": 162,
+  "h": 148
+ },
+ "Tag_Donnerstag": {
+  "src": "/kalender/tag-donnerstag.webp",
+  "w": 162,
+  "h": 148
+ },
+ "Tag_Freitag": {
+  "src": "/kalender/tag-freitag.webp",
+  "w": 162,
+  "h": 148
+ },
+ "Tag_Mittwoch": {
+  "src": "/kalender/tag-mittwoch.webp",
+  "w": 162,
+  "h": 148
+ },
+ "Tag_Montag": {
+  "src": "/kalender/tag-montag.webp",
+  "w": 162,
+  "h": 148
+ },
+ "Tag_Samstag": {
+  "src": "/kalender/tag-samstag.webp",
+  "w": 162,
+  "h": 148
+ },
+ "Tag_Sonntag": {
+  "src": "/kalender/tag-sonntag.webp",
+  "w": 162,
+  "h": 148
+ }
+}

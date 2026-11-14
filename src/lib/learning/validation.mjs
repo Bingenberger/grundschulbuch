@@ -44,6 +44,7 @@ export const WIDGET_KINDS = [
   'phasen',
   'ampel',
   'stundenplan',
+  'kalenderblatt',
   'shop',
   'geometry',
   'monster',
