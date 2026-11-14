@@ -51,6 +51,7 @@ export const WIDGET_KINDS = [
   'elevator',
   'medienseite',
   'diaschau',
+  'trickfilm',
   'shop',
   'geometry',
   'monster',

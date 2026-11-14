@@ -54,7 +54,7 @@ const shapes: [string, string][] = [
   ['shout', 'Rufblase'],
   ['banner', 'Banner'],
 ];
-const stickers: Record<string, [string, string][]> = {
+export const stickers: Record<string, [string, string][]> = {
   Schule: [['✎', 'Stift'], ['📚', 'Bücher'], ['📖', 'Buch'], ['📏', 'Lineal'], ['✂', 'Schere'], ['📌', 'Pinnnadel'], ['📅', 'Kalender'], ['🎒', 'Ranzen'], ['🏫', 'Schule'], ['💡', 'Idee']],
   Gefühle: [['🙂', 'Lächeln'], ['😊', 'Freude'], ['😀', 'Lachen'], ['😢', 'Traurig'], ['😴', 'Müde'], ['😕', 'Unsicher'], ['😮', 'Staunen'], ['😎', 'Cool'], ['🤔', 'Nachdenken'], ['❤️', 'Herz']],
   Tiere: [['🐈', 'Katze'], ['🐕', 'Hund'], ['🐭', 'Maus'], ['🦔', 'Igel'], ['🐘', 'Elefant'], ['🐸', 'Frosch'], ['🐟', 'Fisch'], ['🦋', 'Schmetterling'], ['🐝', 'Biene'], ['🐦', 'Vogel']],

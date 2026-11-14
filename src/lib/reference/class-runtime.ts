@@ -1591,8 +1591,13 @@ var ite = `
 .lh-show-again.is-quiet{background:var(--show-band);color:var(--show-text)}
 @media (prefers-reduced-motion:reduce){.lh-show-slide{transition:opacity .4s}.lh-show-slide.t-slide.is-before,.lh-show-slide.t-slide.is-after,.lh-show-slide.t-zoom.is-before,.lh-show-slide.t-zoom.is-after{transform:none;opacity:0}.lh-show-slide.t-kenburns .lh-show-img{animation:none}}`;
 var of = 1280;
+var ate = [3, 5, 8, 10, 15, 20];
+var sf = [{ id: `linear`, label: `Gleichm\xE4\xDFig`, hint: `immer gleich schnell (linear)` }, { id: `in`, label: `Schneller werden`, hint: `langsam los, dann schneller (Steigerung)` }, { id: `out`, label: `Langsamer werden`, hint: `schnell los, dann langsamer (Verlangsamung)` }, { id: `inout`, label: `Sanft an und aus`, hint: `langsam los, schnell, langsam an (ease in and out)` }];
+var ote = [`#ffffff`, `#e7f5ff`, `#ebfbee`, `#fff9db`, `#fff0f6`, `#f1f3f5`, `#1e293b`, `#0b0d12`];
 var cf = [`#e8590c`, `#7048e8`, `#0ca678`, `#e64980`];
+var lf = [`andika`, `grund`, `schreib`, `druck`, `nunito`, `comic`, `caveat`];
 var df = () => ({ title: `Meine Animation`, len: 5, bg: `#ffffff`, objects: [], paths: [], loop: false, auto: false, showPaths: false, poster: 0 });
+var ff = (e17, t10 = of / 2, n10 = 360) => ({ t: e17, x: t10, y: n10, rot: 0, s: 1, o: 1, ease: `inout` });
 var pf = (e17) => e17 ? [...e17.objects.map((e18) => e18.img), e17.bgImg].filter((e18) => !!e18) : [];
 function mf(e17, t10) {
   let n10 = Math.min(1, Math.max(0, t10));
@@ -1638,6 +1643,7 @@ var yf = (e17) => e17.replace(/&/g, `&amp;`).replace(/</g, `&lt;`).replace(/>/g,
 var bf = (e17) => `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(e17);
 var xf = (e17) => (e17.text ?? ``).split(`
 `).slice(0, 3);
+var Sf = 0.32;
 function Cf(e17, t10) {
   let n10 = e17.flip ? ` transform="scale(-1 1)"` : ``;
   if (e17.kind === `image`) {
@@ -3823,6 +3829,17 @@ function Ik(e17, t10, n10, r10, i10 = {}) {
   }), a10;
 }
 var Rk = () => kk.map((e17) => [e17.short ?? e17.label, pue[e17.id], `W`, (e17.short ?? e17.label).replace(/ …$/, ``)]);
+var Zue = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g stroke="#f59f00" stroke-width="6" stroke-linecap="round"><path d="M50 4v14M50 82v14M4 50h14M82 50h14M17 17l10 10M73 73l10 10M17 83l10-10M73 27l10-10"/></g><circle cx="50" cy="50" r="24" fill="#ffd43b" stroke="#f59f00" stroke-width="5"/></svg>`;
+var Que = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80"><path d="M14 40C34 10 52 22 60 40C68 22 86 10 106 40C86 30 72 36 60 52C48 36 34 30 14 40z" fill="#1c7ed6" stroke="#1864ab" stroke-width="4" stroke-linejoin="round"/></svg>`;
+var $ue = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160"><path d="M0 160V90C120 20 220 20 330 70C430 115 520 40 640 60V160z" fill="#8ce99a" stroke="#2f9e44" stroke-width="6"/></svg>`;
+function ede() {
+  let e17 = [];
+  for (let t10 = 0; t10 <= 24; t10++) {
+    let n10 = Math.PI * (1 - t10 / 24);
+    e17.push([Math.round(of / 2 + Math.cos(n10) * 470), Math.round(600 - Math.sin(n10) * 360)]);
+  }
+  return { title: `Ein Tag im Sommer`, len: 8, bg: `#e7f5ff`, objects: [{ id: `o-sun`, kind: `sticker`, name: `Sonne`, svg: Zue, w: 170, h: 170, keys: [{ ...ff(0, e17[0][0], e17[0][1]), s: 0.8, ease: `inout`, path: { id: `p-arc`, speed: 210 } }] }, { id: `o-hill`, kind: `sticker`, name: `H\xFCgel`, svg: $ue, w: 1400, h: 350, keys: [{ ...ff(0, of / 2, 600), ease: `linear` }] }, { id: `o-bird`, kind: `sticker`, name: `Vogel`, svg: Que, w: 120, h: 80, keys: [{ ...ff(1, -80, 230), ease: `linear`, rot: -6 }, { ...ff(4, 640, 210), ease: `linear`, rot: 6, s: 1.2 }, { ...ff(7, of + 100, 240), ease: `linear`, rot: -4 }] }, { id: `o-text`, kind: `text`, name: `Text`, text: `Guten Morgen!`, font: `andika`, size: 84, color: `#1f2937`, bold: true, fill: `#ffffff`, w: 640, h: 155, keys: [{ ...ff(0, of / 2, 100), o: 0, s: 0.6, ease: `out` }, { ...ff(2.5, of / 2, 100), o: 0, s: 0.6, ease: `out` }, { ...ff(3.5, of / 2, 100), o: 1, s: 0.85, ease: `inout` }, { ...ff(6.5, of / 2, 100), o: 1, s: 0.85, ease: `inout` }, { ...ff(7.5, of / 2, 100), o: 0, s: 1.1, ease: `inout` }] }], paths: [{ id: `p-arc`, pts: e17 }], loop: true, auto: false, showPaths: false, poster: 3.5 };
+}
 var LP = 0.85;
 var GP;
 function Zpe() {
@@ -3851,6 +3868,229 @@ function KP(e17, t10, n10) {
 async function qP(e17, t10) {
   let n10 = e17.getContext(`2d`), r10;
   return r10 = Zpe() ? KP(e17, `image/webp`, LP) : t10 ?? Qpe(n10, e17.width, e17.height) ? KP(e17, `image/png`) : KP(e17, `image/jpeg`, LP), { ...r10, width: e17.width, height: e17.height };
+}
+function JI(e17) {
+  let t10 = /viewBox="([\d.\s-]+)"/.exec(e17);
+  if (!t10) return 1;
+  let [, , n10, r10] = t10[1].trim().split(/\s+/).map(Number);
+  return n10 > 0 && r10 > 0 ? n10 / r10 : 1;
+}
+var iG = (e17) => new Promise((t10) => {
+  let n10 = new Image();
+  n10.onload = () => t10(n10), n10.onerror = () => t10(null), n10.src = e17;
+});
+async function gxe(e17, t10) {
+  let n10 = /* @__PURE__ */ new Map();
+  for (let r11 of e17.objects) {
+    let e18 = r11.kind === `image` ? r11.img ? t10[r11.img]?.dataUrl : void 0 : r11.kind === `sticker` ? bf(_xe(r11)) : void 0;
+    if (!e18) continue;
+    let i10 = await iG(e18);
+    i10 && n10.set(r11.id, i10);
+  }
+  let r10 = new Set(e17.objects.filter((e18) => e18.kind === `text`).map((e18) => `${e18.bold ? 700 : 400} 40px ${Ve(e18.font ?? `andika`)}`));
+  return await Promise.all([...r10].map((e18) => document.fonts?.load(e18).catch(() => null))), { pics: n10, bg: e17.bgImg && t10[e17.bgImg] ? await iG(t10[e17.bgImg].dataUrl) : null };
+}
+function _xe(e17) {
+  return (e17.svg ?? ``).replace(/<svg\b([^>]*)>/, (t10, n10) => /\swidth=/.test(n10) ? t10 : `<svg${n10} width="${Math.round(e17.w * 2)}" height="${Math.round(e17.h * 2)}">`);
+}
+function aG(e17, t10, n10, r10, i10) {
+  if (e17.setTransform(1, 0, 0, 1, 0, 0), e17.globalAlpha = 1, e17.fillStyle = t10.bg, e17.fillRect(0, 0, of * i10, 720 * i10), r10.bg) {
+    let t11 = Math.max(of * i10 / r10.bg.naturalWidth, 720 * i10 / r10.bg.naturalHeight), n11 = r10.bg.naturalWidth * t11, a10 = r10.bg.naturalHeight * t11;
+    e17.drawImage(r10.bg, (of * i10 - n11) / 2, (720 * i10 - a10) / 2, n11, a10);
+  }
+  t10.showPaths && t10.paths.forEach((t11, n11) => {
+    e17.save(), e17.scale(i10, i10), e17.strokeStyle = cf[n11 % cf.length], e17.globalAlpha = 0.8, e17.lineWidth = 6, e17.setLineDash([14, 10]), e17.lineCap = `round`, e17.lineJoin = `round`, e17.beginPath(), t11.pts.forEach(([t12, n12], r11) => r11 ? e17.lineTo(t12, n12) : e17.moveTo(t12, n12)), e17.stroke(), e17.restore();
+  });
+  for (let a10 of t10.objects) {
+    let o10 = vf(a10, n10, t10);
+    if (!(o10.o <= 1e-3)) {
+      if (e17.save(), e17.scale(i10, i10), e17.translate(o10.x, o10.y), e17.rotate(o10.rot * Math.PI / 180), e17.scale(o10.s, o10.s), e17.globalAlpha = o10.o, a10.kind === `text`) {
+        let t11 = a10.size ?? 72;
+        if (a10.fill) {
+          e17.fillStyle = a10.fill;
+          let n12 = t11 * 0.3;
+          e17.beginPath(), typeof e17.roundRect == `function` ? e17.roundRect(-a10.w / 2, -a10.h / 2, a10.w, a10.h, n12) : e17.rect(-a10.w / 2, -a10.h / 2, a10.w, a10.h), e17.fill();
+        }
+        e17.fillStyle = a10.color ?? `#1f2937`, e17.font = `${a10.bold ? 700 : 400} ${t11}px ${Ve(a10.font ?? `andika`)}`, e17.textAlign = `center`, e17.textBaseline = `middle`;
+        let n11 = xf(a10);
+        n11.forEach((r11, i11) => e17.fillText(r11, 0, (i11 - (n11.length - 1) / 2) * t11 * 1.2));
+      } else {
+        let t11 = r10.pics.get(a10.id);
+        if (a10.flip && e17.scale(-1, 1), t11) {
+          if (a10.kind === `sticker`) {
+            let n11 = Math.min(a10.w / t11.naturalWidth, a10.h / t11.naturalHeight), r11 = t11.naturalWidth * n11, i11 = t11.naturalHeight * n11;
+            e17.drawImage(t11, -r11 / 2, -i11 / 2, r11, i11);
+          } else e17.drawImage(t11, -a10.w / 2, -a10.h / 2, a10.w, a10.h);
+        }
+      }
+      e17.restore();
+    }
+  }
+}
+function vxe(e17) {
+  let t10 = [];
+  for (let n11 = 0; n11 < e17.length; n11++) e17[n11] && t10.push({ c: n11, n: e17[n11] });
+  let n10 = (e18, t11) => e18 >> 10 - 5 * t11 & 31, r10 = [{ cols: t10 }];
+  for (; r10.length < 256; ) {
+    let e18 = -1, t11 = 0, i11 = 0;
+    if (r10.forEach((r11, a11) => {
+      if (r11.cols.length < 2) return;
+      let o11 = 0;
+      for (let e19 of r11.cols) o11 += e19.n;
+      for (let s11 = 0; s11 < 3; s11++) {
+        let c11 = 31, l10 = 0;
+        for (let e19 of r11.cols) {
+          let t12 = n10(e19.c, s11);
+          t12 < c11 && (c11 = t12), t12 > l10 && (l10 = t12);
+        }
+        let u10 = (l10 - c11) * Math.sqrt(o11);
+        u10 > t11 && (t11 = u10, e18 = a11, i11 = s11);
+      }
+    }), e18 < 0) break;
+    let a10 = r10[e18];
+    a10.cols.sort((e19, t12) => n10(e19.c, i11) - n10(t12.c, i11));
+    let o10 = 0;
+    for (let e19 of a10.cols) o10 += e19.n;
+    let s10 = 0, c10 = 1;
+    for (let e19 = 0; e19 < a10.cols.length - 1; e19++) if (s10 += a10.cols[e19].n, s10 >= o10 / 2) {
+      c10 = e19 + 1;
+      break;
+    }
+    r10 = [...r10.slice(0, e18), { cols: a10.cols.slice(0, c10) }, { cols: a10.cols.slice(c10) }, ...r10.slice(e18 + 1)];
+  }
+  let i10 = r10.map((e18) => {
+    let t11 = 0, r11 = 0, i11 = 0, a10 = 0;
+    for (let o11 of e18.cols) t11 += o11.n, r11 += n10(o11.c, 0) * o11.n, i11 += n10(o11.c, 1) * o11.n, a10 += n10(o11.c, 2) * o11.n;
+    let o10 = 255 / 31 / Math.max(1, t11);
+    return [Math.round(r11 * o10), Math.round(i11 * o10), Math.round(a10 * o10)];
+  });
+  for (; i10.length < 256; ) i10.push([0, 0, 0]);
+  return i10;
+}
+var oG = class {
+  buf = new Uint8Array(65536);
+  n = 0;
+  byte(e17) {
+    if (this.n >= this.buf.length) {
+      let e18 = new Uint8Array(this.buf.length * 2);
+      e18.set(this.buf), this.buf = e18;
+    }
+    this.buf[this.n++] = e17;
+  }
+  word(e17) {
+    this.byte(e17 & 255), this.byte(e17 >> 8 & 255);
+  }
+  bytes(e17) {
+    for (let t10 = 0; t10 < e17.length; t10++) this.byte(e17[t10]);
+  }
+  out() {
+    return this.buf.slice(0, this.n);
+  }
+};
+function yxe(e17, t10) {
+  t10.byte(8);
+  let n10 = new Uint8Array(255), r10 = 0, i10 = 0, a10 = 0, o10 = () => {
+    if (r10) {
+      t10.byte(r10);
+      for (let e18 = 0; e18 < r10; e18++) t10.byte(n10[e18]);
+      r10 = 0;
+    }
+  }, s10 = 9, c10 = (e18) => {
+    for (i10 |= e18 << a10, a10 += s10; a10 >= 8; ) n10[r10++] = i10 & 255, r10 === 255 && o10(), i10 >>= 8, a10 -= 8;
+  }, l10 = 5003, u10 = new Int32Array(l10), d10 = new Int32Array(l10), f10 = () => {
+    u10.fill(-1), s10 = 9;
+  };
+  f10();
+  let p10 = 258;
+  if (c10(256), !e17.length) c10(257);
+  else {
+    let t11 = e17[0];
+    for (let n11 = 1; n11 < e17.length; n11++) {
+      let r11 = e17[n11], i11 = t11 << 8 | r11, a11 = (r11 << 4 ^ t11) % l10, o11 = -1;
+      for (; u10[a11] !== -1; ) {
+        if (u10[a11] === i11) {
+          o11 = d10[a11];
+          break;
+        }
+        a11 = a11 + 1 === l10 ? 0 : a11 + 1;
+      }
+      o11 >= 0 ? t11 = o11 : (c10(t11), p10 < 4096 ? (u10[a11] = i11, d10[a11] = p10, p10 === 1 << s10 && s10 < 12 && s10++, p10++) : (c10(256), f10(), p10 = 258), t11 = r11);
+    }
+    c10(t11), p10 === 1 << s10 && s10 < 12 && s10++, c10(257);
+  }
+  a10 > 0 && (n10[r10++] = i10 & 255, r10 === 255 && o10()), o10(), t10.byte(0);
+}
+async function sG(e17, t10, n10 = {}) {
+  let r10 = Math.round(n10.width ?? 640), i10 = Math.round(r10 * 720 / of), a10 = n10.fps ?? 12, o10 = r10 / of, s10 = await gxe(e17, t10), c10 = document.createElement(`canvas`);
+  c10.width = r10, c10.height = i10;
+  let l10 = c10.getContext(`2d`, { willReadFrequently: true });
+  if (!l10) throw Error(`canvas`);
+  let u10 = Math.max(1, Math.round(e17.len * a10)), d10 = () => new Promise((e18) => setTimeout(e18, 0)), f10 = new Uint32Array(32768), p10 = Math.max(1, Math.round(u10 / 24));
+  for (let t11 = 0; t11 <= u10; t11 += p10) {
+    aG(l10, e17, t11 / u10 * e17.len, s10, o10);
+    let a11 = l10.getImageData(0, 0, r10, i10).data;
+    for (let e18 = 0; e18 < a11.length; e18 += 12) f10[a11[e18] >> 3 << 10 | a11[e18 + 1] >> 3 << 5 | a11[e18 + 2] >> 3]++;
+    n10.onProgress?.(0.15 * t11 / u10), await d10();
+  }
+  let m10 = vxe(f10), h10 = new Int16Array(32768).fill(-1), g10 = (e18) => {
+    let t11 = (e18 >> 10 & 31) * 8.226, n11 = (e18 >> 5 & 31) * 8.226, r11 = (e18 & 31) * 8.226, i11 = 0, a11 = 1 / 0;
+    for (let e19 = 0; e19 < 256; e19++) {
+      let o11 = m10[e19], s11 = (o11[0] - t11) ** 2 * 0.3 + (o11[1] - n11) ** 2 * 0.59 + (o11[2] - r11) ** 2 * 0.11;
+      s11 < a11 && (a11 = s11, i11 = e19);
+    }
+    return h10[e18] = i11, i11;
+  }, _10 = new oG();
+  _10.bytes([71, 73, 70, 56, 57, 97]), _10.word(r10), _10.word(i10), _10.byte(247), _10.byte(0), _10.byte(0);
+  for (let e18 of m10) _10.bytes(e18);
+  _10.bytes([33, 255, 11, ...Array.from(`NETSCAPE2.0`, (e18) => e18.charCodeAt(0)), 3, 1, 0, 0, 0]);
+  let v10 = [], y10 = null, b10 = 0;
+  for (let t11 = 0; t11 < u10; t11++) {
+    aG(l10, e17, t11 / u10 * e17.len, s10, o10);
+    let a11 = l10.getImageData(0, 0, r10, i10).data, c11 = new Uint8Array(r10 * i10);
+    for (let e18 = 0, t12 = 0; t12 < c11.length; e18 += 4, t12++) {
+      let n11 = a11[e18] >> 3 << 10 | a11[e18 + 1] >> 3 << 5 | a11[e18 + 2] >> 3, r11 = h10[n11];
+      c11[t12] = r11 >= 0 ? r11 : g10(n11);
+    }
+    let f11 = Math.round((t11 + 1) / u10 * e17.len * 100), p11 = f11 - b10;
+    if (b10 = f11, y10 && v10.length && bxe(y10, c11)) v10[v10.length - 1].delay += p11;
+    else {
+      let e18 = new oG();
+      yxe(c11, e18), v10.push({ delay: p11, data: e18.out(), px: c11 });
+    }
+    y10 = c11, v10.length > 1 && (v10[v10.length - 2].px = new Uint8Array()), n10.onProgress?.(0.15 + 0.85 * (t11 + 1) / u10), t11 % 3 == 2 && await d10();
+  }
+  for (let e18 of v10) _10.bytes([33, 249, 4, 4]), _10.word(Math.max(2, e18.delay)), _10.bytes([0, 0]), _10.byte(44), _10.word(0), _10.word(0), _10.word(r10), _10.word(i10), _10.byte(0), _10.bytes(e18.data);
+  _10.byte(59);
+  let x10 = _10.out();
+  return new Blob([x10.buffer.slice(x10.byteOffset, x10.byteOffset + x10.byteLength)], { type: `image/gif` });
+}
+function bxe(e17, t10) {
+  if (e17.length !== t10.length) return false;
+  for (let n10 = 0; n10 < e17.length; n10++) if (e17[n10] !== t10[n10]) return false;
+  return true;
+}
+var cG = 0.04;
+var lG = (e17, t10) => Math.min(t10, Math.max(0, Math.round(e17 * 10) / 10));
+var uG = (e17, t10) => e17.keys.findIndex((e18) => Math.abs(e18.t - t10) < cG);
+var dG = (e17) => `${e17.toFixed(1).replace(`.`, `,`)} s`;
+var fG = (e17) => ({ ...e17, x: Math.round(e17.x * 10) / 10, y: Math.round(e17.y * 10) / 10, rot: Math.round(e17.rot * 10) / 10, s: Math.round(e17.s * 1e3) / 1e3, o: Math.round(e17.o * 100) / 100 });
+function pG(e17, t10, n10, r10) {
+  let i10 = e17.objects.find((e18) => e18.id === t10);
+  if (!i10) return e17;
+  let a10 = uG(i10, n10), o10;
+  if (a10 >= 0) o10 = i10.keys.map((e18, t11) => t11 === a10 ? fG({ ...e18, ...r10 }) : e18);
+  else {
+    if (i10.keys.length >= 24) return null;
+    let t11 = vf(i10, n10, e17), a11 = [...i10.keys].reverse().find((e18) => e18.t < n10);
+    o10 = [...i10.keys, fG({ t: n10, ...t11, ease: a11?.ease ?? `inout`, ...r10 })].sort((e18, t12) => e18.t - t12.t);
+  }
+  return { ...e17, objects: e17.objects.map((e18) => e18.id === t10 ? { ...e18, keys: o10 } : e18) };
+}
+function mG(e17) {
+  let t10 = e17.size ?? 72, n10 = document.createElement(`canvas`).getContext(`2d`), r10 = xf(e17), i10 = t10 * 2;
+  n10 && (n10.font = `${e17.bold ? 700 : 400} ${t10}px ${Ve(e17.font ?? `andika`)}`, i10 = Math.max(t10, ...r10.map((e18) => n10.measureText(e18 || ` `).width)));
+  let a10 = e17.fill ? t10 * Sf * 2 : t10 * 0.2;
+  return { w: Math.round(i10 + a10), h: Math.round(r10.length * t10 * 1.2 + (e17.fill ? t10 * Sf * 1.4 : 0)) };
 }
 var h6 = [{ name: `Deutsch`, color: `#e03131`, arasaac: 37740 }, { name: `Mathe`, color: `#1c7ed6`, arasaac: 10260 }, { name: `Sachunterricht`, color: `#2f9e44`, arasaac: 35437 }, { name: `Englisch`, color: `#7048e8`, arasaac: 32705 }, { name: `Kunst`, color: `#f76707`, arasaac: 11245 }, { name: `Musik`, color: `#d6336c`, arasaac: 24791 }, { name: `Sport`, color: `#0ca678`, arasaac: 7010 }, { name: `Schwimmen`, color: `#1098ad`, arasaac: 6568 }, { name: `Religion`, color: `#a5734d`, arasaac: 24471 }, { name: `Ethik`, color: `#868e96`, arasaac: 34709 }, { name: `Werken`, color: `#e8590c`, arasaac: 9805 }, { name: `Textiles Gestalten`, color: `#c2255c`, arasaac: 7068 }, { name: `Kochen`, color: `#f59f00`, arasaac: 5485 }, { name: `Lesen`, color: `#9c36b5`, arasaac: 2447 }, { name: `Schreiben`, color: `#364fc7`, arasaac: 2380 }, { name: `Computer`, color: `#495057`, arasaac: 22801 }, { name: `Morgenkreis`, color: `#fab005`, arasaac: 27575 }, { name: `F\xF6rderung`, color: `#5c940d`, arasaac: 37810 }, { name: `Logop\xE4die`, color: `#e64980`, arasaac: 6142 }, { name: `Ergotherapie`, color: `#20c997`, arasaac: 24821 }, { name: `Physiotherapie`, color: `#15aabf`, arasaac: 8725 }, { name: `Klassenrat`, color: `#845ef7`, arasaac: 38789 }, { name: `B\xFCcherei`, color: `#a61e4d`, arasaac: 32450 }, { name: `Garten`, color: `#37b24d`, arasaac: 2434 }, { name: `Spielen`, color: `#ff922b`, arasaac: 23392 }, { name: `Basteln`, color: `#fd7e14`, arasaac: 7794 }, { name: `Theater`, color: `#be4bdb`, arasaac: 32412 }, { name: `Ausflug`, color: `#40c057`, arasaac: 4670 }, { name: `Hausaufgaben`, color: `#343a40`, arasaac: 32556 }, { name: `Fr\xFChst\xFCck`, color: `#f08c00`, arasaac: 4626 }, { name: `Pause`, color: `#fab005`, arasaac: 33064 }, { name: `Mittagessen`, color: `#e67700`, arasaac: 4611 }];
 var g6 = [{ name: `Tagesst\xE4tte`, color: `#1c7ed6`, arasaac: 25692 }, { name: `Hort`, color: `#7048e8`, arasaac: 25693 }, { name: `Mittagsbetreuung`, color: `#f08c00`, arasaac: 4611 }, { name: `Bus`, color: `#e03131`, arasaac: 2263 }, { name: `Taxi`, color: `#fab005`, arasaac: 2580 }, { name: `Abholung`, color: `#2f9e44`, arasaac: 35060 }, { name: `Nach Hause`, color: `#495057`, arasaac: 32940 }];
@@ -3967,4 +4207,4 @@ function classTick(t, e) {
 }
 function classReset(e) { e.timer === `fixed` ? wO(e) : SO.delete(e.id); }
 function classStart(e) { e.kind === `timer` && e.timer === `fixed` && !SO.has(e.id) && wO(e); }
-export { classTime as renderTime, classTap as tapTime, classTick as tickTime, classStart as startTime, classReset as resetTimer, xO as timeSpeech, yO as dateText, CO as timerState, Ule as searchPlace, Hle as loadWeather, BO as weatherWord, Ia as renderMultiTimer, Ki as multiTimerConfig, La as multiTimerLabel, Ea as onMultiTimerChange, sa as stopMultiTimer, Hi as MULTI_TIMER_SOUNDS, Ui as MULTI_TIMER_START, Bi as MULTI_TIMER_COLORS, zi as MULTI_TIMER_NEXT_COLORS, Vi as MULTI_TIMER_ICONS, xne as renderApplause, um as applauseConfig, Rm as applauseLabel, Sm as applausePicture, om as APPLAUSE_WORDS, sm as APPLAUSE_SECONDS, une as NOISE_LIMITS, lNe as MIC_SENSITIVITY, bne as stopApplause, Wne as renderTimetable, Nh as timetableLabel, Gne as timetableSay, jh as timetableHtml, wh as timetableConfig, Ch as timetableStart, Eh as timetableTimes, Th as clockText, h6 as TIMETABLE_SUBJECTS, g6 as TIMETABLE_AFTER, yh as TIMETABLE_DESIGNS, gh as TIMETABLE_FONTS, Be as fontOf, YT as renderCalendar, sce as tapCalendar, cce as calendarLabel, eE as restartCalendar, Aw as renderMap, jw as mapLabel, gse as mapConfig, uw as mapStart, QC as mapDesign, ZC as MAP_DESIGNS, GC as MAP_SYMBOLS, JC as mapSymbol, zC as PATH_KINDS, BC as PATH_COLORS, rw as mapTiles, $C as toWorld, ew as fromWorld, tw as toView, nw as fromView, yw as mapMarks, vw as labelBoxes, ow as distanceText, aw as pathLength, iw as distance, U6 as mapPicture, lDe as searchAddress, WC as tileUrl, VC as MAP_W, HC as MAP_DATA, UC as MAP_CREDIT, yce as renderTalk, Sce as tapTalk, pE as renderStrip, Tce as tapStrip, Cce as addToStrip, wce as clearStrip, kk as TALK_BOARDS, Ak as TALK_BACK, jk as TALK_GRIDS, Ok as WORD_CLASSES, pue as TALK_BOOK_ICONS, Ik as talkLayout, Rk as bookCells, Nk as STRIP_BOX, mh as renderPitch, hh as pitchLabel, Vm as pitchConfig, zm as PITCH_SECONDS, Hm as secondsText, Lne as stopPitch, Bm as PITCH_START, tte as renderSlideshow, nte as slideshowLabel, Qd as showStart, Xd as SHOW_DESIGNS, Zd as showDesign, Gd as SHOW_TRANSITIONS, Kd as SHOW_CAPTIONS, Fu as SHOW_MOODS, af as playSlideshow, pte as renderAnimation, Vf as animationLabel, df as animationStart, CLASS_CSS };
+export { classTime as renderTime, classTap as tapTime, classTick as tickTime, classStart as startTime, classReset as resetTimer, xO as timeSpeech, yO as dateText, CO as timerState, Ule as searchPlace, Hle as loadWeather, BO as weatherWord, Ia as renderMultiTimer, Ki as multiTimerConfig, La as multiTimerLabel, Ea as onMultiTimerChange, sa as stopMultiTimer, Hi as MULTI_TIMER_SOUNDS, Ui as MULTI_TIMER_START, Bi as MULTI_TIMER_COLORS, zi as MULTI_TIMER_NEXT_COLORS, Vi as MULTI_TIMER_ICONS, xne as renderApplause, um as applauseConfig, Rm as applauseLabel, Sm as applausePicture, om as APPLAUSE_WORDS, sm as APPLAUSE_SECONDS, une as NOISE_LIMITS, lNe as MIC_SENSITIVITY, bne as stopApplause, Wne as renderTimetable, Nh as timetableLabel, Gne as timetableSay, jh as timetableHtml, wh as timetableConfig, Ch as timetableStart, Eh as timetableTimes, Th as clockText, h6 as TIMETABLE_SUBJECTS, g6 as TIMETABLE_AFTER, yh as TIMETABLE_DESIGNS, gh as TIMETABLE_FONTS, Be as fontOf, YT as renderCalendar, sce as tapCalendar, cce as calendarLabel, eE as restartCalendar, Aw as renderMap, jw as mapLabel, gse as mapConfig, uw as mapStart, QC as mapDesign, ZC as MAP_DESIGNS, GC as MAP_SYMBOLS, JC as mapSymbol, zC as PATH_KINDS, BC as PATH_COLORS, rw as mapTiles, $C as toWorld, ew as fromWorld, tw as toView, nw as fromView, yw as mapMarks, vw as labelBoxes, ow as distanceText, aw as pathLength, iw as distance, U6 as mapPicture, lDe as searchAddress, WC as tileUrl, VC as MAP_W, HC as MAP_DATA, UC as MAP_CREDIT, yce as renderTalk, Sce as tapTalk, pE as renderStrip, Tce as tapStrip, Cce as addToStrip, wce as clearStrip, kk as TALK_BOARDS, Ak as TALK_BACK, jk as TALK_GRIDS, Ok as WORD_CLASSES, pue as TALK_BOOK_ICONS, Ik as talkLayout, Rk as bookCells, Nk as STRIP_BOX, mh as renderPitch, hh as pitchLabel, Vm as pitchConfig, zm as PITCH_SECONDS, Hm as secondsText, Lne as stopPitch, Bm as PITCH_START, tte as renderSlideshow, nte as slideshowLabel, Qd as showStart, Xd as SHOW_DESIGNS, Zd as showDesign, Gd as SHOW_TRANSITIONS, Kd as SHOW_CAPTIONS, Fu as SHOW_MOODS, af as playSlideshow, pte as renderAnimation, Vf as animationLabel, df as animationStart, pG as setKey, uG as keyAt, vf as stateAt, mG as measureText, ff as makeKey, wf as objectTransform, Cf as objectSvg, Ef as backgroundSvg, Tf as pathsSvg, lG as snapTime, dG as timeText, hf as pathLength2, gf as pathDuration, cf as ANIM_PATH_COLORS, cG as KEY_EPS, ede as animationExample, ate as ANIM_LENGTHS, ote as ANIM_BACKGROUNDS, sf as ANIM_EASES, lf as ANIM_FONTS, of as STAGE_W, sG as animationGif, JI as svgRatio, CLASS_CSS };

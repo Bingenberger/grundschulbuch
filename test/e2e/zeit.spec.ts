@@ -248,6 +248,28 @@ test('Diaschau: Fotos hochladen, beschriften, Design, als eigene Seite', async (
   expect(errors).toEqual([]);
 });
 
+test('Animation: Text, zweiter Keyframe, Beispiel, als eigene Seite', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  const dialog = await openBlock(page, 'Medien & Präsentation', 'Animation');
+  await dialog.getByRole('button', { name: 'Text', exact: true }).first().click();
+  await expect(dialog.locator('.an-row .an-name').filter({ hasText: 'Text 1' })).toBeVisible();
+  await expect(dialog.locator('.an-key')).toHaveCount(1);
+  // Playhead to the middle, then a second keyframe with a different size.
+  const ruler = dialog.locator('.an-ruler');
+  const box = (await ruler.boundingBox())!;
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await dialog.getByRole('button', { name: 'Keyframe setzen', exact: true }).click();
+  await expect(dialog.locator('.an-key')).toHaveCount(2);
+  await page.screenshot({ path: test.info().outputPath('animation-dialog.png'), fullPage: true });
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  const sheet = page.locator('.interaction-surface .lh-wg-anim');
+  await expect(sheet).toHaveAttribute('aria-label', /Animation/);
+  await page.screenshot({ path: test.info().outputPath('animation-seite.png') });
+  expect(errors).toEqual([]);
+});
+
 test('Wetter nur über den Schulserver und nur angemeldet', async ({ page }) => {
   expect((await page.request.get('/api/wetter?art=ort&name=Regensburg')).status()).toBe(401);
   await login(page);

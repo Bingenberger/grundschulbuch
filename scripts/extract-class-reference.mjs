@@ -117,6 +117,7 @@ const aliases = {
   mh: 'renderPitch', hh: 'pitchLabel', Vm: 'pitchConfig', zm: 'PITCH_SECONDS', Hm: 'secondsText', Lne: 'stopPitch', Bm: 'PITCH_START',
   tte: 'renderSlideshow', nte: 'slideshowLabel', Qd: 'showStart', Xd: 'SHOW_DESIGNS', Zd: 'showDesign', Gd: 'SHOW_TRANSITIONS', Kd: 'SHOW_CAPTIONS', Fu: 'SHOW_MOODS', af: 'playSlideshow',
   pte: 'renderAnimation', Vf: 'animationLabel', df: 'animationStart',
+  pG: 'setKey', uG: 'keyAt', vf: 'stateAt', mG: 'measureText', ff: 'makeKey', wf: 'objectTransform', Cf: 'objectSvg', Ef: 'backgroundSvg', Tf: 'pathsSvg', lG: 'snapTime', dG: 'timeText', hf: 'pathLength2', gf: 'pathDuration', cf: 'ANIM_PATH_COLORS', cG: 'KEY_EPS', ede: 'animationExample', ate: 'ANIM_LENGTHS', ote: 'ANIM_BACKGROUNDS', sf: 'ANIM_EASES', lf: 'ANIM_FONTS', of: 'STAGE_W', sG: 'animationGif', JI: 'svgRatio',
   CLASS_CSS: 'CLASS_CSS',
 };
 let runtime = extract(Object.keys(aliases));

@@ -5029,3 +5029,30 @@ input[type='checkbox'] {
 .show-row input.text-input { flex: 1; min-width: 140px; }
 .show-no { width: 24px; text-align: right; font-weight: 700; color: #6b7280; }
 .show-thumb { width: 64px; height: 44px; object-fit: cover; border-radius: 6px; background: #f1f5f9; }
+
+/* Animation editor (after the reference's dialog). */
+.an-editor { display: flex; flex-direction: column; gap: 14px; }
+.an-main, .an-side { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.an-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.an-editor .knopf.is-active { background: #253c42; color: #fff; }
+.an-time { font-variant-numeric: tabular-nums; font-weight: 700; }
+.an-stagewrap { position: relative; width: 100%; }
+.an-stage { display: block; width: 100%; height: auto; aspect-ratio: 1280 / 720; border: 2px solid #cbd5e1; border-radius: 10px; background: #fff; touch-action: none; user-select: none; }
+.an-stage.is-path { cursor: crosshair; }
+.an-stage .an-obj { cursor: grab; }
+.an-stage .an-handle { cursor: pointer; }
+.an-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.an-timeline { display: flex; flex-direction: column; gap: 4px; padding: 6px; border: 1px solid #e5e7eb; border-radius: 10px; background: #f8fafc; }
+.an-row { display: grid; grid-template-columns: 130px 1fr; gap: 8px; align-items: center; }
+.an-row.is-active .an-name { color: #2160c4; font-weight: 800; }
+.an-name { border: 0; background: none; text-align: left; font: 600 13px/1.2 Nunito, sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.an-track { position: relative; height: 28px; border-radius: 6px; background: #fff; border: 1px solid #e5e7eb; cursor: pointer; touch-action: none; }
+.an-ruler { height: 30px; }
+.an-tick { position: absolute; top: 2px; transform: translateX(-50%); font-size: 11px; color: #6b7280; pointer-events: none; }
+.an-head { position: absolute; top: -2px; bottom: -2px; width: 2px; margin-left: -1px; background: #e03131; pointer-events: none; }
+.an-poster { position: absolute; bottom: 0; transform: translateX(-50%); font-size: 18px; color: #f59f00; cursor: ew-resize; }
+.an-poster.is-current { color: #e03131; }
+.an-key { position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; transform: rotate(45deg); background: #2160c4; border: 2px solid #fff; cursor: ew-resize; }
+.an-key.is-current { background: #e03131; }
+.an-key.is-hidden { background: #fff; border-color: #2160c4; }
+.an-travel { position: absolute; top: 11px; height: 6px; border-radius: 3px; opacity: 0.6; pointer-events: none; }

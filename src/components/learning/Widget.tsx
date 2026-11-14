@@ -35,6 +35,7 @@ import TalkKey from './TalkKey';
 import SentenceStrip from './SentenceStrip';
 import ElevatorPitch from './ElevatorPitch';
 import SlideshowSheet from './SlideshowSheet';
+import AnimationSheet from './AnimationSheet';
 import { StillFrame } from './TextsachenFrame';
 import MusicTemplate from './MusicTemplate';
 export default function Widget({ element }: { element: PageElement }) {
@@ -65,6 +66,7 @@ export default function Widget({ element }: { element: PageElement }) {
   if (kind === 'satzleiste') return <SentenceStrip element={element} />;
   if (kind === 'elevator') return <ElevatorPitch element={element} />;
   if (kind === 'diaschau') return <SlideshowSheet element={element} />;
+  if (kind === 'trickfilm') return <AnimationSheet element={element} />;
   // Video, Webseite and QR-Plakat become pages of normal elements; nothing to show here.
   if (kind === 'medienseite') return <StillFrame icon="camcorder_pro" title={element.settings?.title || 'Video, Webseite, QR-Plakat'} text="Wird beim Einfügen zu einer Seite." />;
   if (kind === 'geometry') return <GeometryWidget element={element} />;

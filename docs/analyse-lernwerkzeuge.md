@@ -452,6 +452,24 @@ beim Einfügen eine mitgeschickte freie Seiten-ID. Die frühere eigene
 Kommunikationstafel ist nicht mehr auswählbar; vorhandene Seiten damit
 funktionieren weiter.
 
-**Schritt 2 – Fach für Fach (offen):** Mathematik, Deutsch, Musik und Für alle Fächer (fertig), Sachunterricht/Zeit,
-Klassenführung, Unterstützte Kommunikation, Medien – jeweils an der Vorlage
-angleichen und fehlende Bausteine ergänzen (siehe 3.2).
+**Medien & Präsentation (14.11.2026):** Elevator Pitch, Diaschau und Animation
+sind die der Vorlage (gleiches Skript): `ElevatorPitch.tsx` (Fahrstuhl,
+Vorhang, Restzeit, Konfetti; Einstellungen Zeit, Vorhangtext, Fanfare),
+`SlideshowSheet.tsx` mit dem Editor `SlideshowOptions.tsx` (bis 30 Fotos mit
+Beschriftung und Ton, Design, Ablauf, Übergang, Beschriftungsart, Musik,
+Vorschau im Vollbild) und `AnimationSheet.tsx` mit dem nachgebauten
+Animations-Editor `AnimationOptions.tsx` (Bühne mit Verschieben, Drehen,
+Vergrößern, Pfade zeichnen; Zeitleiste mit Abspielmarke, Keyframes und
+Vorschaubild-Stern; Objekte Text, Bild und Sticker – Sticker sind unsere
+Emoji-Sticker, die Stickerbibliothek der Vorlage ist nicht übernommen;
+Keyframe-Werte, Bewegungsart, Pfad mit Geschwindigkeit; Länge, Hintergrund,
+Abspielen, Vorschaubild; Rückgängig; Als GIF speichern). Video (auch mit Titel
+wie die Folie „Video mit Titel“), Webseite und QR-Plakat entstehen als Seiten im
+Layout der Vorlage aus unseren Einbettungen; die Adresse wird beim Einfügen
+abgefragt (in der Vorlage ein Platzhalter). Kurzvortrag, eigene Diaschau und
+Animation sind nicht mehr auswählbar; vorhandene Seiten funktionieren weiter.
+
+**Schritt 2 – Fach für Fach (erledigt, 14.11.2026):** Deutsch, Mathematik, Sachunterricht, Musik,
+Medien & Präsentation, Klassenführung, Unterstützte Kommunikation und Für alle
+Fächer sind an der Vorlage ausgerichtet. Offen: „Bild beschriften“ bei den
+Zuordnungen.

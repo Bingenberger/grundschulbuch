@@ -64,6 +64,7 @@ export const widgetCatalog = {
   elevator: ['Elevator Pitch', 'Präsentation'],
   medienseite: ['Video, Webseite, QR-Plakat', 'Präsentation'],
   diaschau: ['Diaschau', 'Präsentation'],
+  trickfilm: ['Animation', 'Comic & Film'],
   mathboard: ['Rechenmaterial', 'Mathe'],
   shop: ['Einkaufen & Rückgeld', 'Mathe'],
   geometry: ['Geometrie mit Prüfen', 'Mathe'],
@@ -149,6 +150,8 @@ export type LearningSettings = {
   medien?: JsonValue;
   /** Diaschau der Vorlage (see learning/diaschau.ts). */
   show?: JsonValue;
+  /** Animation der Vorlage (see learning/animation.ts). */
+  anim?: JsonValue;
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';
