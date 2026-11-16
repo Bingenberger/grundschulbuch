@@ -11,7 +11,7 @@ import { defaultDnd } from './zuordnung';
 import { defaultQuiz } from './quiz';
 import { defaultZeit } from './zeit';
 import { BOARDS, bookPages, boardPages, GRIDS, picto } from './uk';
-import { presetElements, toolOfKind, toolSettings, toolSpec, TOOL_PRESETS } from './werkzeuge';
+import { presetElements, presetTools, toolSettings, toolSpec, TOOL_PRESETS } from './werkzeuge';
 import { TALK_BACK } from '../reference/class-runtime';
 import type { MathToolKind } from './mathtool';
 import { geoConfig } from './geodraw';
@@ -25,6 +25,9 @@ export const SUBJECTS = [
   'Medien & Präsentation',
   'Klassenführung',
   'Unterstützte Kommunikation',
+  // Bereiche von Lernsachen-Heft 1.47.3 (Förderschwerpunkt geistige Entwicklung).
+  'Alltag',
+  'Beruf & Praktikum',
   'Für alle Fächer',
 ] as const;
 export type Subject = (typeof SUBJECTS)[number];
@@ -387,7 +390,7 @@ toolBlocks.push({ id: 'stundenplan', title: 'Bilder-Stundenplan', subject: 'Klas
 // Tools of Lernsachen-Heft 1.47.3 (tool host of the reference): one block per
 // catalogue entry; a single tool opens its settings first, a page of several
 // tools (Glücksrad with its Strichliste) comes as it is.
-const TOOL_SUBJECTS: Record<string, Subject> = { Mathe: 'Mathematik' };
+const TOOL_SUBJECTS: Record<string, Subject> = { Mathe: 'Mathematik', Schule: 'Klassenführung', Alltag: 'Alltag', 'Beruf & Praktikum': 'Beruf & Praktikum', Gestalten: 'Für alle Fächer' };
 const TOOL_WORDS: Record<string, string> = {
   tally: 'Strichliste Diagramm zählen Striche Säulendiagramm Umfrage Daten',
   spinner: 'Glücksrad Würfel Zufall Wahrscheinlichkeit drehen würfeln Strichliste',
@@ -396,11 +399,11 @@ const TOOL_WORDS: Record<string, string> = {
 };
 for (const preset of TOOL_PRESETS) {
   const subject = TOOL_SUBJECTS[preset.group];
-  const tools = preset.items.map((item) => toolOfKind(item.kind));
+  const tools = presetTools(preset);
   if (!subject || !tools.length || tools.some((t) => !t)) continue;
   const words = `${preset.title} ${TOOL_WORDS[preset.id] ?? ''}`;
   const preview = `/previews/tools/werkzeug-${preset.id}.webp`;
-  if (tools.length === 1) {
+  if (tools.length === 1 && preset.items.length === 1) {
     const tool = tools[0]!, item = preset.items[0];
     toolBlocks.push({ id: `werkzeug-${preset.id}`, title: preset.title, subject, preview, type: 'widget', kind: 'werkzeug', preset: { ...defaultSettings('werkzeug'), ...toolSettings(tool, item[toolSpec(tool).field], preset.title) }, words });
   } else

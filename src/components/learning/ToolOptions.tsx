@@ -6,7 +6,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { JsonValue } from '@/lib/learning/catalog';
 import { findPicture } from '@/lib/learning/picture-search';
-import { fingerprint, toolAssets, toolConfig, toolSpec, type ToolId } from '@/lib/learning/werkzeuge';
+import { fingerprint, toolAssets, toolConfig, toolSpec, toolUnits, type ToolId } from '@/lib/learning/werkzeuge';
+import ToolForm from './ToolForm';
+import { TOOL_FORMS } from './tool-forms';
 import { PATTERN_RULES, SEEK_COLORS, SEEK_SHAPES, seekPicture, SPIN_COLORS, SPIN_PRESETS, TALLY_COLORS, TOOLS_CSS } from '@/lib/reference/tools-runtime';
 import { Toggle } from '../sheets/SheetParts';
 import { Choices } from './OptionControls';
@@ -195,8 +197,7 @@ function PatternOptions({ c, set }: { c: Config; set: (next: Config) => void }) 
   );
 }
 
-const PREVIEW: Record<ToolId, [number, number]> = { tally: [1300, 760], spin: [600, 760], seek: [1200, 888], pattern: [1300, 710] };
-const HINTS: Record<ToolId, string> = {
+const HINTS: Partial<Record<ToolId, string>> = {
   tally: '„+“ macht einen Strich, „−“ nimmt einen weg. Jeder fünfte Strich geht quer über die vier davor.',
   spin: 'Probier es aus: Tippe auf das Rad oder den Würfel.',
   seek: 'Im Heft tippt man die richtigen an. Ausgedruckt kreist man sie ein.',
@@ -210,11 +211,13 @@ export default function ToolOptions({ tool, value, onChange, upload, busy }: Pro
   const set = (next: Config) => onChange(toolConfig(tool, { ...latest.current, ...next }) as unknown as JsonValue);
   // Clean settings are kept as the reference would store them.
   useEffect(() => { if (JSON.stringify(c) !== JSON.stringify(value)) onChange(c as unknown as JsonValue); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const [w, h] = PREVIEW[tool];
+  const [w, h] = toolUnits(tool);
+  const form = TOOL_FORMS[tool];
   return (
     <div className="receipt-options tool-options">
       <Preview tool={tool} config={c} width={w} height={h} />
-      <p className="option-hint">{HINTS[tool]}</p>
+      <p className="option-hint">{form ? (typeof form.hint === 'function' ? form.hint(c) : form.hint) : HINTS[tool]}</p>
+      {form && <ToolForm fields={form.fields} value={c} onChange={(d) => onChange(toolConfig(tool, d) as unknown as JsonValue)} upload={upload} busy={busy} />}
       {tool === 'tally' && <TallyOptions c={c} set={set} upload={upload} busy={busy} />}
       {tool === 'spin' && <SpinOptions c={c} set={set} />}
       {tool === 'seek' && <SeekOptions c={c} set={set} />}

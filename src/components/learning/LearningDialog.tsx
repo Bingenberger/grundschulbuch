@@ -98,7 +98,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
 const subjectIcons: Record<Subject, IconName> = {
   Deutsch: 'reading', Mathematik: 'calculator', Sachunterricht: 'globe', Musik: 'music',
   'Medien & Präsentation': 'podium_with_speaker', Klassenführung: 'alarm_clock',
-  'Unterstützte Kommunikation': 'comments', 'Für alle Fächer': 'puzzle',
+  'Unterstützte Kommunikation': 'comments', Alltag: 'home', 'Beruf & Praktikum': 'businesswoman', 'Für alle Fächer': 'puzzle',
 };
 const blockIcon = (b: LearningBlock): IconName =>
   b.type === 'widget' ? widgetIcons[b.kind as WidgetKind] : activityIcons[b.kind as ActivityKind];

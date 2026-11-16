@@ -12,8 +12,11 @@ export function designPage(id: string, orientation: Page['orientation'] = 'lands
   page.lineColor=design.line;
   const grid=design.grid;
   if(grid)page.templateRuling={top:grid.top*k+offset,pitch:grid.pitch*k,baseline:grid.baseline*k,xHeight:grid.xHeight*k,count:grid.count,left:grid.left*k,right:grid.right*k};
-  page.elements=design.items.map(raw=>{
-    const item=raw as Item;
+  page.elements=design.items.map(raw=>referenceElement(raw as Item,k,offset,grid));
+  return [page];
+}
+/** One item of the reference (1400 × 990 units) as an editable element. */
+export function referenceElement(item: Item, k: number, offset = 0, grid?: { pitch: number } | null): PageElement {
     const base={id:uuid(),x:item.x*k,y:item.y*k+offset,width:Math.max(.1,item.w*k),height:Math.max(.1,item.h*k),rotation:Number(item.rot)||0,locked:false,color:String(item.color||'#1f2937'),designScale:k};
     if(item.type==='vector') return {...base,type:'shape',shape:'template',vectorId:String(item.vectorId),fill:String(item.fill),strokeWidth:Number(item.strokeWidth)*k,opacity:Math.max(.01,Number(item.opacity))} as PageElement;
     if(item.type==='text') {
@@ -25,8 +28,6 @@ export function designPage(id: string, orientation: Page['orientation'] = 'lands
     if(item.type==='audio'&&item.tts&&item.label) return {...base,type:'audio',speechText:String(item.label),alt:String(item.label)} as PageElement;
     if(item.type==='audio'&&item.placeholder) return {...base,type:'audio',placeholder:String(item.placeholder),alt:''} as PageElement;
     throw Error('Unbekanntes Vorlagenelement: '+item.type);
-  });
-  return [page];
 }
 const decode=(s:string)=>s.replace(/<br\s*\/?\s*>/gi,'\n').replace(/<[^>]*>/g,'').replace(/&nbsp;/g,'\u00a0').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");
 function documentFreeText(html:string): Pick<PageElement,'text'|'runs'> {

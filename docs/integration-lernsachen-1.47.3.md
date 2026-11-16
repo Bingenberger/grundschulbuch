@@ -86,9 +86,35 @@ Voreinstellungen und Größen stammen aus den Katalogeinträgen der Vorlage
   Vorschau, mit unseren Bedienelementen. Die Wortlisten-Auswahl des Glücksrads
   fehlt noch; die festen Feld-Vorschläge der Vorlage sind da.
 
+## Fünfte Ausbaustufe: Alltag, Beruf & Praktikum, Klassenführung
+
+Neue Fächer unter Lernwerkzeuge (Entscheidung vom 16.11.2026): **Alltag** und
+**Beruf & Praktikum** wie in der Vorlage. Die Schul-Werkzeuge der Vorlage
+kommen zu **Klassenführung**, die Zeitleiste (Gestalten) zu **Für alle
+Fächer**. Integriert sind damit 45 der 89 Einträge:
+
+- Alltag: Ablaufplan, Mein Weg (Wegeplan), Checkliste, Stressbarometer,
+  Fußgängerampel, Telefonieren üben, Notruf üben, Wo tut es weh?
+- Beruf & Praktikum: Selbst- und Fremdeinschätzung, Stückzähler, Gespräche üben
+- Klassenführung: Wie geht es dir heute?, Abstimmung und Wahl, Rückmeldung zu
+  meiner Arbeit
+- Für alle Fächer: Zeitleiste (Lebenslauf)
+
+Die Einstellungsdialoge entstehen aus einer Beschreibung der Felder
+(`ToolForm.tsx`, `tool-forms.ts`): Überschrift, Auswahlen, Schalter, Farbe,
+Listen mit Bild und Wort (Bildsuche, eigenes Bild, „Fehlende Bilder suchen“),
+fertige Listen der Vorlage. Wie in der Vorlage arbeitet der Dialog mit einem
+Entwurf, damit neue leere Zeilen stehen bleiben. Gespeichert werden die
+Antworten der Checkliste, die Stimmen der Abstimmung, der Stückzähler und die
+Gesichter der Einschätzung. Seiten der Vorlage mit Texten und Vorlesetasten
+(Rückmeldung, Mein Weg) werden wie die Originalseitenvorlagen in bearbeitbare
+Elemente umgewandelt.
+
 ## Noch offene Übernahmen
 
-59 neue Katalogeinträge sind noch offen. Dazu gehören insbesondere:
+44 neue Katalogeinträge sind noch offen. Aus dem Werkzeug-Host fehlen noch
+Wochen- und Dienstplan, Sortieren und Bild-Quiz, Nähe und Distanz, Geld-Planer
+und Kassenbuch sowie die drei Automaten; KI-Partner bauen ist zurückgestellt. Dazu gehören insbesondere:
 
 - „Laute hören“ (einstellbares Arbeitsblatt, gehört zu Vorlagen › Einstellbar);
 - Programmieren sowie die interaktiven Werkzeuge für Alltag und Beruf;

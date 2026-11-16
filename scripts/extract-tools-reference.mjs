@@ -26,6 +26,23 @@ const TOOLS = {
   spin: 'spinner',
   seek: 'seek',
   pattern: 'pattern',
+  body: 'body',
+  budget: 'budget',
+  check: 'check',
+  circles: 'circles',
+  machine: 'machine',
+  mood: 'mood',
+  phone: 'phone',
+  pieces: 'pieces',
+  practice: 'practice',
+  rating: 'rating',
+  sort: 'sort',
+  steps: 'steps',
+  stress: 'stress',
+  timeline: 'timeline',
+  traffic: 'traffic',
+  vote: 'vote',
+  week: 'week',
 };
 
 const html = await fs.readFile('Lernsachen-Heft-komplett.html', 'utf8');
@@ -55,6 +72,10 @@ for (const m of code.matchAll(/(?:^|\), )([\w$]+)\(\(e17, t10(?:, n10)?\) => \{\
   savers.set(m[4], { setter: m[1], keys: keys.sort((a, b) => a[2].localeCompare(b[2]) * -1).map(k => k[1]) });
 }
 
+// Nähe und Distanz keeps the ring of each person: people[i].ring = t10[i].
+for (const m of code.matchAll(/(?:^|\), )([\w$]+)\(\(e17, t10\) => \{\n\s+\w+\(\((\w+)\) => \{\n\s+let (\w+) = \w+\(\2, e17\);\n\s+\3\?\.type === `widget` && \3\.(\w+) && \(\3\.\4 = \{ \.\.\.\3\.\4, people: \3\.\4\.people\.map\(/gm))
+  savers.set(m[4], { setter: m[1], keys: ['rings'] });
+
 const registry = [];
 const aliases = {};
 for (const [cls, kind] of Object.entries(TOOLS)) {
@@ -62,9 +83,12 @@ for (const [cls, kind] of Object.entries(TOOLS)) {
   const draw = find(`${cls} draw`, t => t === `${host}.draw`);
   const spec = inits.get(host);
   const view = /view: ([\w$]+)/.exec(spec)?.[1], label = /label: ([\w$]+)/.exec(spec)?.[1];
-  const viewText = fns.get(view);
+  // The view is a function of its own or written into the tool (Fußgängerampel).
+  const viewText = view ? fns.get(view) : /view\(e17, t10\) \{/.test(spec) ? spec : undefined;
   if (!viewText || !label) throw Error(`${cls}: view or label not found.`);
-  const call = /([\w$]+)\(e17\.(\w+)\b/.exec(viewText);
+  // The settings: what the view cleans first – or, if the view leaves that to
+  // helpers (Fußgängerampel), what its settings dialog opens with.
+  const call = /([\w$]+)\(e17\.(?!id\b|w\b|h\b)(\w+)\b/.exec(viewText) ?? new RegExp(`old: ([\\w$]+)\\(e17\\.(${cls})\\)`).exec(code);
   if (!call) throw Error(`${cls}: settings of the view not found.`);
   const [, config, field] = call;
   const saver = savers.get(field);
@@ -100,6 +124,21 @@ Object.assign(aliases, {
   [pick('spinner presets', spinText, /children: ([\w$]+)\.map\(\(\[e18, t11\]\) => z\(`button`/)]: 'SPIN_PRESETS',
   [pick('tally colours', fns.get(/^\(raw, media\) => ([\w$]+)\(/.exec(registry.find(r => r.startsWith('"tally"')).match(/config: (.*?), redraw/)[1])[1]), /: ([\w$]+)\[n11 % \1\.length\]/)]: 'TALLY_COLORS',
   [pick('spinner colours', fns.get(/^\(raw, media\) => ([\w$]+)\(/.exec(registry.find(r => r.startsWith('"spin"')).match(/config: (.*?), redraw/)[1])[1]), /: ([\w$]+)\[t11 % \1\.length\]/)]: 'SPIN_COLORS',
+});
+
+// The choices of the other dialogs (presets, feelings, partners, colours).
+const chips = /class: `ins-chips`, children: ([\w$]+)\.map\(/;
+const moodText = dialog('Wie geht es dir heute?'), checkText = dialog('Checkliste'), stepsText = dialog('Ablaufplan'), practiceText = dialog('Gespr\\xE4che \\xFCben'), stressText = dialog('Stressbarometer'), ratingText = dialog('Selbst- und Fremdeinsch\\xE4tzung');
+Object.assign(aliases, {
+  [pick('feelings', moodText, /children: ([\w$]+)\.map\(\(e18\) => z\(`button`, \{ type: `button`, "aria-pressed": t10\.feels/)]: 'MOOD_FEELS',
+  [pick('feeling pictures', moodText, /z\(`img`, \{ src: ([\w$]+)\(e18\.id\)/)]: 'moodPicture',
+  [pick('check lists', checkText, chips)]: 'CHECK_PRESETS',
+  [pick('step plans', stepsText, chips)]: 'STEPS_PRESETS',
+  [pick('step colours', stepsText, /label: `Farbe`, value: \w+, colors: ([\w$]+),/)]: 'STEPS_COLORS',
+  [pick('conversations', practiceText, chips)]: 'PRACTICE_PRESETS',
+  [pick('partners', practiceText, /options: ([\w$]+), onChange: \(e18\) => \w+\(\{ partner: e18 \}\)/)]: 'PRACTICE_PARTNERS',
+  [pick('stress ideas', stressText, /\(([\w$]+)\.map\(\(\[e18, , t11\]\) =>/)]: 'STRESS_IDEAS',
+  [pick('rating lists', ratingText, /children: ([\w$]+)\.map\(\(e18\) => z\(`button`, \{ type: `button`, class: `math-chip`, onClick: \(\) => \w+\(e18\.items/)]: 'RATING_PRESETS',
 });
 
 const toolCss = find('tool styles', t => t.startsWith('`\n.lh-ls{position:absolute;inset:0;overflow:hidden}'));

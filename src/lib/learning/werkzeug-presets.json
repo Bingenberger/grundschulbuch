@@ -1,5 +1,52 @@
 [
  {
+  "id": "steps",
+  "title": "Ablaufplan",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 50,
+    "w": 1300,
+    "h": 890,
+    "kind": "steps",
+    "steps": {
+     "title": "Hände waschen",
+     "steps": [
+      {
+       "text": "Wasser an"
+      },
+      {
+       "text": "Hände nass machen"
+      },
+      {
+       "text": "Seife nehmen"
+      },
+      {
+       "text": "Hände reiben"
+      },
+      {
+       "text": "Abspülen"
+      },
+      {
+       "text": "Wasser aus"
+      },
+      {
+       "text": "Abtrocknen"
+      }
+     ],
+     "layout": "cards",
+     "numbers": true,
+     "tick": true,
+     "color": "#1c7ed6"
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
   "id": "tally",
   "title": "Strichliste und Diagramm",
   "group": "Mathe",
@@ -169,6 +216,117 @@
   ]
  },
  {
+  "id": "phone",
+  "title": "Telefonieren üben",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "phone",
+    "phone": {
+     "mode": "call",
+     "contacts": [
+      {
+       "name": "Mama",
+       "number": "0171 234567"
+      },
+      {
+       "name": "Papa",
+       "number": "0160 765432"
+      },
+      {
+       "name": "Oma",
+       "number": "08031 1234"
+      }
+     ],
+     "show": true,
+     "sos": "112"
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "phone-sos",
+  "title": "Notruf üben",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "phone",
+    "phone": {
+     "mode": "sos",
+     "contacts": [],
+     "show": true,
+     "sos": "112"
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "traffic",
+  "title": "Fußgängerampel",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "traffic",
+    "traffic": {
+     "green": 8,
+     "wait": 4,
+     "talk": true,
+     "tick": true
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "mood",
+  "title": "Wie geht es dir heute?",
+  "group": "Schule",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 110,
+    "w": 1300,
+    "h": 770,
+    "kind": "mood",
+    "mood": {
+     "title": "Wie geht es dir heute?",
+     "feels": [
+      "happy",
+      "calm",
+      "tired",
+      "sad",
+      "angry",
+      "scared"
+     ],
+     "count": false
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
   "id": "listen",
   "title": "Hör-Memory",
   "group": "Musik",
@@ -222,6 +380,1323 @@
       "clock"
      ],
      "own": []
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "rating",
+  "title": "Selbst- und Fremdeinschätzung",
+  "group": "Beruf & Praktikum",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "rating",
+    "rate": {
+     "title": "Selbst- und Fremdeinschätzung",
+     "cols": 2,
+     "a": "Ich",
+     "b": "Betreuer/in",
+     "items": [
+      "Ich bin pünktlich.",
+      "Ich arbeite sorgfältig.",
+      "Ich arbeite ausdauernd.",
+      "Ich arbeite in einem guten Tempo.",
+      "Ich halte Ordnung am Arbeitsplatz.",
+      "Ich halte die Sicherheitsregeln ein.",
+      "Ich frage, wenn ich etwas nicht weiß.",
+      "Ich arbeite selbstständig."
+     ],
+     "va": [],
+     "vb": []
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "feedback",
+  "title": "Rückmeldung zu meiner Arbeit",
+  "group": "Schule",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 30,
+    "w": 1300,
+    "h": 620,
+    "kind": "rating",
+    "rate": {
+     "title": "Rückmeldung zu meiner Arbeit",
+     "cols": 2,
+     "a": "Ich",
+     "b": "Mitschüler/in",
+     "items": [
+      "Ich habe die Aufgabe verstanden.",
+      "Ich habe sorgfältig gearbeitet.",
+      "Mein Ergebnis sieht gut aus.",
+      "Ich war rechtzeitig fertig.",
+      "Ich habe Hilfe geholt, wenn ich sie gebraucht habe.",
+      "Ich habe aufgeräumt."
+     ],
+     "va": [],
+     "vb": []
+    },
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "audio",
+    "color": "#2b6cb0",
+    "x": 66,
+    "y": 700,
+    "w": 46,
+    "h": 46,
+    "label": "Das gefällt mir gut:",
+    "tts": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "Das gefällt mir gut:",
+    "font": "andika",
+    "size": 28,
+    "color": "#1f2937",
+    "align": "left",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 124,
+    "y": 700,
+    "w": 530,
+    "h": 46,
+    "bold": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "",
+    "font": "andika",
+    "size": 30,
+    "color": "#1f2937",
+    "align": "left",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 74,
+    "y": 760,
+    "w": 582,
+    "h": 156,
+    "placeholder": "Schreibe hier …",
+    "onLines": true,
+    "rot": 0
+   },
+   {
+    "type": "audio",
+    "color": "#2b6cb0",
+    "x": 736,
+    "y": 700,
+    "w": 46,
+    "h": 46,
+    "label": "Mein Tipp für dich:",
+    "tts": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "Mein Tipp für dich:",
+    "font": "andika",
+    "size": 28,
+    "color": "#1f2937",
+    "align": "left",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 794,
+    "y": 700,
+    "w": 530,
+    "h": 46,
+    "bold": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "",
+    "font": "andika",
+    "size": 30,
+    "color": "#1f2937",
+    "align": "left",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 744,
+    "y": 760,
+    "w": 582,
+    "h": 156,
+    "placeholder": "Schreibe hier …",
+    "onLines": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "checklist",
+  "title": "Checkliste",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "check",
+    "check": {
+     "title": "Ist der Ort barrierefrei?",
+     "mode": "yesno",
+     "items": [
+      {
+       "text": "Der Eingang hat keine Stufen."
+      },
+      {
+       "text": "Die Tür ist breit genug."
+      },
+      {
+       "text": "Es gibt einen Aufzug."
+      },
+      {
+       "text": "Es gibt eine barrierefreie Toilette."
+      },
+      {
+       "text": "Die Schilder sind gut zu lesen."
+      },
+      {
+       "text": "Die Haltestelle ist in der Nähe."
+      },
+      {
+       "text": "Es gibt Sitzplätze zum Ausruhen."
+      },
+      {
+       "text": "Ich weiß, wen ich fragen kann."
+      }
+     ],
+     "vals": []
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "pieces",
+  "title": "Stückzähler (Serienfertigung)",
+  "group": "Beruf & Praktikum",
+  "items": [
+   {
+    "type": "widget",
+    "x": 150,
+    "y": 120,
+    "w": 1100,
+    "h": 720,
+    "kind": "pieces",
+    "pc": {
+     "title": "Weihnachtskarten für den Basar",
+     "one": "Karte",
+     "many": "Karten",
+     "goal": 40,
+     "count": 12
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "stress",
+  "title": "Stressbarometer: Was hilft mir?",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "stress",
+    "stress": {
+     "title": "Wie geht es mir gerade?",
+     "helps": [
+      {
+       "text": "Pause machen",
+       "say": "Ich mache eine Pause."
+      },
+      {
+       "text": "tief atmen",
+       "say": "Ich atme tief ein und aus."
+      },
+      {
+       "text": "Kopfhörer",
+       "say": "Ich setze meine Kopfhörer auf."
+      },
+      {
+       "text": "Bescheid sagen",
+       "say": "Ich sage Bescheid, dass es mir zu viel ist."
+      },
+      {
+       "text": "frische Luft",
+       "say": "Ich gehe kurz an die frische Luft."
+      },
+      {
+       "text": "etwas trinken",
+       "say": "Ich trinke etwas."
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "weekplan",
+  "title": "Wochenplan",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "week",
+    "week": {
+     "title": "Mein Wochenplan",
+     "mode": "plan",
+     "days": 7,
+     "colors": true,
+     "plan": [
+      [
+       {
+        "text": "Arbeit",
+        "time": "8:00"
+       },
+       {
+        "text": "Einkaufen",
+        "time": "16:00"
+       }
+      ],
+      [
+       {
+        "text": "Arbeit",
+        "time": "8:00"
+       },
+       {
+        "text": "Sport",
+        "time": "18:00"
+       }
+      ],
+      [
+       {
+        "text": "Arbeit",
+        "time": "8:00"
+       },
+       {
+        "text": "Wäsche waschen",
+        "time": "17:00"
+       }
+      ],
+      [
+       {
+        "text": "Arbeit",
+        "time": "8:00"
+       },
+       {
+        "text": "Arzt",
+        "time": "15:30"
+       }
+      ],
+      [
+       {
+        "text": "Arbeit",
+        "time": "8:00"
+       },
+       {
+        "text": "Zimmer putzen",
+        "time": "16:00"
+       }
+      ],
+      [
+       {
+        "text": "Freunde treffen",
+        "time": "14:00"
+       }
+      ],
+      [
+       {
+        "text": "Familie besuchen",
+        "time": "11:00"
+       }
+      ]
+     ],
+     "duties": [
+      {
+       "text": "Tisch decken"
+      },
+      {
+       "text": "Spülmaschine"
+      },
+      {
+       "text": "Müll rausbringen"
+      },
+      {
+       "text": "Blumen gießen"
+      }
+     ],
+     "names": [
+      "Anna",
+      "Ben",
+      "Cem",
+      "Dana"
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "dutyplan",
+  "title": "Dienstplan",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "week",
+    "week": {
+     "title": "Unser Dienstplan",
+     "mode": "duty",
+     "days": 7,
+     "colors": true,
+     "plan": [
+      [
+       {
+        "text": "Arbeit",
+        "time": "8:00"
+       },
+       {
+        "text": "Einkaufen",
+        "time": "16:00"
+       }
+      ],
+      [
+       {
+        "text": "Arbeit",
+        "time": "8:00"
+       },
+       {
+        "text": "Sport",
+        "time": "18:00"
+       }
+      ],
+      [
+       {
+        "text": "Arbeit",
+        "time": "8:00"
+       },
+       {
+        "text": "Wäsche waschen",
+        "time": "17:00"
+       }
+      ],
+      [
+       {
+        "text": "Arbeit",
+        "time": "8:00"
+       },
+       {
+        "text": "Arzt",
+        "time": "15:30"
+       }
+      ],
+      [
+       {
+        "text": "Arbeit",
+        "time": "8:00"
+       },
+       {
+        "text": "Zimmer putzen",
+        "time": "16:00"
+       }
+      ],
+      [
+       {
+        "text": "Freunde treffen",
+        "time": "14:00"
+       }
+      ],
+      [
+       {
+        "text": "Familie besuchen",
+        "time": "11:00"
+       }
+      ]
+     ],
+     "duties": [
+      {
+       "text": "Tisch decken"
+      },
+      {
+       "text": "Spülmaschine"
+      },
+      {
+       "text": "Müll rausbringen"
+      },
+      {
+       "text": "Blumen gießen"
+      }
+     ],
+     "names": [
+      "Anna",
+      "Ben",
+      "Cem",
+      "Dana"
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "sort",
+  "title": "Sortieren",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "sort",
+    "sort": {
+     "title": "Wie oft essen?",
+     "mode": "sort",
+     "ask": "Was ist das?",
+     "boxes": [
+      {
+       "label": "oft",
+       "color": "#2f9e44"
+      },
+      {
+       "label": "manchmal",
+       "color": "#f59f00"
+      },
+      {
+       "label": "selten",
+       "color": "#e03131"
+      }
+     ],
+     "items": [
+      {
+       "text": "Apfel",
+       "box": 0
+      },
+      {
+       "text": "Käse",
+       "box": 1
+      },
+      {
+       "text": "Chips",
+       "box": 2
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "sort-quiz",
+  "title": "Bild-Quiz: Was bedeutet das?",
+  "group": "Beruf & Praktikum",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "sort",
+    "sort": {
+     "title": "Was bedeutet das Schild?",
+     "mode": "quiz",
+     "ask": "Was bedeutet das Schild?",
+     "boxes": [],
+     "items": [
+      {
+       "text": "Gehörschutz benutzen",
+       "box": 0
+      },
+      {
+       "text": "Rauchen verboten",
+       "box": 0
+      },
+      {
+       "text": "Warnung vor Rutschgefahr",
+       "box": 0
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "body",
+  "title": "Wo tut es weh?",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "body",
+    "bd": {
+     "title": "Wo tut es weh?",
+     "back": true,
+     "scale": true,
+     "since": true
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "circles",
+  "title": "Nähe und Distanz: Kreise",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "circles",
+    "nd": {
+     "title": "Wer darf mir wie nah kommen?",
+     "center": "Ich",
+     "rings": [
+      {
+       "label": "Familie und Partner",
+       "rule": "umarmen, kuscheln, küssen",
+       "color": "#e64980"
+      },
+      {
+       "label": "Freunde",
+       "rule": "umarmen, abklatschen",
+       "color": "#f08c00"
+      },
+      {
+       "label": "Bekannte (Kollegen, Nachbarn)",
+       "rule": "Hand geben, freundlich grüßen",
+       "color": "#40c057"
+      },
+      {
+       "label": "Fremde",
+       "rule": "Abstand halten, höchstens winken",
+       "color": "#228be6"
+      }
+     ],
+     "people": [
+      {
+       "name": "Mama",
+       "ring": -1
+      },
+      {
+       "name": "Bruder",
+       "ring": -1
+      },
+      {
+       "name": "Freundin",
+       "ring": -1
+      },
+      {
+       "name": "Kollege",
+       "ring": -1
+      },
+      {
+       "name": "Nachbarin",
+       "ring": -1
+      },
+      {
+       "name": "Busfahrer",
+       "ring": -1
+      },
+      {
+       "name": "Verkäuferin",
+       "ring": -1
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "vote",
+  "title": "Abstimmung und Wahl",
+  "group": "Schule",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "vote",
+    "vote": {
+     "title": "Wohin geht unser Ausflug?",
+     "secret": false,
+     "options": [
+      {
+       "text": "Zoo"
+      },
+      {
+       "text": "Kino"
+      },
+      {
+       "text": "Schwimmbad"
+      },
+      {
+       "text": "Museum"
+      }
+     ],
+     "counts": [
+      5,
+      3,
+      7,
+      2
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "timeline",
+  "title": "Zeitleiste (Lebenslauf)",
+  "group": "Gestalten",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "timeline",
+    "tl": {
+     "title": "Mein Leben",
+     "stations": [
+      {
+       "when": "2007",
+       "text": "Ich bin geboren."
+      },
+      {
+       "when": "2010",
+       "text": "Kindergarten"
+      },
+      {
+       "when": "2013",
+       "text": "Ich komme in die Schule."
+      },
+      {
+       "when": "2023",
+       "text": "Berufsschulstufe"
+      },
+      {
+       "when": "2025",
+       "text": "Mein erstes Praktikum"
+      },
+      {
+       "when": "später",
+       "text": "Arbeit in der Werkstatt"
+      },
+      {
+       "when": "später",
+       "text": "Eigene Wohnung"
+      }
+     ],
+     "now": 4
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "budget",
+  "title": "Geld-Planer: Mein Monat",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "budget",
+    "bud": {
+     "title": "Mein Geld im Monat",
+     "mode": "month",
+     "income": [
+      {
+       "text": "Lohn aus der Werkstatt",
+       "cent": 32000
+      },
+      {
+       "text": "Grundsicherung",
+       "cent": 56300
+      }
+     ],
+     "spend": [
+      {
+       "text": "Miete",
+       "cent": 38000
+      },
+      {
+       "text": "Strom",
+       "cent": 4500
+      },
+      {
+       "text": "Handy",
+       "cent": 1500
+      },
+      {
+       "text": "Essen und Trinken",
+       "cent": 25000
+      }
+     ],
+     "wishes": [
+      {
+       "text": "Kino",
+       "cent": 1200
+      },
+      {
+       "text": "Konzert",
+       "cent": 4500
+      },
+      {
+       "text": "Neue Schuhe",
+       "cent": 6000
+      },
+      {
+       "text": "Ausflug",
+       "cent": 2500
+      }
+     ],
+     "book": [
+      {
+       "date": "3.11.",
+       "text": "Verkauf Pausenbrote",
+       "cent": 4250
+      },
+      {
+       "date": "4.11.",
+       "text": "Einkauf Brot und Käse",
+       "cent": 1890,
+       "out": true
+      },
+      {
+       "date": "5.11.",
+       "text": "Verkauf Kaffee",
+       "cent": 1800
+      },
+      {
+       "date": "6.11.",
+       "text": "Einkauf Becher",
+       "cent": 650,
+       "out": true
+      }
+     ],
+     "start": 5000,
+     "fill": false
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "cashbook",
+  "title": "Kassenbuch",
+  "group": "Beruf & Praktikum",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "budget",
+    "bud": {
+     "title": "Kassenbuch Schülercafé",
+     "mode": "cash",
+     "income": [
+      {
+       "text": "Lohn aus der Werkstatt",
+       "cent": 32000
+      },
+      {
+       "text": "Grundsicherung",
+       "cent": 56300
+      }
+     ],
+     "spend": [
+      {
+       "text": "Miete",
+       "cent": 38000
+      },
+      {
+       "text": "Strom",
+       "cent": 4500
+      },
+      {
+       "text": "Handy",
+       "cent": 1500
+      },
+      {
+       "text": "Essen und Trinken",
+       "cent": 25000
+      }
+     ],
+     "wishes": [
+      {
+       "text": "Kino",
+       "cent": 1200
+      },
+      {
+       "text": "Konzert",
+       "cent": 4500
+      },
+      {
+       "text": "Neue Schuhe",
+       "cent": 6000
+      },
+      {
+       "text": "Ausflug",
+       "cent": 2500
+      }
+     ],
+     "book": [
+      {
+       "date": "3.11.",
+       "text": "Verkauf Pausenbrote",
+       "cent": 4250
+      },
+      {
+       "date": "4.11.",
+       "text": "Einkauf Brot und Käse",
+       "cent": 1890,
+       "out": true
+      },
+      {
+       "date": "5.11.",
+       "text": "Verkauf Kaffee",
+       "cent": 1800
+      },
+      {
+       "date": "6.11.",
+       "text": "Einkauf Becher",
+       "cent": 650,
+       "out": true
+      }
+     ],
+     "start": 5000,
+     "fill": false
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "budget-fill",
+  "title": "Geld-Planer zum Ausfüllen",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "budget",
+    "bud": {
+     "title": "Mein Geld im Monat",
+     "mode": "month",
+     "income": [],
+     "spend": [],
+     "wishes": [],
+     "book": [],
+     "start": 0,
+     "fill": true
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "my-way",
+  "title": "Mein Weg (Wegeplan)",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 860,
+    "h": 870,
+    "kind": "steps",
+    "steps": {
+     "title": "Mein Weg zur Arbeit",
+     "layout": "list",
+     "numbers": true,
+     "tick": true,
+     "color": "#2b6cb0",
+     "steps": [
+      {
+       "text": "7:20 Uhr: Ich gehe aus dem Haus."
+      },
+      {
+       "text": "Ich gehe zur Haltestelle Rathaus."
+      },
+      {
+       "text": "7:32 Uhr: Bus 52 Richtung Bahnhof"
+      },
+      {
+       "text": "7:51 Uhr: Ich steige an der Haltestelle Werkstatt aus."
+      },
+      {
+       "text": "Ich gehe zum Eingang und melde mich."
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "audio",
+    "color": "#2b6cb0",
+    "x": 950,
+    "y": 80,
+    "w": 46,
+    "h": 46,
+    "label": "Was tue ich, wenn …",
+    "tts": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "Was tue ich, wenn …",
+    "font": "andika",
+    "size": 28,
+    "color": "#1f2937",
+    "align": "left",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 1008,
+    "y": 80,
+    "w": 330,
+    "h": 46,
+    "bold": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "<b>der Bus nicht kommt?</b><br>10 Minuten warten. Dann anrufen.<br><br><b>ich falsch eingestiegen bin?</b><br>An der nächsten Haltestelle aussteigen. Den Fahrer fragen.<br><br><b>ich mich verlaufen habe?</b><br>Stehen bleiben. Anrufen oder jemanden fragen.",
+    "font": "andika",
+    "size": 24,
+    "color": "#1f2937",
+    "align": "left",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 950,
+    "y": 150,
+    "w": 380,
+    "h": 560,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "Wichtige Nummer:",
+    "font": "andika",
+    "size": 26,
+    "color": "#1f2937",
+    "align": "left",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 950,
+    "y": 740,
+    "w": 380,
+    "h": 44,
+    "bold": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "",
+    "font": "andika",
+    "size": 30,
+    "color": "#1f2937",
+    "align": "left",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 950,
+    "y": 790,
+    "w": 380,
+    "h": 50,
+    "placeholder": "Telefon …",
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "machine-ticket",
+  "title": "Fahrkartenautomat üben",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "machine",
+    "mc": {
+     "kind": "ticket",
+     "title": "Fahrkartenautomat",
+     "items": [
+      {
+       "name": "Einzelfahrt Erwachsene",
+       "cent": 320
+      },
+      {
+       "name": "Einzelfahrt ermäßigt",
+       "cent": 180
+      },
+      {
+       "name": "Tageskarte",
+       "cent": 750
+      },
+      {
+       "name": "4-Fahrten-Karte",
+       "cent": 1160
+      }
+     ],
+     "pin": "1234",
+     "amounts": [
+      2000,
+      5000,
+      10000,
+      20000
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "machine-atm",
+  "title": "Geldautomat üben",
+  "group": "Alltag",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "machine",
+    "mc": {
+     "kind": "atm",
+     "title": "Geldautomat",
+     "items": [
+      {
+       "name": "Einzelfahrt Erwachsene",
+       "cent": 320
+      },
+      {
+       "name": "Einzelfahrt ermäßigt",
+       "cent": 180
+      },
+      {
+       "name": "Tageskarte",
+       "cent": 750
+      },
+      {
+       "name": "4-Fahrten-Karte",
+       "cent": 1160
+      }
+     ],
+     "pin": "1234",
+     "amounts": [
+      2000,
+      5000,
+      10000,
+      20000
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "machine-drinks",
+  "title": "Getränkeautomat üben",
+  "group": "Beruf & Praktikum",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "machine",
+    "mc": {
+     "kind": "drinks",
+     "title": "Getränkeautomat",
+     "items": [
+      {
+       "name": "Wasser",
+       "cent": 120
+      },
+      {
+       "name": "Apfelschorle",
+       "cent": 150
+      },
+      {
+       "name": "Orangensaft",
+       "cent": 170
+      },
+      {
+       "name": "Cola",
+       "cent": 180
+      },
+      {
+       "name": "Kakao",
+       "cent": 140
+      },
+      {
+       "name": "Tee",
+       "cent": 100
+      }
+     ],
+     "pin": "1234",
+     "amounts": [
+      2000,
+      5000,
+      10000,
+      20000
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "practice",
+  "title": "Gespräche üben",
+  "group": "Beruf & Praktikum",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "practice",
+    "gp": {
+     "title": "Ich melde mich krank",
+     "partner": "phone",
+     "name": "Frau Meier (Werkstatt)",
+     "lines": [
+      {
+       "you": false,
+       "text": "Werkstatt Sonnenhof, Meier, guten Morgen."
+      },
+      {
+       "you": true,
+       "text": "Guten Morgen, Frau Meier. Hier ist … Ich bin leider krank."
+      },
+      {
+       "you": false,
+       "text": "Oh, gute Besserung! Was haben Sie denn?"
+      },
+      {
+       "you": true,
+       "text": "Ich habe Fieber und Halsschmerzen."
+      },
+      {
+       "you": false,
+       "text": "Wie lange fehlen Sie?"
+      },
+      {
+       "you": true,
+       "text": "Ich gehe heute zum Arzt. Ich rufe morgen wieder an."
+      },
+      {
+       "you": false,
+       "text": "In Ordnung. Danke für Ihren Anruf. Auf Wiederhören!"
+      },
+      {
+       "you": true,
+       "text": "Auf Wiederhören!"
+      }
+     ],
+     "hint": true
     },
     "locked": true,
     "rot": 0

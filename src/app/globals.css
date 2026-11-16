@@ -5297,3 +5297,13 @@ input[type='checkbox'] {
 .tool-row img, .tool-row-empty { width: 48px; height: 48px; object-fit: contain; border-radius: 8px; display: block; }
 .tool-rule small { display: block; font-weight: 400; opacity: .75; }
 .listen-pick[aria-checked='true'] { border-color: #2f9e44; background: #ebfbee; }
+.tool-options .tool-row { grid-template-columns: 48px minmax(180px, 1fr) auto; }
+.tool-options .tool-row > .learning-actions { grid-column: auto; flex-wrap: wrap; justify-content: flex-end; }
+.tool-options .tool-row > .mt-colors { grid-column: 2 / -1; }
+.tool-row-texts { display: flex; gap: 6px; align-items: center; min-width: 0; }
+.tool-row-texts .text-input { width: 100%; min-width: 0; }
+.tool-row-texts .tool-row-extra { width: 9em; flex: none; }
+.tool-row .listen-own-empty { display: grid; place-items: center; }
+@media (max-width: 760px) { .tool-options .tool-row { grid-template-columns: 48px 1fr; } .tool-options .tool-row > .learning-actions { grid-column: 1 / -1; justify-content: flex-start; } }
+.receipt-options.tool-options { max-width: 920px; }
+.tool-options .tool-row > .learning-actions .knopf.compact { padding-inline: 8px; }
