@@ -424,7 +424,7 @@ const musicBlocks: LearningBlock[] = [{ id: 'music-notes', title: 'Noten lernen'
 
 export const learningBlocks: LearningBlock[] = [...toolBlocks, ...musicBlocks, ...blueprints.map(fromBlueprint)]
   .filter((b): b is LearningBlock => !!b)
-  .map(block => block.subject === 'Mathematik' ? { ...block, preview: `/previews/math/${block.id}.webp` } : block)
+  .map(block => ({ ...block, preview: block.preview || `/previews/${block.subject === 'Mathematik' ? 'math' : 'tools'}/${block.id}.webp` }))
   .sort((a, b) => SUBJECTS.indexOf(a.subject) - SUBJECTS.indexOf(b.subject));
 
 /** Interactive templates (widgets, activities, the communication book) are building blocks now. */
