@@ -29,6 +29,7 @@ import TimeWidget from './TimeWidget';
 import MultiTimerWidget from './MultiTimerWidget';
 import ApplauseWidget from './ApplauseWidget';
 import ListenWidget from './ListenWidget';
+import ToolWidget from './ToolWidget';
 import TimetableWidget from './TimetableWidget';
 import CalendarSheet from './CalendarSheet';
 import MapSheet from './MapSheet';
@@ -61,6 +62,7 @@ export default function Widget({ element }: { element: PageElement }) {
   if (kind === 'phasen') return <MultiTimerWidget element={element} />;
   if (kind === 'ampel') return <ApplauseWidget element={element} />;
   if (kind === 'hoeren') return <ListenWidget element={element} />;
+  if (kind === 'werkzeug') return <ToolWidget element={element} />;
   if (kind === 'stundenplan') return <TimetableWidget element={element} />;
   if (kind === 'kalenderblatt') return <CalendarSheet element={element} />;
   if (kind === 'karte') return <MapSheet element={element} />;

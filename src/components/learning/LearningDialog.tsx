@@ -6,6 +6,8 @@ import TimeOptions from './TimeOptions';
 import MultiTimerOptions from './MultiTimerOptions';
 import ApplauseOptions from './ApplauseOptions';
 import ListenOptions from './ListenOptions';
+import ToolOptions from './ToolOptions';
+import { isTool, toolCurrent, toolSize } from '@/lib/learning/werkzeuge';
 import TimetableOptions from './TimetableOptions';
 import MapOptions from './MapOptions';
 import TalkOptions from './TalkOptions';
@@ -89,7 +91,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', hoeren: 'headset', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', elevator: 'podium_with_speaker', medienseite: 'camcorder_pro', diaschau: 'stack_of_photos', trickfilm: 'film_reel', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', hoeren: 'headset', werkzeug: 'puzzle', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', elevator: 'podium_with_speaker', medienseite: 'camcorder_pro', diaschau: 'stack_of_photos', trickfilm: 'film_reel', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -113,6 +115,7 @@ function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) 
   if (kind === 'ampel') return { width: 276, height: 153 };
   // Hör-Memory of the reference: 1300 × 870 of 1400 page width.
   if (kind === 'hoeren') return { width: 276, height: 185 };
+  if (kind === 'werkzeug' && isTool(settings.tool)) return toolSize(settings.tool);
   if (kind === 'placevalue' || kind === 'dienes') return { width: 220, height: 160 };
   if (kind === 'numberline') return { width: 250, height: 80 };
   if (kind === 'hundredfield') return { width: 200, height: 150 };
@@ -145,7 +148,10 @@ export default function LearningDialog({
     element?.widgetKind || element?.activityKind || 'timer',
   );
   const [settings, setSettings] = useState<LearningSettings>(
-    element?.settings?.musicTemplate ? { ...element.settings, musicConfig: element.response?.musicConfig || element.settings.musicConfig } : element?.settings || defaultSettings(kind),
+    element?.settings?.musicTemplate ? { ...element.settings, musicConfig: element.response?.musicConfig || element.settings.musicConfig }
+      // A tool opens with what was kept on the page (e.g. the current counts).
+      : element?.widgetKind === 'werkzeug' && isTool(element.settings?.tool) ? { ...element.settings, werkzeug: toolCurrent(element.settings.tool, element.settings, element.response) as never }
+      : element?.settings || defaultSettings(kind),
   );
   const [showNotes, setShowNotes] = useState(false);
   const [error, setError] = useState('');
@@ -824,6 +830,7 @@ export default function LearningDialog({
             {kind === 'karte' && <MapOptions value={settings.map} isNew={!element} onChange={(map) => patch({ map })} />}
             {kind === 'stundenplan' && <TimetableOptions value={settings.tt ?? (defaultTimetable() as unknown as JsonValue)} onChange={(tt) => patch({ tt })} upload={media} busy={busy} />}
             {kind === 'ampel' && <ApplauseOptions value={settings.applause} onChange={(applause) => patch({ applause })} />}
+            {kind === 'werkzeug' && isTool(settings.tool) && <ToolOptions tool={settings.tool} value={settings.werkzeug} onChange={(werkzeug) => patch({ werkzeug })} upload={media} busy={busy} />}
             {kind === 'hoeren' && <ListenOptions value={settings.listen} onChange={(listen) => patch({ listen })} upload={media} busy={busy} />}
             {kind === 'phasen' && <MultiTimerOptions value={settings.multi} onChange={(multi) => patch({ multi })} />}
             {kind === 'quizsachen' && <QuizOptions value={settings.qz} title={settings.title || ''} onChange={(qz) => patch({ qz })} upload={media} busy={busy} />}

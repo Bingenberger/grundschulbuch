@@ -1,0 +1,231 @@
+[
+ {
+  "id": "tally",
+  "title": "Strichliste und Diagramm",
+  "group": "Mathe",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 80,
+    "w": 1300,
+    "h": 830,
+    "kind": "tally",
+    "tally": {
+     "title": "Was essen wir am liebsten?",
+     "cats": [
+      {
+       "label": "Apfel",
+       "color": "#e03131"
+      },
+      {
+       "label": "Banane",
+       "color": "#f08c00"
+      },
+      {
+       "label": "Birne",
+       "color": "#2f9e44"
+      }
+     ],
+     "counts": [
+      0,
+      0,
+      0
+     ],
+     "view": "both"
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "spinner",
+  "title": "Glücksrad und Würfel",
+  "group": "Mathe",
+  "items": [
+   {
+    "type": "widget",
+    "x": 40,
+    "y": 110,
+    "w": 600,
+    "h": 760,
+    "kind": "spinner",
+    "spin": {
+     "mode": "wheel",
+     "fields": [
+      {
+       "label": "Apfel",
+       "color": "#e03131"
+      },
+      {
+       "label": "Banane",
+       "color": "#fab005"
+      },
+      {
+       "label": "Birne",
+       "color": "#15aabf"
+      },
+      {
+       "label": "Kiwi",
+       "color": "#7048e8"
+      }
+     ],
+     "dice": 1,
+     "faces": "dots",
+     "noRepeat": false,
+     "count": true,
+     "auto": true
+    },
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "widget",
+    "x": 680,
+    "y": 110,
+    "w": 680,
+    "h": 760,
+    "kind": "tally",
+    "tally": {
+     "title": "Was kommt am häufigsten?",
+     "cats": [
+      {
+       "label": "Apfel",
+       "color": "#e03131"
+      },
+      {
+       "label": "Banane",
+       "color": "#fab005"
+      },
+      {
+       "label": "Birne",
+       "color": "#15aabf"
+      },
+      {
+       "label": "Kiwi",
+       "color": "#7048e8"
+      }
+     ],
+     "counts": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "view": "both"
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "seek",
+  "title": "Suchbild",
+  "group": "Mathe",
+  "items": [
+   {
+    "type": "widget",
+    "x": 100,
+    "y": 51,
+    "w": 1200,
+    "h": 888,
+    "kind": "seek",
+    "seek": {
+     "shape": "star",
+     "color": "red",
+     "targets": 6,
+     "level": "easy",
+     "seed": 20261114
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "pattern",
+  "title": "Muster fortsetzen",
+  "group": "Mathe",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 140,
+    "w": 1300,
+    "h": 710,
+    "kind": "pattern",
+    "pat": {
+     "kind": "beads",
+     "rule": "AB",
+     "blanks": 4,
+     "rounds": 5,
+     "seed": 7
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "listen",
+  "title": "Hör-Memory",
+  "group": "Musik",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "listen",
+    "listen": {
+     "mode": "memory",
+     "set": "fx",
+     "picks": [
+      "rain",
+      "thunder",
+      "birds",
+      "knock",
+      "bell",
+      "clock"
+     ],
+     "own": []
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "listen-quiz",
+  "title": "Was hörst du?",
+  "group": "Musik",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "listen",
+    "listen": {
+     "mode": "quiz",
+     "set": "fx",
+     "picks": [
+      "rain",
+      "thunder",
+      "birds",
+      "knock",
+      "bell",
+      "clock"
+     ],
+     "own": []
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ }
+]

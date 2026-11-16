@@ -11,6 +11,7 @@ import { defaultDnd } from './zuordnung';
 import { defaultQuiz } from './quiz';
 import { defaultZeit } from './zeit';
 import { BOARDS, bookPages, boardPages, GRIDS, picto } from './uk';
+import { presetElements, toolOfKind, toolSettings, toolSpec, TOOL_PRESETS } from './werkzeuge';
 import { TALK_BACK } from '../reference/class-runtime';
 import type { MathToolKind } from './mathtool';
 import { geoConfig } from './geodraw';
@@ -34,7 +35,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', hoeren: 'Musik', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', diaschau: 'Medien & Präsentation', trickfilm: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', hoeren: 'Musik', werkzeug: 'Mathematik', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', diaschau: 'Medien & Präsentation', trickfilm: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -132,6 +133,8 @@ const SKIP = new Set([
   'widget-ampel',
   // Hör-Memory and Was hörst du? are two blocks of one tool.
   'widget-hoeren',
+  // The tools of 1.47.3 come as blocks of their catalogue entries.
+  'widget-werkzeug',
   // Replaced by the Bilder-Stundenplan of the reference.
   'widget-timetable',
   'widget-stundenplan',
@@ -381,6 +384,28 @@ toolBlocks.push({ id: 'elevator', title: 'Elevator Pitch', subject: 'Medien & Pr
 toolBlocks.push({ id: 'karte', title: 'Karte', subject: 'Sachunterricht', type: 'widget', kind: 'karte', preset: { ...defaultSettings('karte'), title: 'Meine Karte' }, words: 'Karte Stadtplan Ort Schulweg Weg Markierung Entfernung messen OpenStreetMap Heimatort' });
 toolBlocks.push({ id: 'kalenderblatt', title: 'Das sprechende Kalenderblatt', subject: 'Sachunterricht', type: 'widget', kind: 'kalenderblatt', preset: { ...defaultSettings('kalenderblatt'), title: 'Das sprechende Kalenderblatt' }, pages: () => fullPageWidget('kalenderblatt', { ...defaultSettings('kalenderblatt'), title: 'Das sprechende Kalenderblatt' }), words: 'Kalender Kalenderblatt Datum Wochentag Monat Jahr Jahreszeit Morgenkreis heute sprechen' });
 toolBlocks.push({ id: 'stundenplan', title: 'Bilder-Stundenplan', subject: 'Klassenführung', type: 'widget', kind: 'stundenplan', preset: { ...defaultSettings('stundenplan'), title: 'Bilder-Stundenplan' }, words: 'Stundenplan Bilder Fächer Woche Pausen Nach der Schule Tagesablauf Piktogramme' });
+// Tools of Lernsachen-Heft 1.47.3 (tool host of the reference): one block per
+// catalogue entry; a single tool opens its settings first, a page of several
+// tools (Glücksrad with its Strichliste) comes as it is.
+const TOOL_SUBJECTS: Record<string, Subject> = { Mathe: 'Mathematik' };
+const TOOL_WORDS: Record<string, string> = {
+  tally: 'Strichliste Diagramm zählen Striche Säulendiagramm Umfrage Daten',
+  spinner: 'Glücksrad Würfel Zufall Wahrscheinlichkeit drehen würfeln Strichliste',
+  seek: 'Suchbild suchen finden zählen Formen Farben',
+  pattern: 'Muster fortsetzen Reihe Perlen Regel Folge',
+};
+for (const preset of TOOL_PRESETS) {
+  const subject = TOOL_SUBJECTS[preset.group];
+  const tools = preset.items.map((item) => toolOfKind(item.kind));
+  if (!subject || !tools.length || tools.some((t) => !t)) continue;
+  const words = `${preset.title} ${TOOL_WORDS[preset.id] ?? ''}`;
+  const preview = `/previews/tools/werkzeug-${preset.id}.webp`;
+  if (tools.length === 1) {
+    const tool = tools[0]!, item = preset.items[0];
+    toolBlocks.push({ id: `werkzeug-${preset.id}`, title: preset.title, subject, preview, type: 'widget', kind: 'werkzeug', preset: { ...defaultSettings('werkzeug'), ...toolSettings(tool, item[toolSpec(tool).field], preset.title) }, words });
+  } else
+    toolBlocks.push({ id: `werkzeug-${preset.id}`, title: preset.title, subject, preview, type: 'widget', kind: 'werkzeug', pages: () => { const page = newPage('blanko', 'landscape'); page.elements = presetElements(preset); return [page]; }, words });
+}
 // Hör-Memory and Was hörst du? of Lernsachen-Heft 1.47.3: one tool, two games.
 for (const [id, mode, title, words] of [
   ['hoeren-memory', 'memory', 'Hör-Memory', 'Hör-Memory Memory hören Geräusche Paare Klänge Instrumente Aufnahmen'],

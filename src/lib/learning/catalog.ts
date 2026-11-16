@@ -57,6 +57,7 @@ export const widgetCatalog = {
   phasen: ['Multi-Timer', 'Schule'],
   ampel: ['Lärmampel und Applausometer', 'Schule'],
   hoeren: ['Hör-Memory und Was hörst du?', 'Musik'],
+  werkzeug: ['Werkzeug', 'Interaktive Übungen'],
   stundenplan: ['Bilder-Stundenplan', 'Schule'],
   kalenderblatt: ['Das sprechende Kalenderblatt', 'Schule'],
   karte: ['Karte', 'Schule'],
@@ -139,6 +140,10 @@ export type LearningSettings = {
   multi?: JsonValue;
   /** Hör-Memory und Was hörst du? der Vorlage (1.47.3): mode, set, picks, own (label, sound, img). */
   listen?: JsonValue;
+  /** Werkzeug der Vorlage (1.47.3): which tool (tally, spin, seek, pattern). */
+  tool?: string;
+  /** Its configuration as the reference stores it. */
+  werkzeug?: JsonValue;
   /** Lärmampel und Applausometer der Vorlage: mode, secs, sens, limit, chime, words. */
   applause?: JsonValue;
   /** Bilder-Stundenplan der Vorlage (see learning/stundenplan.ts). */

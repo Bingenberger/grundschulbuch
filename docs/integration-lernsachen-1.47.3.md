@@ -62,9 +62,33 @@ Telefon, Automaten, Gefühle und die Praktikumseinschätzung.
 Widget-Klasse statt über die (versionsabhängigen) Kurznamen. Weitere Werkzeuge
 werden dort ergänzt.
 
+## Vierte Ausbaustufe: Mathe-Werkzeuge
+
+Strichliste und Diagramm, Glücksrad und Würfel, Suchbild und Muster fortsetzen
+sind integriert (30 der 89 Einträge) und stehen unter Lernwerkzeuge ›
+Mathematik. Alle Werkzeuge des neuen Werkzeug-Hosts teilen sich die
+Widget-Art `werkzeug` (`settings.tool`, `settings.werkzeug` wie in der
+Vorlage; `src/lib/learning/werkzeuge.ts`, `ToolWidget.tsx`). Die
+Voreinstellungen und Größen stammen aus den Katalogeinträgen der Vorlage
+(`src/lib/learning/werkzeug-presets.json`, erzeugt vom Extraktionsskript).
+
+- Was ein Werkzeug sich merkt (z. B. die Striche der Strichliste), speichert
+  die Vorlage über Rückrufe; bei uns landet es als Antwort des Elements, mit
+  einem Fingerabdruck der Einstellungen. Neue Einstellungen gelten deshalb
+  vor alten Strichen; der Dialog zeigt beim Öffnen die aktuellen Striche.
+- Glücksrad und Würfel kommt wie in der Vorlage als Seite mit Rad und
+  Strichliste; das Rad zählt in die Strichliste derselben Seite. Dafür sucht
+  das Werkzeug seine Seite bei uns als Arbeitsfläche statt `.lh-page` (einzige
+  Änderung am übernommenen Code, im Skript beschrieben). Anders als in der
+  Vorlage passt das Bearbeiten des Rads die Felder der Strichliste nicht
+  automatisch an; sie wird dafür selbst eingestellt.
+- Die Einstellungsdialoge folgen den Dialogen der Vorlage mit spielbarer
+  Vorschau, mit unseren Bedienelementen. Die Wortlisten-Auswahl des Glücksrads
+  fehlt noch; die festen Feld-Vorschläge der Vorlage sind da.
+
 ## Noch offene Übernahmen
 
-63 neue Katalogeinträge sind noch offen. Dazu gehören insbesondere:
+59 neue Katalogeinträge sind noch offen. Dazu gehören insbesondere:
 
 - „Laute hören“ (einstellbares Arbeitsblatt, gehört zu Vorlagen › Einstellbar);
 - Programmieren sowie die interaktiven Werkzeuge für Alltag und Beruf;
