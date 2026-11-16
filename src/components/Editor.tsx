@@ -293,7 +293,7 @@ export default function Editor({
     (setSquare) => {
       s.chooseBrush('pen');
       useEditor.setState({ selected: [] });
-      const sheet = sheetSize(page || initial.pages[0]), view = visibleCenter(scroller.current, surface.current, size);
+      const sheet = sheetSize(page || initial.pages[0]), view = visibleCenter(document.querySelector<HTMLElement>('.canvas-scroll'), document.querySelector<HTMLElement>('.canvas-scroll .interaction-surface'), size);
       setGuide({ kind: setSquare ? 'triangle' : 'ruler', ...(view || { x: sheet.width / 2, y: sheet.height * 0.72 }), angle: 0 });
     },
   );

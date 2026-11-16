@@ -180,7 +180,7 @@ export default function ChildEditor({
     (setSquare) => {
       s.chooseBrush('pen');
       useEditor.setState({ selected: [] });
-      const view = visibleCenter(scroller.current, surface.current, size);
+      const view = visibleCenter(document.querySelector<HTMLElement>('.canvas-scroll'), document.querySelector<HTMLElement>('.canvas-scroll .interaction-surface'), size);
       setGuide({ kind: setSquare ? 'triangle' : 'ruler', ...(view || { x: size.left + size.width / 2, y: size.top + size.height * 0.72 }), angle: 0 });
     },
   );
