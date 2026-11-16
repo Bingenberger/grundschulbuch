@@ -110,11 +110,16 @@ Gesichter der Einschätzung. Seiten der Vorlage mit Texten und Vorlesetasten
 (Rückmeldung, Mein Weg) werden wie die Originalseitenvorlagen in bearbeitbare
 Elemente umgewandelt.
 
+Dazu kommen (48 der 89 Einträge) Nähe und Distanz (Kreise mit Regeln und
+Farben, Personen mit Bild; wohin die Kinder sie legen, wird gespeichert) sowie
+Wochenplan und Dienstplan (eine Liste pro Tag mit Uhrzeiten, Dienste und
+Namen) unter Alltag.
+
 ## Noch offene Übernahmen
 
-44 neue Katalogeinträge sind noch offen. Aus dem Werkzeug-Host fehlen noch
-Wochen- und Dienstplan, Sortieren und Bild-Quiz, Nähe und Distanz, Geld-Planer
-und Kassenbuch sowie die drei Automaten; KI-Partner bauen ist zurückgestellt. Dazu gehören insbesondere:
+41 neue Katalogeinträge sind noch offen. Aus dem Werkzeug-Host fehlen noch
+Sortieren und Bild-Quiz, Geld-Planer und Kassenbuch sowie die drei Automaten;
+KI-Partner bauen ist zurückgestellt. Dazu gehören insbesondere:
 
 - „Laute hören“ (einstellbares Arbeitsblatt, gehört zu Vorlagen › Einstellbar);
 - Programmieren sowie die interaktiven Werkzeuge für Alltag und Beruf;

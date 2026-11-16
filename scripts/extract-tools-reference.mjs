@@ -141,6 +141,16 @@ Object.assign(aliases, {
   [pick('rating lists', ratingText, /children: ([\w$]+)\.map\(\(e18\) => z\(`button`, \{ type: `button`, class: `math-chip`, onClick: \(\) => \w+\(e18\.items/)]: 'RATING_PRESETS',
 });
 
+// Nähe und Distanz and Wochenplan: ring sets and colours, weekdays, the plan of each mode.
+const configOf = (cls) => fns.get(/config: \(raw, media\) => ([\w$]+)\(/.exec(registry.find(r => r.startsWith(`"${cls}"`)))[1]);
+const circlesConfig = configOf('circles'), weekConfig = configOf('week');
+Object.assign(aliases, {
+  [pick('ring sets', circlesConfig, /r10\.length >= 2 \? r10 : ([\w$]+)\[0\]/)]: 'CIRCLE_RINGS',
+  [pick('ring colours', circlesConfig, /: ([\w$]+)\[t11 % \1\.length\]/)]: 'CIRCLE_COLORS',
+  [pick('weekdays', weekConfig, /i10 = ([\w$]+)\.map\(\(e18, t11\) =>/)]: 'WEEK_DAYS',
+  [pick('week plans', fns.get(find('week dialog', t => t.startsWith('function') && t.includes('`Dienstplan` : `Wochenplan`') && t.includes('close: () => e17.close(null)'))), /title: t10\.title === ([\w$]+)\(t10\.mode\)\.title/)]: 'weekStart',
+});
+
 const toolCss = find('tool styles', t => t.startsWith('`\n.lh-ls{position:absolute;inset:0;overflow:hidden}'));
 
 // The catalogue entries of these tools: their pages are the presets.

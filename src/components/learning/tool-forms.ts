@@ -3,7 +3,7 @@
 // reference's dialogs.
 import type { ToolId } from '@/lib/learning/werkzeuge';
 import {
-  CHECK_PRESETS, MOOD_FEELS, moodPicture, PRACTICE_PARTNERS, PRACTICE_PRESETS, RATING_PRESETS, STEPS_PRESETS, STEPS_COLORS, STRESS_IDEAS,
+  CHECK_PRESETS, CIRCLE_COLORS, CIRCLE_RINGS, MOOD_FEELS, WEEK_DAYS, weekStart, moodPicture, PRACTICE_PARTNERS, PRACTICE_PRESETS, RATING_PRESETS, STEPS_PRESETS, STEPS_COLORS, STRESS_IDEAS,
 } from '@/lib/reference/tools-runtime';
 import type { Draft, Field } from './ToolForm';
 
@@ -120,6 +120,32 @@ export const TOOL_FORMS: Partial<Record<ToolId, ToolForm>> = {
       { t: 'note', text: 'Die Stimme der Leitstelle stellt nacheinander die W-Fragen. Das Kind antwortet laut und tippt auf „Weiter“. Am Gerät steht immer „Nur zum Üben“.', when: (d) => d.mode === 'sos' },
       { t: 'list', key: 'contacts', label: 'Kontakte', what: 'Kontakt', max: 6, text: 'name', placeholder: 'Name', textMax: 30, picture: true, when: (d) => d.mode !== 'sos', fresh: () => ({ name: '', number: '' }), extra: { key: 'number', label: 'Nummer', placeholder: 'Nummer', max: 20, clean: (v) => v.replace(/[^\d *#+/-]/g, '') } },
       { t: 'note', text: 'Tipp: Eigene Nummern der Familie nur, wenn das Heft nicht weitergegeben wird – sonst ausgedachte.', when: (d) => d.mode !== 'sos' },
+    ],
+  },
+  circles: {
+    hint: 'Probier es aus: Tippe einen Namen an und dann einen Kreis. Ein Tipp auf einen Kreis liest vor, was dort passt.',
+    fields: [
+      { t: 'text', key: 'title', label: 'Überschrift' },
+      { t: 'picture', key: 'centerImg', label: 'Bild in der Mitte (z. B. ein Foto)', query: (d) => String(d.center ?? '') },
+      { t: 'text', key: 'center', label: 'In der Mitte', placeholder: 'Ich', max: 20 },
+      { t: 'presets', label: 'Kreise (von innen nach außen)', options: (CIRCLE_RINGS as unknown as Row[][]).map((rings) => ({ label: `${rings.length} Kreise`, apply: () => ({ rings: structuredClone(rings) }) })) },
+      { t: 'list', key: 'rings', label: 'Kreise', what: 'Kreis', min: 2, max: 5, text: 'label', textMax: 40, extra: { key: 'rule', label: 'Was passt?', placeholder: 'Was passt? z. B. Hand geben', max: 80, wide: true }, color: { key: 'color', colors: CIRCLE_COLORS as unknown as string[] }, fresh: (rows) => ({ label: 'Kreis', rule: '', color: (CIRCLE_COLORS as unknown as string[])[rows.length % (CIRCLE_COLORS as unknown as string[]).length] }) },
+      { t: 'list', key: 'people', label: 'Personen', what: 'Person', max: 16, text: 'name', textMax: 24, placeholder: 'z. B. Mama', picture: true, fresh: () => ({ name: '', ring: -1 }) },
+      { t: 'button', label: 'Alle zurück an die Seite', apply: (d) => ({ people: ((d.people as Row[]) ?? []).map((p) => ({ ...p, ring: -1 })) }), disabled: (d) => !((d.people as Row[]) ?? []).some((p) => Number(p.ring ?? -1) >= 0) },
+      { t: 'note', text: 'Echte Namen und Fotos nur, wenn das Heft nicht weitergegeben wird.' },
+    ],
+  },
+  week: {
+    hint: (d) => (d.mode === 'duty' ? 'Jede Woche rücken die Namen einen Dienst weiter. Mit ◀ ▶ siehst du die Wochen davor und danach.' : 'Heute ist markiert. Ein Tipp liest vor, was geplant ist.'),
+    fields: [
+      { t: 'choice', key: 'mode', label: 'Art', options: [{ value: 'plan', label: 'Wochenplan' }, { value: 'duty', label: 'Dienstplan' }],
+        apply: (d, mode) => ({ mode, title: d.title === (weekStart(d.mode as string) as { title: string }).title ? (weekStart(mode as string) as { title: string }).title : d.title }) },
+      { t: 'text', key: 'title', label: 'Überschrift' },
+      { t: 'choice', key: 'days', label: 'Tage', options: [{ value: 5, label: 'Montag bis Freitag' }, { value: 7, label: 'Ganze Woche' }], when: (d) => d.mode !== 'duty' },
+      { t: 'toggle', key: 'colors', label: 'Tage farbig (wie im Kalenderblatt)', when: (d) => d.mode !== 'duty' },
+      { t: 'days', key: 'plan', label: 'Was ist geplant?', days: WEEK_DAYS as unknown as string[], count: (d) => Number(d.days) || 7, what: 'Eintrag', max: 6, placeholder: 'z. B. Arbeit', textMax: 60, picture: true, extra: { key: 'time', label: 'Uhrzeit', placeholder: '8:00', max: 12 }, when: (d) => d.mode !== 'duty' },
+      { t: 'list', key: 'duties', label: 'Dienste', what: 'Dienst', max: 8, placeholder: 'z. B. Tisch decken', textMax: 60, picture: true, when: (d) => d.mode === 'duty' },
+      { t: 'lines', key: 'names', label: 'Namen', hint: 'Einer pro Zeile; gibt es mehr Namen als Dienste, steht unten, wer frei hat', max: 16, when: (d) => d.mode === 'duty' },
     ],
   },
   practice: {

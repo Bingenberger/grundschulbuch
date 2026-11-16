@@ -139,3 +139,49 @@ test('Formulare wie in der Vorlage: Vorlagen, neue Zeilen, Gefühle, Gespräch u
   expect(saved.find((e) => e.settings?.tool === 'traffic')?.settings?.werkzeug).toMatchObject({ green: 12 });
   expect(errors).toEqual([]);
 });
+
+test('Nähe und Distanz: Personen in Kreise legen bleibt gespeichert; Wochen- und Dienstplan', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  const id = await fresh(page, 'Kreise und Plan');
+
+  let dialog = await openBlock(page, 'Alltag', 'Nähe und Distanz: Kreise');
+  await dialog.getByRole('button', { name: '3 Kreise', exact: true }).click();
+  await expect(dialog.getByLabel(/^Kreis \d+$/)).toHaveCount(3);
+  await dialog.getByRole('button', { name: '＋ Person', exact: true }).click();
+  await dialog.getByLabel(/^Person \d+$/).last().fill('Oma');
+  await expect(dialog.locator('.tool-preview .lh-ct-circles svg')).toContainText('Oma');
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  const circles = page.locator('.interaction-surface .lh-wg-circles');
+  await circles.locator('svg [data-a="p:0"]').click();
+  // The legend box of the inner circle (the ring itself lies under the middle).
+  await circles.locator('svg [data-a="r:0"]').last().click();
+  await expect.poll(async () => ((await stateOf(page, id, 'circles'))?.rings as number[] | undefined)?.[0]).toBe(0);
+  // After reloading, the person is still in the inner circle (from the saved response).
+  await page.reload();
+  await expect(page.locator('.interaction-surface .lh-wg-circles svg')).toContainText('Oma');
+  expect(((await stateOf(page, id, 'circles'))?.rings as number[])[0]).toBe(0);
+  await page.locator('.interaction-surface .lh-wg-circles').evaluate((el) => el.closest('.page-element')?.remove());
+
+  dialog = await openBlock(page, 'Alltag', 'Wochenplan');
+  await dialog.getByRole('tab', { name: 'Mittwoch', exact: true }).click();
+  await expect(dialog.getByLabel('Eintrag 2', { exact: true })).toHaveValue('Wäsche waschen');
+  await dialog.getByRole('button', { name: '＋ Eintrag', exact: true }).click();
+  await dialog.getByLabel('Eintrag 3', { exact: true }).fill('Kino');
+  await dialog.getByLabel('Eintrag 3: Uhrzeit', { exact: true }).fill('19:00');
+  await dialog.getByRole('radio', { name: 'Montag bis Freitag', exact: true }).click();
+  await expect(dialog.getByRole('tab', { name: 'Samstag', exact: true })).toHaveCount(0);
+  await dialog.getByRole('radio', { name: 'Dienstplan', exact: true }).click();
+  await expect(dialog.getByLabel('Überschrift', { exact: true })).toHaveValue('Unser Dienstplan');
+  await expect(dialog.getByLabel('Namen', { exact: true })).toBeVisible();
+  await dialog.getByRole('radio', { name: 'Wochenplan', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(page.locator('.interaction-surface .lh-wg-week')).toHaveCount(1);
+  await expect(page.getByText('✓ Gespeichert', { exact: true })).toBeVisible();
+  const week = (await elements(page, id)).find((e) => e.settings?.tool === 'week')?.settings?.werkzeug as { days: number; plan: { text: string; time?: string }[][]; title: string };
+  expect(week.days).toBe(5);
+  expect(week.title).toBe('Mein Wochenplan');
+  expect(week.plan[2]).toContainEqual({ text: 'Kino', time: '19:00' });
+  expect(errors).toEqual([]);
+});
