@@ -1,7 +1,7 @@
 // The settings dialogs of the tools of Lernsachen-Heft 1.47.3, described as
 // fields for ToolForm: the same choices, texts and ready-made lists as in the
 // reference's dialogs.
-import type { ToolId } from '@/lib/learning/werkzeuge';
+import { SORT_COLORS, SORT_SETS, type ToolId } from '@/lib/learning/werkzeuge';
 import {
   CHECK_PRESETS, CIRCLE_COLORS, CIRCLE_RINGS, MOOD_FEELS, WEEK_DAYS, weekStart, moodPicture, PRACTICE_PARTNERS, PRACTICE_PRESETS, RATING_PRESETS, STEPS_PRESETS, STEPS_COLORS, STRESS_IDEAS,
 } from '@/lib/reference/tools-runtime';
@@ -133,6 +133,19 @@ export const TOOL_FORMS: Partial<Record<ToolId, ToolForm>> = {
       { t: 'list', key: 'people', label: 'Personen', what: 'Person', max: 16, text: 'name', textMax: 24, placeholder: 'z. B. Mama', picture: true, fresh: () => ({ name: '', ring: -1 }) },
       { t: 'button', label: 'Alle zurück an die Seite', apply: (d) => ({ people: ((d.people as Row[]) ?? []).map((p) => ({ ...p, ring: -1 })) }), disabled: (d) => !((d.people as Row[]) ?? []).some((p) => Number(p.ring ?? -1) >= 0) },
       { t: 'note', text: 'Echte Namen und Fotos nur, wenn das Heft nicht weitergegeben wird.' },
+    ],
+  },
+  sort: {
+    hint: (d) => (d.mode === 'quiz' ? 'Probier es aus: Tippe die richtige Antwort an. Nach zwei Fehlern wird die Lösung gezeigt.' : 'Probier es aus: Tippe auf den Kasten, in den die Karte gehört. Ein Tipp auf die Karte liest sie vor.'),
+    fields: [
+      { t: 'presets', label: 'Fertige Sets', options: SORT_SETS.map((set) => ({ label: set.label, apply: () => ({ title: set.title, mode: set.mode, ask: set.ask ?? 'Was ist das?', boxes: structuredClone(set.boxes), items: structuredClone(set.items) }) })) },
+      { t: 'choice', key: 'mode', label: 'Art', options: [{ value: 'sort', label: 'In Kästen sortieren' }, { value: 'quiz', label: 'Quiz: Bild und drei Antworten' }],
+        apply: (d, mode) => ({ mode, ...(mode === 'sort' && ((d.boxes as Row[]) ?? []).length < 2 ? { boxes: [{ label: 'Kasten 1', color: SORT_COLORS[0] }, { label: 'Kasten 2', color: SORT_COLORS[3] }] } : {}) }) },
+      { t: 'text', key: 'title', label: 'Überschrift' },
+      { t: 'text', key: 'ask', label: 'Frage', placeholder: 'Was bedeutet das?', when: (d) => d.mode === 'quiz' },
+      { t: 'list', key: 'boxes', label: 'Kästen', what: 'Kasten', min: 2, max: 4, text: 'label', textMax: 30, color: { key: 'color', colors: SORT_COLORS }, fresh: (rows) => ({ label: `Kasten ${rows.length + 1}`, color: SORT_COLORS[(rows.length * 3) % SORT_COLORS.length] }), when: (d) => d.mode !== 'quiz' },
+      { t: 'list', key: 'items', label: 'Karten', what: 'Karte', max: 24, placeholder: 'z. B. Apfel (im Quiz: die richtige Antwort)', textMax: 60, picture: true, fresh: () => ({ text: '', box: 0 }),
+        choice: { key: 'box', label: 'Kasten', options: (d) => (d.mode === 'quiz' ? [] : ((d.boxes as Row[]) ?? []).map((b, i) => ({ value: i, label: String(b.label || `Kasten ${i + 1}`) }))) } },
     ],
   },
   week: {

@@ -4,13 +4,14 @@
 // stores it (settings.werkzeug); what is tapped and kept (counts, ticks, …)
 // goes into the response, tied to the configuration it belongs to.
 import presetData from './werkzeug-presets.json';
+import sortData from './sort-sets.json';
 import { TOOL_REGISTRY } from '../reference/tools-runtime';
 import { uuid, type PageElement } from '../notebook-model';
 import { referenceElement } from './page-designs';
 import type { JsonValue, LearningSettings } from './catalog';
 
 /** Tools available as “werkzeug” (Hör-Memory has its own kind “hoeren”). */
-export const TOOL_IDS = ['tally', 'spin', 'seek', 'pattern', 'mood', 'vote', 'rating', 'check', 'stress', 'steps', 'traffic', 'pieces', 'body', 'timeline', 'phone', 'practice', 'circles', 'week'] as const;
+export const TOOL_IDS = ['tally', 'spin', 'seek', 'pattern', 'mood', 'vote', 'rating', 'check', 'stress', 'steps', 'traffic', 'pieces', 'body', 'timeline', 'phone', 'practice', 'circles', 'week', 'sort'] as const;
 export type ToolId = (typeof TOOL_IDS)[number];
 type ToolSpec = {
   kind: string;
@@ -32,16 +33,25 @@ export const TOOL_TITLES: Record<ToolId, string> = {
   mood: 'Wie geht es dir heute?', vote: 'Abstimmung und Wahl', rating: 'Selbst- und Fremdeinschätzung', check: 'Checkliste',
   stress: 'Stressbarometer', steps: 'Ablaufplan', traffic: 'Fußgängerampel', pieces: 'Stückzähler', body: 'Wo tut es weh?',
   timeline: 'Zeitleiste', phone: 'Telefonieren üben', practice: 'Gespräche üben',
-  circles: 'Nähe und Distanz', week: 'Wochenplan',
+  circles: 'Nähe und Distanz', week: 'Wochenplan', sort: 'Sortieren',
 };
 export const isTool = (v: unknown): v is ToolId => typeof v === 'string' && (TOOL_IDS as readonly string[]).includes(v);
 
 type PresetItem = Record<string, unknown> & { type: string; kind?: string; x: number; y: number; w: number; h: number };
 export type ToolPreset = { id: string; title: string; group: string; items: PresetItem[] };
-export const TOOL_PRESETS = presetData as unknown as ToolPreset[];
+/** Ready-made sets of Sortieren and Bild-Quiz (with their pictures). */
+export const SORT_SETS = sortData.sets;
+export const SORT_COLORS = sortData.colors;
+/** The catalogue starts Sortieren with the Ernährungsampel and the Bild-Quiz with the signs (as the reference). */
+const SORT_START: Record<string, string> = { sort: 'food', 'sort-quiz': 'signs-quiz' };
+export const TOOL_PRESETS = (presetData as unknown as ToolPreset[]).map((p) => {
+  const set = SORT_SETS.find((s) => s.id === SORT_START[p.id]);
+  return set ? { ...p, items: p.items.map((i) => (i.kind === 'sort' ? { ...i, sort: { title: set.title, mode: set.mode, ask: set.ask ?? 'Was ist das?', boxes: set.boxes, items: set.items } } : i)) } : p;
+});
 
-/** Own pictures and sounds are media addresses of the school server. */
-const media = (v: unknown) => (typeof v === 'string' && /^\/api\/medien\/[\w./-]+$/.test(v) ? v : undefined);
+/** Own pictures and sounds are media addresses of the school server; the pictures of the
+ *  ready-made sort sets ship with the app (public/sortieren). */
+const media = (v: unknown) => (typeof v === 'string' && (/^\/api\/medien\/[\w./-]+$/.test(v) || /^\/sortieren\/[\w-]+\.(webp|svg)$/.test(v)) ? v : undefined);
 
 /** Cleaned configuration, with the reference's own rules. */
 export function toolConfig(tool: ToolId, raw: unknown) {

@@ -185,3 +185,35 @@ test('Nähe und Distanz: Personen in Kreise legen bleibt gespeichert; Wochen- un
   expect(week.plan[2]).toContainEqual({ text: 'Kino', time: '19:00' });
   expect(errors).toEqual([]);
 });
+
+test('Sortieren und Bild-Quiz: fertige Sets mit mitgelieferten Bildern', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  await fresh(page, 'Sortieren');
+  let dialog = await openBlock(page, 'Alltag', 'Sortieren');
+  // Starts with the Ernährungsampel of the reference, with its pictures.
+  await expect(dialog.getByLabel('Überschrift', { exact: true })).toHaveValue('Wie oft essen?');
+  await expect(dialog.getByRole('img', { name: 'Bild: Karte 1', exact: true })).toHaveAttribute('src', '/sortieren/2462.webp');
+  await dialog.getByRole('button', { name: 'Mülltrennung', exact: true }).click();
+  await expect(dialog.getByLabel(/^Kasten \d+$/)).toHaveCount(4);
+  await dialog.getByRole('button', { name: 'Karte 1: Kasten Bio', exact: true }).click();
+  await expect(dialog.getByRole('button', { name: 'Karte 1: Kasten Bio', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(dialog.locator('.tool-preview .lh-ct-sort svg')).toContainText('In welche Tonne?');
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  const sort = page.locator('.interaction-surface .lh-wg-sort');
+  await expect(sort.locator('svg')).toContainText('In welche Tonne?');
+  await expect(sort.locator('img.lh-ls-pic').first()).toHaveJSProperty('complete', true);
+  expect(await sort.locator('img.lh-ls-pic').first().evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+  await sort.locator('svg [data-a^="b:"]').first().click();
+  await sort.evaluate((el) => el.closest('.page-element')?.remove());
+
+  dialog = await openBlock(page, 'Beruf & Praktikum', 'Bild-Quiz: Was bedeutet das?');
+  await expect(dialog.getByLabel('Frage', { exact: true })).toHaveValue('Was bedeutet das Schild?');
+  await expect(dialog.getByRole('img', { name: 'Bild: Karte 1', exact: true })).toHaveAttribute('src', /^\/sortieren\/sign-[\w-]+\.svg$/);
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  const quiz = page.locator('.interaction-surface .lh-wg-sort');
+  await expect(quiz.locator('svg [data-a^="a:"]')).toHaveCount(3);
+  await page.screenshot({ path: test.info().outputPath('bild-quiz.png') });
+  expect(errors).toEqual([]);
+});

@@ -19,7 +19,7 @@ ihre Urheber werden hier genannt.
     - Zeichnungen der Stickerbibliothek (`src/lib/sheets/letter-pictures.json`).
     - Laut- und Silbenaufnahmen (`public/laute/`, `src/lib/reference/recordings.json`).
   - **Unverändert übernommen (Regal › Zeit):** Uhr, Timer, Datum, Multi-Timer, Lärmampel, Applausometer, Bilder-Stundenplan, Karte, Sprechtaste, Satzleiste und die Kommunikationstafeln, Elevator Pitch, Diaschau, Animation, Das sprechende Kalenderblatt mit seinen Zeichnungen (`public/kalender/`; `src/lib/reference/class-runtime.ts`, erzeugt von `scripts/extract-class-reference.mjs`); das Wetter kommt von Open-Meteo.com (Daten CC BY 4.0) über den Schulserver.
-  - **Unverändert übernommen aus Version 1.47.3:** Strichliste und Diagramm, Glücksrad und Würfel, Suchbild, Muster fortsetzen, Hör-Memory und Was hörst du?, die Werkzeuge für Alltag, Beruf & Praktikum und Klassenführung (Ablaufplan, Checkliste, Stressbarometer, Fußgängerampel, Telefon und Notruf, Körperbild, Einschätzung, Stückzähler, Gespräche üben, Gefühle, Abstimmung, Zeitleiste) mit ihren Vorlagenlisten mit ihren eingebauten Geräuschen und Instrumentenklängen (`src/lib/reference/tools-runtime.ts`, erzeugt von `scripts/extract-tools-reference.mjs`); die sechs neuen Kommunikationstafeln mit 69 weiteren ARASAAC-Bildern (`public/uk/`).
+  - **Unverändert übernommen aus Version 1.47.3:** Strichliste und Diagramm, Glücksrad und Würfel, Suchbild, Muster fortsetzen, Hör-Memory und Was hörst du?, die Werkzeuge für Alltag, Beruf & Praktikum und Klassenführung (Sortieren und Bild-Quiz mit ihren fertigen Sets, Nähe und Distanz, Wochen- und Dienstplan, Ablaufplan, Checkliste, Stressbarometer, Fußgängerampel, Telefon und Notruf, Körperbild, Einschätzung, Stückzähler, Gespräche üben, Gefühle, Abstimmung, Zeitleiste) mit ihren Vorlagenlisten mit ihren eingebauten Geräuschen und Instrumentenklängen (`src/lib/reference/tools-runtime.ts`, erzeugt von `scripts/extract-tools-reference.mjs`); die sechs neuen Kommunikationstafeln mit 69 weiteren ARASAAC-Bildern (`public/uk/`).
   - **Nachgebaut:** Gliederung und Abläufe weiterer Lernwerkzeuge, u. a. Einkaufen an der Kasse, Rechnen mit dem Taschenrechner und Mathe-Werkzeuge. Auch die Idee des digitalen Heftes stammt von hier.
   - **Originalgestaltung in bearbeitbare Elemente umgewandelt:** 84 statische Seitenvorlagen einschließlich ihrer Texte, Bildplatzhalter, Vorlesetasten und 2506 Vektor- und Rahmenbestandteile (`src/lib/reference/page-templates.json`, `template-vectors.json`). Enthält 18 neue Entwürfe aus Version 1.47.3 (Schülerzeitung, Praktikumsseiten, Lerntagebuch, Stundenplan, Kunstbetrachtung); das alte Lerntagebuch bleibt intern erhalten. Erzeugung aus `Lernsachen-Heft-komplett.html`: `scripts/extract-page-templates.mjs`; Anpassung an das Elementmodell des Grundschulbuchs: `src/lib/learning/page-designs.ts`.
 
@@ -61,7 +61,8 @@ Dateiköpfen aus den veröffentlichten Apps gewonnen.
 - Verwendet: Bilder der Anlaut-Tastatur (`public/anlaut/`), Anlaut- und
   Mengenbilder (`public/bilder/`), Geld und Waren der Kasse (`public/kasse/`),
   Fächer des Bilder-Stundenplans (`public/stundenplan/`), Kommunikationstafeln
-  (`public/uk/`).
+  (`public/uk/`), fertige Sets von Sortieren und Bild-Quiz (`public/sortieren/*.webp`;
+  die Schilder und Wäschezeichen dort zeichnet Lernsachen-Heft selbst als SVG).
   Bilder, die zur Laufzeit über die Bildsuche geladen werden, erhalten ihren
   Bildnachweis automatisch.
 

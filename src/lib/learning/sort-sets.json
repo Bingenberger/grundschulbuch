@@ -1,0 +1,1084 @@
+{
+ "colors": [
+  "#2f9e44",
+  "#f59f00",
+  "#e03131",
+  "#1c7ed6",
+  "#7048e8",
+  "#495057",
+  "#8d5524",
+  "#15aabf"
+ ],
+ "sets": [
+  {
+   "id": "food",
+   "label": "Ernährungsampel",
+   "title": "Wie oft essen?",
+   "mode": "sort",
+   "boxes": [
+    {
+     "label": "oft",
+     "color": "#2f9e44"
+    },
+    {
+     "label": "manchmal",
+     "color": "#f59f00"
+    },
+    {
+     "label": "selten",
+     "color": "#e03131"
+    }
+   ],
+   "items": [
+    {
+     "text": "Apfel",
+     "box": 0,
+     "img": "/sortieren/2462.webp"
+    },
+    {
+     "text": "Banane",
+     "box": 0,
+     "img": "/sortieren/2530.webp"
+    },
+    {
+     "text": "Karotte",
+     "box": 0,
+     "img": "/sortieren/2619.webp"
+    },
+    {
+     "text": "Gurke",
+     "box": 0,
+     "img": "/sortieren/2847.webp"
+    },
+    {
+     "text": "Tomate",
+     "box": 0,
+     "img": "/sortieren/2594.webp"
+    },
+    {
+     "text": "Wasser",
+     "box": 0,
+     "img": "/sortieren/2248.webp"
+    },
+    {
+     "text": "Vollkornbrot",
+     "box": 0,
+     "img": "/sortieren/38723.webp"
+    },
+    {
+     "text": "Käse",
+     "box": 1,
+     "img": "/sortieren/2541.webp"
+    },
+    {
+     "text": "Nudeln",
+     "box": 1,
+     "img": "/sortieren/8652.webp"
+    },
+    {
+     "text": "Reis",
+     "box": 1,
+     "img": "/sortieren/39387.webp"
+    },
+    {
+     "text": "Ei",
+     "box": 1,
+     "img": "/sortieren/2427.webp"
+    },
+    {
+     "text": "Fleisch",
+     "box": 1,
+     "img": "/sortieren/2316.webp"
+    },
+    {
+     "text": "Wurst",
+     "box": 1,
+     "img": "/sortieren/8554.webp"
+    },
+    {
+     "text": "Schokolade",
+     "box": 2,
+     "img": "/sortieren/25940.webp"
+    },
+    {
+     "text": "Chips",
+     "box": 2,
+     "img": "/sortieren/5400.webp"
+    },
+    {
+     "text": "Cola",
+     "box": 2,
+     "img": "/sortieren/2338.webp"
+    },
+    {
+     "text": "Gummibärchen",
+     "box": 2,
+     "img": "/sortieren/22182.webp"
+    },
+    {
+     "text": "Pommes",
+     "box": 2,
+     "img": "/sortieren/2505.webp"
+    },
+    {
+     "text": "Kuchen",
+     "box": 2,
+     "img": "/sortieren/2502.webp"
+    }
+   ]
+  },
+  {
+   "id": "waste",
+   "label": "Mülltrennung",
+   "title": "In welche Tonne?",
+   "mode": "sort",
+   "boxes": [
+    {
+     "label": "Papier",
+     "color": "#1c7ed6"
+    },
+    {
+     "label": "Verpackung",
+     "color": "#fab005"
+    },
+    {
+     "label": "Bio",
+     "color": "#8d5524"
+    },
+    {
+     "label": "Restmüll",
+     "color": "#495057"
+    }
+   ],
+   "items": [
+    {
+     "text": "Zeitung",
+     "box": 0,
+     "img": "/sortieren/7784.webp"
+    },
+    {
+     "text": "Eierkarton",
+     "box": 0,
+     "img": "/sortieren/27836.webp"
+    },
+    {
+     "text": "Papiertüte",
+     "box": 0,
+     "img": "/sortieren/23849.webp"
+    },
+    {
+     "text": "Joghurtbecher",
+     "box": 1,
+     "img": "/sortieren/2618.webp"
+    },
+    {
+     "text": "Getränkedose",
+     "box": 1,
+     "img": "/sortieren/6545.webp"
+    },
+    {
+     "text": "Konservendose",
+     "box": 1,
+     "img": "/sortieren/6544.webp"
+    },
+    {
+     "text": "Chipstüte",
+     "box": 1,
+     "img": "/sortieren/5400.webp"
+    },
+    {
+     "text": "Bananenschale",
+     "box": 2,
+     "img": "/sortieren/17292.webp"
+    },
+    {
+     "text": "Eierschalen",
+     "box": 2,
+     "img": "/sortieren/6966.webp"
+    },
+    {
+     "text": "Kaffeesatz",
+     "box": 2,
+     "img": "/sortieren/24479.webp"
+    },
+    {
+     "text": "Teebeutel",
+     "box": 2,
+     "img": "/sortieren/2429.webp"
+    },
+    {
+     "text": "Windel",
+     "box": 3,
+     "img": "/sortieren/22017.webp"
+    },
+    {
+     "text": "Taschentuch",
+     "box": 3,
+     "img": "/sortieren/17284.webp"
+    },
+    {
+     "text": "Staubsaugerbeutel",
+     "box": 3,
+     "img": "/sortieren/3227.webp"
+    }
+   ]
+  },
+  {
+   "id": "store",
+   "label": "Vorräte lagern",
+   "title": "Wohin damit?",
+   "mode": "sort",
+   "boxes": [
+    {
+     "label": "Kühlschrank",
+     "color": "#1c7ed6"
+    },
+    {
+     "label": "Gefrierfach",
+     "color": "#15aabf"
+    },
+    {
+     "label": "Vorratsschrank",
+     "color": "#a0522d"
+    }
+   ],
+   "items": [
+    {
+     "text": "Milch",
+     "box": 0,
+     "img": "/sortieren/2445.webp"
+    },
+    {
+     "text": "Butter",
+     "box": 0,
+     "img": "/sortieren/2461.webp"
+    },
+    {
+     "text": "Joghurt",
+     "box": 0,
+     "img": "/sortieren/2618.webp"
+    },
+    {
+     "text": "Käse",
+     "box": 0,
+     "img": "/sortieren/2541.webp"
+    },
+    {
+     "text": "Wurst",
+     "box": 0,
+     "img": "/sortieren/8554.webp"
+    },
+    {
+     "text": "Eis",
+     "box": 1,
+     "img": "/sortieren/35209.webp"
+    },
+    {
+     "text": "Eiswürfel",
+     "box": 1,
+     "img": "/sortieren/7128.webp"
+    },
+    {
+     "text": "Fischstäbchen",
+     "box": 1,
+     "img": "/sortieren/6653.webp"
+    },
+    {
+     "text": "Tiefkühlpizza",
+     "box": 1,
+     "img": "/sortieren/2527.webp"
+    },
+    {
+     "text": "Nudeln",
+     "box": 2,
+     "img": "/sortieren/8652.webp"
+    },
+    {
+     "text": "Reis",
+     "box": 2,
+     "img": "/sortieren/39387.webp"
+    },
+    {
+     "text": "Mehl",
+     "box": 2,
+     "img": "/sortieren/8600.webp"
+    },
+    {
+     "text": "Zucker",
+     "box": 2,
+     "img": "/sortieren/25560.webp"
+    },
+    {
+     "text": "Konservendose",
+     "box": 2,
+     "img": "/sortieren/6544.webp"
+    }
+   ]
+  },
+  {
+   "id": "laundry",
+   "label": "Wäsche sortieren",
+   "title": "Welcher Wäschekorb?",
+   "mode": "sort",
+   "boxes": [
+    {
+     "label": "Weißwäsche 60 °C",
+     "color": "#adb5bd"
+    },
+    {
+     "label": "Buntwäsche 40 °C",
+     "color": "#e8590c"
+    },
+    {
+     "label": "Wolle / Handwäsche",
+     "color": "#7048e8"
+    }
+   ],
+   "items": [
+    {
+     "text": "weißes T-Shirt",
+     "box": 0,
+     "img": "/sortieren/sortpic-e5sm1u.svg"
+    },
+    {
+     "text": "weiße Socken",
+     "box": 0,
+     "img": "/sortieren/sortpic-yr0kv.svg"
+    },
+    {
+     "text": "weißes Handtuch",
+     "box": 0,
+     "img": "/sortieren/sortpic-15jk6gu.svg"
+    },
+    {
+     "text": "rotes T-Shirt",
+     "box": 1,
+     "img": "/sortieren/sortpic-vn97bv.svg"
+    },
+    {
+     "text": "Jeans",
+     "box": 1,
+     "img": "/sortieren/sortpic-1h7lcj4.svg"
+    },
+    {
+     "text": "blaue Socken",
+     "box": 1,
+     "img": "/sortieren/sortpic-9ff3b1.svg"
+    },
+    {
+     "text": "grünes Handtuch",
+     "box": 1,
+     "img": "/sortieren/sortpic-13qx0am.svg"
+    },
+    {
+     "text": "Wollpullover",
+     "box": 2,
+     "img": "/sortieren/sortpic-5ssgn2.svg"
+    },
+    {
+     "text": "Wollsocken",
+     "box": 2,
+     "img": "/sortieren/sortpic-1361rs3.svg"
+    },
+    {
+     "text": "Wollschal",
+     "box": 2,
+     "img": "/sortieren/sortpic-1b5ha9j.svg"
+    }
+   ]
+  },
+  {
+   "id": "polite",
+   "label": "Sie oder du?",
+   "title": "Sage ich „Sie“ oder „du“?",
+   "mode": "sort",
+   "boxes": [
+    {
+     "label": "Sie",
+     "color": "#2b6cb0"
+    },
+    {
+     "label": "du",
+     "color": "#e8590c"
+    }
+   ],
+   "items": [
+    {
+     "text": "Chef",
+     "box": 0,
+     "img": "/sortieren/4631.webp"
+    },
+    {
+     "text": "Ärztin",
+     "box": 0,
+     "img": "/sortieren/8263.webp"
+    },
+    {
+     "text": "Busfahrer",
+     "box": 0,
+     "img": "/sortieren/38086.webp"
+    },
+    {
+     "text": "Polizist",
+     "box": 0,
+     "img": "/sortieren/37367.webp"
+    },
+    {
+     "text": "Verkäuferin",
+     "box": 0,
+     "img": "/sortieren/3001.webp"
+    },
+    {
+     "text": "Kellner",
+     "box": 0,
+     "img": "/sortieren/2681.webp"
+    },
+    {
+     "text": "Nachbarin",
+     "box": 0,
+     "img": "/sortieren/26529.webp"
+    },
+    {
+     "text": "Mama",
+     "box": 1,
+     "img": "/sortieren/2458.webp"
+    },
+    {
+     "text": "Oma",
+     "box": 1,
+     "img": "/sortieren/23710.webp"
+    },
+    {
+     "text": "Bruder",
+     "box": 1,
+     "img": "/sortieren/2423.webp"
+    },
+    {
+     "text": "Schwester",
+     "box": 1,
+     "img": "/sortieren/2422.webp"
+    },
+    {
+     "text": "Mitschüler",
+     "box": 1,
+     "img": "/sortieren/7063.webp"
+    },
+    {
+     "text": "Baby",
+     "box": 1,
+     "img": "/sortieren/6060.webp"
+    }
+   ]
+  },
+  {
+   "id": "edible",
+   "label": "Essbar?",
+   "title": "Kann man das essen?",
+   "mode": "sort",
+   "boxes": [
+    {
+     "label": "essbar",
+     "color": "#2f9e44"
+    },
+    {
+     "label": "nicht essbar",
+     "color": "#e03131"
+    }
+   ],
+   "items": [
+    {
+     "text": "Apfel",
+     "box": 0,
+     "img": "/sortieren/2462.webp"
+    },
+    {
+     "text": "Brot",
+     "box": 0,
+     "img": "/sortieren/2494.webp"
+    },
+    {
+     "text": "Banane",
+     "box": 0,
+     "img": "/sortieren/2530.webp"
+    },
+    {
+     "text": "Karotte",
+     "box": 0,
+     "img": "/sortieren/2619.webp"
+    },
+    {
+     "text": "Käse",
+     "box": 0,
+     "img": "/sortieren/2541.webp"
+    },
+    {
+     "text": "Gurke",
+     "box": 0,
+     "img": "/sortieren/2847.webp"
+    },
+    {
+     "text": "Ei",
+     "box": 0,
+     "img": "/sortieren/2427.webp"
+    },
+    {
+     "text": "Seife",
+     "box": 1,
+     "img": "/sortieren/2964.webp"
+    },
+    {
+     "text": "Knete",
+     "box": 1,
+     "img": "/sortieren/2529.webp"
+    },
+    {
+     "text": "Spülmittel",
+     "box": 1,
+     "img": "/sortieren/7143.webp"
+    },
+    {
+     "text": "Waschmittel",
+     "box": 1,
+     "img": "/sortieren/7021.webp"
+    },
+    {
+     "text": "Kerze",
+     "box": 1,
+     "img": "/sortieren/6242.webp"
+    },
+    {
+     "text": "Schwamm",
+     "box": 1,
+     "img": "/sortieren/2749.webp"
+    },
+    {
+     "text": "Kleber",
+     "box": 1,
+     "img": "/sortieren/2510.webp"
+    },
+    {
+     "text": "Batterie",
+     "box": 1,
+     "img": "/sortieren/8320.webp"
+    },
+    {
+     "text": "Murmel",
+     "box": 1,
+     "img": "/sortieren/36507.webp"
+    },
+    {
+     "text": "Stein",
+     "box": 1,
+     "img": "/sortieren/6594.webp"
+    }
+   ]
+  },
+  {
+   "id": "luck",
+   "label": "Glück haben – glücklich sein",
+   "title": "Glück haben oder glücklich sein?",
+   "mode": "sort",
+   "boxes": [
+    {
+     "label": "Glück haben",
+     "color": "#f59f00"
+    },
+    {
+     "label": "glücklich sein",
+     "color": "#e64980"
+    }
+   ],
+   "items": [
+    {
+     "text": "den Schlüssel wiederfinden",
+     "box": 0,
+     "img": "/sortieren/2451.webp"
+    },
+    {
+     "text": "eine Sechs würfeln",
+     "box": 0,
+     "img": "/sortieren/2731.webp"
+    },
+    {
+     "text": "beim Losen gewinnen",
+     "box": 0,
+     "img": "/sortieren/8699.webp"
+    },
+    {
+     "text": "den Bus noch erwischen",
+     "box": 0,
+     "img": "/sortieren/2263.webp"
+    },
+    {
+     "text": "Geld finden",
+     "box": 0,
+     "img": "/sortieren/4630.webp"
+    },
+    {
+     "text": "mit Freunden spielen",
+     "box": 1,
+     "img": "/sortieren/2439.webp"
+    },
+    {
+     "text": "Geburtstag feiern",
+     "box": 1,
+     "img": "/sortieren/3087.webp"
+    },
+    {
+     "text": "umarmt werden",
+     "box": 1,
+     "img": "/sortieren/6023.webp"
+    },
+    {
+     "text": "Lieblingsmusik hören",
+     "box": 1,
+     "img": "/sortieren/2746.webp"
+    },
+    {
+     "text": "ein Geschenk bekommen",
+     "box": 1,
+     "img": "/sortieren/3149.webp"
+    }
+   ]
+  },
+  {
+   "id": "wishes",
+   "label": "Wünsche: kaufen?",
+   "title": "Kann man das kaufen?",
+   "mode": "sort",
+   "boxes": [
+    {
+     "label": "kann man kaufen",
+     "color": "#1c7ed6"
+    },
+    {
+     "label": "kann man nicht kaufen",
+     "color": "#7048e8"
+    }
+   ],
+   "items": [
+    {
+     "text": "Fahrrad",
+     "box": 0,
+     "img": "/sortieren/2277.webp"
+    },
+    {
+     "text": "Handy",
+     "box": 0,
+     "img": "/sortieren/2586.webp"
+    },
+    {
+     "text": "Schuhe",
+     "box": 0,
+     "img": "/sortieren/2622.webp"
+    },
+    {
+     "text": "Eis",
+     "box": 0,
+     "img": "/sortieren/35209.webp"
+    },
+    {
+     "text": "Kino",
+     "box": 0,
+     "img": "/sortieren/4602.webp"
+    },
+    {
+     "text": "Computerspiel",
+     "box": 0,
+     "img": "/sortieren/2354.webp"
+    },
+    {
+     "text": "Freundschaft",
+     "box": 1,
+     "img": "/sortieren/8488.webp"
+    },
+    {
+     "text": "Gesundheit",
+     "box": 1,
+     "img": "/sortieren/36591.webp"
+    },
+    {
+     "text": "Liebe",
+     "box": 1,
+     "img": "/sortieren/8020.webp"
+    },
+    {
+     "text": "Familie",
+     "box": 1,
+     "img": "/sortieren/2392.webp"
+    },
+    {
+     "text": "Vertrauen",
+     "box": 1,
+     "img": "/sortieren/36695.webp"
+    }
+   ]
+  },
+  {
+   "id": "signs",
+   "label": "Schilder sortieren",
+   "title": "Was für ein Schild ist das?",
+   "mode": "sort",
+   "boxes": [
+    {
+     "label": "Gebot (blau)",
+     "color": "#1864ab"
+    },
+    {
+     "label": "Verbot (rot)",
+     "color": "#e03131"
+    },
+    {
+     "label": "Warnung (gelb)",
+     "color": "#f59f00"
+    },
+    {
+     "label": "Rettung (grün)",
+     "color": "#2b8a3e"
+    }
+   ],
+   "items": [
+    {
+     "text": "Gehörschutz benutzen",
+     "box": 0,
+     "img": "/sortieren/sign-ear.svg"
+    },
+    {
+     "text": "Schutzbrille benutzen",
+     "box": 0,
+     "img": "/sortieren/sign-goggles.svg"
+    },
+    {
+     "text": "Handschutz benutzen",
+     "box": 0,
+     "img": "/sortieren/sign-gloves.svg"
+    },
+    {
+     "text": "Sicherheitsschuhe tragen",
+     "box": 0,
+     "img": "/sortieren/sign-boots.svg"
+    },
+    {
+     "text": "Zutritt verboten",
+     "box": 1,
+     "img": "/sortieren/sign-no-access.svg"
+    },
+    {
+     "text": "Berühren verboten",
+     "box": 1,
+     "img": "/sortieren/sign-no-touch.svg"
+    },
+    {
+     "text": "Essen und Trinken verboten",
+     "box": 1,
+     "img": "/sortieren/sign-no-food.svg"
+    },
+    {
+     "text": "Rauchen verboten",
+     "box": 1,
+     "img": "/sortieren/sign-no-smoking.svg"
+    },
+    {
+     "text": "Warnung vor einer Gefahrenstelle",
+     "box": 2,
+     "img": "/sortieren/sign-warn.svg"
+    },
+    {
+     "text": "Warnung vor elektrischer Spannung",
+     "box": 2,
+     "img": "/sortieren/sign-warn-power.svg"
+    },
+    {
+     "text": "Warnung vor heißer Oberfläche",
+     "box": 2,
+     "img": "/sortieren/sign-warn-hot.svg"
+    },
+    {
+     "text": "Warnung vor Rutschgefahr",
+     "box": 2,
+     "img": "/sortieren/sign-warn-slip.svg"
+    },
+    {
+     "text": "Notausgang",
+     "box": 3,
+     "img": "/sortieren/sign-exit.svg"
+    },
+    {
+     "text": "Erste Hilfe",
+     "box": 3,
+     "img": "/sortieren/sign-first-aid.svg"
+    },
+    {
+     "text": "Sammelstelle",
+     "box": 3,
+     "img": "/sortieren/sign-assembly.svg"
+    }
+   ]
+  },
+  {
+   "id": "signs-quiz",
+   "label": "Quiz: Schilder",
+   "title": "Was bedeutet das Schild?",
+   "mode": "quiz",
+   "ask": "Was bedeutet das Schild?",
+   "boxes": [],
+   "items": [
+    {
+     "text": "Gehörschutz benutzen",
+     "box": 0,
+     "img": "/sortieren/sign-ear.svg"
+    },
+    {
+     "text": "Schutzbrille benutzen",
+     "box": 0,
+     "img": "/sortieren/sign-goggles.svg"
+    },
+    {
+     "text": "Handschutz benutzen",
+     "box": 0,
+     "img": "/sortieren/sign-gloves.svg"
+    },
+    {
+     "text": "Sicherheitsschuhe tragen",
+     "box": 0,
+     "img": "/sortieren/sign-boots.svg"
+    },
+    {
+     "text": "Zutritt verboten",
+     "box": 0,
+     "img": "/sortieren/sign-no-access.svg"
+    },
+    {
+     "text": "Berühren verboten",
+     "box": 0,
+     "img": "/sortieren/sign-no-touch.svg"
+    },
+    {
+     "text": "Essen und Trinken verboten",
+     "box": 0,
+     "img": "/sortieren/sign-no-food.svg"
+    },
+    {
+     "text": "Rauchen verboten",
+     "box": 0,
+     "img": "/sortieren/sign-no-smoking.svg"
+    },
+    {
+     "text": "Handy aus",
+     "box": 0,
+     "img": "/sortieren/sign-no-phone.svg"
+    },
+    {
+     "text": "Warnung vor elektrischer Spannung",
+     "box": 0,
+     "img": "/sortieren/sign-warn-power.svg"
+    },
+    {
+     "text": "Warnung vor heißer Oberfläche",
+     "box": 0,
+     "img": "/sortieren/sign-warn-hot.svg"
+    },
+    {
+     "text": "Warnung vor Rutschgefahr",
+     "box": 0,
+     "img": "/sortieren/sign-warn-slip.svg"
+    },
+    {
+     "text": "Warnung vor Schnittverletzungen",
+     "box": 0,
+     "img": "/sortieren/sign-warn-cut.svg"
+    },
+    {
+     "text": "Notausgang",
+     "box": 0,
+     "img": "/sortieren/sign-exit.svg"
+    },
+    {
+     "text": "Erste Hilfe",
+     "box": 0,
+     "img": "/sortieren/sign-first-aid.svg"
+    },
+    {
+     "text": "Feuerlöscher",
+     "box": 0,
+     "img": "/sortieren/sign-extinguisher.svg"
+    },
+    {
+     "text": "Sammelstelle",
+     "box": 0,
+     "img": "/sortieren/sign-assembly.svg"
+    },
+    {
+     "text": "Gefahrstoff: entzündbar",
+     "box": 0,
+     "img": "/sortieren/sign-ghs-flame.svg"
+    },
+    {
+     "text": "Gefahrstoff: ätzend",
+     "box": 0,
+     "img": "/sortieren/sign-ghs-corrosive.svg"
+    },
+    {
+     "text": "Gefahrstoff: giftig",
+     "box": 0,
+     "img": "/sortieren/sign-ghs-toxic.svg"
+    }
+   ]
+  },
+  {
+   "id": "care-quiz",
+   "label": "Quiz: Wäsche-Symbole",
+   "title": "Was bedeutet das Zeichen?",
+   "mode": "quiz",
+   "ask": "Was bedeutet das Zeichen im Kleidungsstück?",
+   "boxes": [],
+   "items": [
+    {
+     "text": "Waschen bei 30 Grad",
+     "box": 0,
+     "img": "/sortieren/sign-care-30.svg"
+    },
+    {
+     "text": "Waschen bei 40 Grad",
+     "box": 0,
+     "img": "/sortieren/sign-care-40.svg"
+    },
+    {
+     "text": "Waschen bei 60 Grad",
+     "box": 0,
+     "img": "/sortieren/sign-care-60.svg"
+    },
+    {
+     "text": "Handwäsche",
+     "box": 0,
+     "img": "/sortieren/sign-care-hand.svg"
+    },
+    {
+     "text": "Nicht waschen",
+     "box": 0,
+     "img": "/sortieren/sign-care-nowash.svg"
+    },
+    {
+     "text": "Bügeln mit wenig Hitze",
+     "box": 0,
+     "img": "/sortieren/sign-care-iron1.svg"
+    },
+    {
+     "text": "Bügeln mit mittlerer Hitze",
+     "box": 0,
+     "img": "/sortieren/sign-care-iron2.svg"
+    },
+    {
+     "text": "Bügeln mit viel Hitze",
+     "box": 0,
+     "img": "/sortieren/sign-care-iron3.svg"
+    },
+    {
+     "text": "Nicht bügeln",
+     "box": 0,
+     "img": "/sortieren/sign-care-noiron.svg"
+    },
+    {
+     "text": "Trockner erlaubt",
+     "box": 0,
+     "img": "/sortieren/sign-care-dryer.svg"
+    },
+    {
+     "text": "Nicht in den Trockner",
+     "box": 0,
+     "img": "/sortieren/sign-care-nodryer.svg"
+    },
+    {
+     "text": "Nicht bleichen",
+     "box": 0,
+     "img": "/sortieren/sign-care-nobleach.svg"
+    }
+   ]
+  },
+  {
+   "id": "tools-quiz",
+   "label": "Quiz: Werkzeuge",
+   "title": "Wie heißt das Werkzeug?",
+   "mode": "quiz",
+   "ask": "Wie heißt das?",
+   "boxes": [],
+   "items": [
+    {
+     "text": "Hammer",
+     "box": 0,
+     "img": "/sortieren/2922.webp"
+    },
+    {
+     "text": "Säge",
+     "box": 0,
+     "img": "/sortieren/2799.webp"
+    },
+    {
+     "text": "Schraubenzieher",
+     "box": 0,
+     "img": "/sortieren/2736.webp"
+    },
+    {
+     "text": "Bohrmaschine",
+     "box": 0,
+     "img": "/sortieren/3392.webp"
+    },
+    {
+     "text": "Zange",
+     "box": 0,
+     "img": "/sortieren/2644.webp"
+    },
+    {
+     "text": "Schraube",
+     "box": 0,
+     "img": "/sortieren/2788.webp"
+    },
+    {
+     "text": "Nagel",
+     "box": 0,
+     "img": "/sortieren/8306.webp"
+    },
+    {
+     "text": "Feile",
+     "box": 0,
+     "img": "/sortieren/5501.webp"
+    },
+    {
+     "text": "Pinsel",
+     "box": 0,
+     "img": "/sortieren/2523.webp"
+    },
+    {
+     "text": "Meterstab",
+     "box": 0,
+     "img": "/sortieren/2915.webp"
+    },
+    {
+     "text": "Schleifpapier",
+     "box": 0,
+     "img": "/sortieren/5498.webp"
+    },
+    {
+     "text": "Akkuschrauber",
+     "box": 0,
+     "img": "/sortieren/39587.webp"
+    },
+    {
+     "text": "Wasserwaage",
+     "box": 0,
+     "img": "/sortieren/9119.webp"
+    },
+    {
+     "text": "Schutzbrille",
+     "box": 0,
+     "img": "/sortieren/28275.webp"
+    },
+    {
+     "text": "Gehörschutz",
+     "box": 0,
+     "img": "/sortieren/36357.webp"
+    }
+   ]
+  }
+ ]
+}

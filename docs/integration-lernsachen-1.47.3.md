@@ -115,11 +115,21 @@ Farben, Personen mit Bild; wohin die Kinder sie legen, wird gespeichert) sowie
 Wochenplan und Dienstplan (eine Liste pro Tag mit Uhrzeiten, Dienste und
 Namen) unter Alltag.
 
+Außerdem Sortieren (Alltag) und Bild-Quiz: Was bedeutet das? (Beruf &
+Praktikum), 50 der 89 Einträge. Die zwölf fertigen Sets der Vorlage
+(Ernährungsampel, Mülltrennung, Schilder, Wäsche-Symbole, Werkzeuge …) kommen
+mit ihren Bildern: 99 ARASAAC-Bilder aus dem Paket „sort-pictos“ und die von
+der Vorlage gezeichneten Schilder und Zeichen liegen in `public/sortieren/`,
+die Sets in `src/lib/learning/sort-sets.json` (beides vom Extraktionsskript).
+Wie in der Vorlage beginnt Sortieren mit der Ernährungsampel und das Bild-Quiz
+mit den Schildern. Die Wahl des Kastens je Karte sind Knöpfe statt einer
+Auswahlliste.
+
 ## Noch offene Übernahmen
 
-41 neue Katalogeinträge sind noch offen. Aus dem Werkzeug-Host fehlen noch
-Sortieren und Bild-Quiz, Geld-Planer und Kassenbuch sowie die drei Automaten;
-KI-Partner bauen ist zurückgestellt. Dazu gehören insbesondere:
+39 neue Katalogeinträge sind noch offen. Aus dem Werkzeug-Host fehlen noch
+Geld-Planer, Kassenbuch und Geld-Planer zum Ausfüllen sowie die drei
+Automaten; KI-Partner bauen ist zurückgestellt. Dazu gehören insbesondere:
 
 - „Laute hören“ (einstellbares Arbeitsblatt, gehört zu Vorlagen › Einstellbar);
 - Programmieren sowie die interaktiven Werkzeuge für Alltag und Beruf;

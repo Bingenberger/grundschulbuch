@@ -221,3 +221,43 @@ const { TOOL_CATALOG } = await import('data:text/javascript;base64,' + Buffer.fr
 const presets = TOOL_CATALOG.map(meta => ({ id: meta.id, title: meta.label, group: meta.group, items: meta.items().map(item => { const copy = { ...item }; delete copy.id; return copy; }) }));
 await fs.writeFile('src/lib/learning/werkzeug-presets.json', JSON.stringify(presets, null, 1) + '\n');
 console.log('Tools reference:', runtime.length, 'bytes;', Object.keys(TOOLS).length, 'tools;', presets.length, 'presets;', pages, 'page lookups;', [...savers.keys()].length, 'savers found');
+
+// Sortieren and Bild-Quiz: the ready-made sets with their pictures. ARASAAC
+// pictures come from the pack “sort-pictos” (CC BY-NC-SA 4.0), signs and care
+// symbols are drawn by the reference as SVG; all are saved in public/sortieren/.
+const sortStart = find('sort start', t => t.startsWith('async function') && t.includes('`signs-quiz` : `food`'));
+const sortStartText = fns.get(sortStart);
+const setsName = pick('sort sets', sortStartText, /r10 = ([\w$]+)\.find\(\(e18\) => e18\.id === n10\)/);
+const pictureName = pick('sort pictures', sortStartText, /let r11 = ([\w$]+)\(n11, e18\)/);
+const signName = pick('sign pictures', fns.get(pictureName), /let n11 = ([\w$]+)\(e17\);\s*return n11 \? [\w$]+\(`sign-/);
+const sortColors = pick('box colours', fns.get(/config: \(raw, media\) => ([\w$]+)\(/.exec(registry.find(r => r.startsWith('"sort"')))[1]), /: ([\w$]+)\[t11 % \1\.length\]/);
+const sortCode = extract([setsName, signName, sortColors]);
+const sortRef = await import('data:text/javascript;base64,' + Buffer.from(sortCode + `\nexport { ${setsName} as sets, ${signName} as sign, ${sortColors} as colors };`).toString('base64'));
+const pack = JSON.parse(html.match(/<script type="text\/plain" id="lh-pack-sort-pictos">([^<]*)<\/script>/)?.[1] ?? 'null');
+if (!pack) throw Error('Picture pack sort-pictos not found.');
+await fs.mkdir('public/sortieren', { recursive: true });
+for (const [id, url] of Object.entries(pack)) {
+  const m = /^data:image\/webp;base64,([A-Za-z0-9+/=]+)$/.exec(url);
+  if (!/^\d+$/.test(id) || !m) throw Error('Unexpected picture ' + id);
+  await fs.writeFile(`public/sortieren/${id}.webp`, Buffer.from(m[1], 'base64'));
+}
+const hash = (s) => { let n = 0; for (const c of s) n = n * 31 + c.charCodeAt(0) | 0; return (n >>> 0).toString(36); };
+const svgFile = async (name, svg) => {
+  if (!/^<svg[\s>]/.test(svg) || /<script|on\w+=|href="(?!#)/i.test(svg)) throw Error('Unexpected picture ' + name);
+  await fs.writeFile(`public/sortieren/${name}.svg`, svg.includes('xmlns=') ? svg : svg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"'));
+  return `/sortieren/${name}.svg`;
+};
+const sortSets = [];
+for (const set of sortRef.sets) {
+  const items = [];
+  for (const [text, box, pic] of set.items) {
+    let img;
+    if (typeof pic === 'number') { if (!pack[pic]) throw Error('Missing picture ' + pic); img = `/sortieren/${pic}.webp`; }
+    else if (typeof pic === 'string' && pic.startsWith('sg-')) img = await svgFile(`sign-${pic.slice(3)}`, sortRef.sign(pic));
+    else if (typeof pic === 'string') img = await svgFile(`sortpic-${hash(pic)}`, pic);
+    items.push({ text, box, ...(img ? { img } : {}) });
+  }
+  sortSets.push({ id: set.id, label: set.label, title: set.title, mode: set.mode, ...(set.ask ? { ask: set.ask } : {}), boxes: set.boxes.map(([label, color]) => ({ label, color })), items });
+}
+await fs.writeFile('src/lib/learning/sort-sets.json', JSON.stringify({ colors: sortRef.colors, sets: sortSets }, null, 1) + '\n');
+console.log('Sort sets:', sortSets.length, 'with', Object.keys(pack).length, 'pictures');
