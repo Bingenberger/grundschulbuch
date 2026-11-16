@@ -238,3 +238,23 @@ test('Geld-Planer und Automat: Beträge in Euro', async ({ page }) => {
   expect(els.find((e) => e.settings?.tool === 'machine')?.settings?.werkzeug).toMatchObject({ kind: 'drinks', title: 'Getränkeautomat' });
   expect(errors).toEqual([]);
 });
+
+test('Geld-Planer: auf der Heftseite eingetragene Wünsche bleiben gespeichert', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  const id = await fresh(page, 'Geld ausfüllen');
+  const dialog = await openBlock(page, 'Alltag', 'Geld-Planer: Mein Monat');
+  await dialog.locator('label.sheet-toggle', { hasText: 'Auf der Heftseite ausfüllen' }).click();
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  const budget = page.locator('.interaction-surface .lh-wg-budget');
+  await budget.locator('svg [data-a="add:w"]').click();
+  await page.getByLabel('Was?', { exact: true }).fill('Zoo');
+  await page.getByLabel('Wie viel Euro?', { exact: true }).fill('18,50');
+  await page.getByRole('button', { name: 'Fertig', exact: true }).click();
+  await expect(budget.locator('svg')).toContainText('Zoo');
+  await expect.poll(async () => ((await stateOf(page, id, 'budget'))?.bud as { wishes?: { text: string; cent: number }[] } | undefined)?.wishes?.find((w) => w.text === 'Zoo')?.cent).toBe(1850);
+  await page.reload();
+  await expect(page.locator('.interaction-surface .lh-wg-budget svg')).toContainText('Zoo');
+  expect(errors).toEqual([]);
+});

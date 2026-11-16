@@ -125,11 +125,18 @@ Wie in der Vorlage beginnt Sortieren mit der Ernährungsampel und das Bild-Quiz
 mit den Schildern. Die Wahl des Kastens je Karte sind Knöpfe statt einer
 Auswahlliste.
 
+Schließlich Geld-Planer, Geld-Planer zum Ausfüllen, Kassenbuch und die drei
+Automaten (Fahrkarten-, Geld- und Getränkeautomat), 56 der 89 Einträge.
+Beträge werden im Dialog in Euro eingegeben und wie in der Vorlage in Cent
+gespeichert. Füllen die Kinder den Geld-Planer auf der Seite aus, speichert
+die Vorlage den ganzen Plan; bei uns ist das die Antwort des Elements. Bilder
+dazu kommen aus unserer Bildsuche und liegen auf dem Schulserver.
+
 ## Noch offene Übernahmen
 
-39 neue Katalogeinträge sind noch offen. Aus dem Werkzeug-Host fehlen noch
-Geld-Planer, Kassenbuch und Geld-Planer zum Ausfüllen sowie die drei
-Automaten; KI-Partner bauen ist zurückgestellt. Dazu gehören insbesondere:
+33 neue Katalogeinträge sind noch offen: Programmieren (21), „Laute hören“,
+KI-Partner bauen (zurückgestellt), Nachrichten in leichter Sprache,
+Linksammlung, Figuren, Puppentheater, Erklärbär und weitere einzelne Einträge. Dazu gehören insbesondere:
 
 - „Laute hören“ (einstellbares Arbeitsblatt, gehört zu Vorlagen › Einstellbar);
 - Programmieren sowie die interaktiven Werkzeuge für Alltag und Beruf;
