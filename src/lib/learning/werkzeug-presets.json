@@ -1,5 +1,2050 @@
 [
  {
+  "id": "bookmarks",
+  "title": "Linksammlung",
+  "group": "Video & Web",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "bookmarks",
+    "bm": {
+     "title": "Meine Links",
+     "layout": "cards",
+     "path": false,
+     "color": "#2563eb",
+     "links": [
+      {
+       "url": "https://de.wikipedia.org/wiki/Igel",
+       "title": "Igel",
+       "desc": "Alles über den Igel"
+      },
+      {
+       "url": "https://www.fragfinn.de/",
+       "title": "fragFINN",
+       "desc": "Suchmaschine für Kinder"
+      },
+      {
+       "url": "https://www.planet-schule.de/",
+       "title": "planet schule",
+       "desc": "Filme für die Schule"
+      },
+      {
+       "url": "https://www.blinde-kuh.de/",
+       "title": "Blinde Kuh",
+       "desc": "Suchen und Spielen"
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding",
+  "title": "Programmieren",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "goal",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "bee",
+     "mat": "classic",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        3,
+        4,
+        0
+       ],
+       "goal": [
+        4,
+        2
+       ],
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "best": 4
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-pad",
+  "title": "Wie ein Bodenroboter: Tasten",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "goal",
+     "input": "pad",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "bee",
+     "mat": "classic",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        0,
+        0,
+        0
+       ],
+       "goal": [
+        0,
+        2
+       ],
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "best": 2
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-cards",
+  "title": "Zum Ziel: Pfeilkarten legen",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "goal",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "medium",
+     "walls": "none",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "mouse",
+     "mat": "garden",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        3,
+        4,
+        0
+       ],
+       "goal": [
+        1,
+        2
+       ],
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "best": 5
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-walls",
+  "title": "Hindernisse umfahren",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "goal",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "medium",
+     "walls": "few",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "car",
+     "mat": "city",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        0,
+        2,
+        0
+       ],
+       "goal": [
+        1,
+        3
+       ],
+       "walls": [
+        [
+         2,
+         1
+        ],
+        [
+         2,
+         2
+        ],
+        [
+         0,
+         3
+        ]
+       ],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "best": 4
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-word",
+  "title": "Wörter abfahren",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "word",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "robot",
+     "mat": "classic",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        2,
+        2,
+        0
+       ],
+       "goal": null,
+       "walls": [],
+       "stops": [
+        {
+         "x": 2,
+         "y": 0,
+         "t": "O"
+        },
+        {
+         "x": 1,
+         "y": 3,
+         "t": "P"
+        },
+        {
+         "x": 4,
+         "y": 3,
+         "t": "A"
+        }
+       ],
+       "extra": [],
+       "stars": [],
+       "word": "OPA"
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-math",
+  "title": "Rechnen und fahren",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "math",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "rocket",
+     "mat": "space",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        1,
+        1,
+        0
+       ],
+       "goal": null,
+       "walls": [],
+       "stops": [
+        {
+         "x": 2,
+         "y": 0,
+         "t": "8"
+        },
+        {
+         "x": 3,
+         "y": 4,
+         "t": "3"
+        }
+       ],
+       "extra": [
+        {
+         "x": 4,
+         "y": 1,
+         "t": "5"
+        }
+       ],
+       "stars": [],
+       "sums": [
+        "7 + 1",
+        "2 + 1"
+       ]
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-numbers",
+  "title": "Zahlen der Reihe nach",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "numbers",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "turtle",
+     "mat": "sea",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": true,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        1,
+        3,
+        0
+       ],
+       "goal": null,
+       "walls": [],
+       "stops": [
+        {
+         "x": 3,
+         "y": 0,
+         "t": "4"
+        },
+        {
+         "x": 4,
+         "y": 0,
+         "t": "5"
+        },
+        {
+         "x": 4,
+         "y": 1,
+         "t": "10"
+        }
+       ],
+       "extra": [
+        {
+         "x": 0,
+         "y": 0,
+         "t": "1"
+        },
+        {
+         "x": 1,
+         "y": 0,
+         "t": "2"
+        },
+        {
+         "x": 2,
+         "y": 0,
+         "t": "3"
+        },
+        {
+         "x": 0,
+         "y": 1,
+         "t": "6"
+        },
+        {
+         "x": 1,
+         "y": 1,
+         "t": "7"
+        },
+        {
+         "x": 2,
+         "y": 1,
+         "t": "8"
+        },
+        {
+         "x": 3,
+         "y": 1,
+         "t": "9"
+        },
+        {
+         "x": 0,
+         "y": 2,
+         "t": "11"
+        },
+        {
+         "x": 1,
+         "y": 2,
+         "t": "12"
+        },
+        {
+         "x": 2,
+         "y": 2,
+         "t": "13"
+        },
+        {
+         "x": 3,
+         "y": 2,
+         "t": "14"
+        },
+        {
+         "x": 4,
+         "y": 2,
+         "t": "15"
+        },
+        {
+         "x": 0,
+         "y": 3,
+         "t": "16"
+        },
+        {
+         "x": 1,
+         "y": 3,
+         "t": "17"
+        },
+        {
+         "x": 2,
+         "y": 3,
+         "t": "18"
+        },
+        {
+         "x": 3,
+         "y": 3,
+         "t": "19"
+        },
+        {
+         "x": 4,
+         "y": 3,
+         "t": "20"
+        },
+        {
+         "x": 0,
+         "y": 4,
+         "t": "21"
+        },
+        {
+         "x": 1,
+         "y": 4,
+         "t": "22"
+        },
+        {
+         "x": 2,
+         "y": 4,
+         "t": "23"
+        },
+        {
+         "x": 3,
+         "y": 4,
+         "t": "24"
+        },
+        {
+         "x": 4,
+         "y": 4,
+         "t": "25"
+        }
+       ],
+       "stars": []
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-collect",
+  "title": "Sterne sammeln",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "collect",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "medium",
+     "walls": "none",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "ladybug",
+     "mat": "garden",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        1,
+        2,
+        0
+       ],
+       "goal": [
+        4,
+        3
+       ],
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [
+        [
+         2,
+         0
+        ],
+        [
+         2,
+         4
+        ],
+        [
+         0,
+         4
+        ]
+       ]
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-predict",
+  "title": "Wo kommt die Figur an?",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "read",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "dog",
+     "mat": "farm",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        2,
+        2,
+        0
+       ],
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "goal": null,
+       "kind": "predict",
+       "prog": "FFRFF"
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-fix",
+  "title": "Fehler finden",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "read",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "mouse",
+     "mat": "classic",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "fix",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        4,
+        3,
+        0
+       ],
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "goal": [
+        2,
+        2
+       ],
+       "kind": "fix",
+       "prog": "FLLF"
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-gap",
+  "title": "Was fehlt?",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "read",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "car",
+     "mat": "city",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "gap",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        2,
+        4,
+        0
+       ],
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "goal": [
+        1,
+        3
+       ],
+       "kind": "gap",
+       "prog": "F?F"
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-loop",
+  "title": "Schleifen: wiederhole",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "loop",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "medium",
+     "walls": "none",
+     "turn": false,
+     "size": 7,
+     "count": 1,
+     "costume": "robot",
+     "mat": "colors",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": true,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 7,
+       "start": [
+        0,
+        4,
+        0
+       ],
+       "goal": [
+        2,
+        2
+       ],
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [
+        [
+         0,
+         2
+        ]
+       ],
+       "best": 4,
+       "limit": 5
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-pen",
+  "title": "Zeichnen mit dem Stift",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "pen",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 6,
+     "count": 1,
+     "costume": "turtle",
+     "mat": "classic",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 6,
+       "start": [
+        3,
+        2,
+        0
+       ],
+       "goal": null,
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "lines": [
+        [
+         3,
+         2,
+         3,
+         1
+        ],
+        [
+         3,
+         1,
+         4,
+         1
+        ],
+        [
+         4,
+         1,
+         4,
+         2
+        ],
+        [
+         4,
+         2,
+         3,
+         2
+        ]
+       ],
+       "shape": "ein kleines Quadrat"
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-paint",
+  "title": "Freies Malen",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "pen",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 8,
+     "count": 1,
+     "costume": "turtle",
+     "mat": "classic",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "free",
+     "tasks": [
+      {
+       "n": 8,
+       "start": [
+        4,
+        4,
+        0
+       ],
+       "goal": null,
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "lines": [],
+       "shape": ""
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-music",
+  "title": "Musik-Teppich",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "music",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 5,
+     "count": 1,
+     "costume": "bee",
+     "mat": "garden",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 5,
+       "start": [
+        0,
+        0,
+        0
+       ],
+       "goal": null,
+       "walls": [],
+       "stops": [
+        {
+         "x": 0,
+         "y": 4,
+         "t": "E"
+        },
+        {
+         "x": 2,
+         "y": 4,
+         "t": "D"
+        },
+        {
+         "x": 3,
+         "y": 0,
+         "t": "C"
+        },
+        {
+         "x": 2,
+         "y": 4,
+         "t": "D"
+        }
+       ],
+       "extra": [],
+       "stars": [],
+       "melody": "Mary Had a Little Lamb",
+       "beats": [
+        1,
+        1,
+        1,
+        1
+       ]
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-cond",
+  "title": "Bedingungen: Farbweg",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "cond",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 7,
+     "count": 1,
+     "costume": "robot",
+     "mat": "classic",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": true,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 7,
+       "start": [
+        6,
+        2,
+        2
+       ],
+       "goal": [
+        4,
+        1
+       ],
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "path": [
+        [
+         6,
+         2
+        ],
+        [
+         6,
+         3
+        ],
+        [
+         6,
+         4
+        ],
+        [
+         5,
+         4
+        ],
+        [
+         4,
+         4
+        ],
+        [
+         4,
+         3
+        ],
+        [
+         4,
+         2
+        ],
+        [
+         4,
+         1
+        ]
+       ],
+       "colors": [
+        [
+         6,
+         4,
+         "r"
+        ],
+        [
+         4,
+         4,
+         "r"
+        ]
+       ],
+       "best": 3,
+       "limit": 4
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-maze",
+  "title": "Labyrinth mit „falls“",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "cond",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "hard",
+     "walls": "none",
+     "turn": false,
+     "size": 7,
+     "count": 1,
+     "costume": "mouse",
+     "mat": "garden",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": true,
+     "limit": false,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 7,
+       "start": [
+        0,
+        6,
+        0
+       ],
+       "goal": [
+        6,
+        0
+       ],
+       "walls": [
+        [
+         1,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         3,
+         1
+        ],
+        [
+         5,
+         1
+        ],
+        [
+         3,
+         2
+        ],
+        [
+         5,
+         2
+        ],
+        [
+         1,
+         3
+        ],
+        [
+         2,
+         3
+        ],
+        [
+         3,
+         3
+        ],
+        [
+         5,
+         3
+        ],
+        [
+         1,
+         4
+        ],
+        [
+         5,
+         4
+        ],
+        [
+         0,
+         5
+        ],
+        [
+         1,
+         5
+        ],
+        [
+         3,
+         5
+        ],
+        [
+         4,
+         5
+        ],
+        [
+         5,
+         5
+        ],
+        [
+         3,
+         6
+        ]
+       ],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "maze": true,
+       "best": 5
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-cat",
+  "title": "Achtung, Katze!",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "cat",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 6,
+     "count": 1,
+     "costume": "mouse",
+     "mat": "farm",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 6,
+       "start": [
+        5,
+        5,
+        0
+       ],
+       "goal": [
+        1,
+        5
+       ],
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [],
+       "best": 6,
+       "cat": [
+        [
+         3,
+         3
+        ],
+        [
+         3,
+         4
+        ],
+        [
+         3,
+         5
+        ]
+       ],
+       "catK": 3
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-count",
+  "title": "Punkte zählen",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "count",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "none",
+     "turn": false,
+     "size": 7,
+     "count": 1,
+     "costume": "ladybug",
+     "mat": "garden",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 7,
+       "start": [
+        3,
+        5,
+        3
+       ],
+       "goal": [
+        0,
+        5
+       ],
+       "walls": [],
+       "stops": [],
+       "extra": [],
+       "stars": [
+        [
+         2,
+         5
+        ],
+        [
+         1,
+         5
+        ]
+       ],
+       "path": [
+        [
+         3,
+         5
+        ],
+        [
+         2,
+         5
+        ],
+        [
+         1,
+         5
+        ],
+        [
+         0,
+         5
+        ]
+       ],
+       "colors": [],
+       "best": 3,
+       "limit": 4
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "coding-events",
+  "title": "Pfeile programmieren",
+  "group": "Programmieren",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "code",
+    "pg": {
+     "lesson": "events",
+     "input": "cards",
+     "pad": "store",
+     "memory": true,
+     "level": "easy",
+     "walls": "few",
+     "turn": false,
+     "size": 6,
+     "count": 1,
+     "costume": "car",
+     "mat": "city",
+     "words": [
+      "OMA",
+      "OPA",
+      "MAMA",
+      "PAPA",
+      "EIS",
+      "HUT",
+      "TOR",
+      "LAMA",
+      "ROSE",
+      "HOSE",
+      "NASE",
+      "IGEL",
+      "ESEL",
+      "SOFA",
+      "AUTO",
+      "BLUME",
+      "MAUS",
+      "HAUS"
+     ],
+     "range": 10,
+     "ops": "add",
+     "numMat": false,
+     "voice": true,
+     "speed": 2,
+     "peek": false,
+     "read": "predict",
+     "rate": false,
+     "limit": true,
+     "penMode": "shapes",
+     "tasks": [
+      {
+       "n": 6,
+       "start": [
+        2,
+        0,
+        0
+       ],
+       "goal": [
+        4,
+        5
+       ],
+       "walls": [
+        [
+         1,
+         4
+        ],
+        [
+         5,
+         2
+        ],
+        [
+         2,
+         3
+        ],
+        [
+         1,
+         3
+        ]
+       ],
+       "stops": [],
+       "extra": [],
+       "stars": [
+        [
+         2,
+         5
+        ],
+        [
+         5,
+         0
+        ]
+       ],
+       "kind": "events"
+      }
+     ]
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
   "id": "steps",
   "title": "Ablaufplan",
   "group": "Alltag",
@@ -327,6 +2372,349 @@
   ]
  },
  {
+  "id": "feelings",
+  "title": "Gefühle-Karten",
+  "group": "Schule",
+  "items": [
+   {
+    "type": "widget",
+    "x": 180,
+    "y": 90,
+    "w": 180,
+    "h": 300,
+    "kind": "avatar",
+    "av": {
+     "child": true,
+     "skin": "#8d5a3b",
+     "hair": "afro",
+     "hairColor": "#2b1d16",
+     "eyes": "lashes",
+     "eyeColor": "#5b3a1e",
+     "brows": true,
+     "mouth": "smile",
+     "cheeks": true,
+     "beard": "none",
+     "glasses": "none",
+     "hat": "none",
+     "hatColor": "#ef4444",
+     "top": "tshirt",
+     "topColor": "#facc15",
+     "pattern": "star",
+     "bottom": "skirt",
+     "bottomColor": "#6366f1",
+     "shoes": "#1f2937",
+     "name": "",
+     "feel": "happy"
+    },
+    "say": {
+     "text": "Ich bin fröhlich.",
+     "pitch": "normal"
+    },
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "fröhlich",
+    "font": "grund",
+    "size": 44,
+    "color": "#1f2937",
+    "align": "center",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 90,
+    "y": 400,
+    "w": 360,
+    "h": 66,
+    "bold": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "widget",
+    "x": 610,
+    "y": 90,
+    "w": 180,
+    "h": 300,
+    "kind": "avatar",
+    "av": {
+     "child": true,
+     "skin": "#eebd94",
+     "hair": "spiky",
+     "hairColor": "#c47a35",
+     "eyes": "dots",
+     "eyeColor": "#5b3a1e",
+     "brows": true,
+     "mouth": "smile",
+     "cheeks": true,
+     "beard": "none",
+     "glasses": "none",
+     "hat": "none",
+     "hatColor": "#ef4444",
+     "top": "hoodie",
+     "topColor": "#22c55e",
+     "pattern": "none",
+     "bottom": "shorts",
+     "bottomColor": "#1e3a8a",
+     "shoes": "#ffffff",
+     "name": "",
+     "feel": "sad"
+    },
+    "say": {
+     "text": "Ich bin traurig.",
+     "pitch": "normal"
+    },
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "traurig",
+    "font": "grund",
+    "size": 44,
+    "color": "#1f2937",
+    "align": "center",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 520,
+    "y": 400,
+    "w": 360,
+    "h": 66,
+    "bold": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "widget",
+    "x": 1040,
+    "y": 90,
+    "w": 180,
+    "h": 300,
+    "kind": "avatar",
+    "av": {
+     "child": true,
+     "skin": "#f6d3b8",
+     "hair": "plaits",
+     "hairColor": "#8a4b22",
+     "eyes": "dots",
+     "eyeColor": "#5b3a1e",
+     "brows": true,
+     "mouth": "smile",
+     "cheeks": true,
+     "beard": "none",
+     "glasses": "none",
+     "hat": "none",
+     "hatColor": "#ef4444",
+     "top": "dress",
+     "topColor": "#ec4899",
+     "pattern": "dots",
+     "bottom": "trousers",
+     "bottomColor": "#1e3a8a",
+     "shoes": "#ef4444",
+     "name": "",
+     "feel": "angry"
+    },
+    "say": {
+     "text": "Ich bin wütend.",
+     "pitch": "normal"
+    },
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "wütend",
+    "font": "grund",
+    "size": 44,
+    "color": "#1f2937",
+    "align": "center",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 950,
+    "y": 400,
+    "w": 360,
+    "h": 66,
+    "bold": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "widget",
+    "x": 180,
+    "y": 530,
+    "w": 180,
+    "h": 300,
+    "kind": "avatar",
+    "av": {
+     "child": false,
+     "skin": "#f6d3b8",
+     "hair": "bald",
+     "hairColor": "#e5e7eb",
+     "eyes": "dots",
+     "eyeColor": "#5b3a1e",
+     "brows": true,
+     "mouth": "calm",
+     "cheeks": true,
+     "beard": "moustache",
+     "glasses": "round",
+     "hat": "none",
+     "hatColor": "#ef4444",
+     "top": "sweater",
+     "topColor": "#78350f",
+     "pattern": "none",
+     "bottom": "trousers",
+     "bottomColor": "#9ca3af",
+     "shoes": "#1f2937",
+     "name": "",
+     "feel": "scared"
+    },
+    "say": {
+     "text": "Ich habe Angst.",
+     "pitch": "normal"
+    },
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "ängstlich",
+    "font": "grund",
+    "size": 44,
+    "color": "#1f2937",
+    "align": "center",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 90,
+    "y": 840,
+    "w": 360,
+    "h": 66,
+    "bold": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "widget",
+    "x": 610,
+    "y": 530,
+    "w": 180,
+    "h": 300,
+    "kind": "avatar",
+    "av": {
+     "child": true,
+     "skin": "#d9a066",
+     "hair": "side",
+     "hairColor": "#2b1d16",
+     "eyes": "dots",
+     "eyeColor": "#5b3a1e",
+     "brows": true,
+     "mouth": "smile",
+     "cheeks": true,
+     "beard": "none",
+     "glasses": "round",
+     "hat": "none",
+     "hatColor": "#ef4444",
+     "top": "sweater",
+     "topColor": "#ef4444",
+     "pattern": "stripes",
+     "bottom": "trousers",
+     "bottomColor": "#1f2937",
+     "shoes": "#1f2937",
+     "name": "",
+     "feel": "surprised"
+    },
+    "say": {
+     "text": "Ich bin überrascht.",
+     "pitch": "normal"
+    },
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "überrascht",
+    "font": "grund",
+    "size": 44,
+    "color": "#1f2937",
+    "align": "center",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 520,
+    "y": 840,
+    "w": 360,
+    "h": 66,
+    "bold": true,
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "widget",
+    "x": 1040,
+    "y": 530,
+    "w": 180,
+    "h": 300,
+    "kind": "avatar",
+    "av": {
+     "child": false,
+     "skin": "#f6d3b8",
+     "hair": "bun",
+     "hairColor": "#5a3825",
+     "eyes": "round",
+     "eyeColor": "#5b3a1e",
+     "brows": true,
+     "mouth": "smile",
+     "cheeks": true,
+     "beard": "none",
+     "glasses": "square",
+     "hat": "none",
+     "hatColor": "#ef4444",
+     "top": "shirt",
+     "topColor": "#14b8a6",
+     "pattern": "none",
+     "bottom": "skirt",
+     "bottomColor": "#1e3a8a",
+     "shoes": "#1f2937",
+     "name": "",
+     "feel": "tired"
+    },
+    "say": {
+     "text": "Ich bin müde.",
+     "pitch": "normal"
+    },
+    "locked": true,
+    "rot": 0
+   },
+   {
+    "type": "text",
+    "html": "müde",
+    "font": "grund",
+    "size": 44,
+    "color": "#1f2937",
+    "align": "center",
+    "shape": "none",
+    "fill": "#ffffff",
+    "stroke": "#1f2937",
+    "tail": "bl",
+    "x": 950,
+    "y": 840,
+    "w": 360,
+    "h": 66,
+    "bold": true,
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
   "id": "listen",
   "title": "Hör-Memory",
   "group": "Musik",
@@ -380,6 +2768,41 @@
       "clock"
      ],
      "own": []
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "pm-rating",
+  "title": "Praktikumsmappe: Einschätzung",
+  "group": "Beruf & Praktikum",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "rating",
+    "rate": {
+     "title": "Mein Praktikum: Einschätzung",
+     "cols": 2,
+     "a": "Ich",
+     "b": "Betreuer/in",
+     "items": [
+      "Ich bin pünktlich.",
+      "Ich arbeite sorgfältig.",
+      "Ich arbeite ausdauernd.",
+      "Ich arbeite in einem guten Tempo.",
+      "Ich halte Ordnung am Arbeitsplatz.",
+      "Ich halte die Sicherheitsregeln ein.",
+      "Ich frage, wenn ich etwas nicht weiß.",
+      "Ich arbeite selbstständig."
+     ],
+     "va": [],
+     "vb": []
     },
     "locked": true,
     "rot": 0
@@ -1697,6 +4120,71 @@
       }
      ],
      "hint": true
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
+  "id": "easy-news",
+  "title": "Nachrichten in leichter Sprache",
+  "group": "Medien & KI",
+  "items": [
+   {
+    "type": "widget",
+    "x": 0,
+    "y": 0,
+    "w": 1400,
+    "h": 990,
+    "kind": "bookmarks",
+    "bm": {
+     "title": "Nachrichten in leichter Sprache",
+     "layout": "list",
+     "path": false,
+     "color": "#0f766e",
+     "links": [
+      {
+       "url": "https://www.nachrichtenleicht.de/",
+       "title": "nachrichtenleicht",
+       "desc": "Nachrichten der Woche in einfacher Sprache (Deutschlandfunk)"
+      },
+      {
+       "url": "https://www.mdr.de/nachrichten-leicht/",
+       "title": "MDR in Leichter Sprache",
+       "desc": "Neueste Nachrichten in Leichter Sprache"
+      },
+      {
+       "url": "https://www.ndr.de/fernsehen/barrierefreie_angebote/leichte_sprache/",
+       "title": "NDR in Leichter Sprache",
+       "desc": "Nachrichten aus Norddeutschland in Leichter Sprache"
+      },
+      {
+       "url": "https://lenadi.de/",
+       "title": "LENADi",
+       "desc": "Leichte Nachrichten digital – von der Lebenshilfe Freising"
+      },
+      {
+       "url": "https://www.bundestag.de/leichte_sprache",
+       "title": "Der Bundestag",
+       "desc": "Politik und Parlament in Leichter Sprache"
+      },
+      {
+       "url": "https://www.bundesregierung.de/breg-de/leichte-sprache",
+       "title": "Die Bundesregierung",
+       "desc": "Was die Regierung macht, in Leichter Sprache"
+      },
+      {
+       "url": "https://www.bpb.de/kurz-knapp/lexika/das-junge-politik-lexikon/",
+       "title": "Politik-Lexikon",
+       "desc": "Wörter aus der Politik einfach erklärt (bpb)"
+      },
+      {
+       "url": "https://www.arbeitsagentur.de/leichte-sprache",
+       "title": "Agentur für Arbeit",
+       "desc": "Arbeit und Ausbildung in Leichter Sprache"
+      }
+     ]
     },
     "locked": true,
     "rot": 0

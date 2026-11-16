@@ -28,6 +28,7 @@ export const SUBJECTS = [
   // Bereiche von Lernsachen-Heft 1.47.3 (Förderschwerpunkt geistige Entwicklung).
   'Alltag',
   'Beruf & Praktikum',
+  'Programmieren',
   'Für alle Fächer',
 ] as const;
 export type Subject = (typeof SUBJECTS)[number];
@@ -38,7 +39,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', hoeren: 'Musik', werkzeug: 'Mathematik', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', diaschau: 'Medien & Präsentation', trickfilm: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', hoeren: 'Musik', werkzeug: 'Mathematik', linksammlung: 'Medien & Präsentation', programmieren: 'Programmieren', figur: 'Klassenführung', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', diaschau: 'Medien & Präsentation', trickfilm: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -138,6 +139,9 @@ const SKIP = new Set([
   'widget-hoeren',
   // The tools of 1.47.3 come as blocks of their catalogue entries.
   'widget-werkzeug',
+  'widget-linksammlung',
+  'widget-programmieren',
+  'widget-figur',
   // Replaced by the Bilder-Stundenplan of the reference.
   'widget-timetable',
   'widget-stundenplan',
@@ -408,6 +412,20 @@ for (const preset of TOOL_PRESETS) {
     toolBlocks.push({ id: `werkzeug-${preset.id}`, title: preset.title, subject, preview, type: 'widget', kind: 'werkzeug', preset: { ...defaultSettings('werkzeug'), ...toolSettings(tool, item[toolSpec(tool).field], preset.title) }, words });
   } else
     toolBlocks.push({ id: `werkzeug-${preset.id}`, title: preset.title, subject, preview, type: 'widget', kind: 'werkzeug', pages: () => { const page = newPage('blanko', 'landscape'); page.elements = presetElements(preset); return [page]; }, words });
+}
+// Figuren of Lernsachen-Heft 1.47.3: a single figure, and the Gefühle-Karten (a page of figures with words).
+toolBlocks.push({ id: 'figur', title: 'Figur', subject: 'Für alle Fächer', preview: '/previews/tools/figur.webp', type: 'widget', kind: 'figur', preset: { ...defaultSettings('figur'), title: 'Figur' }, words: 'Figur Person Avatar Mensch Kind sprechen winken gestalten' });
+for (const preset of TOOL_PRESETS.filter((p) => p.items.some((i) => i.kind === 'avatar')))
+  toolBlocks.push({ id: `figuren-${preset.id}`, title: preset.title, subject: 'Klassenführung', preview: `/previews/tools/figuren-${preset.id}.webp`, type: 'widget', kind: 'figur', pages: () => { const page = newPage('blanko', 'landscape'); page.elements = presetElements(preset); return [page]; }, words: `${preset.title} Gefühle Karten Figuren fröhlich traurig wütend Morgenkreis` });
+// Programmieren of Lernsachen-Heft 1.47.3: one tool, its 20 lessons of the catalogue.
+for (const preset of TOOL_PRESETS.filter((p) => p.items.some((i) => i.kind === 'code'))) {
+  const pg = preset.items.find((i) => i.kind === 'code')!.pg as JsonValue;
+  toolBlocks.push({ id: `code-${preset.id}`, title: preset.title, subject: 'Programmieren', preview: `/previews/tools/code-${preset.id}.webp`, type: 'widget', kind: 'programmieren', preset: { ...defaultSettings('programmieren'), title: preset.title, pg }, words: `${preset.title} Programmieren Bodenroboter Pfeile Befehle Schleife Algorithmus Informatik` });
+}
+// Linksammlung and Nachrichten in leichter Sprache of Lernsachen-Heft 1.47.3.
+for (const preset of TOOL_PRESETS.filter((p) => p.items.some((i) => i.kind === 'bookmarks'))) {
+  const bm = preset.items.find((i) => i.kind === 'bookmarks')!.bm as JsonValue;
+  toolBlocks.push({ id: `links-${preset.id}`, title: preset.title, subject: 'Medien & Präsentation', preview: `/previews/tools/links-${preset.id}.webp`, type: 'widget', kind: 'linksammlung', preset: { ...defaultSettings('linksammlung'), title: preset.title, bm }, words: `${preset.title} Linksammlung Links Webseiten Internet Lernpfad Nachrichten leichte Sprache` });
 }
 // Hör-Memory and Was hörst du? of Lernsachen-Heft 1.47.3: one tool, two games.
 for (const [id, mode, title, words] of [

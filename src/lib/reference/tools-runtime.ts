@@ -2,6 +2,14 @@
 // @ts-nocheck
 // Generated from Lernsachen-Heft-komplett.html (1.47.3) by scripts/extract-tools-reference.mjs:
 // the tools drawn by the reference's tool host, unchanged (page lookup: see the script).
+var Be = [{ id: `andika`, family: `Andika`, label: `Andika`, hint: `f\xFCr Leseanf\xE4nger, einst\xF6ckiges a`, fallback: `Verdana, sans-serif` }, { id: `druck`, family: `Andika`, label: `Druckschrift`, hint: `Grundschul-Druckschrift wie in Bayern (Gruschudru)`, fallback: `Andika, Verdana, sans-serif` }, { id: `grund`, family: `Playwrite DE Grund`, label: `Grundschrift`, hint: `wie in der Schule (Playwrite DE Grund)`, fallback: `Andika, Verdana, sans-serif` }, { id: `schreib`, family: `Playwrite DE VA`, label: `Schreibschrift VA`, hint: `verbundene Schrift (Vereinfachte Ausgangsschrift)`, fallback: `cursive` }, { id: `sas`, family: `Playwrite DE SAS`, label: `Schreibschrift SAS`, hint: `verbundene Schrift (Schulausgangsschrift, z. B. in Bayern)`, fallback: `cursive` }, { id: `lexend`, family: `Lexend`, label: `Lexend`, hint: `besonders leicht lesbar, weite Buchstaben`, fallback: `Verdana, sans-serif` }, { id: `nunito`, family: `Nunito`, label: `Nunito`, hint: `serifenlos, freundlich`, fallback: `system-ui, sans-serif` }, { id: `atkinson`, family: `Atkinson Hyperlegible`, label: `Atkinson`, hint: `barrierefrei, gut unterscheidbare Buchstaben`, fallback: `Verdana, sans-serif` }, { id: `merriweather`, family: `Merriweather`, label: `Merriweather`, hint: `mit Serifen, wie in B\xFCchern`, fallback: `Georgia, serif` }, { id: `caveat`, family: `Caveat`, label: `Handschrift`, hint: `locker wie mit dem Stift geschrieben`, fallback: `cursive` }, { id: `comic`, family: `Bangers`, label: `Comic`, hint: `gro\xDFe Comic-Buchstaben (Bangers)`, fallback: `Impact, sans-serif` }];
+function Ve(e17) {
+  return Be.find((t10) => t10.id === e17) ?? Be[0];
+}
+function He(e17) {
+  let t10 = Ve(e17);
+  return `"${t10.family}", ${t10.fallback}`;
+}
 var Xn = new TextEncoder();
 function Zn(e17) {
   let t10 = new Uint8Array(e17.reduce((e18, t11) => e18 + t11.length, 0)), n10 = 0;
@@ -515,6 +523,7 @@ function Za(e17, t10) {
   let n10 = e17.replace(/\.(?=\s|$)/g, `!`);
   return /[.!?…:;,]\s*$/.test(n10) || !n10.trim() ? n10 : `${n10.replace(/\s+$/, ``)}!`;
 }
+var oo = [`#e03131`, `#f76707`, `#fd7e14`, `#f59f00`, `#fcc419`, `#82c91e`, `#37b24d`, `#0ca678`, `#1098ad`, `#4263eb`, `#7048e8`, `#e64980`];
 var wo = (e17) => 440 * 2 ** ((e17 - 69) / 12);
 var Bo = (e17) => e17.replace(/&/g, `&amp;`).replace(/</g, `&lt;`).replace(/>/g, `&gt;`).replace(/"/g, `&quot;`);
 var A = (e17) => Math.round(e17 * 10) / 10;
@@ -1429,6 +1438,7 @@ var Il = (e17, t10 = ``, n10 = ``) => {
   let r10 = document.createElement(e17);
   return t10 && (r10.className = t10), n10 && (r10.textContent = n10), r10;
 };
+var lu = [{ id: `low`, label: `Tief`, k: 0.62 }, { id: `normal`, label: `Normal`, k: 1 }, { id: `high`, label: `Hoch`, k: 1.45 }];
 var ku = [{ id: `happy`, label: `fr\xF6hlich`, say: `Ich bin fr\xF6hlich.` }, { id: `sad`, label: `traurig`, say: `Ich bin traurig.` }, { id: `angry`, label: `w\xFCtend`, say: `Ich bin w\xFCtend.` }, { id: `scared`, label: `\xE4ngstlich`, say: `Ich habe Angst.` }, { id: `surprised`, label: `\xFCberrascht`, say: `Ich bin \xFCberrascht.` }, { id: `tired`, label: `m\xFCde`, say: `Ich bin m\xFCde.` }];
 var Fu = [`#fbe3cf`, `#f6d3b8`, `#eebd94`, `#d9a066`, `#b9794a`, `#8d5a3b`, `#6b4129`];
 var Iu = [`#2b1d16`, `#5a3825`, `#8a4b22`, `#c47a35`, `#e8c170`, `#f3e2b0`, `#9ca3af`, `#e5e7eb`, `#d33f6a`, `#3b82f6`];
@@ -1715,6 +1725,38 @@ function ld(e17, t10 = {}, n10 = {}) {
   return f10 += `<g class="av-up" transform="${p10}">${_ne(e17, r10)}</g>`, f10 += `<g class="av-legL" transform="rotate(${cd(t10.legL ?? 0)} ${l10} ${r10.hip})"><g transform="translate(${l10} ${r10.hip})">${sd(e17, r10, -1)}</g></g>`, f10 += `<g class="av-legR" transform="rotate(${cd(t10.legR ?? 0)} ${u10} ${r10.hip})"><g transform="translate(${u10} ${r10.hip})">${sd(e17, r10, 1)}</g></g>`, f10 += `<g class="av-up" transform="${p10}">`, f10 += `<rect x="${r10.hx - 11}" y="${r10.hy + r10.ry - 14}" width="22" height="${r10.sy - r10.hy - r10.ry + 22}" rx="8" fill="${e17.skin}" stroke="${td(e17.skin)}" stroke-width="2"/>`, f10 += Dne(e17, r10), f10 += `<g class="av-armL" transform="rotate(${cd(i10)} ${o10} ${c10})"><g transform="translate(${o10} ${c10})">${od(e17, r10)}</g></g>`, f10 += `<g class="av-armR" transform="rotate(${cd(a10)} ${s10} ${c10})"><g transform="translate(${s10} ${c10})">${od(e17, r10)}</g></g>`, f10 += `<g class="av-head">${Tne(e17, r10, t10)}${vne(e17, r10)}${wne(e17, r10)}${yne(e17, r10)}</g>`, f10 += `</g></g></svg>`, f10;
 }
 var ud = (e17, t10) => t10.up || t10.dip || t10.squash ? `translate(${e17.hx} ${cd(e17.hip + (t10.dip ?? 0))}) rotate(${cd(t10.up ?? 0)}) scale(1 ${cd(1 - (t10.squash ?? 0))}) translate(${-e17.hx} ${-e17.hip})` : ``;
+function fd(e17, t10) {
+  let n10 = id(e17), r10 = (e18, t11, n11) => `${(e18 - n11 / 2).toFixed(1)} ${(t11 - n11 / 2).toFixed(1)} ${n11.toFixed(1)} ${n11.toFixed(1)}`;
+  switch (t10) {
+    case `head`:
+      return r10(n10.hx, n10.hy - n10.ry * 0.12, Math.max(n10.rx, n10.ry) * 3.1);
+    case `face`:
+      return r10(n10.hx, n10.hy + n10.ry * 0.2, n10.ry * 2.25);
+    case `eyes`:
+      return r10(n10.hx, n10.hy + 2, n10.rx * 1.5);
+    case `mouth`:
+      return r10(n10.hx, n10.hy + n10.ry * 0.58, n10.rx * 1.05);
+    case `body`:
+      return r10(n10.hx, (n10.sy + n10.hip) / 2 + 4, (n10.hip - n10.sy) * 1.45);
+    case `legs`:
+      return r10(n10.hx, (n10.hip + n10.ankle) / 2 + 8, (n10.ankle - n10.hip) * 1.45);
+    default:
+      return `0 0 200 400`;
+  }
+}
+var pd = (e17, t10) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(ld(e17, t10))}`;
+var md = (e17) => e17?.name ? e17.name : `Figur`;
+var hd = /* @__PURE__ */ new Map();
+function One(e17, t10, n10, r10 = {}) {
+  n10 && r10.assets && hd.set(t10.id, { assets: r10.assets, assetUrl: r10.assetUrl });
+  let i10 = $u(t10.av), a10 = `${n10}|${JSON.stringify(i10)}`;
+  e17.dataset.k !== a10 && (e17.dataset.k = a10, e17.setAttribute(`aria-label`, t10.say?.text || md(i10)), e17.innerHTML = n10 ? `<div class="lh-av">${ld(i10)}</div>` : `<img class="lh-av-img" src="${pd(i10)}" alt="" draggable="false">`);
+}
+var Mne = `
+.lh-av{position:absolute;inset:0}
+.lh-av svg,.lh-av-img{display:block;width:100%;height:100%}
+.lh-av svg{overflow:visible}
+.lh-av-img{object-fit:contain;object-position:50% 100%}`;
 var yd = `#1f2937`;
 var bd = `#2b6cb0`;
 var xd = (e17, t10) => [{ you: false, text: e17 }, { you: true, text: t10 }];
@@ -3802,6 +3844,1815 @@ function yg(e17) {
 function noe() {
   mg?.(), mg = null;
 }
+var goe = { g: 55, C: 60, D: 62, E: 64, F: 65, G: 67, A: 69, H: 71, c: 72 };
+function Og(e17) {
+  return e17.trim().split(/\s+/).map((e18) => {
+    let t10 = /^([gCDEFGAHc-])([\d.]*)$/.exec(e18);
+    if (!t10) throw Error(`bad note ${e18}`);
+    return [t10[1] === `-` ? null : goe[t10[1]], t10[2] ? Number(t10[2]) : 1];
+  });
+}
+var kg = [{ id: `entchen`, title: `Alle meine Entchen`, bpm: 100, notes: Og(`C D E F G2 G2 A A A A G4 A A A A G4 F F F F E2 E2 D D D D C4`) }, { id: `haenschen`, title: `H\xE4nschen klein`, bpm: 100, notes: Og(`G E E2 F D D2 C D E F G G G2 G E E2 F D D2 C E G G C4 D D D D D E F2 E E E E E F G2 G E E2 F D D2 C E G G C4`) }, { id: `jakob`, title: `Bruder Jakob`, bpm: 100, notes: Og(`C D E C C D E C E F G2 E F G2 G.5 A.5 G.5 F.5 E C G.5 A.5 G.5 F.5 E C C g C2 C g C2`) }, { id: `weihnachtsmann`, title: `Morgen kommt der Weihnachtsmann`, bpm: 100, notes: Og(`C C G G A A G2 F F E E D D C2 G G F F E E D2 G G F F E E D2 C C G G A A G2 F F E E D D C2`) }, { id: `freude`, title: `Ode an die Freude`, bpm: 100, notes: Og(`E E F G G F E D C C D E E1.5 D.5 D2 E E F G G F E D C C D E D1.5 C.5 C2`) }, { id: `jingle`, title: `Jingle Bells`, bpm: 120, notes: Og(`E E E2 E E E2 E G C D E4 F F F F F E E E E D D E D2 G2 E E E2 E E E2 E G C D E4 F F F F F E E E G G F D C4`) }, { id: `mary`, title: `Mary Had a Little Lamb`, bpm: 110, notes: Og(`E D C D E E E2 D D D2 E G G2 E D C D E E E E D D E D C4`) }, { id: `scale`, title: `Tonleiter (C-Dur)`, bpm: 90, notes: Og(`C D E F G A H c2 c H A G F E D C2`) }];
+var zb = [`#2563eb`, `#0d9488`, `#7c3aed`, `#c2410c`, `#be123c`, `#4d7c0f`];
+function Bb() {
+  return { title: ``, layout: `cards`, path: false, color: zb[0], links: [] };
+}
+function Vb(e17) {
+  if (typeof e17 != `string`) return null;
+  let t10 = e17.trim();
+  if (!t10) return null;
+  try {
+    let e18 = new URL(/^[a-z][a-z0-9+.-]*:/i.test(t10) ? t10 : `https://${t10}`);
+    return e18.protocol === `http:` || e18.protocol === `https:` ? e18.href : null;
+  } catch {
+    return null;
+  }
+}
+function Hb(e17, t10) {
+  let n10 = e17 && typeof e17 == `object` ? e17 : {}, r10 = Bb(), i10 = (e18, t11) => typeof e18 == `string` ? e18.slice(0, t11) : ``, a10 = [];
+  for (let e18 of Array.isArray(n10.links) ? n10.links : []) {
+    let n11 = e18 && typeof e18 == `object` ? e18 : {}, r11 = Vb(n11.url);
+    if (!r11) continue;
+    let o10 = t10(n11.img);
+    if (a10.push({ url: r11, title: i10(n11.title, 200), desc: i10(n11.desc, 400), ...o10 ? { img: o10 } : {} }), a10.length >= 12) break;
+  }
+  return { title: i10(n10.title, 120), layout: n10.layout === `list` || n10.layout === `tiles` || n10.layout === `buttons` ? n10.layout : `cards`, path: n10.path === true, color: typeof n10.color == `string` && /^#[0-9a-f]{6}$/i.test(n10.color) ? n10.color : r10.color, links: a10 };
+}
+var Ub = (e17) => e17.replace(/[&<>"']/g, (e18) => ({ "&": `&amp;`, "<": `&lt;`, ">": `&gt;`, '"': `&quot;`, "'": `&#39;` })[e18]);
+var Wb = (e17) => `${Math.round(e17 * 10) / 10}px`;
+var Gb = (e17) => {
+  try {
+    return new URL(e17).hostname.replace(/^www\./, ``);
+  } catch {
+    return e17;
+  }
+};
+var Kb = `lernheft-path-`;
+function qb(e17) {
+  try {
+    let t10 = JSON.parse(localStorage.getItem(Kb + e17) ?? `[]`);
+    return new Set(Array.isArray(t10) ? t10.filter((e18) => typeof e18 == `number`) : []);
+  } catch {
+    return /* @__PURE__ */ new Set();
+  }
+}
+function Jb(e17, t10) {
+  try {
+    t10.size ? localStorage.setItem(Kb + e17, JSON.stringify([...t10])) : localStorage.removeItem(Kb + e17);
+  } catch {
+  }
+}
+var Yb = (e17, t10) => {
+  let n10 = 0;
+  for (; n10 < t10 && e17.has(n10); ) n10++;
+  return n10;
+};
+function Xb(e17, t10, n10) {
+  let r10 = e17.links.length;
+  if (!r10) return [];
+  let i10 = Math.min(t10, n10) * 0.035, a10 = i10 + (e17.title.trim() ? Math.min(n10 * 0.12, 110) : 0), o10 = t10 - 2 * i10, s10 = n10 - a10 - i10, c10 = Math.min(t10, n10) * 0.025, l10;
+  l10 = e17.layout === `list` ? r10 <= 5 ? 1 : 2 : e17.layout === `buttons` ? r10 <= 4 ? 1 : r10 <= 8 ? 2 : 3 : r10 <= 2 ? r10 : r10 <= 4 ? 2 : r10 <= 9 ? 3 : 4;
+  let u10 = Math.ceil(r10 / l10), d10 = (o10 - (l10 - 1) * c10) / l10, f10 = (s10 - (u10 - 1) * c10) / u10;
+  e17.layout === `cards` && (f10 = Math.min(f10, d10 * 0.95)), e17.layout === `tiles` && (f10 = Math.min(f10, d10 * 0.75)), e17.layout === `list` && (f10 = Math.min(f10, Math.max(90, d10 * 0.22))), e17.layout === `buttons` && (f10 = Math.min(f10, 120), d10 = Math.min(d10, 900));
+  let p10 = u10 * f10 + (u10 - 1) * c10, m10 = i10 + (o10 - (l10 * d10 + (l10 - 1) * c10)) / 2, h10 = a10 + Math.max(0, (s10 - p10) / 2);
+  return e17.links.map((e18, t11) => {
+    let n11 = Math.floor(t11 / l10), i11 = Math.min(l10, r10 - n11 * l10), a11 = t11 % l10, o11 = (l10 - i11) * (d10 + c10) / 2;
+    return { i: t11, x: m10 + o11 + a11 * (d10 + c10), y: h10 + n11 * (f10 + c10), w: d10, h: f10 };
+  });
+}
+function Zb(e17, t10, n10, r10) {
+  let i10 = Xb(e17, t10, n10), a10 = Math.min(t10, n10) * 0.035, o10 = e17.title.trim() ? Math.min(n10 * 0.12, 110) : 0, s10 = r10.done ?? /* @__PURE__ */ new Set(), c10 = e17.path ? Yb(s10, e17.links.length) : e17.links.length, l10 = `<div class="lh-bm lh-bm-${e17.layout}${e17.path ? ` is-path` : ``}" style="width:${Wb(t10)};height:${Wb(n10)};--bc:${e17.color}">`;
+  if (o10 && (l10 += `<div class="lh-bm-title" style="left:${Wb(a10)};top:${Wb(a10)};width:${Wb(t10 - 2 * a10)};height:${Wb(o10)};font-size:${Wb(Math.min(o10 * 0.55, t10 * 0.9 / (0.55 * Math.max(6, [...e17.title].length))))}">${Ub(e17.title)}</div>`), e17.links.length || (l10 += `<div class="lh-bm-empty" style="font-size:${Wb(Math.min(t10, n10) * 0.05)}">Noch keine Links \u2013 tippe auf das Zahnrad.</div>`), e17.path && i10.length > 1) {
+    let r11 = i10.map((e18) => `${(e18.x + e18.w / 2).toFixed(1)},${(e18.y + e18.h / 2).toFixed(1)}`).join(` `);
+    l10 += `<svg class="lh-bm-line" width="${Wb(t10)}" height="${Wb(n10)}" viewBox="0 0 ${t10} ${n10}"><polyline points="${r11}" fill="none" stroke="${e17.color}" stroke-width="${Math.max(4, Math.min(t10, n10) * 8e-3)}" stroke-dasharray="14 12" stroke-linecap="round" opacity=".55"/></svg>`;
+  }
+  return e17.links.forEach((t11, n11) => {
+    let a11 = i10[n11], o11 = t11.img ? r10.src(t11.img) : void 0, u10 = e17.path && n11 > c10, d10 = e17.path && s10.has(n11), f10 = `lh-bm-link${u10 ? ` is-locked` : ``}${d10 ? ` is-done` : ``}${e17.path && n11 === c10 ? ` is-next` : ``}`, p10 = e17.layout === `list` ? Math.min(a11.h * 0.24, a11.w * 0.05) : e17.layout === `buttons` ? Math.min(a11.h * 0.32, a11.w * 0.06) : Math.min(a11.w * 0.075, a11.h * 0.09), m10 = Ub(t11.title || Gb(t11.url)), h10 = Math.min(a11.w, a11.h) * (e17.layout === `cards` ? 0.24 : e17.layout === `tiles` ? 0.34 : e17.layout === `list` ? 0.42 : 0.36), g10 = o11 ? `<img class="lh-bm-img" src="${Ub(o11)}" alt="" draggable="false">` : `<div class="lh-bm-img lh-bm-noimg" style="font-size:${Wb(h10)}">${Ub(Gb(t11.url).slice(0, 1).toUpperCase())}</div>`, _10 = e17.path ? `<span class="lh-bm-num" style="font-size:${Wb(p10 * 0.9)}">${d10 ? `\u2713` : n11 + 1}</span>` : ``, v10 = u10 ? `<span class="lh-bm-lock" aria-hidden="true" style="font-size:${Wb(p10 * 0.85)}">\u{1F512}</span>` : ``, y10 = e17.layout === `buttons` ? `<span class="lh-bm-t" style="font-size:${Wb(p10)}">${m10}</span>` : `<span class="lh-bm-t" style="font-size:${Wb(p10)}">${m10}</span>${t11.desc && e17.layout !== `tiles` ? `<span class="lh-bm-d" style="font-size:${Wb(p10 * 0.68)}">${Ub(t11.desc)}</span>` : ``}<span class="lh-bm-u" style="font-size:${Wb(p10 * 0.6)}">${Ub(Gb(t11.url))}</span>`;
+    l10 += `<div class="${f10}" data-i="${n11}" data-href="${Ub(t11.url)}" role="link" aria-label="${Ub(`${e17.path ? `${n11 + 1}. ` : ``}${t11.title || Gb(t11.url)}${u10 ? ` (noch gesperrt)` : ``}`)}" style="left:${Wb(a11.x)};top:${Wb(a11.y)};width:${Wb(a11.w)};height:${Wb(a11.h)}">${g10}<div class="lh-bm-text">${y10}</div>${_10}${v10}</div>`;
+  }), r10.live && e17.path && s10.size && (l10 += `<button type="button" class="lh-bm-reset" data-a="reset" style="right:${Wb(a10 * 0.6)};bottom:${Wb(a10 * 0.4)};font-size:${Wb(Math.min(t10, n10) * 0.025)}">\u21BA Von vorn</button>`), l10 + `</div>`;
+}
+function Mue(e17, t10, n10, r10) {
+  let i10 = t10.bm ? Hb(t10.bm, (e18) => typeof e18 == `string` ? e18 : void 0) : Bb(), a10 = Math.max(1, Math.round(t10.w)), o10 = Math.max(1, Math.round(t10.h)), s10 = n10 && i10.path ? qb(t10.id) : /* @__PURE__ */ new Set(), c10 = `${a10}x${o10}|${n10}|${[...s10].join(`,`)}|${JSON.stringify(t10.bm ?? null)}`;
+  if (e17.dataset.k === c10) return;
+  e17.dataset.k = c10, e17.setAttribute(`aria-label`, Qb(t10));
+  let l10 = r10.assets ?? {};
+  e17.innerHTML = Zb(i10, a10, o10, { src: (e18) => {
+    let t11 = l10[e18];
+    return t11 ? r10.assetUrl ? r10.assetUrl(t11) : t11.dataUrl : void 0;
+  }, done: s10, live: n10 });
+}
+function Qb(e17) {
+  let t10 = e17.bm;
+  return t10?.links.length ? `${t10.title || `Linksammlung`}: ${t10.links.map((e18, n10) => `${t10.path ? `${n10 + 1}. ` : ``}${e18.title || Gb(e18.url)}`).join(`, `)}` : `Linksammlung`;
+}
+function Nue(e17, t10, n10) {
+  let r10 = e17.bm;
+  if (!r10) return null;
+  if (t10?.closest?.(`[data-a="reset"]`)) return Jb(e17.id, /* @__PURE__ */ new Set()), n10(), null;
+  let i10 = t10?.closest?.(`[data-i]`);
+  if (!i10) return null;
+  let a10 = Number(i10.getAttribute(`data-i`)), o10 = r10.links[a10], s10 = o10 ? Vb(o10.url) : null;
+  if (!s10) return null;
+  if (r10.path) {
+    let t11 = qb(e17.id);
+    if (a10 > Yb(t11, r10.links.length)) return i10.classList.remove(`is-nope`), i10.offsetWidth, i10.classList.add(`is-nope`), `\xD6ffne zuerst Link ${Yb(t11, r10.links.length) + 1}.`;
+    t11.add(a10), Jb(e17.id, t11), n10();
+  }
+  return window.open(s10, `_blank`, `noopener`), null;
+}
+var Pue = `
+.lh-bm{position:relative;box-sizing:border-box;overflow:hidden;font-family:'Nunito',Nunito,system-ui,sans-serif;color:#1e293b;line-height:1.2}
+.lh-bm *{box-sizing:border-box}
+.lh-bm-title{position:absolute;display:flex;align-items:center;justify-content:center;font-weight:800;text-align:center;white-space:nowrap;overflow:hidden;color:var(--bc)}
+.lh-bm-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#64748b;text-align:center;padding:5%}
+.lh-bm-line{position:absolute;left:0;top:0;pointer-events:none}
+.lh-bm-link{position:absolute;display:flex;overflow:hidden;background:#fff;border-radius:16px;box-shadow:0 3px 10px rgba(15,23,42,.14);border:2px solid #e2e8f0;cursor:pointer}
+.lh-bm-img{display:block;object-fit:cover;background:#f1f5f9;flex:none}
+.lh-bm-noimg{display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;background:var(--bc);line-height:1}
+.lh-bm-text{display:flex;flex-direction:column;gap:.25em;min-width:0;padding:.55em .7em;flex:1}
+.lh-bm-t{font-weight:800;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lh-bm-d{color:#475569;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lh-bm-u{color:var(--bc);font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-top:auto}
+.lh-bm-cards .lh-bm-link{flex-direction:column}
+.lh-bm-cards .lh-bm-img{width:100%;height:52%}
+.lh-bm-list .lh-bm-link{flex-direction:row;align-items:stretch}
+.lh-bm-list .lh-bm-img{height:100%;aspect-ratio:1/1}
+.lh-bm-list .lh-bm-text{justify-content:center}
+.lh-bm-list .lh-bm-u{margin-top:0}
+.lh-bm-tiles .lh-bm-img{position:absolute;inset:0;width:100%;height:100%}
+.lh-bm-tiles .lh-bm-text{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(15,23,42,.82));color:#fff;padding-top:2em}
+.lh-bm-tiles .lh-bm-u{color:#e2e8f0}
+.lh-bm-buttons .lh-bm-link{flex-direction:row;align-items:center;border-radius:999px;border-color:var(--bc);border-width:3px;padding:0 .4em}
+.lh-bm-buttons .lh-bm-img{height:78%;aspect-ratio:1/1;border-radius:50%;margin-left:.3em}
+.lh-bm-buttons .lh-bm-text{justify-content:center}
+.lh-bm-num{position:absolute;left:.35em;top:.35em;min-width:1.7em;height:1.7em;border-radius:999px;background:var(--bc);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px #fff}
+.lh-bm-buttons .lh-bm-num,.lh-bm-list .lh-bm-num{position:static;order:-1;margin:0 .1em 0 .45em;align-self:center;flex:none}
+.lh-bm-link.is-done{border-color:#22c55e}
+.lh-bm-link.is-done .lh-bm-num{background:#16a34a}
+.lh-bm-link.is-next{border-color:var(--bc);box-shadow:0 0 0 3px var(--bc),0 3px 10px rgba(15,23,42,.14)}
+.lh-bm-link.is-locked{cursor:default}
+.lh-bm-link.is-locked>.lh-bm-img,.lh-bm-link.is-locked>.lh-bm-text{filter:grayscale(1);opacity:.45}
+.lh-bm-lock{position:absolute;right:.35em;top:.3em;line-height:1}
+.lh-bm-buttons .lh-bm-lock{position:static;order:2;align-self:center;margin:0 .5em 0 .2em}
+.lh-bm-link.is-nope{animation:lh-bm-nope .45s ease-in-out}
+@keyframes lh-bm-nope{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+.lh-bm-reset{position:absolute;border:0;border-radius:999px;background:#fff;color:#334155;font-weight:700;padding:.35em .9em;box-shadow:0 2px 6px rgba(15,23,42,.18);cursor:pointer;font-family:inherit}`;
+var kD = [{ id: `bee`, nom: `die Biene`, dat: `der Biene`, goal: `Blume`, toGoal: `zur Blume`, atGoal: `bei der Blume`, byGoal: `an der Blume` }, { id: `robot`, nom: `der Roboter`, dat: `dem Roboter`, goal: `Akku`, toGoal: `zum Akku`, atGoal: `beim Akku`, byGoal: `am Akku` }, { id: `mouse`, nom: `die Maus`, dat: `der Maus`, goal: `K\xE4se`, toGoal: `zum K\xE4se`, atGoal: `beim K\xE4se`, byGoal: `am K\xE4se` }, { id: `car`, nom: `das Auto`, dat: `dem Auto`, goal: `Garage`, toGoal: `in die Garage`, atGoal: `in der Garage`, byGoal: `an der Garage` }, { id: `rocket`, nom: `die Rakete`, dat: `der Rakete`, goal: `Planet`, toGoal: `zum Planeten`, atGoal: `beim Planeten`, byGoal: `am Planeten` }, { id: `turtle`, nom: `die Schildkr\xF6te`, dat: `der Schildkr\xF6te`, goal: `Teich`, toGoal: `zum Teich`, atGoal: `am Teich`, byGoal: `am Teich` }, { id: `dog`, nom: `der Hund`, dat: `dem Hund`, goal: `Knochen`, toGoal: `zum Knochen`, atGoal: `beim Knochen`, byGoal: `am Knochen` }, { id: `ladybug`, nom: `der Marienk\xE4fer`, dat: `dem Marienk\xE4fer`, goal: `Blatt`, toGoal: `zum Blatt`, atGoal: `beim Blatt`, byGoal: `am Blatt` }];
+var AD = (e17) => kD.find((t10) => t10.id === e17) ?? kD[0];
+var jD = `#1f2937`;
+var MD = { bee: `<ellipse cx="-22" cy="-4" rx="20" ry="12" transform="rotate(-28 -22 -4)" fill="#e0f2fe" fill-opacity=".9" stroke="#60a5fa" stroke-width="2.5"/><ellipse cx="22" cy="-4" rx="20" ry="12" transform="rotate(28 22 -4)" fill="#e0f2fe" fill-opacity=".9" stroke="#60a5fa" stroke-width="2.5"/><ellipse cx="0" cy="8" rx="19" ry="29" fill="#facc15" stroke="${jD}" stroke-width="3"/><path d="M-18 1H18M-17 14H17M-12 26H12" stroke="${jD}" stroke-width="6.5"/><path d="M-4 36L0 45L4 36Z" fill="${jD}"/><circle cx="0" cy="-25" r="13" fill="${jD}"/><circle cx="-5" cy="-30" r="4" fill="#fff"/><circle cx="5" cy="-30" r="4" fill="#fff"/><circle cx="-5" cy="-31" r="1.8" fill="${jD}"/><circle cx="5" cy="-31" r="1.8" fill="${jD}"/><path d="M-5 -37Q-9 -46 -15 -48M5 -37Q9 -46 15 -48" stroke="${jD}" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="-15" cy="-48" r="3" fill="${jD}"/><circle cx="15" cy="-48" r="3" fill="${jD}"/>`, robot: `<rect x="-42" y="-20" width="12" height="40" rx="5" fill="#334155"/><rect x="30" y="-20" width="12" height="40" rx="5" fill="#334155"/><rect x="-32" y="-30" width="64" height="62" rx="16" fill="#38bdf8" stroke="#0f172a" stroke-width="3"/><rect x="-22" y="-26" width="44" height="18" rx="9" fill="#0f172a"/><circle cx="-10" cy="-17" r="5" fill="#a7f3d0"/><circle cx="10" cy="-17" r="5" fill="#a7f3d0"/><rect x="-18" y="6" width="36" height="16" rx="5" fill="#e0f2fe" stroke="#0f172a" stroke-width="2"/><circle cx="-9" cy="14" r="3" fill="#f43f5e"/><circle cx="0" cy="14" r="3" fill="#facc15"/><circle cx="9" cy="14" r="3" fill="#22c55e"/><path d="M0 -30V-41" stroke="#0f172a" stroke-width="3"/><circle cx="0" cy="-44" r="5" fill="#f43f5e" stroke="#0f172a" stroke-width="2"/>`, mouse: `<path d="M0 34C9 40 -9 44 3 48" stroke="#f472b6" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M0 -40C14 -40 26 -6 26 12C26 30 14 36 0 36C-14 36 -26 30 -26 12C-26 -6 -14 -40 0 -40Z" fill="#9ca3af" stroke="#374151" stroke-width="3"/><circle cx="-15" cy="-14" r="11" fill="#d1d5db" stroke="#374151" stroke-width="3"/><circle cx="-15" cy="-14" r="6" fill="#f9a8d4"/><circle cx="15" cy="-14" r="11" fill="#d1d5db" stroke="#374151" stroke-width="3"/><circle cx="15" cy="-14" r="6" fill="#f9a8d4"/><circle cx="-6" cy="-26" r="3" fill="#111827"/><circle cx="6" cy="-26" r="3" fill="#111827"/><path d="M-3 -36L-17 -41M-3 -34L-17 -32M3 -36L17 -41M3 -34L17 -32" stroke="#374151" stroke-width="1.6"/><circle cx="0" cy="-40" r="4.5" fill="#f472b6"/>`, car: `<rect x="-31" y="-30" width="9" height="17" rx="3" fill="#111827"/><rect x="22" y="-30" width="9" height="17" rx="3" fill="#111827"/><rect x="-31" y="14" width="9" height="17" rx="3" fill="#111827"/><rect x="22" y="14" width="9" height="17" rx="3" fill="#111827"/><rect x="-24" y="-42" width="48" height="84" rx="14" fill="#ef4444" stroke="#7f1d1d" stroke-width="3"/><path d="M-18 -18H18L14 -6H-14Z" fill="#bfdbfe" stroke="#7f1d1d" stroke-width="2"/><rect x="-15" y="-5" width="30" height="27" rx="5" fill="#dc2626" stroke="#7f1d1d" stroke-width="2"/><path d="M-14 23H14L17 31H-17Z" fill="#bfdbfe" stroke="#7f1d1d" stroke-width="2"/><circle cx="-14" cy="-37" r="4" fill="#fef08a"/><circle cx="14" cy="-37" r="4" fill="#fef08a"/>`, rocket: `<path d="M-10 33Q0 54 10 33Z" fill="#f97316"/><path d="M-5 33Q0 46 5 33Z" fill="#fde047"/><path d="M-13 12L-30 34L-13 30Z" fill="#ef4444" stroke="${jD}" stroke-width="2.5" stroke-linejoin="round"/><path d="M13 12L30 34L13 30Z" fill="#ef4444" stroke="${jD}" stroke-width="2.5" stroke-linejoin="round"/><path d="M0 -46C16 -30 18 0 14 34H-14C-18 0 -16 -30 0 -46Z" fill="#f1f5f9" stroke="${jD}" stroke-width="3"/><path d="M0 -46C8 -38 11 -31 12 -25H-12C-11 -31 -8 -38 0 -46Z" fill="#ef4444" stroke="${jD}" stroke-width="2.5"/><circle cx="0" cy="-4" r="9" fill="#7dd3fc" stroke="${jD}" stroke-width="3"/>`, turtle: `<ellipse cx="-25" cy="-19" rx="10" ry="7" fill="#86efac" stroke="#166534" stroke-width="2.5"/><ellipse cx="25" cy="-19" rx="10" ry="7" fill="#86efac" stroke="#166534" stroke-width="2.5"/><ellipse cx="-25" cy="23" rx="10" ry="7" fill="#86efac" stroke="#166534" stroke-width="2.5"/><ellipse cx="25" cy="23" rx="10" ry="7" fill="#86efac" stroke="#166534" stroke-width="2.5"/><path d="M-4 33L0 43L4 33Z" fill="#86efac" stroke="#166534" stroke-width="2"/><ellipse cx="0" cy="-37" rx="11" ry="12" fill="#86efac" stroke="#166534" stroke-width="3"/><circle cx="-5" cy="-41" r="2.6" fill="${jD}"/><circle cx="5" cy="-41" r="2.6" fill="${jD}"/><ellipse cx="0" cy="2" rx="28" ry="32" fill="#16a34a" stroke="#14532d" stroke-width="3"/><path d="M0 -12V-29M11 -5L24 -14M11 9L24 18M0 16V33M-11 9L-24 18M-11 -5L-24 -14" stroke="#14532d" stroke-width="2"/><path d="M0 -12L11 -5V9L0 16L-11 9V-5Z" fill="#22c55e" stroke="#14532d" stroke-width="2"/>`, dog: `<path d="M0 30Q11 41 4 49" stroke="#92400e" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="-19" cy="-6" r="6" fill="#b45309"/><circle cx="19" cy="-6" r="6" fill="#b45309"/><circle cx="-19" cy="27" r="6" fill="#b45309"/><circle cx="19" cy="27" r="6" fill="#b45309"/><ellipse cx="0" cy="11" rx="20" ry="25" fill="#d97706" stroke="#78350f" stroke-width="3"/><ellipse cx="6" cy="16" rx="8" ry="10" fill="#fde68a" opacity=".75"/><circle cx="0" cy="-24" r="16" fill="#d97706" stroke="#78350f" stroke-width="3"/><ellipse cx="-16" cy="-22" rx="7" ry="13" transform="rotate(16 -16 -22)" fill="#78350f"/><ellipse cx="16" cy="-22" rx="7" ry="13" transform="rotate(-16 16 -22)" fill="#78350f"/><ellipse cx="0" cy="-37" rx="8" ry="7" fill="#fde68a" stroke="#78350f" stroke-width="2"/><circle cx="0" cy="-42" r="3.5" fill="#111827"/><circle cx="-6" cy="-27" r="3" fill="#111827"/><circle cx="6" cy="-27" r="3" fill="#111827"/>`, ladybug: `<path d="M-20 -8L-34 -15M-22 6L-36 6M-20 20L-33 28M20 -8L34 -15M22 6L36 6M20 20L33 28" stroke="#111827" stroke-width="3" stroke-linecap="round"/><circle cx="0" cy="7" r="29" fill="#ef4444" stroke="#111827" stroke-width="3"/><path d="M0 -20V36" stroke="#111827" stroke-width="3"/><circle cx="-13" cy="-3" r="6" fill="#111827"/><circle cx="13" cy="-3" r="6" fill="#111827"/><circle cx="-15" cy="18" r="5" fill="#111827"/><circle cx="15" cy="18" r="5" fill="#111827"/><circle cx="-6" cy="30" r="3.5" fill="#111827"/><circle cx="6" cy="30" r="3.5" fill="#111827"/><ellipse cx="0" cy="-26" rx="15" ry="10" fill="#111827"/><circle cx="-6" cy="-29" r="3" fill="#fff"/><circle cx="6" cy="-29" r="3" fill="#fff"/><path d="M-5 -35Q-9 -44 -14 -46M5 -35Q9 -44 14 -46" stroke="#111827" stroke-width="2.5" fill="none" stroke-linecap="round"/>` };
+var Zhe = { bee: `<ellipse cx="-16" cy="26" rx="13" ry="6" transform="rotate(-30 -16 26)" fill="#4ade80" stroke="#166534" stroke-width="2"/><ellipse cx="16" cy="26" rx="13" ry="6" transform="rotate(30 16 26)" fill="#4ade80" stroke="#166534" stroke-width="2"/>` + [0, 60, 120, 180, 240, 300].map((e17) => `<circle cx="${(Math.sin(e17 * Math.PI / 180) * 17).toFixed(1)}" cy="${(-Math.cos(e17 * Math.PI / 180) * 17 - 4).toFixed(1)}" r="13" fill="#f472b6" stroke="#be185d" stroke-width="2.5"/>`).join(``) + `<circle cx="0" cy="-4" r="11" fill="#facc15" stroke="#a16207" stroke-width="2.5"/>`, robot: `<rect x="-18" y="-28" width="36" height="58" rx="7" fill="#22c55e" stroke="#14532d" stroke-width="3"/><rect x="-8" y="-36" width="16" height="8" rx="2" fill="#14532d"/><path d="M4 -19L-9 3H1L-4 21L10 -3H0Z" fill="#fef9c3" stroke="#14532d" stroke-width="2" stroke-linejoin="round"/>`, mouse: `<path d="M-32 20H32V-4L-26 -22Z" fill="#fbbf24" stroke="#92400e" stroke-width="3" stroke-linejoin="round"/><path d="M-26 -22L32 -4" stroke="#92400e" stroke-width="2"/><circle cx="-12" cy="8" r="5" fill="#f59e0b"/><circle cx="10" cy="2" r="4" fill="#f59e0b"/><circle cx="20" cy="12" r="3.5" fill="#f59e0b"/><circle cx="-2" cy="-6" r="3" fill="#f59e0b"/>`, car: `<path d="M-34 -4L0 -32L34 -4V32H-34Z" fill="#e5e7eb" stroke="#374151" stroke-width="3" stroke-linejoin="round"/><path d="M-39 -2L0 -36L39 -2" fill="none" stroke="#dc2626" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><rect x="-21" y="2" width="42" height="30" fill="#9ca3af" stroke="#374151" stroke-width="2.5"/><path d="M-21 10H21M-21 17H21M-21 24H21" stroke="#4b5563" stroke-width="2"/>`, rocket: `<circle cx="0" cy="0" r="22" fill="#a78bfa" stroke="#4c1d95" stroke-width="3"/><circle cx="-7" cy="-7" r="5" fill="#8b5cf6"/><circle cx="8" cy="6" r="3.5" fill="#8b5cf6"/><ellipse cx="0" cy="0" rx="38" ry="10" transform="rotate(-18)" fill="none" stroke="#f59e0b" stroke-width="4"/>`, turtle: `<path d="M-34 4C-36 -18 -10 -30 10 -26C32 -22 38 0 30 16C22 32 -30 30 -34 4Z" fill="#60a5fa" stroke="#1d4ed8" stroke-width="3"/><path d="M-12 2A11 11 0 1 0 -2 -8L-6 -2Z" fill="#4ade80" stroke="#166534" stroke-width="2"/><circle cx="14" cy="10" r="5" fill="#f9a8d4" stroke="#be185d" stroke-width="1.5"/><path d="M-22 -14q5 -3 10 0M10 -16q5 -3 10 0" stroke="#bfdbfe" stroke-width="2" fill="none"/>`, dog: `<g transform="rotate(-25)"><circle cx="-22" cy="-7" r="8" fill="#f8fafc" stroke="#78716c" stroke-width="2.5"/><circle cx="-22" cy="7" r="8" fill="#f8fafc" stroke="#78716c" stroke-width="2.5"/><circle cx="22" cy="-7" r="8" fill="#f8fafc" stroke="#78716c" stroke-width="2.5"/><circle cx="22" cy="7" r="8" fill="#f8fafc" stroke="#78716c" stroke-width="2.5"/><rect x="-22" y="-6" width="44" height="12" fill="#f8fafc" stroke="#78716c" stroke-width="2.5"/><rect x="-23" y="-4.5" width="46" height="9" fill="#f8fafc"/></g>`, ladybug: `<path d="M0 -34C24 -20 24 18 0 34C-24 18 -24 -20 0 -34Z" fill="#4ade80" stroke="#166534" stroke-width="3"/><path d="M0 -30V38M0 -10L12 -20M0 4L14 -6M0 18L12 10M0 -10L-12 -20M0 4L-14 -6M0 18L-12 10" stroke="#166534" stroke-width="2" fill="none"/>` };
+var ND = `<path d="M0 -27L7.6 -9.4L26.6 -8.3L11.9 3.9L16.5 22.3L0 12L-16.5 22.3L-11.9 3.9L-26.6 -8.3L-7.6 -9.4Z" fill="#facc15" stroke="#a16207" stroke-width="3" stroke-linejoin="round"/>`;
+var Qhe = `<path d="M-30 18C-34 0 -22 -24 -2 -26C20 -28 34 -10 30 12C28 26 -26 30 -30 18Z" fill="#9ca3af" stroke="#4b5563" stroke-width="3"/><path d="M-14 -14C-6 -20 6 -20 12 -14" stroke="#e5e7eb" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+var PD = [{ id: `classic`, label: `Klassisch`, page: `#f1f5f9`, a: `#ffffff`, b: `#ffffff`, line: `#334155`, frame: `#334155`, wall: `ein Stein`, wallSvg: Qhe }, { id: `garden`, label: `Garten`, page: `#ecfccb`, a: `#bbf7d0`, b: `#a7f3d0`, line: `#15803d`, frame: `#166534`, wall: `ein Busch`, wallSvg: `<circle cx="-14" cy="6" r="18" fill="#16a34a" stroke="#14532d" stroke-width="3"/><circle cx="14" cy="6" r="18" fill="#16a34a" stroke="#14532d" stroke-width="3"/><circle cx="0" cy="-12" r="20" fill="#22c55e" stroke="#14532d" stroke-width="3"/><circle cx="-8" cy="-14" r="3" fill="#ef4444"/><circle cx="10" cy="-6" r="3" fill="#ef4444"/><circle cx="-16" cy="8" r="3" fill="#ef4444"/>` }, { id: `city`, label: `Stadt`, page: `#e2e8f0`, a: `#f1f5f9`, b: `#e2e8f0`, line: `#64748b`, frame: `#334155`, wall: `eine Baustelle`, wallSvg: `<path d="M-26 30L-20 6M26 30L20 6" stroke="#475569" stroke-width="5" stroke-linecap="round"/><rect x="-34" y="-14" width="68" height="22" rx="4" fill="#ffffff" stroke="#b91c1c" stroke-width="3"/><path d="M-26 8L-12 -14M-10 8L4 -14M6 8L20 -14M22 8L32 -6" stroke="#dc2626" stroke-width="7"/><rect x="-34" y="-14" width="68" height="22" rx="4" fill="none" stroke="#b91c1c" stroke-width="3"/><circle cx="0" cy="-24" r="7" fill="#facc15" stroke="#a16207" stroke-width="2"/>` }, { id: `farm`, label: `Bauernhof`, page: `#fef3c7`, a: `#fde68a`, b: `#fcd34d`, line: `#a16207`, frame: `#78350f`, wall: `ein Heuballen`, wallSvg: `<rect x="-32" y="-22" width="64" height="44" rx="14" fill="#facc15" stroke="#a16207" stroke-width="3"/><path d="M-22 -14Q0 -8 22 -14M-24 0Q0 6 24 0M-22 14Q0 20 22 14" stroke="#ca8a04" stroke-width="2.5" fill="none"/><path d="M-8 -22V22M10 -22V22" stroke="#b91c1c" stroke-width="3"/>` }, { id: `space`, label: `Weltraum`, page: `#1e1b4b`, a: `#312e81`, b: `#2e2a6e`, line: `#818cf8`, frame: `#a5b4fc`, wall: `ein Asteroid`, wallSvg: `<path d="M-28 4C-30 -16 -12 -30 6 -26C26 -22 32 -2 26 14C20 30 -2 32 -16 26C-24 22 -27 14 -28 4Z" fill="#78716c" stroke="#292524" stroke-width="3"/><circle cx="-8" cy="-8" r="7" fill="#57534e"/><circle cx="12" cy="8" r="5" fill="#57534e"/><circle cx="-10" cy="14" r="4" fill="#57534e"/>` }, { id: `sea`, label: `Meer`, page: `#e0f2fe`, a: `#bae6fd`, b: `#a5dcf7`, line: `#0369a1`, frame: `#075985`, wall: `ein Felsen`, wallSvg: `<ellipse cx="0" cy="12" rx="34" ry="14" fill="#f0f9ff" opacity=".9"/><path d="M-26 14C-30 -6 -14 -26 2 -24C20 -22 30 -6 26 14Z" fill="#64748b" stroke="#334155" stroke-width="3"/><path d="M-10 -12C-4 -18 6 -18 10 -12" stroke="#cbd5e1" stroke-width="3" fill="none" stroke-linecap="round"/>` }, { id: `colors`, label: `Farbfelder`, page: `#faf5ff`, a: `#ffffff`, b: `#ffffff`, line: `#475569`, frame: `#475569`, wall: `ein Stein`, wallSvg: Qhe }];
+var FD = (e17) => PD.find((t10) => t10.id === e17) ?? PD[0];
+var $he = [`#fecaca`, `#fed7aa`, `#fef08a`, `#bbf7d0`, `#bae6fd`, `#ddd6fe`, `#fbcfe8`];
+function ege(e17, t10, n10, r10, i10) {
+  let a10 = (e18) => (t10 * 9301 + e18 * 49297 + 233) % 233280 / 233280, o10 = (e18) => (n10 + i10 * (0.15 + 0.7 * a10(e18))).toFixed(1), s10 = (e18) => (r10 + i10 * (0.15 + 0.7 * a10(e18 + 7))).toFixed(1), c10 = (i10 / 100).toFixed(2);
+  switch (e17) {
+    case `garden`:
+      return `<path d="M${o10(1)} ${s10(1)}l-3 -9m3 9l0 -11m0 11l4 -9" stroke="#22c55e" stroke-width="${(2 * c10).toFixed(1)}" fill="none" stroke-linecap="round" transform=""/>`;
+    case `space`:
+      return `<circle cx="${o10(1)}" cy="${s10(1)}" r="${(1.6 * c10).toFixed(1)}" fill="#e0e7ff"/><circle cx="${o10(2)}" cy="${s10(2)}" r="${(1 * c10).toFixed(1)}" fill="#c7d2fe"/><circle cx="${o10(3)}" cy="${s10(3)}" r="${(1.2 * c10).toFixed(1)}" fill="#fef9c3"/>`;
+    case `sea`:
+      return `<path d="M${o10(1)} ${s10(1)}q${(6 * c10).toFixed(1)} -${(5 * c10).toFixed(1)} ${(12 * c10).toFixed(1)} 0t${(12 * c10).toFixed(1)} 0" stroke="#e0f2fe" stroke-width="${(2.5 * c10).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
+    case `farm`:
+      return `<path d="M${o10(1)} ${s10(1)}l${(10 * c10).toFixed(1)} -${(3 * c10).toFixed(1)}M${o10(2)} ${s10(2)}l${(9 * c10).toFixed(1)} ${(4 * c10).toFixed(1)}" stroke="#ca8a04" stroke-width="${(2 * c10).toFixed(1)}" stroke-linecap="round"/>`;
+    case `city`:
+      return `<path d="M${(n10 + i10 * 0.5).toFixed(1)} ${(r10 + i10 * 0.12).toFixed(1)}v${(i10 * 0.12).toFixed(1)}M${(n10 + i10 * 0.5).toFixed(1)} ${(r10 + i10 * 0.76).toFixed(1)}v${(i10 * 0.12).toFixed(1)}M${(n10 + i10 * 0.12).toFixed(1)} ${(r10 + i10 * 0.5).toFixed(1)}h${(i10 * 0.12).toFixed(1)}M${(n10 + i10 * 0.76).toFixed(1)} ${(r10 + i10 * 0.5).toFixed(1)}h${(i10 * 0.12).toFixed(1)}" stroke="#cbd5e1" stroke-width="${(3 * c10).toFixed(1)}" stroke-linecap="round"/>`;
+    default:
+      return ``;
+  }
+}
+function tge(e17, t10, n10, r10, i10) {
+  let a10 = FD(e17), o10 = i10 / t10, s10 = `<rect x="${n10 - 8}" y="${r10 - 8}" width="${i10 + 16}" height="${i10 + 16}" rx="14" fill="${a10.frame}"/>`;
+  for (let i11 = 0; i11 < t10; i11++) for (let c11 = 0; c11 < t10; c11++) {
+    let l10 = n10 + c11 * o10, u10 = r10 + i11 * o10, d10 = e17 === `colors` ? $he[(c11 * 3 + i11 * 5 + c11 * i11 % 3) % $he.length] : (c11 + i11) % 2 ? a10.b : a10.a;
+    s10 += `<rect x="${l10.toFixed(1)}" y="${u10.toFixed(1)}" width="${o10.toFixed(1)}" height="${o10.toFixed(1)}" fill="${d10}"/>`, s10 += ege(e17, i11 * t10 + c11, l10, u10, o10);
+  }
+  let c10 = ``;
+  for (let e18 = 1; e18 < t10; e18++) c10 += `M${(n10 + e18 * o10).toFixed(1)} ${r10}V${r10 + i10}M${n10} ${(r10 + e18 * o10).toFixed(1)}H${n10 + i10}`;
+  return s10 += `<path d="${c10}" stroke="${a10.line}" stroke-width="${e17 === `classic` ? 3 : 2}" opacity="${e17 === `classic` ? 0.85 : 0.6}"/>`, s10 += `<rect x="${n10}" y="${r10}" width="${i10}" height="${i10}" fill="none" stroke="${a10.frame}" stroke-width="4"/>`, s10;
+}
+var ID = { F: `<path d="M0 -24L19 -2H7V24H-7V-2H-19Z" fill="#fff"/>`, B: `<path d="M0 24L19 2H7V-24H-7V2H-19Z" fill="#fff"/>`, L: `<path d="M12 24V2Q12 -12 -2 -12H-6" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M-4 -26L-22 -12L-4 2Z" fill="#fff"/>`, R: `<path d="M-12 24V2Q-12 -12 2 -12H6" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M4 -26L22 -12L4 2Z" fill="#fff"/>`, P: `<rect x="-15" y="-19" width="10" height="38" rx="3" fill="#fff"/><rect x="5" y="-19" width="10" height="38" rx="3" fill="#fff"/>`, D: `<g transform="rotate(45)"><rect x="-6" y="-26" width="12" height="28" rx="2" fill="#fff"/><path d="M-6 4H6L0 15Z" fill="#fff"/></g><path d="M-22 21H22" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/>`, V: `<text x="0" y="11" text-anchor="middle" font-family="Verdana, sans-serif" font-size="30" font-weight="700" fill="#fff">+1</text>`, U: `<g transform="translate(2 -9) rotate(45)"><rect x="-6" y="-26" width="12" height="28" rx="2" fill="#fff"/><path d="M-6 4H6L0 15Z" fill="#fff"/></g><path d="M-22 21H22" stroke="#fff" stroke-width="4" stroke-dasharray="5 6" stroke-linecap="round"/>` };
+var nge = `<circle r="18" fill="#fff"/><circle cx="-6" cy="-5" r="6" fill="#ef4444"/><circle cx="7" cy="-5" r="6" fill="#3b82f6"/><circle cx="0" cy="7" r="6" fill="#22c55e"/>`;
+var rge = `<path d="M3 -22V9" stroke="#fff" stroke-width="5" stroke-linecap="round"/><ellipse cx="-6" cy="11" rx="10" ry="7.5" transform="rotate(-20 -6 11)" fill="#fff"/><path d="M3 -22Q16 -18 17 -6Q11 -13 3 -13Z" fill="#fff"/>`;
+var ige = (e17) => `<g transform="rotate(${e17})"><path d="M0 -24L19 -2H7V24H-7V-2H-19Z" fill="#fff"/></g>`;
+var age = `<path d="M-30 -14L-34 -42L-12 -28Z" fill="#fb923c" stroke="#7c2d12" stroke-width="3" stroke-linejoin="round"/><path d="M30 -14L34 -42L12 -28Z" fill="#fb923c" stroke="#7c2d12" stroke-width="3" stroke-linejoin="round"/><ellipse cx="0" cy="2" rx="36" ry="32" fill="#fb923c" stroke="#7c2d12" stroke-width="3"/><path d="M-12 -30Q0 -24 12 -30M-6 -22V-12M6 -22V-12" stroke="#c2410c" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="-13" cy="-2" rx="7" ry="9" fill="#fef9c3"/><ellipse cx="13" cy="-2" rx="7" ry="9" fill="#fef9c3"/><ellipse cx="-13" cy="-1" rx="3" ry="7" fill="#1f2937"/><ellipse cx="13" cy="-1" rx="3" ry="7" fill="#1f2937"/><path d="M-5 12L5 12L0 18Z" fill="#f472b6"/><path d="M0 18Q-4 24 -9 22M0 18Q4 24 9 22" stroke="#7c2d12" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M-14 14L-38 10M-14 18L-38 22M14 14L38 10M14 18L38 22" stroke="#7c2d12" stroke-width="2" stroke-linecap="round"/>`;
+var oge = `<ellipse cx="0" cy="6" rx="9" ry="8"/><circle cx="-9" cy="-6" r="4"/><circle cx="-3" cy="-11" r="4"/><circle cx="4" cy="-11" r="4"/><circle cx="10" cy="-6" r="4"/>`;
+var LD = [{ c: `#1e293b`, name: `schwarz` }, { c: `#dc2626`, name: `rot` }, { c: `#2563eb`, name: `blau` }, { c: `#16a34a`, name: `gr\xFCn` }, { c: `#f59e0b`, name: `orange` }, { c: `#9333ea`, name: `lila` }, { c: `#ec4899`, name: `rosa` }];
+var RD = { wall: `Wand vor mir`, free: `vorne frei`, rightFree: `rechts frei`, leftFree: `links frei`, red: `Feld rot`, blue: `Feld blau`, star: `auf Stern` };
+var zD = (e17) => typeof e17 == `object` && `rep` in e17;
+var BD = (e17) => typeof e17 == `object` && `on` in e17;
+var VD = (e17) => typeof e17 == `object` && `col` in e17;
+var HD = (e17) => typeof e17 == `object` && `cond` in e17;
+var UD = (e17) => zD(e17) || BD(e17) || HD(e17) ? e17.body : null;
+var sge = [`up`, `down`, `left`, `right`];
+var cge = { up: 0, down: 180, left: -90, right: 90 };
+var WD = { up: `Pfeil nach oben`, down: `Pfeil nach unten`, left: `Pfeil nach links`, right: `Pfeil nach rechts` };
+var lge = (e17) => [...e17].filter((e18) => `FBLRPDUV?`.includes(e18));
+var GD = (e17) => e17.reduce((e18, t10) => e18 + (BD(t10) ? GD(t10.body) : zD(t10) ? 1 + GD(t10.body) : 1), 0);
+var uge = [5, 6, 7, 8, 10];
+var dge = [10, 20, 100];
+var fge = [`OMA`, `OPA`, `MAMA`, `PAPA`, `EIS`, `HUT`, `TOR`, `LAMA`, `ROSE`, `HOSE`, `NASE`, `IGEL`, `ESEL`, `SOFA`, `AUTO`, `BLUME`, `MAUS`, `HAUS`];
+var pge = [{ value: `goal`, label: `Zum Ziel` }, { value: `word`, label: `W\xF6rter abfahren` }, { value: `math`, label: `Rechnen und fahren` }, { value: `numbers`, label: `Zahlen der Reihe nach` }, { value: `collect`, label: `Sterne sammeln` }, { value: `read`, label: `Programme lesen` }, { value: `loop`, label: `Schleifen` }, { value: `pen`, label: `Zeichnen mit dem Stift` }, { value: `music`, label: `Musik-Teppich` }, { value: `events`, label: `Pfeile programmieren` }, { value: `cond`, label: `Bedingungen` }, { value: `cat`, label: `Achtung, Katze!` }, { value: `count`, label: `Punkte z\xE4hlen` }];
+var mge = [{ value: `predict`, label: `Wo kommt die Figur an?` }, { value: `fix`, label: `Fehler finden` }, { value: `gap`, label: `Was fehlt?` }, { value: `mix`, label: `Gemischt` }];
+var KD = (e17) => e17 === `read` || e17 === `loop` || e17 === `pen` || e17 === `events` || e17 === `cond` || e17 === `count` || e17 === `cat`;
+var hge = (e17) => e17 === `loop` || e17 === `pen` || e17 === `events` || e17 === `cond` || e17 === `count`;
+var qD = (e17) => e17 === `goal` || e17 === `loop` || e17 === `cond` || e17 === `count` || e17 === `cat`;
+var JD = (e17, t10, n10) => t10.includes(e17) ? e17 : n10;
+var YD = (e17, t10, n10, r10) => {
+  let i10 = Math.round(Number(e17));
+  return Number.isFinite(i10) ? Math.max(t10, Math.min(n10, i10)) : r10;
+};
+var XD = (e17) => [...e17.trim()].filter((e18) => /\p{L}/u.test(e18)).map((e18) => e18 === `\xDF` ? e18 : e18.toUpperCase());
+var ZD = (e17) => {
+  let t10 = XD(e17);
+  return t10.length >= 2 && t10.length <= 8 && t10.every((e18, n10) => n10 === 0 || e18 !== t10[n10 - 1]);
+};
+function _ge(e17) {
+  let t10 = e17 && typeof e17 == `object` ? e17 : null;
+  if (!t10) return null;
+  let n10 = YD(t10.n, 3, 10, 5), r10 = (e18) => Array.isArray(e18) && e18.length >= 2 ? [YD(e18[0], 0, n10 - 1, 0), YD(e18[1], 0, n10 - 1, 0)] : null, i10 = (e18) => {
+    let t11 = e18 && typeof e18 == `object` ? e18 : null;
+    return t11 ? { x: YD(t11.x, 0, n10 - 1, 0), y: YD(t11.y, 0, n10 - 1, 0), t: String(t11.t ?? ``).slice(0, 4) } : null;
+  }, a10 = Array.isArray(t10.start) ? t10.start : [], o10 = { n: n10, start: [YD(a10[0], 0, n10 - 1, 0), YD(a10[1], 0, n10 - 1, n10 - 1), YD(a10[2], 0, 3, 0)], goal: r10(t10.goal), walls: (Array.isArray(t10.walls) ? t10.walls : []).map(r10).filter((e18) => !!e18).slice(0, 60), stops: (Array.isArray(t10.stops) ? t10.stops : []).map(i10).filter((e18) => !!e18 && !!e18.t).slice(0, 12), extra: (Array.isArray(t10.extra) ? t10.extra : []).map(i10).filter((e18) => !!e18 && !!e18.t).slice(0, 100), stars: (Array.isArray(t10.stars) ? t10.stars : []).map(r10).filter((e18) => !!e18).slice(0, 12) };
+  return Array.isArray(t10.sums) && (o10.sums = t10.sums.map((e18) => String(e18).slice(0, 20)).slice(0, 12)), typeof t10.word == `string` && (o10.word = t10.word.slice(0, 20)), (t10.kind === `predict` || t10.kind === `fix` || t10.kind === `gap` || t10.kind === `events`) && (o10.kind = t10.kind), typeof t10.prog == `string` && (o10.prog = t10.prog.replace(/[^FBLRPDUV?]/g, ``).slice(0, 40)), Array.isArray(t10.lines) && (o10.lines = t10.lines.filter((e18) => Array.isArray(e18) && e18.length === 4).map((e18) => e18.map((e19) => YD(e19, 0, n10 - 1, 0))).slice(0, 80)), typeof t10.shape == `string` && (o10.shape = t10.shape.slice(0, 40)), typeof t10.melody == `string` && (o10.melody = t10.melody.slice(0, 60)), Array.isArray(t10.beats) && (o10.beats = t10.beats.map((e18) => Math.max(0.25, Math.min(8, Number(e18) || 1))).slice(0, 16)), Array.isArray(t10.path) && (o10.path = t10.path.map(r10).filter((e18) => !!e18).slice(0, 100)), Array.isArray(t10.colors) && (o10.colors = t10.colors.filter((e18) => Array.isArray(e18) && e18.length >= 3).map((e18) => [YD(e18[0], 0, n10 - 1, 0), YD(e18[1], 0, n10 - 1, 0), e18[2] === `b` ? `b` : `r`]).slice(0, 40)), t10.maze === true && (o10.maze = true), Array.isArray(t10.cat) && (o10.cat = t10.cat.map(r10).filter((e18) => !!e18).slice(0, 8)), t10.catK !== void 0 && (o10.catK = YD(t10.catK, 0, 99, 0)), t10.own === true && (o10.own = true), Number.isFinite(Number(t10.best)) && t10.best !== void 0 && (o10.best = YD(t10.best, 1, 99, 1)), Number.isFinite(Number(t10.limit)) && t10.limit !== void 0 && (o10.limit = YD(t10.limit, 1, 99, 9)), o10;
+}
+function QD(e17) {
+  let t10 = e17 && typeof e17 == `object` ? e17 : {}, n10 = uge.includes(Number(t10.size)) ? Number(t10.size) : 5, r10 = (Array.isArray(t10.words) ? t10.words : []).map((e18) => XD(String(e18)).join(``)).filter(ZD).slice(0, 40), i10 = { lesson: JD(t10.lesson, [`goal`, `word`, `math`, `numbers`, `collect`, `read`, `loop`, `pen`, `music`, `events`, `cond`, `cat`, `count`], `goal`), input: JD(t10.input, [`pad`, `cards`], `cards`), pad: JD(t10.pad, [`now`, `store`], `store`), memory: t10.memory !== false, level: JD(t10.level, [`easy`, `medium`, `hard`], `easy`), walls: JD(t10.walls, [`none`, `few`, `many`], `none`), turn: t10.turn === true, size: n10, count: YD(t10.count, 1, 10, 5), costume: JD(t10.costume, kD.map((e18) => e18.id), `bee`), mat: JD(t10.mat, PD.map((e18) => e18.id), `classic`), words: r10.length ? r10 : fge.slice(), range: dge.includes(Number(t10.range)) ? Number(t10.range) : 10, ops: JD(t10.ops, [`add`, `sub`, `both`], `add`), numMat: t10.numMat === true, voice: t10.voice !== false, speed: YD(t10.speed, 1, 3, 2), peek: t10.peek === true, read: JD(t10.read, [`predict`, `fix`, `gap`, `mix`], `predict`), rate: t10.rate === true, limit: t10.limit !== false, penMode: t10.penMode === `free` ? `free` : `shapes`, tasks: [] }, a10 = (Array.isArray(t10.tasks) ? t10.tasks : []).map(_ge).filter((e18) => !!e18 && e18.n === n10);
+  return i10.tasks = a10.length ? a10.slice(0, 10) : gO(i10), i10;
+}
+var eO = [0, 1, 0, -1];
+var tO = [-1, 0, 1, 0];
+var nO = (e17) => Math.floor(Math.random() * e17);
+function rO(e17) {
+  let t10 = e17.slice();
+  for (let e18 = t10.length - 1; e18 > 0; e18--) {
+    let n10 = nO(e18 + 1);
+    [t10[e18], t10[n10]] = [t10[n10], t10[e18]];
+  }
+  return t10;
+}
+function iO(e17, t10, n10) {
+  let r10 = new Int16Array(e17 * e17 * 4).fill(-1), i10 = [], a10 = (n10.y * e17 + n10.x) * 4 + n10.d;
+  r10[a10] = 0, i10.push(a10);
+  for (let n11 = 0; n11 < i10.length; n11++) {
+    let a11 = i10[n11], o10 = a11 % 4, s10 = (a11 - o10) / 4, c10 = s10 % e17, l10 = (s10 - c10) / e17, u10 = [s10 * 4 + (o10 + 3) % 4, s10 * 4 + (o10 + 1) % 4];
+    for (let n12 of [1, -1]) {
+      let r11 = c10 + n12 * eO[o10], i11 = l10 + n12 * tO[o10];
+      r11 >= 0 && i11 >= 0 && r11 < e17 && i11 < e17 && !t10.has(i11 * e17 + r11) && u10.push((i11 * e17 + r11) * 4 + o10);
+    }
+    for (let e18 of u10) r10[e18] < 0 && (r10[e18] = r10[a11] + 1, i10.push(e18));
+  }
+  return r10;
+}
+function aO(e17, t10, n10, r10) {
+  let i10 = null;
+  for (let a10 = 0; a10 < 4; a10++) {
+    let o10 = e17[(r10 * t10 + n10) * 4 + a10];
+    o10 >= 0 && (!i10 || o10 < i10.len) && (i10 = { len: o10, end: { x: n10, y: r10, d: a10 } });
+  }
+  return i10;
+}
+var vge = { easy: [1, 4], medium: [4, 7], hard: [7, 13] };
+function oO(e17, t10) {
+  return t10 === `none` ? 0 : Math.round(e17 * e17 * (t10 === `few` ? 0.12 : 0.2));
+}
+function sO(e17, t10) {
+  let n10 = [];
+  for (let r10 = 0; r10 < e17 * e17; r10++) t10.has(r10) || n10.push(r10);
+  return rO(n10);
+}
+function cO(e17) {
+  let t10 = e17.size, [n10, r10] = vge[e17.level];
+  for (let i10 = 0; i10 < 400; i10++) {
+    let a10 = nO(t10 * t10), o10 = { x: a10 % t10, y: Math.floor(a10 / t10), d: e17.turn ? nO(4) : 0 }, s10 = new Set(sO(t10, /* @__PURE__ */ new Set([a10])).slice(0, oO(t10, e17.walls))), c10 = iO(t10, s10, o10), l10 = e17.walls !== `none` && e17.level !== `easy` ? iO(t10, /* @__PURE__ */ new Set(), o10) : null, u10 = [], d10 = [];
+    for (let e18 = 0; e18 < t10 * t10; e18++) {
+      if (e18 === a10 || s10.has(e18)) continue;
+      let i11 = aO(c10, t10, e18 % t10, Math.floor(e18 / t10));
+      !i11 || i11.len < n10 || i11.len > r10 || (u10.push(e18), l10 && i11.len > (aO(l10, t10, e18 % t10, Math.floor(e18 / t10))?.len ?? 0) && d10.push(e18));
+    }
+    let f10 = d10.length && i10 < 300 ? d10 : u10;
+    if (!f10.length) continue;
+    let p10 = f10[nO(f10.length)], m10 = aO(c10, t10, p10 % t10, Math.floor(p10 / t10))?.len;
+    return { n: t10, start: [o10.x, o10.y, o10.d], goal: [p10 % t10, Math.floor(p10 / t10)], walls: [...s10].map((e18) => [e18 % t10, Math.floor(e18 / t10)]), stops: [], extra: [], stars: [], best: m10 };
+  }
+  return null;
+}
+function yge(e17, t10, n10, r10) {
+  let i10 = n10, a10 = 0, o10 = -1;
+  for (let n11 of r10) {
+    let r11 = aO(iO(e17, t10, i10), e17, n11 % e17, Math.floor(n11 / e17));
+    if (!r11 || r11.len < 1 && n11 !== o10) return false;
+    o10 = n11, a10 += r11.len, i10 = r11.end;
+  }
+  return a10 <= 36;
+}
+function lO(e17, t10, n10, r10, i10) {
+  let a10 = e17.size;
+  for (let o10 = 0; o10 < 300; o10++) {
+    let o11 = /* @__PURE__ */ new Set(), s10 = /* @__PURE__ */ new Map(), c10 = [], l10;
+    if (r10) {
+      for (let e18 of t10) s10.set(e18, Number(e18) - 1);
+      let n11 = new Set(s10.values()), r11 = sO(a10, n11);
+      l10 = r11[0];
+      for (let t11 of r11.slice(1, 1 + oO(a10, e17.walls))) o11.add(t11);
+      for (let e18 = 0; e18 < a10 * a10; e18++) !n11.has(e18) && !o11.has(e18) && c10.push({ x: e18 % a10, y: Math.floor(e18 / a10), t: String(e18 + 1) });
+    } else {
+      let r11 = [...new Set(t10)], i11 = sO(a10, /* @__PURE__ */ new Set());
+      l10 = i11[0];
+      let u11 = 1;
+      for (let e18 of r11) s10.set(e18, i11[u11++]);
+      for (let e18 of n10) {
+        if (u11 >= i11.length - 1) break;
+        let t11 = i11[u11++];
+        c10.push({ x: t11 % a10, y: Math.floor(t11 / a10), t: e18 });
+      }
+      for (let t11 of i11.slice(u11, u11 + oO(a10, e17.walls))) o11.add(t11);
+    }
+    let u10 = { x: l10 % a10, y: Math.floor(l10 / a10), d: e17.turn ? nO(4) : 0 }, d10 = t10.map((e18) => s10.get(e18));
+    if (d10[0] !== l10 && yge(a10, o11, u10, d10)) return { n: a10, start: [u10.x, u10.y, u10.d], goal: null, walls: [...o11].map((e18) => [e18 % a10, Math.floor(e18 / a10)]), stops: t10.map((e18) => ({ x: s10.get(e18) % a10, y: Math.floor(s10.get(e18) / a10), t: e18 })), extra: c10, stars: [], ...i10 };
+  }
+  return null;
+}
+var bge = `ABCDEFGHIKLMNOPRSTUW`.split(``);
+function xge(e17, t10) {
+  let n10 = XD(t10);
+  return lO(e17, n10, rO(bge.filter((e18) => !n10.includes(e18))).slice(0, e17.level === `easy` ? 0 : e17.level === `medium` ? 2 : 5), false, { word: n10.join(``) });
+}
+var Sge = (e17) => e17.numMat ? Math.min(e17.range, e17.size * e17.size) : e17.range;
+function Cge(e17) {
+  let t10 = Sge(e17), n10 = e17.level === `easy` ? 3 : e17.level === `medium` ? 4 : 5, r10 = rO(Array.from({ length: t10 }, (e18, t11) => t11 + 1)).slice(0, n10).sort((e18, t11) => e18 - t11), i10 = e17.numMat ? [] : rO(Array.from({ length: t10 }, (e18, t11) => t11 + 1).filter((e18) => !r10.includes(e18))).slice(0, e17.level === `easy` ? 1 : e17.level === `medium` ? 3 : 5);
+  return lO(e17, r10.map(String), i10.map(String), e17.numMat, {});
+}
+var wge = `\u2212`;
+function Tge(e17) {
+  let t10 = Sge(e17), n10 = e17.level === `easy` ? 2 : e17.level === `medium` ? 3 : 4, r10 = [], i10 = [];
+  for (let a11 = 0; r10.length < n10 && a11 < 400; a11++) {
+    let n11 = e17.ops === `sub` || e17.ops === `both` && Math.random() < 0.5, a12 = 1 + nO(t10);
+    if (!i10.includes(a12)) {
+      if (n11) {
+        let e18 = 1 + nO(Math.max(1, t10 - a12));
+        if (a12 + e18 > t10) continue;
+        r10.push(`${a12 + e18} ${wge} ${e18}`);
+      } else {
+        if (a12 < 2) continue;
+        let e18 = 1 + nO(a12 - 1);
+        r10.push(`${e18} + ${a12 - e18}`);
+      }
+      i10.push(a12);
+    }
+  }
+  if (r10.length < n10) return null;
+  let a10 = /* @__PURE__ */ new Set();
+  for (let e18 of i10) for (let n11 of [1, -1, 2, -2, 10, -10]) e18 + n11 >= 1 && e18 + n11 <= t10 && !i10.includes(e18 + n11) && a10.add(e18 + n11);
+  let o10 = e17.numMat ? [] : rO([...a10]).slice(0, e17.level === `easy` ? 1 : e17.level === `medium` ? 3 : 5);
+  return lO(e17, i10.map(String), o10.map(String), e17.numMat, { sums: r10 });
+}
+function Ege(e17) {
+  let t10 = e17.size, n10 = e17.level === `easy` ? 2 : e17.level === `medium` ? 3 : 5;
+  for (let r10 = 0; r10 < 300; r10++) {
+    let r11 = sO(t10, /* @__PURE__ */ new Set()), i10 = r11[0], a10 = r11.slice(1, 1 + n10), o10 = r11[1 + n10], s10 = new Set(r11.slice(2 + n10, 2 + n10 + oO(t10, e17.walls))), c10 = { x: i10 % t10, y: Math.floor(i10 / t10), d: e17.turn ? nO(4) : 0 }, l10 = c10, u10 = 0, d10 = a10.slice(), f10 = true;
+    for (; d10.length && f10; ) {
+      let e18 = iO(t10, s10, l10), n11 = null;
+      if (d10.forEach((r12, i11) => {
+        let a11 = aO(e18, t10, r12 % t10, Math.floor(r12 / t10));
+        a11 && (!n11 || a11.len < n11.len) && (n11 = { i: i11, ...a11 });
+      }), !n11) f10 = false;
+      else {
+        let e19 = n11;
+        u10 += e19.len, l10 = e19.end, d10.splice(e19.i, 1);
+      }
+    }
+    let p10 = f10 ? aO(iO(t10, s10, l10), t10, o10 % t10, Math.floor(o10 / t10)) : null;
+    if (!(!p10 || u10 + p10.len > 36)) return { n: t10, start: [c10.x, c10.y, c10.d], goal: [o10 % t10, Math.floor(o10 / t10)], walls: [...s10].map((e18) => [e18 % t10, Math.floor(e18 / t10)]), stops: [], extra: [], stars: a10.map((e18) => [e18 % t10, Math.floor(e18 / t10)]) };
+  }
+  return null;
+}
+function Dge(e17, t10, n10, r10) {
+  let i10 = n10, a10 = [];
+  for (let n11 of r10) if (n11 !== `?` && n11 !== `P` && (i10 = Tk(i10, n11), n11 === `F` || n11 === `B`)) {
+    if (i10.x < 0 || i10.y < 0 || i10.x >= e17 || i10.y >= e17 || t10.has(i10.y * e17 + i10.x)) return null;
+    a10.push([i10.x, i10.y]);
+  }
+  return { end: i10, cells: a10 };
+}
+var Oge = { easy: [3, 5], medium: [5, 8], hard: [8, 12] };
+function kge(e17, t10, n10, r10, i10) {
+  let a10 = n10, o10 = [], s10 = /* @__PURE__ */ new Set([n10.y * e17 + n10.x]);
+  for (let n11 = 0; n11 < r10; n11++) {
+    let c10 = o10[o10.length - 1], l10 = (n12) => {
+      let r11 = Tk(a10, n12);
+      return r11.x >= 0 && r11.y >= 0 && r11.x < e17 && r11.y < e17 && !t10.has(r11.y * e17 + r11.x) && !s10.has(r11.y * e17 + r11.x);
+    }, u10 = [];
+    if (l10(`F`) && u10.push(`F`, `F`, `F`), i10 && l10(`B`) && u10.push(`B`), n11 < r10 - 1 && c10 !== `L` && c10 !== `R` && u10.push(`L`, `R`), !u10.length) return null;
+    let d10 = n11 === r10 - 1 ? u10.includes(`F`) ? `F` : u10.includes(`B`) ? `B` : null : u10[nO(u10.length)];
+    if (!d10) return null;
+    o10.push(d10), a10 = Tk(a10, d10), s10.add(a10.y * e17 + a10.x);
+  }
+  return o10;
+}
+function Age(e17, t10) {
+  let n10 = e17.size, [r10, i10] = Oge[e17.level];
+  for (let a10 = 0; a10 < 400; a10++) {
+    let a11 = nO(n10 * n10), o10 = { x: a11 % n10, y: Math.floor(a11 / n10), d: e17.turn ? nO(4) : 0 }, s10 = new Set(sO(n10, /* @__PURE__ */ new Set([a11])).slice(0, oO(n10, e17.walls))), c10 = kge(n10, s10, o10, r10 + nO(i10 - r10 + 1), e17.level === `hard`);
+    if (!c10 || c10.filter((e18) => e18 === `F` || e18 === `B`).length < 2) continue;
+    let l10 = Dge(n10, s10, o10, c10);
+    if (!l10 || l10.end.x === o10.x && l10.end.y === o10.y || e17.level !== `easy` && !c10.some((e18) => e18 === `L` || e18 === `R`)) continue;
+    let u10 = { n: n10, start: [o10.x, o10.y, o10.d], walls: [...s10].map((e18) => [e18 % n10, Math.floor(e18 / n10)]), stops: [], extra: [], stars: [] };
+    if (t10 === `predict`) return { ...u10, goal: null, kind: t10, prog: c10.join(``) };
+    let d10 = [l10.end.x, l10.end.y], f10 = (e18) => {
+      let t11 = Dge(n10, s10, o10, e18);
+      return !!t11 && t11.end.x === d10[0] && t11.end.y === d10[1];
+    };
+    if (t10 === `fix`) for (let e18 of rO(c10.map((e19, t11) => t11))) {
+      let n11 = rO(c10[e18] === `F` ? [`L`, `R`] : c10[e18] === `L` ? [`R`, `F`] : c10[e18] === `R` ? [`L`, `F`] : [`F`]);
+      for (let r11 of n11) {
+        let n12 = c10.slice();
+        if (n12[e18] = r11, !f10(n12)) return { ...u10, goal: d10, kind: t10, prog: n12.join(``) };
+      }
+    }
+    else for (let e18 of rO(c10.map((e19, t11) => t11))) if ([`F`, `B`, `L`, `R`].filter((t11) => {
+      let n11 = c10.slice();
+      return n11[e18] = t11, f10(n11);
+    }).length === 1) {
+      let n11 = c10.slice();
+      return n11[e18] = `?`, { ...u10, goal: d10, kind: t10, prog: n11.join(``) };
+    }
+  }
+  return null;
+}
+var jge = { easy: [[`F`]], medium: [[`F`, `R`, `F`, `L`], [`F`, `L`, `F`, `R`], [`F`, `F`, `R`]], hard: [[`F`, `F`, `R`, `F`, `L`], [`F`, `L`, `F`, `F`, `R`], [`F`, `R`, `F`, `R`, `F`, `L`, `F`, `L`], [`F`, `F`, `L`, `F`, `F`, `R`]] };
+function Mge(e17) {
+  let t10 = e17.size;
+  for (let n10 = 0; n10 < 500; n10++) {
+    let n11 = jge[e17.level], r10 = n11[nO(n11.length)], i10 = 1 + r10.length, a10 = i10 + (e17.level === `hard` ? 0 : 1), o10 = Math.max(2, Math.floor(a10 / r10.length) + 1) + nO(4), s10 = nO(t10 * t10), c10 = { x: s10 % t10, y: Math.floor(s10 / t10), d: e17.turn ? nO(4) : 0 }, l10 = c10, u10 = [], d10 = /* @__PURE__ */ new Set([s10]), f10 = true;
+    for (let e18 = 0; e18 < o10 && f10; e18++) {
+      for (let e19 of r10) {
+        if (l10 = Tk(l10, e19), l10.x < 0 || l10.y < 0 || l10.x >= t10 || l10.y >= t10) {
+          f10 = false;
+          break;
+        }
+        d10.add(l10.y * t10 + l10.x);
+      }
+      u10.push([l10.x, l10.y]);
+    }
+    if (!f10 || l10.x === c10.x && l10.y === c10.y) continue;
+    let p10 = u10[u10.length - 1], m10 = r10.length > 1 ? u10.slice(0, -1) : [];
+    if (new Set(m10.map(([e18, n12]) => n12 * t10 + e18)).size !== m10.length || m10.some(([e18, t11]) => e18 === p10[0] && t11 === p10[1] || e18 === c10.x && t11 === c10.y)) continue;
+    let h10 = sO(t10, d10).slice(0, oO(t10, e17.walls));
+    return { n: t10, start: [c10.x, c10.y, c10.d], goal: p10, walls: h10.map((e18) => [e18 % t10, Math.floor(e18 / t10)]), stops: [], extra: [], stars: m10, best: i10, ...e17.limit ? { limit: a10 } : {} };
+  }
+  return null;
+}
+var Nge = { easy: [{ name: `eine lange Linie`, prog: `DFFF` }, { name: `eine Linie nach rechts`, prog: `RDFF` }, { name: `eine Ecke`, prog: `DFFRFF` }, { name: `eine Ecke nach links`, prog: `DFFLFF` }, { name: `ein kleines Quadrat`, prog: `DFRFRFRF` }, { name: `ein kleines Rechteck`, prog: `DFFRFRFFRF` }, { name: `eine kleine Treppe`, prog: `DFRFLFRF` }, { name: `den Buchstaben L`, prog: `DFFBBRF` }, { name: `eine Br\xFCcke`, prog: `DFRFRF` }, { name: `eine Schale`, prog: `RRDFLFLF` }], medium: [{ name: `ein gro\xDFes Quadrat`, prog: `DFFRFFRFFRFF` }, { name: `ein Rechteck`, prog: `DFFFRFFRFFFRFF` }, { name: `eine Treppe`, prog: `DFRFLFRFLFRFL` }, { name: `eine Treppe nach links`, prog: `DFLFRFLFRFLF` }, { name: `den Buchstaben T`, prog: `DFFFLFBB` }, { name: `den Buchstaben U`, prog: `RRDFFLFFLFF` }, { name: `den Buchstaben C`, prog: `LDFLFFLF` }, { name: `den Buchstaben F`, prog: `DFRFBLFRFB` }, { name: `den Buchstaben P`, prog: `DFFRFRFRF` }, { name: `eine Fahne`, prog: `DFFFRFFRFRFF` }, { name: `ein Plus`, prog: `DFBBFRFBB` }], hard: [{ name: `den Buchstaben E`, prog: `DRFBLFRFBLFRFB` }, { name: `den Buchstaben H`, prog: `DFFBRFLFBB` }, { name: `den Buchstaben S`, prog: `RDFLFLFRFRF` }, { name: `eine Schlange`, prog: `DFFRFRFFLFLFF` }, { name: `eine Spirale`, prog: `DFRFRFFRFFRFFFRFFF` }, { name: `einen Berg`, prog: `DFRFLFRFRFLFRF` }, { name: `ein Fenster`, prog: `DFFRFFRFFRFFBRFFBLFBB` }] };
+var uO = (e17) => {
+  let [t10, n10, r10, i10] = e17;
+  return t10 < r10 || t10 === r10 && n10 <= i10 ? `${t10},${n10},${r10},${i10}` : `${r10},${i10},${t10},${n10}`;
+};
+function Pge(e17, t10, n10) {
+  let r10 = t10, i10 = false, a10 = /* @__PURE__ */ new Map();
+  for (let t11 of n10) if (t11 === `D`) i10 = true;
+  else if (t11 === `U`) i10 = false;
+  else if (`FBLR`.includes(t11)) {
+    let n11 = Tk(r10, t11);
+    if (n11.x < 0 || n11.y < 0 || n11.x >= e17 || n11.y >= e17) return null;
+    if (i10 && (t11 === `F` || t11 === `B`)) {
+      let e18 = [r10.x, r10.y, n11.x, n11.y];
+      a10.set(uO(e18), e18);
+    }
+    r10 = n11;
+  }
+  return [...a10.values()];
+}
+function Fge(e17, t10 = 0, n10 = []) {
+  let r10 = e17.size;
+  if (e17.penMode === `free`) {
+    let e18 = Math.floor(r10 / 2);
+    return { n: r10, start: [e18, e18, 0], goal: null, walls: [], stops: [], extra: [], stars: [], lines: [], shape: `` };
+  }
+  let i10 = Nge[e17.level];
+  for (let e18 = 0; e18 < 300; e18++) {
+    let a10 = i10[n10.length ? n10[(t10 + Math.floor(e18 / 40)) % n10.length] : nO(i10.length)], o10 = nO(r10 * r10), s10 = { x: o10 % r10, y: Math.floor(o10 / r10), d: 0 }, c10 = Pge(r10, s10, a10.prog);
+    if (c10?.length) return { n: r10, start: [s10.x, s10.y, 0], goal: null, walls: [], stops: [], extra: [], stars: [], lines: c10, shape: a10.name };
+  }
+  return null;
+}
+var dO = { C: 60, D: 62, E: 64, F: 65, G: 67, A: 69, H: 71, c: 72 };
+var Ige = Object.fromEntries(Object.entries(dO).map(([e17, t10]) => [t10, e17]));
+var Lge = (e17) => oo[(dO[e17] ?? 60) % 12];
+var Rge = (e17) => e17 === `c` ? `C` : e17;
+var zge = (e17, t10, n10, r10, i10 = `#fff`) => e17 === `c` ? `<circle cx="${t10.toFixed(1)}" cy="${n10.toFixed(1)}" r="${r10.toFixed(1)}" fill="${i10}" stroke="#1e293b" stroke-width="1.5"/>` : ``;
+function Bge(e17) {
+  let t10 = e17 === `easy` ? 4 : e17 === `medium` ? 6 : 8;
+  return kg.map((e18) => {
+    let n10 = e18.notes.filter((e19) => e19[0] !== null).slice(0, t10);
+    return { title: e18.title, notes: n10 };
+  }).filter((e18) => e18.notes.length === t10 && e18.notes.every(([e19]) => Ige[e19]) && new Set(e18.notes.map(([e19]) => e19)).size >= Math.min(3, t10 - 1));
+}
+function Vge(e17, t10 = 0, n10 = []) {
+  let r10 = Bge(e17.level), i10 = n10.length ? [...n10.slice(t10 % n10.length), ...n10.slice(0, t10 % n10.length)].map((e18) => r10[e18]).filter(Boolean) : rO(r10);
+  for (let t11 of i10) {
+    let n11 = t11.notes.map(([e18]) => Ige[e18]), r11 = lO(e17, n11, rO(Object.keys(dO).filter((e18) => !n11.includes(e18))).slice(0, e17.level === `easy` ? 0 : e17.level === `medium` ? 2 : 8), false, { melody: t11.title, beats: t11.notes.map(([, e18]) => e18) });
+    if (r11) return r11;
+  }
+  return null;
+}
+function Hge(e17) {
+  let t10 = Ege(e17);
+  return t10 ? { ...t10, kind: `events` } : null;
+}
+function Uge(e17, t10, n10, r10) {
+  for (let i10 = 0; i10 < 400; i10++) {
+    let i11 = { x: nO(e17), y: nO(e17), d: nO(4) }, a10 = [[i11.x, i11.y]], o10 = /* @__PURE__ */ new Set([i11.y * e17 + i11.x]), s10 = [], c10 = i11, l10 = t10 === `none` ? 0 : n10 + nO(r10 - n10 + 1), u10 = true;
+    for (let n11 = 0; n11 <= l10 && u10; n11++) {
+      let r11 = t10 === `none` ? 3 + nO(Math.max(1, e17 - 3)) : 1 + nO(3) + +(n11 === 0);
+      for (let t11 = 0; t11 < r11; t11++) {
+        let t12 = Tk(c10, `F`), n12 = [0, 1, 2, 3].some((n13) => {
+          let r12 = t12.x + eO[n13], i13 = t12.y + tO[n13];
+          return (r12 !== c10.x || i13 !== c10.y) && o10.has(i13 * e17 + r12);
+        });
+        if (t12.x < 0 || t12.y < 0 || t12.x >= e17 || t12.y >= e17 || o10.has(t12.y * e17 + t12.x) || n12) {
+          u10 = false;
+          break;
+        }
+        c10 = t12, o10.add(c10.y * e17 + c10.x), a10.push([c10.x, c10.y]);
+      }
+      if (!u10 || n11 === l10) break;
+      let i12 = t10 === `right` || Math.random() < 0.5;
+      s10.push([c10.x, c10.y, i12 ? `r` : `b`]), c10 = Tk(c10, i12 ? `R` : `L`);
+    }
+    if (!(!u10 || a10.length < 4 || s10.length !== l10) && !s10.some(([e18, t11]) => e18 === c10.x && t11 === c10.y)) return { start: i11, cells: a10, colors: s10 };
+  }
+  return null;
+}
+function Wge(e17) {
+  let t10 = e17 % 2 ? e17 : e17 - 1, n10 = /* @__PURE__ */ new Set(), r10 = [[0, t10 - 1]];
+  for (n10.add((t10 - 1) * e17); r10.length; ) {
+    let [i11, a10] = r10[r10.length - 1], o10 = rO([[2, 0], [-2, 0], [0, 2], [0, -2]]).map(([e18, t11]) => [i11 + e18, a10 + t11, i11 + e18 / 2, a10 + t11 / 2]).filter(([r11, i12]) => r11 >= 0 && i12 >= 0 && r11 < t10 && i12 < t10 && !n10.has(i12 * e17 + r11));
+    if (!o10.length) {
+      r10.pop();
+      continue;
+    }
+    let [s10, c10, l10, u10] = o10[0];
+    n10.add(u10 * e17 + l10), n10.add(c10 * e17 + s10), r10.push([s10, c10]);
+  }
+  let i10 = /* @__PURE__ */ new Set();
+  for (let t11 = 0; t11 < e17 * e17; t11++) n10.has(t11) || i10.add(t11);
+  return { walls: i10, start: { x: 0, y: t10 - 1, d: 0 }, goal: [t10 - 1, 0] };
+}
+function fO(e17, t10) {
+  let n10 = q_e(e17, PO(e17), t10);
+  return !n10.bump && !!e17.goal && n10.end.x === e17.goal[0] && n10.end.y === e17.goal[1];
+}
+var Gge = () => [{ rep: 2, until: true, body: [`F`, { cond: `red`, body: [`R`] }] }];
+var Kge = () => [{ rep: 2, until: true, body: [`F`, { cond: `red`, body: [`R`] }, { cond: `blue`, body: [`L`] }] }];
+var qge = () => [{ rep: 2, until: true, body: [{ cond: `rightFree`, body: [`R`] }, { cond: `wall`, body: [`L`] }, { cond: `wall`, body: [`L`] }, { cond: `free`, body: [`F`] }] }];
+function Jge(e17) {
+  let t10 = e17.size;
+  if (e17.level === `hard`) {
+    for (let n11 = 0; n11 < 30; n11++) {
+      let n12 = Wge(t10), r10 = { n: t10, start: [n12.start.x, n12.start.y, 0], goal: n12.goal, walls: [...n12.walls].map((e18) => [e18 % t10, Math.floor(e18 / t10)]), stops: [], extra: [], stars: [], maze: true };
+      if (!fO(r10, qge())) continue;
+      let i10 = GD(qge());
+      return { ...r10, best: i10, ...e17.limit ? { limit: i10 + 1 } : {} };
+    }
+    return null;
+  }
+  let n10 = e17.level === `easy`;
+  for (let r10 = 0; r10 < 100; r10++) {
+    let r11 = Uge(t10, n10 ? `right` : `both`, n10 ? 2 : 3, n10 ? 3 : 5);
+    if (!r11) continue;
+    let i10 = r11.cells[r11.cells.length - 1], a10 = { n: t10, start: [r11.start.x, r11.start.y, r11.start.d], goal: i10, walls: [], stops: [], extra: [], stars: [], path: r11.cells, colors: r11.colors }, o10 = n10 ? Gge() : Kge(), s10 = GD(o10);
+    if (!(!fO(a10, o10) || r11.cells.length - 1 + r11.colors.length <= s10 + 1)) return { ...a10, best: s10, ...e17.limit ? { limit: s10 + 1 } : {} };
+  }
+  return null;
+}
+function Yge(e17) {
+  let t10 = e17.size, n10 = e17.level === `easy` ? `none` : e17.level === `medium` ? `right` : `both`, r10 = e17.level === `easy` ? 2 : e17.level === `medium` ? 3 : 4;
+  for (let i10 = 0; i10 < 200; i10++) {
+    let i11 = Uge(t10, n10, 2, 3);
+    if (!i11) continue;
+    let a10 = i11.cells[i11.cells.length - 1], o10 = rO(i11.cells.slice(1, -1).filter(([e18, t11]) => !i11.colors.some(([n11, r11]) => n11 === e18 && r11 === t11)));
+    if (o10.length < r10) continue;
+    let s10 = { n: t10, start: [i11.start.x, i11.start.y, i11.start.d], goal: a10, walls: [], stops: [], extra: [], stars: o10.slice(0, r10), path: i11.cells, colors: i11.colors }, c10 = [{ rep: 2, until: true, body: [`F`, ...n10 === `none` ? [] : [{ cond: `red`, body: [`R`] }], ...n10 === `both` ? [{ cond: `blue`, body: [`L`] }] : [], { cond: `star`, body: [`V`] }] }];
+    if (!fO(s10, c10)) continue;
+    let l10 = GD(c10);
+    return { ...s10, best: l10, ...e17.limit ? { limit: l10 + 1 } : {} };
+  }
+  return null;
+}
+function pO(e17, t10) {
+  let n10 = e17.cat;
+  if (!n10?.length) return null;
+  if (n10.length === 1) return n10[0];
+  let r10 = 2 * (n10.length - 1), i10 = (t10 + (e17.catK ?? 0)) % r10;
+  return n10[i10 < n10.length ? i10 : r10 - i10];
+}
+var mO = (e17, t10, n10, r10) => !!t10 && (t10[0] === r10.x && t10[1] === r10.y || !!e17 && e17[0] === r10.x && e17[1] === r10.y && t10[0] === n10.x && t10[1] === n10.y);
+function Xge(e17, t10 = 40, n10 = true) {
+  let r10 = e17.n, i10 = Math.max(1, 2 * ((e17.cat?.length ?? 1) - 1)), a10 = new Set(e17.walls.map(([e18, t11]) => t11 * r10 + e18)), o10 = (e18, t11) => ((e18.y * r10 + e18.x) * 4 + e18.d) * i10 + t11 % i10, s10 = /* @__PURE__ */ new Set(), c10 = [{ p: PO(e17), k: 0 }];
+  s10.add(o10(PO(e17), 0));
+  for (let i11 = 1; i11 <= t10 && c10.length; i11++) {
+    let t11 = [];
+    for (let { p: l10, k: u10 } of c10) for (let c11 of n10 ? [`F`, `B`, `L`, `R`, `P`] : [`F`, `B`, `L`, `R`]) {
+      let n11 = Tk(l10, c11);
+      if (n11.x < 0 || n11.y < 0 || n11.x >= r10 || n11.y >= r10 || a10.has(n11.y * r10 + n11.x) || mO(pO(e17, u10), pO(e17, u10 + 1), l10, n11)) continue;
+      if (e17.goal && n11.x === e17.goal[0] && n11.y === e17.goal[1]) return i11;
+      let d10 = o10(n11, u10 + 1);
+      s10.has(d10) || (s10.add(d10), t11.push({ p: n11, k: u10 + 1 }));
+    }
+    c10 = t11;
+  }
+  return null;
+}
+function hO(e17, t10 = false) {
+  let n10 = e17.n, r10 = new Set(e17.walls.map(([e18, t11]) => t11 * n10 + e18)), i10 = PO(e17), a10 = /* @__PURE__ */ new Map(), o10 = (e18) => `${e18.x},${e18.y},${e18.d}`, s10 = [i10];
+  for (a10.set(o10(i10), [``, `F`]); s10.length; ) {
+    let c10 = s10.shift();
+    if (e17.goal && c10.x === e17.goal[0] && c10.y === e17.goal[1]) {
+      let e18 = [], t11 = o10(c10);
+      for (; t11 !== o10(i10); ) {
+        let [n11, r11] = a10.get(t11);
+        e18.unshift(r11), t11 = n11;
+      }
+      return e18;
+    }
+    for (let e18 of t10 ? [`F`, `L`, `R`] : [`F`, `B`, `L`, `R`]) {
+      let t11 = Tk(c10, e18);
+      t11.x < 0 || t11.y < 0 || t11.x >= n10 || t11.y >= n10 || r10.has(t11.y * n10 + t11.x) || a10.has(o10(t11)) || (a10.set(o10(t11), [o10(c10), e18]), s10.push(t11));
+    }
+  }
+  return null;
+}
+function Zge(e17) {
+  let t10 = e17.size;
+  for (let n10 = 0; n10 < 400; n10++) {
+    let r10 = cO({ ...e17, level: e17.level === `easy` ? `medium` : `hard` });
+    if (!r10) continue;
+    let i10 = hO(r10);
+    if (!i10 || i10.length < 3) continue;
+    let a10 = PO(r10), o10 = [];
+    for (let e18 of i10) a10 = Tk(a10, e18), (e18 === `F` || e18 === `B`) && o10.push([a10.x, a10.y]);
+    let s10 = o10.slice(0, -1);
+    if (!s10.length) continue;
+    let [c10, l10] = s10[nO(s10.length)], u10 = e17.level === `easy` ? 3 : 4, d10 = Math.random() < 0.5, f10 = nO(u10), p10 = [];
+    for (let e18 = 0; e18 < u10; e18++) p10.push(d10 ? [c10 - f10 + e18, l10] : [c10, l10 - f10 + e18]);
+    let m10 = new Set(r10.walls.map(([e18, n11]) => n11 * t10 + e18));
+    if (p10.some(([e18, n11]) => e18 < 0 || n11 < 0 || e18 >= t10 || n11 >= t10 || m10.has(n11 * t10 + e18) || e18 === r10.start[0] && n11 === r10.start[1] || !!r10.goal && e18 === r10.goal[0] && n11 === r10.goal[1])) continue;
+    let h10 = { ...r10, cat: p10, catK: nO(2 * (u10 - 1)) }, g10 = PO(h10), _10 = false;
+    if (i10.forEach((e18, t11) => {
+      let n11 = Tk(g10, e18);
+      mO(pO(h10, t11), pO(h10, t11 + 1), g10, n11) && (_10 = true), g10 = n11;
+    }), !_10 && n10 < 350) continue;
+    let v10 = Xge(h10);
+    if (!v10) continue;
+    let y10 = Xge(h10, v10 + 1, false);
+    if (!(y10 !== null && y10 <= v10 && n10 < 380)) return { ...h10, best: v10 };
+  }
+  return null;
+}
+function gO(e17) {
+  let t10 = e17, n10 = [], r10 = rO(t10.words.filter(ZD)), i10 = rO(Nge[t10.level].map((e18, t11) => t11)), a10 = rO(Bge(t10.level).map((e18, t11) => t11));
+  for (let e18 = 0; e18 < t10.count; e18++) {
+    let o10 = null;
+    if (t10.lesson === `word`) for (let n11 = 0; n11 < r10.length && !o10; n11++) o10 = xge(t10, r10[(e18 + n11) % r10.length]);
+    else o10 = t10.lesson === `math` ? Tge(t10) : t10.lesson === `numbers` ? Cge(t10) : t10.lesson === `collect` ? Ege(t10) : t10.lesson === `read` ? Age(t10, t10.read === `mix` ? [`predict`, `fix`, `gap`][e18 % 3] : t10.read) : t10.lesson === `loop` ? Mge(t10) : t10.lesson === `pen` ? Fge(t10, e18, i10) : t10.lesson === `music` ? Vge(t10, e18, a10) : t10.lesson === `events` ? Hge(t10) : t10.lesson === `cond` ? Jge(t10) : t10.lesson === `count` ? Yge(t10) : t10.lesson === `cat` ? Zge(t10) : cO(t10);
+    if (t10.lesson === `pen` && t10.penMode === `free` && e18 > 0) break;
+    o10 && n10.push(o10);
+  }
+  return n10.length || n10.push(cO({ ...t10, walls: `none`, level: `easy` })), n10;
+}
+var _O = (e17) => e17.charAt(0).toUpperCase() + e17.slice(1);
+var vO = (e17) => e17.replace(/ \+ /g, ` plus `).replace(RegExp(` ${wge} `, `g`), ` minus `).replace(/ = /g, ` gleich `);
+var yO = { F: `vorw\xE4rts`, B: `r\xFCckw\xE4rts`, L: `links drehen`, R: `rechts drehen`, P: `Pause`, D: `Stift ab`, U: `Stift hoch`, V: `Punkte plus eins` };
+var Qge = { F: `vorw\xE4rts`, B: `r\xFCckw\xE4rts`, L: `links`, R: `rechts`, P: `Pause`, D: `Stift ab`, U: `Stift hoch`, V: `Punkte + 1` };
+var bO = (e17, t10) => t10 === `P` && e17.lesson === `music` ? `Ton spielen` : t10 === `P` && e17.lesson === `cat` ? `warte` : t10 === `V` ? `Punkte + 1` : yO[t10];
+var $ge = (e17, t10) => t10 === `P` && e17.lesson === `music` ? `spielen` : t10 === `P` && e17.lesson === `cat` ? `warte` : Qge[t10];
+var xO = (e17, t10) => t10 === `P` && e17?.lesson === `music` ? rge : ID[t10];
+function SO(e17, t10) {
+  let n10 = AD(e17.costume);
+  switch (e17.lesson) {
+    case `word`:
+      return `Fahre die Buchstaben von ${t10.word ?? ``} der Reihe nach ab!`;
+    case `math`:
+      return `Rechne und fahre zum Ergebnis!`;
+    case `numbers`:
+      return `Fahre die Zahlen der Reihe nach ab!`;
+    case `collect`:
+      return `Sammle alle Sterne \u2013 dann ${n10.toGoal}!`;
+    case `read`:
+      return t10.kind === `predict` ? `Wo kommt ${n10.nom} an?` : t10.kind === `gap` ? `Was fehlt? ${_O(n10.nom)} soll ${n10.toGoal}.` : `Finde den Fehler! ${_O(n10.nom)} soll ${n10.toGoal}.`;
+    case `loop`:
+      return t10.stars.length ? `Sammle alle Sterne \u2013 dann ${n10.toGoal}!` : `Hilf ${n10.dat} ${n10.toGoal}!`;
+    case `pen`:
+      return t10.lines?.length ? `Zeichne ${t10.shape ?? `die Form`}!` : `Male ein Bild!`;
+    case `music`:
+      return `Spiel den Anfang von \u201E${t10.melody ?? `dem Lied`}\u201C!`;
+    case `events`:
+      return `Programmiere die Pfeile \u2013 dann steuere ${n10.nom} zu den Sternen!`;
+    case `cond`:
+      return t10.maze ? `Finde den Weg durchs Labyrinth ${n10.toGoal}!` : `Folge den Farben zum Ziel!`;
+    case `cat`:
+      return `Hilf ${n10.dat} ${n10.toGoal} \u2013 pass auf die Katze auf!`;
+    case `count`:
+      return `Z\xE4hle die Sterne auf dem Weg!`;
+    default:
+      return `Hilf ${n10.dat} ${n10.toGoal}!`;
+  }
+}
+function e_e(e17) {
+  return e17.input === `pad` ? e17.pad === `now` ? `Tippe auf die Pfeile \u2013 ${AD(e17.costume).nom} f\xE4hrt sofort.` : `Tippe die Pfeile ein \u2013 dann auf LOS.` : `Tippe auf die Bausteine \u2013 dann auf LOS.`;
+}
+var CO = (e17, t10) => e17.lesson === `music` && t10 === `c` ? `das hohe C` : e17.lesson === `word` || e17.lesson === `music` ? `das ${t10}` : `die ${t10}`;
+var wO = (e17, t10) => e17.lesson === `music` && t10 === `c` ? `zum hohen C` : e17.lesson === `word` || e17.lesson === `music` ? `zum ${t10}` : `zur ${t10}`;
+function TO(e17, t10) {
+  let n10 = e17.input === `pad` && e17.pad === `now` ? `` : e17.input === `pad` ? ` Halte dort an: Ende oder Pause.` : ` Halte dort an: Ende des Programms oder Pause-Karte.`;
+  switch (e17.lesson) {
+    case `word`:
+      return `Fahre zu jedem Buchstaben.${n10}`;
+    case `math`:
+      return `Fahre zu jedem Ergebnis.${n10}`;
+    case `numbers`:
+      return `Fahre zu jeder Zahl.${n10}`;
+    case `music`:
+      return e17.input === `pad` ? `Fahre zu den T\xF6nen der Reihe nach. Pause oder das Ende spielt den Ton.` : `Fahre zu den T\xF6nen der Reihe nach. \u201ESpielen\u201C oder das Ende spielt den Ton.`;
+    case `collect`:
+      return `Fahre \xFCber alle Sterne und halte am Ziel an.`;
+    case `read`:
+      return t10?.kind === `predict` ? `Lies das Programm. Tippe auf das Feld, wo ${AD(e17.costume).nom} ankommt.` : t10?.kind === `gap` ? `Tippe auf das ? und dann auf den Baustein, der fehlt.` : `Ein Baustein ist falsch. Tippe auf ihn und dann auf den richtigen.`;
+    case `loop`:
+      return t10?.limit ? `H\xF6chstens ${t10.limit} Bausteine \u2013 nimm \u201Ewiederhole\u201C.` : `Mit \u201Ewiederhole\u201C wird das Programm k\xFCrzer.`;
+    case `pen`:
+      return t10?.lines?.length ? `Mit \u201EStift ab\u201C zieht die Figur eine Linie. Fahre die blasse Form nach.` : `Mit \u201EStift ab\u201C malt die Figur. Probiere Farben und \u201Ewiederhole\u201C.`;
+    case `events`:
+      return `Was soll passieren, wenn man einen Pfeil tippt? Lege Bausteine hinein.`;
+    case `cond`:
+      return t10?.maze ? `Nimm \u201Ewiederhole bis Ziel\u201C und \u201Efalls\u201C \u2013 zum Beispiel \u201Efalls Wand vor mir\u201C.` : t10?.colors?.some((e18) => e18[2] === `b`) ? `Rot = rechts drehen, Blau = links drehen. Nimm \u201Ebis Ziel\u201C und \u201Efalls\u201C.` : `Auf Rot: rechts drehen. Nimm \u201Ewiederhole bis Ziel\u201C und \u201Efalls\u201C.`;
+    case `cat`:
+      return `Die Katze l\xE4uft bei jedem Baustein ein Feld. \u201Ewarte\u201C l\xE4sst sie vorbei.`;
+    case `count`:
+      return `Auf einem Stern: \u201EPunkte + 1\u201C.`;
+    default:
+      return e_e(e17);
+  }
+}
+var EO = 400;
+var t_e = 200;
+function DO(e17, t10, n10) {
+  let r10 = (t10.d + n10) % 4, i10 = t10.x + eO[r10], a10 = t10.y + tO[r10];
+  return i10 < 0 || a10 < 0 || i10 >= e17.n || a10 >= e17.n || Ck(e17, i10, a10);
+}
+var n_e = (e17, t10) => e17.colors?.find(([e18, n10]) => e18 === t10.x && n10 === t10.y)?.[2] ?? null;
+function r_e(e17, t10) {
+  let n10 = t10.pose(), r10 = t10.t;
+  switch (e17) {
+    case `wall`:
+      return DO(r10, n10, 0);
+    case `free`:
+      return !DO(r10, n10, 0);
+    case `rightFree`:
+      return !DO(r10, n10, 1);
+    case `leftFree`:
+      return !DO(r10, n10, 3);
+    case `red`:
+      return n_e(r10, n10) === `r`;
+    case `blue`:
+      return n_e(r10, n10) === `b`;
+    case `star`:
+      return r10.stars.some(([e18, t11]) => e18 === n10.x && t11 === n10.y);
+  }
+}
+function* OO(e17, t10, n10 = 0, r10 = ``, i10 = []) {
+  for (let a10 = n10; a10 < e17.length; a10++) {
+    if (t10.stuck) return;
+    let n11 = e17[a10], o10 = r10 + a10;
+    if (!BD(n11)) {
+      if (VD(n11)) t10.count++, yield { cmd: `K`, col: n11.col, path: o10, loops: i10 };
+      else if (HD(n11)) r_e(n11.cond, t10) && (yield* OO(n11.body, t10, 0, o10 + `.`, i10));
+      else if (zD(n11)) {
+        if (n11.until) for (let e18 = 1; e18 <= t_e && !(t10.t.goal && t10.t.goal[0] === t10.pose().x && t10.t.goal[1] === t10.pose().y); e18++) {
+          let r11 = t10.count;
+          if (yield* OO(n11.body, t10, 0, o10 + `.`, [...i10, { path: o10, k: e18, n: 0 }]), t10.count === r11) {
+            t10.stuck = true;
+            return;
+          }
+        }
+        else for (let e18 = 1; e18 <= n11.rep; e18++) yield* OO(n11.body, t10, 0, o10 + `.`, [...i10, { path: o10, k: e18, n: n11.rep }]);
+      } else t10.count++, yield { cmd: n11, path: o10, loops: i10 };
+    }
+  }
+}
+var i_e = (e17) => e17.some((e18) => e18 === `?` || (UD(e18) ? i_e(UD(e18)) : false));
+function kO(e17, t10) {
+  let n10 = t10.split(`.`).map(Number), r10 = e17, i10 = ``;
+  for (let e18 of n10.slice(0, -1)) {
+    let t11 = r10[e18], n11 = t11 ? UD(t11) : null;
+    if (!n11) return null;
+    r10 = n11, i10 += e18 + `.`;
+  }
+  let a10 = n10[n10.length - 1];
+  return a10 >= 0 && a10 < r10.length ? { list: r10, i: a10, prefix: i10 } : null;
+}
+var AO = (e17, t10) => {
+  let n10 = kO(e17, t10);
+  return n10 ? n10.list[n10.i] : null;
+};
+function jO(e17) {
+  let t10 = [];
+  for (let n10 of e17) zD(n10) ? t10.push(`${n10.until ? `wiederhole bis zum Ziel` : `wiederhole ${n10.rep} mal`}: ${jO(n10.body).join(`, `) || `nichts`}. Ende`) : HD(n10) ? t10.push(`falls ${RD[n10.cond]} dann: ${jO(n10.body).join(`, `) || `nichts`}. Ende`) : BD(n10) ? t10.push(`Wenn ${WD[n10.on]} getippt: ${jO(n10.body).join(`, `) || `nichts`}. Ende`) : VD(n10) ? t10.push(`Farbe ${LD[n10.col]?.name ?? ``}`) : t10.push(n10 === `?` ? `L\xFCcke` : yO[n10]);
+  return t10;
+}
+var MO = /* @__PURE__ */ new Map();
+var NO = /* @__PURE__ */ new Map();
+var PO = (e17) => ({ x: e17.start[0], y: e17.start[1], d: e17.start[2] });
+var FO = (e17) => e17.kind === `events` ? sge.map((e18) => ({ on: e18, body: [] })) : e17.prog ? lge(e17.prog) : [];
+function IO(e17, t10, n10 = null) {
+  let r10 = PO(t10);
+  return { ver: e17, tasks: n10, i: 0, prog: FO(t10), done: 0, sel: null, steps: [], mark: null, rating: 0, at: r10, origin: r10, got: 0, ink: [], penDown: false, penCol: 0, play: false, gen: null, env: null, tick: 0, points: 0, phase: `idle`, pc: 0, token: 0, trace: [], msg: null, bad: null, stats: [], gotRun: 0, starsRun: [], happy: false };
+}
+var LO = (e17, t10) => t10?.tasks ?? e17.tasks;
+var RO = (e17, t10) => {
+  let n10 = LO(e17, t10);
+  return n10[Math.min(t10?.i ?? 0, n10.length - 1)];
+};
+function zO(e17) {
+  let t10 = MO.get(e17);
+  if (!t10) {
+    let n10 = QD(NO.get(e17)?.pg);
+    MO.set(e17, t10 = IO(0, n10.tasks[0]));
+  }
+  return t10;
+}
+var BO = (e17) => e17.stats[e17.i] ??= { start: Date.now(), end: 0, tries: 0, peeks: 0, stars: 0 };
+var HO = 1400;
+var UO = 990;
+var WO = { x: 44, y: 140, s: 810 };
+var GO = 900;
+var KO = 456;
+var qO = `Verdana, Arial, sans-serif`;
+var JO = `#4c97ff`;
+var YO = `#3373cc`;
+var XO = `#ffab19`;
+var ZO = `#cf8b17`;
+var QO = (e17) => e17.replace(/&/g, `&amp;`).replace(/</g, `&lt;`).replace(/>/g, `&gt;`);
+var s_e = He(`andika`).replace(/"/g, `'`);
+var $O = (e17) => WO.s / e17;
+var ek = (e17, t10, n10) => [WO.x + (t10 + 0.5) * $O(e17), WO.y + (n10 + 0.5) * $O(e17)];
+var tk = (e17, t10, n10, r10) => {
+  let [i10, a10] = ek(e17, t10, n10);
+  return `translate(${i10.toFixed(1)} ${a10.toFixed(1)}) rotate(${r10.toFixed(1)}) scale(${($O(e17) / 100 * 0.92).toFixed(3)})`;
+};
+var nk = (e17, t10, n10, r10) => {
+  let [i10, a10] = ek(e17, t10, n10);
+  return `translate(${i10.toFixed(1)} ${a10.toFixed(1)}) scale(${($O(e17) / 100 * r10).toFixed(3)})`;
+};
+function rk(e17, t10, n10, r10, i10, a10, o10, s10, c10 = {}) {
+  let l10 = c10.rx ?? Math.min(a10 / 2, 22), u10 = e17 && !t10, d10 = c10.size ?? 22, f10 = e17 && t10 ? ` class="lh-key" data-a="${t10}"` : ``, p10 = c10.icon ? d10 * 1.25 : 0, m10 = s10 ? s10.length * d10 * 0.6 : 0, h10 = n10 + i10 / 2 - (p10 + (s10 ? 8 : 0) + m10) / 2, g10 = `<g${f10}${u10 ? ` opacity=".4"` : ``}><rect x="${n10}" y="${r10}" width="${i10}" height="${a10}" rx="${l10}" fill="${o10}"${c10.stroke ? ` stroke="${c10.stroke}" stroke-width="2.5"` : ``}/>`;
+  return c10.icon && (g10 += `<g transform="translate(${(h10 + p10 / 2).toFixed(1)} ${r10 + a10 / 2}) scale(${(d10 / 34).toFixed(3)})" fill="${c10.color ?? `#fff`}" stroke="${c10.color ?? `#fff`}">${c10.icon}</g>`), s10 && (g10 += `<text x="${(c10.icon ? h10 + p10 + 8 : n10 + i10 / 2).toFixed(1)}" y="${(r10 + a10 / 2 + d10 * 0.36).toFixed(1)}"${c10.icon ? `` : ` text-anchor="middle"`} font-family="${qO}" font-size="${d10}" font-weight="700" fill="${c10.color ?? `#fff`}">${QO(s10)}</text>`), e17 && t10 && (g10 += `<rect class="lh-kdown" x="${n10}" y="${r10}" width="${i10}" height="${a10}" rx="${l10}" fill="#000" opacity="0"/>`), g10 + `<title>${QO(c10.title ?? s10)}</title></g>`;
+}
+var ik = `<path d="M-9 -13L13 0L-9 13Z" stroke="none"/>`;
+var c_e = `<rect x="-11" y="-11" width="22" height="22" rx="3" stroke="none"/>`;
+var l_e = `<path d="M-12 -12L6 0L-12 12Z" stroke="none"/><rect x="8" y="-12" width="5" height="24" rx="1.5" stroke="none"/>`;
+var u_e = `<path d="M-14 0L-5 -10H14V10H-5Z" fill="none" stroke-width="3" stroke-linejoin="round"/><path d="M0 -4L7 4M7 -4L0 4" fill="none" stroke-width="3" stroke-linecap="round"/>`;
+var d_e = `<path d="M-11 -8H11M-7 -8V12H7V-8M-4 -8V-12H4V-8" fill="none" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+var ak = `<path d="M-13 -5H-7L1 -12V12L-7 5H-13Z" stroke="none"/><path d="M5 -6Q9 0 5 6M9 -10Q16 0 9 10" fill="none" stroke-width="2.6" stroke-linecap="round"/>`;
+var ok = `<path d="M-9 -9A12 12 0 1 1 -12 2" fill="none" stroke-width="3.2" stroke-linecap="round"/><path d="M-15 -14L-7 -5L-16 -3Z" stroke="none"/>`;
+var f_e = `<path d="M-12 0H10M3 -8L11 0L3 8" fill="none" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+var sk = `<path d="M-16 0Q0 -14 16 0Q0 14 -16 0Z" fill="none" stroke-width="3" stroke-linejoin="round"/><circle cx="0" cy="0" r="5.5" stroke="none"/>`;
+var p_e = `<path d="M-12 1L0 -11L12 1M-8 -2V12H8V-2" fill="none" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+function m_e(e17, t10, n10, r10, i10 = ``, a10) {
+  if (e17 === `?`) return `<rect class="lh-pg-face" x="${t10}" y="${n10}" width="${r10}" height="${r10}" rx="${r10 * 0.16}" fill="#fff7ed" stroke="#ea580c" stroke-width="${Math.max(2.5, r10 * 0.05).toFixed(1)}" stroke-dasharray="${(r10 * 0.12).toFixed(1)} ${(r10 * 0.08).toFixed(1)}"${i10}/><text x="${(t10 + r10 / 2).toFixed(1)}" y="${(n10 + r10 * 0.68).toFixed(1)}" text-anchor="middle" font-family="${qO}" font-size="${(r10 * 0.52).toFixed(1)}" font-weight="700" fill="#ea580c">?</text>`;
+  let o10 = e17 === `P` ? XO : JO, s10 = e17 === `P` ? ZO : YO, c10 = r10 * 0.16, l10 = r10 * 0.12, u10 = n10 + r10 / 2;
+  return `<path class="lh-pg-face" d="${`M${t10 + c10} ${n10}H${t10 + r10 - c10}Q${t10 + r10} ${n10} ${t10 + r10} ${n10 + c10}V${u10 - l10}A${l10} ${l10} 0 0 1 ${t10 + r10} ${u10 + l10}V${n10 + r10 - c10}Q${t10 + r10} ${n10 + r10} ${t10 + r10 - c10} ${n10 + r10}H${t10 + c10}Q${t10} ${n10 + r10} ${t10} ${n10 + r10 - c10}V${n10 + c10}Q${t10} ${n10} ${t10 + c10} ${n10}Z`}" fill="${o10}" stroke="${s10}" stroke-width="${Math.max(2, r10 * 0.04).toFixed(1)}"${i10}/><g transform="translate(${(t10 + r10 / 2).toFixed(1)} ${(n10 + r10 / 2).toFixed(1)}) scale(${(r10 / 72 * 0.78).toFixed(3)})">${a10 ?? ID[e17]}</g>`;
+}
+function ck(e17, t10) {
+  let n10 = [], r10 = ``;
+  for (let i10 of e17.split(/\s+/)) r10 && (r10 + ` ` + i10).length > t10 ? (n10.push(r10), r10 = i10) : r10 = r10 ? r10 + ` ` + i10 : i10;
+  return r10 && n10.push(r10), n10;
+}
+function h_e(e17, t10, n10 = false) {
+  let r10 = t10.t, i10 = r10.n, a10 = $O(i10), o10 = FD(e17.mat), s10 = tge(e17.mat, i10, WO.x, WO.y, WO.s);
+  if (r10.path?.length) {
+    for (let [e18, t11] of r10.path) {
+      let [n11, r11] = ek(i10, e18, t11), o11 = a10 * 0.9;
+      s10 += `<rect x="${(n11 - o11 / 2).toFixed(1)}" y="${(r11 - o11 / 2).toFixed(1)}" width="${o11.toFixed(1)}" height="${o11.toFixed(1)}" rx="${(a10 * 0.12).toFixed(1)}" fill="#fef3c7" stroke="#d97706" stroke-opacity=".5" stroke-width="2"/>`;
+    }
+    for (let [e18, t11, n11] of r10.colors ?? []) {
+      let [o11, c11] = ek(i10, e18, t11), l11 = a10 * 0.9;
+      s10 += `<rect class="lh-pg-color" x="${(o11 - l11 / 2).toFixed(1)}" y="${(c11 - l11 / 2).toFixed(1)}" width="${l11.toFixed(1)}" height="${l11.toFixed(1)}" rx="${(a10 * 0.12).toFixed(1)}" fill="${n11 === `r` ? `#ef4444` : `#3b82f6`}" stroke="${n11 === `r` ? `#991b1b` : `#1e40af`}" stroke-width="3"/>`;
+      let u11 = r10.path.findIndex(([n12, r11]) => n12 === e18 && r11 === t11), d11 = u11 > 0 ? r10.path[u11 - 1] : null;
+      if (d11) {
+        let r11 = eO.findIndex((n12, r12) => e18 - d11[0] === n12 && t11 - d11[1] === tO[r12]);
+        s10 += `<g transform="translate(${o11.toFixed(1)} ${c11.toFixed(1)}) rotate(${r11 * 90}) scale(${a10 / 100 * 0.62})" opacity=".85">${ID[n11 === `r` ? `R` : `L`]}</g>`;
+      }
+    }
+  }
+  let [c10, l10] = ek(i10, r10.start[0], r10.start[1]);
+  if (s10 += `<circle cx="${c10.toFixed(1)}" cy="${l10.toFixed(1)}" r="${(a10 * 0.4).toFixed(1)}" fill="none" stroke="${e17.mat === `space` ? `#c7d2fe` : `#64748b`}" stroke-width="${Math.max(2, a10 * 0.025).toFixed(1)}" stroke-dasharray="${(a10 * 0.07).toFixed(1)} ${(a10 * 0.06).toFixed(1)}"/>`, s10 += `<text x="${c10.toFixed(1)}" y="${(l10 + a10 * 0.47).toFixed(1)}" text-anchor="middle" font-family="${qO}" font-size="${(a10 * 0.11).toFixed(1)}" font-weight="700" fill="${e17.mat === `space` ? `#c7d2fe` : `#64748b`}">START</text>`, r10.maze) for (let [t11, n11] of r10.walls) s10 += `<rect class="lh-pg-wall" data-x="${t11}" data-y="${n11}" x="${(WO.x + t11 * a10).toFixed(1)}" y="${(WO.y + n11 * a10).toFixed(1)}" width="${a10.toFixed(1)}" height="${a10.toFixed(1)}" fill="${e17.mat === `garden` ? `#15803d` : e17.mat === `space` ? `#57534e` : o10.frame}" stroke="${e17.mat === `space` ? `#292524` : `#0f172a`}" stroke-opacity=".35" stroke-width="2"/>`;
+  else for (let [e18, t11] of r10.walls) s10 += `<g class="lh-pg-wall" data-x="${e18}" data-y="${t11}" transform="${nk(i10, e18, t11, 0.82)}">${o10.wallSvg}</g>`;
+  for (let [e18, t11] of r10.cat ?? []) s10 += `<g transform="${nk(i10, e18, t11, 0.55)}" fill="#c2410c" opacity=".45">${oge}</g>`;
+  let u10 = new Set(r10.stops.slice(0, t10.got).map((e18) => `${e18.x},${e18.y}`)), d10 = /* @__PURE__ */ new Map();
+  for (let e18 of [...r10.extra, ...r10.stops]) d10.set(`${e18.x},${e18.y}`, e18.t);
+  let f10 = e17.numMat && e17.lesson !== `word`;
+  for (let [t11, n11] of d10) {
+    let [r11, o11] = t11.split(`,`).map(Number), [c11, l11] = ek(i10, r11, o11), d11 = u10.has(t11), p11 = a10 * (n11.length > 2 ? 0.34 : n11.length > 1 ? 0.42 : 0.5) * (f10 ? 0.8 : 1);
+    if (f10) d11 && (s10 += `<circle cx="${c11.toFixed(1)}" cy="${l11.toFixed(1)}" r="${(a10 * 0.36).toFixed(1)}" fill="#bbf7d0" stroke="#16a34a" stroke-width="3"/>`);
+    else if (e17.lesson === `music`) {
+      let e18 = a10 * 0.74;
+      s10 += `<rect data-cell="${t11}" x="${(c11 - e18 / 2).toFixed(1)}" y="${(l11 - e18 / 2).toFixed(1)}" width="${e18.toFixed(1)}" height="${e18.toFixed(1)}" rx="${(a10 * 0.16).toFixed(1)}" fill="${Lge(n11)}" stroke="${d11 ? `#16a34a` : `#1e293b`}" stroke-width="${d11 ? 6 : 3}"/>`;
+    } else {
+      let e18 = a10 * 0.74;
+      s10 += `<rect data-cell="${t11}" x="${(c11 - e18 / 2).toFixed(1)}" y="${(l11 - e18 / 2).toFixed(1)}" width="${e18.toFixed(1)}" height="${e18.toFixed(1)}" rx="${(a10 * 0.12).toFixed(1)}" fill="${d11 ? `#dcfce7` : `#ffffff`}" stroke="${d11 ? `#16a34a` : `#334155`}" stroke-width="3"/>`;
+    }
+    s10 += `<text class="lh-pg-label" data-x="${r11}" data-y="${o11}" x="${c11.toFixed(1)}" y="${(l11 + p11 * 0.36).toFixed(1)}" text-anchor="middle" font-family="${e17.lesson === `word` ? s_e : qO}" font-size="${p11.toFixed(1)}" font-weight="700" fill="${e17.lesson === `music` ? `#ffffff` : d11 ? `#166534` : e17.mat === `space` && f10 ? `#e0e7ff` : `#1e293b`}"${e17.lesson === `music` ? ` stroke="#1e293b" stroke-width="1.5" paint-order="stroke"` : ``} data-t="${QO(n11)}">${QO(e17.lesson === `music` ? Rge(n11) : n11)}</text>`, e17.lesson === `music` && (s10 += zge(n11, c11, l11 - p11 * 0.58, p11 * 0.13));
+  }
+  if (r10.stars.forEach(([e18, n11], r11) => {
+    s10 += `<g data-star="${r11}" class="lh-pg-star${t10.stars.includes(r11) ? ` is-got` : ``}" transform="${nk(i10, e18, n11, 0.72)}">${ND}</g>`;
+  }), r10.goal && (s10 += `<g class="lh-pg-goal" data-x="${r10.goal[0]}" data-y="${r10.goal[1]}" transform="${nk(i10, r10.goal[0], r10.goal[1], 0.82)}">${Zhe[e17.costume]}</g>`), r10.lines?.length) {
+    let t11 = ``;
+    for (let [e18, n11, a11, o11] of r10.lines) {
+      let [r11, s11] = ek(i10, e18, n11), [c11, l11] = ek(i10, a11, o11);
+      t11 += `M${r11.toFixed(1)} ${s11.toFixed(1)}L${c11.toFixed(1)} ${l11.toFixed(1)}`;
+    }
+    s10 += `<path class="lh-pg-target" d="${t11}" fill="none" stroke="${e17.mat === `space` ? `#c7d2fe` : `#64748b`}" stroke-opacity=".45" stroke-width="${(a10 * 0.13).toFixed(1)}" stroke-linecap="round" stroke-dasharray="${(a10 * 0.04).toFixed(1)} ${(a10 * 0.16).toFixed(1)}"/>`;
+  }
+  let p10 = t10.trace.map(([e18, t11]) => ek(i10, e18, t11).map((e19) => e19.toFixed(1)).join(`,`)).join(` `);
+  if (s10 += `<polyline class="lh-pg-trace" points="${p10}" fill="none" stroke="#2563eb" stroke-opacity=".5" stroke-width="${(a10 * 0.07).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="${(a10 * 0.01).toFixed(2)} ${(a10 * 0.13).toFixed(1)}"/>`, e17.lesson === `pen`) {
+    s10 += `<g class="lh-pg-ink">`;
+    for (let e18 of t10.ink) {
+      let [t11, n11] = ek(i10, e18[0], e18[1]), [r11, o11] = ek(i10, e18[2], e18[3]);
+      s10 += `<line x1="${t11.toFixed(1)}" y1="${n11.toFixed(1)}" x2="${r11.toFixed(1)}" y2="${o11.toFixed(1)}" stroke="${LD[e18[4]]?.c ?? LD[0].c}" stroke-width="${(a10 * 0.1).toFixed(1)}" stroke-linecap="round"/>`;
+    }
+    s10 += `</g>`;
+  }
+  let m10 = pO(r10, t10.tick);
+  if (m10 && (s10 += `<g class="lh-pg-cat" data-track="${(r10.cat ?? []).map((e18) => e18.join(`,`)).join(`;`)}" data-k="${r10.catK ?? 0}" transform="${nk(i10, m10[0], m10[1], 0.78)}">${age}</g>`), t10.mark) {
+    let [e18, n11] = ek(i10, t10.mark[0], t10.mark[1]), r11 = t10.phase === `won`;
+    s10 += `<g class="lh-pg-mark"><circle cx="${e18.toFixed(1)}" cy="${n11.toFixed(1)}" r="${(a10 * 0.42).toFixed(1)}" fill="${r11 ? `#bbf7d0` : `#ffedd5`}" stroke="${r11 ? `#16a34a` : `#ea580c`}" stroke-width="${(a10 * 0.05).toFixed(1)}"/><path d="M${(e18 - a10 * 0.08).toFixed(1)} ${(n11 + a10 * 0.24).toFixed(1)}V${(n11 - a10 * 0.26).toFixed(1)}l${(a10 * 0.26).toFixed(1)} ${(a10 * 0.1).toFixed(1)}l${(-a10 * 0.26).toFixed(1)} ${(a10 * 0.1).toFixed(1)}" fill="${r11 ? `#16a34a` : `#ea580c`}" stroke="${r11 ? `#16a34a` : `#ea580c`}" stroke-width="${(a10 * 0.035).toFixed(1)}" stroke-linejoin="round"/></g>`;
+  }
+  if (s10 += `<g class="lh-pg-bot" data-n="${i10}" data-x="${t10.at.x}" data-y="${t10.at.y}" data-d="${t10.at.d}" transform="${tk(i10, t10.at.x, t10.at.y, t10.ang)}"><g class="lh-pg-body${t10.happy ? ` is-happy` : ``}">${MD[e17.costume]}</g>${e17.lesson === `pen` ? `<circle class="lh-pg-pendot" r="11" fill="${LD[t10.penCol]?.c ?? LD[0].c}" stroke="#fff" stroke-width="4" opacity="${+!!t10.penDown}"/>` : ``}</g>`, n10 && t10.t.kind === `predict` && t10.phase === `idle`) for (let t11 = 0; t11 < i10; t11++) for (let n11 = 0; n11 < i10; n11++) s10 += `<rect class="lh-key" data-a="cell:${n11},${t11}" x="${(WO.x + n11 * a10).toFixed(1)}" y="${(WO.y + t11 * a10).toFixed(1)}" width="${a10.toFixed(1)}" height="${a10.toFixed(1)}" fill="#000" fill-opacity="0"><title>Hier kommt ${QO(AD(e17.costume).nom)} an</title></rect>`;
+  return s10;
+}
+function g_e(e17, t10, n10) {
+  let r10 = t10.t, i10 = 124, a10 = ``;
+  return e17.lesson === `goal` || e17.lesson === `read` || e17.lesson === `loop` && !r10.stars.length ? `<text x="${i10}" y="${n10}" font-family="${qO}" font-size="23" fill="#475569">${QO(TO(e17, r10))}</text>` : e17.lesson === `collect` || e17.lesson === `loop` ? (r10.stars.forEach((e18, r11) => {
+    let o10 = t10.stars.includes(r11);
+    a10 += `<g transform="translate(${i10 + 20} ${n10 - 9}) scale(.7)" opacity="${o10 ? 1 : 0.3}">${ND}</g>`, i10 += 44;
+  }), a10 + `<text x="${i10 + 10}" y="${n10}" font-family="${qO}" font-size="22" fill="#475569">${QO(TO(e17, r10))}</text>`) : e17.lesson === `music` ? (r10.stops.forEach((e18, r11) => {
+    let o10 = r11 < t10.got, s10 = r11 === t10.got && t10.phase !== `won`;
+    a10 += `<rect x="${i10}" y="${n10 - 32}" width="44" height="46" rx="10" fill="${Lge(e18.t)}" stroke="${o10 ? `#16a34a` : s10 ? `#1e293b` : `#ffffff`}" stroke-width="${o10 || s10 ? 4 : 2}" opacity="${o10 || s10 ? 1 : 0.8}"/>`, a10 += `<text x="${i10 + 22}" y="${n10}" text-anchor="middle" font-family="${qO}" font-size="24" font-weight="700" fill="#fff" stroke="#1e293b" stroke-width="1.2" paint-order="stroke">${QO(Rge(e18.t))}</text>${zge(e18.t, i10 + 22, n10 - 26, 3.5)}`, o10 && (a10 += `<path d="M${i10 + 30} ${n10 - 40}l5 5 10-11" fill="none" stroke="#16a34a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`), i10 += 50;
+  }), a10) : e17.lesson === `count` ? `<rect x="${i10}" y="${n10 - 32}" width="150" height="46" rx="12" fill="#ff8c1a" stroke="#db6e00" stroke-width="2.5"/><text x="${i10 + 14}" y="${n10}" font-family="${qO}" font-size="22" font-weight="700" fill="#fff">Punkte:</text><text class="lh-pg-points" x="${i10 + 128}" y="${n10}" text-anchor="end" font-family="${qO}" font-size="26" font-weight="700" fill="#fff">${t10.points}</text><text x="${i10 + 166}" y="${n10}" font-family="${qO}" font-size="21" fill="#475569">${QO(TO(e17, r10))}</text>` : e17.lesson === `pen` || e17.lesson === `events` || e17.lesson === `cond` || e17.lesson === `cat` ? `<text x="${i10}" y="${n10}" font-family="${qO}" font-size="22" fill="#475569">${QO(TO(e17, r10))}</text>` : (r10.stops.forEach((o10, s10) => {
+    let c10 = s10 < t10.got, l10 = s10 === t10.got && t10.phase !== `won`, u10 = e17.lesson === `math` ? `${r10.sums?.[s10] ?? `?`} = ${c10 ? o10.t : `?`}` : o10.t, d10 = e17.lesson === `word` ? 34 : 24, f10 = Math.max(48, u10.length * d10 * (e17.lesson === `word` ? 0.62 : 0.6) + 24);
+    a10 += `<rect x="${i10}" y="${n10 - 32}" width="${f10.toFixed(1)}" height="46" rx="10" fill="${c10 ? `#dcfce7` : l10 ? `#fef9c3` : `#ffffff`}" stroke="${c10 ? `#16a34a` : l10 ? `#ca8a04` : `#94a3b8`}" stroke-width="${l10 ? 3.5 : 2.5}"/>`, a10 += `<text x="${(i10 + f10 / 2).toFixed(1)}" y="${n10 + (e17.lesson === `word` ? 3 : 0)}" text-anchor="middle" font-family="${e17.lesson === `word` ? s_e : qO}" font-size="${d10}" font-weight="700" fill="${c10 ? `#166534` : `#1e293b`}">${QO(u10)}</text>`, i10 += f10 + (e17.lesson === `word` ? 8 : 14);
+  }), a10);
+}
+function lk(e17, t10, n10, r10, i10, a10, o10, s10 = 0) {
+  let c10 = e17?.k ?? `info`, l10 = c10 === `bad` ? `#fef2f2` : c10 === `ok` ? `#f0fdf4` : c10 === `win` ? `#dcfce7` : `#f8fafc`, u10 = c10 === `bad` ? `#f87171` : c10 === `ok` || c10 === `win` ? `#22c55e` : `#cbd5e1`, d10 = c10 === `bad` ? `#b91c1c` : c10 === `ok` || c10 === `win` ? `#166534` : `#475569`, f10 = s10 ? 46 : 0, p10 = ck(e17?.t ?? t10, Math.floor((i10 - 28) / (o10 * (e17 ? 0.62 : 0.56)))).slice(0, Math.max(1, Math.floor((a10 - f10 - 12) / (o10 * 1.3)))), m10 = `<rect x="${n10}" y="${r10}" width="${i10}" height="${a10}" rx="16" fill="${l10}" stroke="${u10}" stroke-width="2.5"/>`;
+  for (let e18 = 0; e18 < (s10 ? 3 : 0); e18++) m10 += `<g transform="translate(${n10 + 32 + e18 * 44} ${r10 + 30}) scale(.62)" opacity="${e18 < s10 ? 1 : 0.22}">${ND}</g>`;
+  let h10 = r10 + f10 + (a10 - f10) / 2 - (p10.length - 1) * o10 * 1.3 / 2 + o10 * 0.36;
+  return p10.forEach((t11, r11) => m10 += `<text x="${n10 + 16}" y="${(h10 + r11 * o10 * 1.3).toFixed(1)}" font-family="${qO}" font-size="${o10}" font-weight="${e17 ? 700 : 400}" fill="${d10}">${QO(t11)}</text>`), m10;
+}
+function __e(e17, t10, n10, r10, i10, a10, o10 = false, s10 = `edit`) {
+  let c10 = t10.prog.length, l10 = o10 ? 4 : 8, u10 = o10 ? 34 : 72;
+  for (let e18 of o10 ? [34, 28] : [72, 60, 50, 42]) if (u10 = e18, Math.floor((i10 + l10) / (e18 + l10)) * Math.floor((a10 + l10) / (e18 + l10)) >= c10 + 1) break;
+  let d10 = Math.max(1, Math.floor((i10 + l10) / (u10 + l10))), f10 = Math.max(1, Math.floor((a10 + l10) / (u10 + l10))), p10 = Math.max(0, c10 - d10 * f10), m10 = ``, h10 = ``;
+  for (let i11 = p10; i11 < c10; i11++) {
+    let a11 = t10.prog[i11];
+    if (typeof a11 == `object`) continue;
+    let c11 = String(i11), f11 = i11 - p10, g10 = n10 + f11 % d10 * (u10 + l10), _10 = r10 + Math.floor(f11 / d10) * (u10 + l10), v10 = `lh-pg-card${i11 < t10.done ? ` is-done` : ``}${t10.sel === c11 ? ` is-sel` : ``}${t10.bad === c11 ? ` is-bad` : ``}`, y10 = e17 && !o10 && s10 !== `read` && i11 >= t10.done && (t10.phase === `idle` || t10.phase === `step`), b10 = y10 && s10 === `edit` ? ` data-drag="${c11}"` : ``;
+    if (m10 += `<g data-node="${c11}" data-cmd="${a11}"${b10} class="${v10}${y10 ? ` lh-key` : ``}"${y10 ? ` data-a="card:${c11}"` : ``}>${m_e(a11, g10, _10, u10, ``, a11 === `?` ? void 0 : xO(t10.pg, a11))}${y10 ? `<rect class="lh-kdown" x="${g10}" y="${_10}" width="${u10}" height="${u10}" rx="${u10 * 0.16}" fill="#000" opacity="0"/><title>${QO(a11 === `?` ? `L\xFCcke` : bO(t10.pg, a11))}</title>` : ``}</g>`, t10.sel === c11 && e17 && !o10 && s10 === `edit`) {
+      m10 += `<path d="M${g10 + u10 + l10 / 2} ${_10 - 4}V${_10 + u10 + 4}" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>`;
+      let e18 = Math.max(17, u10 * 0.29);
+      h10 = v_e(c11, g10 + u10 - 6, _10 + 6, e18, { cx: g10 + u10 - 6, cy: _10 + 6, r: e18 * 1.75 });
+    }
+  }
+  return p10 && (m10 += `<text x="${n10 + i10}" y="${r10 - 6}" text-anchor="end" font-family="${qO}" font-size="15" fill="#64748b">\u2026 und ${p10} weitere davor</text>`), m10 + h10;
+}
+function v_e(e17, t10, n10, r10, i10) {
+  let a10 = r10 * 0.42;
+  return `<g class="lh-key" data-a="del:${e17}">${`r` in i10 ? `<circle cx="${i10.cx.toFixed(1)}" cy="${i10.cy.toFixed(1)}" r="${i10.r.toFixed(1)}" fill="#000" fill-opacity="0"/>` : `<rect x="${i10.x.toFixed(1)}" y="${i10.y.toFixed(1)}" width="${i10.w.toFixed(1)}" height="${i10.h.toFixed(1)}" fill="#000" fill-opacity="0"/>`}<circle cx="${t10.toFixed(1)}" cy="${n10.toFixed(1)}" r="${r10.toFixed(1)}" fill="#dc2626" stroke="#fff" stroke-width="3"/><path d="M${(t10 - a10).toFixed(1)} ${(n10 - a10).toFixed(1)}l${(2 * a10).toFixed(1)} ${(2 * a10).toFixed(1)}m0 ${(-2 * a10).toFixed(1)}l${(-2 * a10).toFixed(1)} ${(2 * a10).toFixed(1)}" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle class="lh-kdown" cx="${t10.toFixed(1)}" cy="${n10.toFixed(1)}" r="${r10.toFixed(1)}" fill="#000" opacity="0"/><title>Baustein entfernen</title></g>`;
+}
+var uk = `<path d="M-13 -1A13 13 0 0 1 9 -10" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/><path d="M4 -19L16 -9L2 -3Z" fill="#fff"/><path d="M13 1A13 13 0 0 1 -9 10" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/><path d="M-4 19L-16 9L-2 3Z" fill="#fff"/>`;
+function y_e(e17, t10 = ``, n10 = 0, r10 = [], i10 = 0) {
+  return e17.forEach((e18, a10) => {
+    let o10 = t10 + (a10 + i10), s10 = UD(e18);
+    s10 ? (r10.push({ kind: `top`, path: o10, depth: n10, node: e18 }), s10.length || r10.push({ kind: `slot`, path: o10, depth: n10 + 1 }), y_e(s10, o10 + `.`, n10 + 1, r10), r10.push({ kind: `end`, path: o10, depth: n10 })) : r10.push({ kind: `cmd`, path: o10, depth: n10, node: e18 });
+  }), r10;
+}
+var dk = `#0fbd8c`;
+var fk = `#0b9a72`;
+var b_e = `#ffbf00`;
+var x_e = `#cc9900`;
+var S_e = `#ff8c1a`;
+var C_e = `#db6e00`;
+function w_e(e17, t10, n10, r10, i10, a10, o10 = t10.prog, s10 = 0, c10 = true) {
+  let l10 = y_e(o10, ``, 0, [], s10), u10 = l10.filter((e18) => e18.kind === `end`).length, d10 = Math.max(22, Math.min(46, l10.length ? (a10 - (l10.length - 1) * 4) / (l10.length - u10 + u10 * 0.42) : 46)), f10 = e17 && c10 && (t10.phase === `idle` || t10.phase === `step`), p10 = r10, m10 = l10.map((e18) => {
+    let t11 = e18.kind === `end` ? d10 * 0.42 : d10, n11 = { y: p10, h: t11 };
+    return p10 += t11 + 4, n11;
+  }), h10 = d10 * 0.42, g10 = ``, _10 = ``;
+  l10.forEach((e18, t11) => {
+    if (e18.kind !== `top`) return;
+    let r11 = l10.findIndex((n11, r12) => r12 > t11 && n11.kind === `end` && n11.path === e18.path), a11 = n10 + e18.depth * 26, o11 = BD(e18.node), s11 = o11 ? b_e : XO;
+    g10 += `<rect x="${a11}" y="${(m10[t11].y + d10 - 3).toFixed(1)}" width="18" height="${(m10[r11].y - m10[t11].y - d10 + 6).toFixed(1)}" fill="${s11}"/>`, g10 += `<rect data-end="${e18.path}" x="${a11}" y="${m10[r11].y.toFixed(1)}" width="${Math.min(150, i10 - e18.depth * 26)}" height="${m10[r11].h.toFixed(1)}" rx="${(m10[r11].h / 2).toFixed(1)}" fill="${s11}" stroke="${o11 ? x_e : ZO}" stroke-width="2"/>`;
+  });
+  let v10 = (e18, t11, n11, r11, i11) => `<rect class="lh-pg-face" x="${e18}" y="${t11.toFixed(1)}" width="${n11}" height="${d10.toFixed(1)}" rx="${(d10 * 0.22).toFixed(1)}" fill="${r11}" stroke="${i11}" stroke-width="2"/>`, y10 = (e18, t11, n11) => f10 ? `<rect class="lh-kdown" x="${e18}" y="${t11.toFixed(1)}" width="${n11}" height="${d10.toFixed(1)}" rx="${(d10 * 0.22).toFixed(1)}" fill="#000" opacity="0"/>` : ``, b10 = (e18, t11, n11) => `<g transform="translate(${(e18 + d10 * 0.55).toFixed(1)} ${(t11 + d10 / 2).toFixed(1)}) scale(${(d10 / 72 * 0.68).toFixed(3)})">${n11}</g>`, x10 = (e18, t11, n11, r11 = `#fff`, i11 = 0) => {
+    let a11 = i11 > 0 && n11.length * h10 * 0.64 > i11 ? ` textLength="${i11.toFixed(1)}" lengthAdjust="spacingAndGlyphs"` : ``;
+    return `<text x="${e18.toFixed(1)}" y="${(t11 + d10 * 0.66).toFixed(1)}" font-family="${qO}" font-size="${h10.toFixed(1)}" font-weight="700" fill="${r11}"${a11}>${QO(n11)}</text>`;
+  };
+  if (l10.forEach((e18, r11) => {
+    if (e18.kind === `end`) return;
+    let a11 = n10 + e18.depth * 26, o11 = i10 - e18.depth * 26, s11 = m10[r11].y;
+    if (e18.kind === `slot`) {
+      g10 += `<g data-slot="${e18.path}"${f10 ? ` class="lh-key" data-a="card:${e18.path}"` : ``}><rect x="${a11}" y="${s11.toFixed(1)}" width="${o11}" height="${d10.toFixed(1)}" rx="${(d10 * 0.22).toFixed(1)}" fill="#fffbeb" stroke="${XO}" stroke-width="2" stroke-dasharray="8 6"/><text x="${a11 + 12}" y="${(s11 + d10 * 0.64).toFixed(1)}" font-family="${qO}" font-size="${(h10 * 0.85).toFixed(1)}" fill="#b45309">${o11 < 260 ? `leer \u2013 hierher ziehen` : `leer \u2013 Bausteine hierher ziehen`}</text></g>`;
+      return;
+    }
+    let c11 = e18.node, l11 = t10.sel === e18.path, u11 = `lh-pg-card${l11 ? ` is-sel` : ``}${t10.bad === e18.path ? ` is-bad` : ``}`;
+    if (BD(c11)) {
+      let t11 = a11 + 12 + 4 * h10 * 0.7 + 8 + d10 * 0.38;
+      g10 += `<g data-node="${e18.path}" class="${u11} is-loop is-event${f10 ? ` lh-key" data-a="card:${e18.path}` : ``}">${v10(a11, s11, o11, b_e, x_e)}` + x10(a11 + 12, s11, `Wenn`, `#422006`) + `<g transform="translate(${t11.toFixed(1)} ${(s11 + d10 / 2).toFixed(1)})"><circle r="${(d10 * 0.38).toFixed(1)}" fill="#422006"/><g transform="scale(${(d10 / 72 * 0.6).toFixed(3)})">${ige(cge[c11.on])}</g></g>` + x10(t11 + d10 * 0.38 + 8, s11, `getippt`, `#422006`, a11 + o11 - (t11 + d10 * 0.38 + 8) - 8) + `${y10(a11, s11, o11)}<title>Wenn ${WD[c11.on]} getippt</title></g>`;
+      return;
+    }
+    let p11 = f10 ? ` lh-key" data-drag="${e18.path}" data-a="card:${e18.path}` : ``;
+    if (HD(c11)) {
+      let t11 = a11 + 12, n11 = t11 + 5 * h10 * 0.64 + 8, r12 = RD[c11.cond], i11 = Math.min(o11 - (n11 - a11) - (l11 ? Math.max(90, d10 * 2) : 70), r12.length * h10 * 0.6 + 20);
+      g10 += `<g data-node="${e18.path}" class="${u11} is-loop${p11}">${v10(a11, s11, o11, XO, ZO)}${x10(t11, s11, `falls`)}${i11 < o11 ? x10(n11 + i11 + 8, s11, `dann`, `#fff`, a11 + o11 - (n11 + i11 + 8) - (l11 ? Math.max(90, d10 * 2) : 8)) : ``}${y10(a11, s11, o11)}<title>falls ${QO(r12)} dann</title></g>`, g10 += `<g${f10 ? ` class="lh-key" data-a="cond:${e18.path}"` : ``}><rect x="${n11.toFixed(1)}" y="${(s11 + d10 * 0.14).toFixed(1)}" width="${i11.toFixed(1)}" height="${(d10 * 0.72).toFixed(1)}" rx="${(d10 * 0.36).toFixed(1)}" fill="#5cb1d6" stroke="#2e8eb8" stroke-width="2"/><text x="${(n11 + i11 / 2).toFixed(1)}" y="${(s11 + d10 * 0.64).toFixed(1)}" text-anchor="middle" font-family="${qO}" font-size="${(h10 * 0.92).toFixed(1)}" font-weight="700" fill="#fff"${r12.length * h10 * 0.6 > i11 - 12 ? ` textLength="${(i11 - 12).toFixed(1)}" lengthAdjust="spacingAndGlyphs"` : ``}>${QO(r12)}</text>${f10 ? `<rect class="lh-kdown" x="${n11.toFixed(1)}" y="${(s11 + d10 * 0.14).toFixed(1)}" width="${i11.toFixed(1)}" height="${(d10 * 0.72).toFixed(1)}" rx="${(d10 * 0.36).toFixed(1)}" fill="#000" opacity="0"/>` : ``}<title>andere Bedingung</title></g>`;
+    } else if (zD(c11) && c11.until) g10 += `<g data-node="${e18.path}" class="${u11} is-loop${p11}">${v10(a11, s11, o11, XO, ZO)}${b10(a11, s11, uk)}${x10(a11 + d10 * 1.1, s11, `wiederhole bis Ziel`, `#fff`, o11 - d10 * 1.1 - (l11 ? Math.max(90, d10 * 2) + 40 : 50))}<text data-loopk="${e18.path}" x="${(a11 + o11 - (l11 ? Math.max(90, d10 * 2) + 8 : 12)).toFixed(1)}" y="${(s11 + d10 * 0.66).toFixed(1)}" text-anchor="end" font-family="${qO}" font-size="${h10.toFixed(1)}" font-weight="700" fill="#fff"></text>${y10(a11, s11, o11)}<title>wiederhole bis zum Ziel</title></g>`;
+    else if (zD(c11)) {
+      let t11 = a11 + d10 * 1.1, n11 = t11 + 10 * h10 * 0.64 + 10, r12 = d10 * 0.34, i11 = s11 + d10 / 2;
+      g10 += `<g data-node="${e18.path}" class="${u11} is-loop${p11}">${v10(a11, s11, o11, XO, ZO)}${b10(a11, s11, uk)}${x10(t11, s11, `wiederhole`)}<rect x="${(n11 + r12 * 2 + 2).toFixed(1)}" y="${(i11 - d10 * 0.34).toFixed(1)}" width="${(h10 * 1.5).toFixed(1)}" height="${(d10 * 0.68).toFixed(1)}" rx="6" fill="#fff"/><text x="${(n11 + r12 * 2 + 2 + h10 * 0.75).toFixed(1)}" y="${(s11 + d10 * 0.67).toFixed(1)}" text-anchor="middle" font-family="${qO}" font-size="${(h10 * 1.05).toFixed(1)}" font-weight="700" fill="#9a3412">${c11.rep}</text>` + x10(n11 + r12 * 4 + h10 * 1.5 + 12, s11, `mal`) + `<text data-loopk="${e18.path}" x="${(a11 + o11 - (l11 ? Math.max(90, d10 * 2) + 8 : 12)).toFixed(1)}" y="${(s11 + d10 * 0.66).toFixed(1)}" text-anchor="end" font-family="${qO}" font-size="${h10.toFixed(1)}" font-weight="700" fill="#fff"></text>${y10(a11, s11, o11)}<title>wiederhole ${c11.rep} mal</title></g>`;
+      let m11 = (t12, n12) => `<g${f10 ? ` class="lh-key" data-a="rep${t12}:${e18.path}"` : ``}><circle cx="${n12.toFixed(1)}" cy="${i11.toFixed(1)}" r="${r12.toFixed(1)}" fill="#fff" stroke="${ZO}" stroke-width="2"/><path d="M${(n12 - r12 * 0.5).toFixed(1)} ${i11.toFixed(1)}h${r12.toFixed(1)}${t12 === `+` ? `M${n12.toFixed(1)} ${(i11 - r12 * 0.5).toFixed(1)}v${r12.toFixed(1)}` : ``}" stroke="#9a3412" stroke-width="3" stroke-linecap="round"/>${f10 ? `<circle class="lh-kdown" cx="${n12.toFixed(1)}" cy="${i11.toFixed(1)}" r="${r12.toFixed(1)}" fill="#000" opacity="0"/>` : ``}<title>${t12 === `+` ? `einmal mehr` : `einmal weniger`}</title></g>`;
+      g10 += m11(`-`, n11 + r12) + m11(`+`, n11 + r12 * 3 + h10 * 1.5 + 4);
+    } else if (VD(c11)) {
+      let t11 = LD[c11.col] ?? LD[0], n11 = a11 + d10 * 1.1 + 5 * h10 * 0.64 + 14 + d10 * 0.36;
+      g10 += `<g data-node="${e18.path}" data-cmd="K" class="${u11}${p11}">${v10(a11, s11, o11, dk, fk)}${b10(a11, s11, nge)}${x10(a11 + d10 * 1.1, s11, `Farbe`)}${y10(a11, s11, o11)}<title>Farbe ${t11.name}</title></g>`, g10 += `<g${f10 ? ` class="lh-key" data-a="col:${e18.path}"` : ``}><circle cx="${n11.toFixed(1)}" cy="${(s11 + d10 / 2).toFixed(1)}" r="${(d10 * 0.36).toFixed(1)}" fill="${t11.c}" stroke="#fff" stroke-width="3"/>${f10 ? `<circle class="lh-kdown" cx="${n11.toFixed(1)}" cy="${(s11 + d10 / 2).toFixed(1)}" r="${(d10 * 0.36).toFixed(1)}" fill="#000" opacity="0"/>` : ``}<title>andere Farbe</title></g>`;
+    } else {
+      let n11 = c11, r12 = n11 === `D` || n11 === `U`, i11 = n11 === `P` ? XO : n11 === `?` ? `#fff7ed` : n11 === `V` ? S_e : r12 ? dk : JO, f11 = n11 === `P` ? ZO : n11 === `V` ? C_e : r12 ? fk : YO;
+      g10 += `<g data-node="${e18.path}" data-cmd="${n11}" class="${u11}${p11}">${v10(a11, s11, o11, i11, f11)}` + (n11 === `?` ? `` : b10(a11, s11, xO(t10.pg, n11))) + x10(a11 + d10 * 1.1, s11, n11 === `?` ? `?` : bO(t10.pg, n11), n11 === `?` ? `#ea580c` : `#fff`, o11 - d10 * 1.1 - (l11 ? Math.max(90, d10 * 2) : 10)) + `${y10(a11, s11, o11)}<title>${n11 === `?` ? `L\xFCcke` : bO(t10.pg, n11)}</title></g>`;
+    }
+    l11 && f10 && (_10 = v_e(e18.path, a11 + o11 - d10 * 0.55, s11 + d10 / 2, d10 * 0.42, { x: a11 + o11 - Math.max(90, d10 * 2), y: s11 - 2, w: Math.max(90, d10 * 2) + 6, h: d10 + 4 }));
+  }), f10 && t10.sel !== null) {
+    let e18 = l10.findIndex((e19) => e19.path === t10.sel && (e19.kind === `cmd` || e19.kind === `top`));
+    if (e18 >= 0) {
+      let t11 = l10[e18], r11 = n10 + t11.depth * 26, a11 = m10[e18].y + m10[e18].h + 2;
+      if (t11.kind === `top`) {
+        let n11 = l10.findIndex((n12, r12) => r12 > e18 && n12.kind === `end` && n12.path === t11.path);
+        r11 += 26, a11 = m10[n11].y - 2;
+      }
+      g10 += `<path d="M${r11} ${a11.toFixed(1)}H${r11 + Math.min(130, i10 - (r11 - n10))}" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>`;
+    }
+  }
+  return g10 + _10;
+}
+function T_e(e17, t10, n10) {
+  let r10 = n10.phase === `run` || n10.phase === `won`, i10 = t10 && !r10, a10 = 1128, o10 = `<rect x="904" y="204" width="448" height="404" rx="44" fill="#fef3c7" stroke="#f59e0b" stroke-width="3"/>`, s10 = (e18, t11, n11) => `<g${i10 ? ` class="lh-key" data-a="add:${e18}"` : ``}><rect x="${t11}" y="${n11}" width="124" height="112" rx="26" fill="${JO}" stroke="${YO}" stroke-width="3"/><g transform="translate(${t11 + 62} ${n11 + 56}) scale(1.25)">${ID[e18]}</g>${i10 ? `<rect class="lh-kdown" x="${t11}" y="${n11}" width="124" height="112" rx="26" fill="#000" opacity="0"/>` : ``}<title>${yO[e18]}</title></g>`;
+  if (o10 += s10(`F`, 1066, 214) + s10(`L`, 918, 344) + s10(`R`, 1214, 344) + s10(`B`, 1066, 474), e17.pad === `now`) o10 += `<g${i10 ? ` class="lh-key" data-a="home"` : ``}><circle cx="${a10}" cy="400" r="58" fill="#ffffff" stroke="#f59e0b" stroke-width="4"/><g transform="translate(${a10} 400) scale(${($O(5) / 100 * 0.62).toFixed(3)})">${MD[e17.costume]}</g>${i10 ? `<circle class="lh-kdown" cx="${a10}" cy="400" r="58" fill="#000" opacity="0"/>` : ``}<title>Zur\xFCck zum Start</title></g>`, o10 += rk(t10, i10 ? `home` : null, 904, 626, 448, 70, `#ffffff`, `Zur\xFCck zum Start`, { color: `#334155`, stroke: `#94a3b8`, icon: p_e, size: 22 });
+  else {
+    let r11 = t10 && n10.phase !== `won`;
+    o10 += `<g${r11 ? ` class="lh-key" data-a="go"` : ``}><circle cx="${a10}" cy="400" r="58" fill="${n10.phase === `run` ? `#dc2626` : `#16a34a`}" stroke="#14532d" stroke-width="3"/><text x="${a10}" y="${n10.phase === `run` ? 410 : 412}" text-anchor="middle" font-family="${qO}" font-size="${n10.phase === `run` ? 26 : 34}" font-weight="700" fill="#fff">${n10.phase === `run` ? `STOPP` : `LOS`}</text>${r11 ? `<circle class="lh-kdown" cx="${a10}" cy="400" r="58" fill="#000" opacity="0"/>` : ``}<title>${n10.phase === `run` ? `Anhalten` : `Los!`}</title></g>`;
+    let s11 = xO(e17, `P`).replace(/fill="#fff"/g, ``).replace(/stroke="#fff"/g, ``);
+    o10 += rk(t10, i10 ? `add:P` : null, 904, 626, 214, 70, XO, $ge(e17, `P`) === `spielen` ? `Spielen` : `Pause`, { stroke: ZO, icon: s11, size: 24 }), o10 += rk(t10, i10 ? `clear` : null, 1138, 626, 214, 70, `#ffffff`, `L\xF6schen`, { color: `#b91c1c`, stroke: `#f87171`, icon: `<path d="M-9 -9L9 9M9 -9L-9 9" fill="none" stroke-width="4" stroke-linecap="round"/>`, size: 24 }), !e17.memory && e17.peek && (o10 += rk(t10, i10 ? `peek` : null, 1284, 708, 68, 46, `#fff7ed`, ``, { color: `#c2410c`, stroke: `#fdba74`, icon: sk, size: 32, rx: 23, title: `Weg zeigen` })), e17.memory && (o10 += `<text x="906" y="728" font-family="${qO}" font-size="17" font-weight="700" fill="#64748b">SPEICHER${n10.prog.length ? ` \xB7 ${n10.prog.length}` : ``}</text>`, e17.peek && (o10 += rk(t10, i10 ? `peek` : null, 1292, 700, 60, 38, `#fff7ed`, ``, { color: `#c2410c`, stroke: `#fdba74`, icon: sk, size: 28, rx: 19, title: `Weg zeigen` })), o10 += __e(false, n10, 906, 740, 444, 72, true));
+  }
+  return o10;
+}
+function E_e(e17) {
+  let t10 = (t11) => ({ a: t11, label: $ge(e17, t11), word: bO(e17, t11), fill: t11 === `P` ? XO : t11 === `D` || t11 === `U` ? dk : JO, stroke: t11 === `P` ? ZO : t11 === `D` || t11 === `U` ? fk : YO, icon: xO(e17, t11) }), n10 = { a: `W`, label: `wiederhole`, word: `wiederhole`, fill: XO, stroke: ZO, icon: uk }, r10 = { a: `Z`, label: `bis Ziel`, word: `wiederhole bis zum Ziel`, fill: XO, stroke: ZO, icon: uk }, i10 = { a: `I`, label: `falls`, word: `falls \u2026 dann`, fill: XO, stroke: ZO, icon: `<path d="M-14 -4L0 -18L14 -4L0 10Z" fill="none" stroke="#fff" stroke-width="4.5" stroke-linejoin="round"/><path d="M0 10V22" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/>` }, a10 = [`F`, `B`, `L`, `R`].map(t10), o10 = [`F`, `L`, `R`].map(t10);
+  return e17.lesson === `cond` ? [...o10, r10, i10] : e17.lesson === `count` ? [...o10, r10, i10, { a: `V`, label: `Punkte + 1`, word: `Punkte + 1`, fill: S_e, stroke: C_e, icon: ID.V }] : e17.lesson === `pen` ? [...a10, n10, t10(`D`), t10(`U`), { a: `K`, label: `Farbe`, word: `Farbe`, fill: dk, stroke: fk, icon: nge }] : e17.lesson === `loop` || e17.lesson === `events` ? [...a10, n10] : e17.lesson === `goal` || e17.lesson === `collect` || e17.lesson === `read` ? a10 : [...a10, t10(`P`)];
+}
+function D_e(e17, t10, n10) {
+  let r10 = n10.t, i10 = r10.kind === `predict`, a10 = r10.kind === `fix` || r10.kind === `gap`, o10 = r10.kind === `events`, s10 = hge(e17.lesson), c10 = o10 && n10.play, l10 = t10 && (n10.phase === `idle` || n10.phase === `step`) && !c10, u10 = ``;
+  if (i10) u10 += `<rect x="${GO}" y="206" width="${KO}" height="112" rx="16" fill="#fff7ed" stroke="#fdba74" stroke-width="2.5"/>`, ck(`Was macht das Programm? Tippe auf das Feld, wo ${AD(e17.costume).nom} ankommt \u2013 dann auf \u201EPr\xFCfen\u201C.`, 34).slice(0, 3).forEach((e18, t11) => u10 += `<text x="918" y="${240 + t11 * 29}" font-family="${qO}" font-size="19" font-weight="700" fill="#9a3412">${QO(e18)}</text>`);
+  else if (c10) u10 += rk(t10, t10 && n10.phase === `idle` ? `edit` : null, GO, 206, KO, 112, `#fffbeb`, `Programm \xE4ndern`, { color: `#92400e`, stroke: `#fbbf24`, icon: `<path d="M-12 10L6 -8L12 -2L-6 16H-12Z" fill="none" stroke-width="3" stroke-linejoin="round"/><path d="M8 -10L12 -14L18 -8L14 -4" fill="none" stroke-width="3" stroke-linejoin="round"/>`, size: 24 });
+  else {
+    let t11 = E_e(e17), n11 = t11.length > 5, r11 = n11 ? Math.ceil(t11.length / 2) : t11.length, i11 = n11 ? (KO - (r11 - 1) * 8) / r11 : t11.length === 5 ? 84 : 100, o11 = n11 ? 52 : 112, s11 = (KO - r11 * i11) / Math.max(1, r11 - 1);
+    t11.forEach((e18, t12) => {
+      let c11 = GO + t12 % r11 * (i11 + s11), d11 = 206 + Math.floor(t12 / r11) * (o11 + 8), f11 = a10 ? `` : ` data-drag="new:${e18.a}"`;
+      if (u10 += `<g${l10 ? ` class="lh-key" data-a="add:${e18.a}"${f11}` : ``}><rect x="${c11.toFixed(1)}" y="${d11}" width="${i11.toFixed(1)}" height="${o11}" rx="${n11 ? 12 : 16}" fill="${e18.fill}" stroke="${e18.stroke}" stroke-width="3"/>`, n11) {
+        let t13 = i11 - 44, n12 = e18.label.length * 14 * 0.62;
+        u10 += `<g transform="translate(${(c11 + 20).toFixed(1)} ${d11 + o11 / 2}) scale(.55)">${e18.icon}</g><text x="${(c11 + 38).toFixed(1)}" y="${d11 + o11 / 2 + 5}" font-family="${qO}" font-size="14" font-weight="700" fill="#fff"${n12 > t13 ? ` textLength="${t13.toFixed(1)}" lengthAdjust="spacingAndGlyphs"` : ``}>${QO(e18.label)}</text>`;
+      } else u10 += `<g transform="translate(${(c11 + i11 / 2).toFixed(1)} ${d11 + 44}) scale(.95)">${e18.icon}</g><text x="${(c11 + i11 / 2).toFixed(1)}" y="${d11 + 100}" text-anchor="middle" font-family="${qO}" font-size="${e18.label.length > 9 ? 12.5 : i11 < 90 ? 14 : 16}" font-weight="700" fill="#fff">${QO(e18.label)}</text>`;
+      u10 += `${l10 ? `<rect class="lh-kdown" x="${c11.toFixed(1)}" y="${d11}" width="${i11.toFixed(1)}" height="${o11}" rx="12" fill="#000" opacity="0"/>` : ``}<title>${QO(e18.word)}</title></g>`;
+    });
+  }
+  let d10 = l10 && n10.sel !== null && !a10 ? ` class="lh-key" data-a="unsel"` : ``;
+  u10 += `<rect${d10} x="${GO}" y="336" width="${KO}" height="356" rx="18" fill="#ffffff" stroke="#94a3b8" stroke-width="2.5"${n10.prog.length ? `` : ` stroke-dasharray="10 8"`}/>`, u10 += `<text x="916" y="366" font-family="${qO}" font-size="18" font-weight="700" fill="#64748b">PROGRAMM</text>`;
+  let f10 = e17.peek && !i10 && !o10 && n10.phase !== `won`, p10 = GD(n10.prog), m10 = !!r10.limit, h10 = m10 && r10.limit ? `${p10} von h\xF6chstens ${r10.limit}` : s10 ? `${p10} ${p10 === 1 ? `Baustein` : `Bausteine`}` : `${p10} ${p10 === 1 ? `Karte` : `Karten`}`;
+  if ((n10.prog.length && !o10 || m10 && r10.limit || o10 && p10) && (u10 += `<text x="${f10 ? 1272 : 1340}" y="366" text-anchor="end" font-family="${qO}" font-size="18" fill="${m10 && r10.limit && p10 >= r10.limit ? `#c2410c` : `#64748b`}">${h10}</text>`), f10 && (u10 += rk(t10, l10 ? `peek` : null, 1286, 342, 60, 38, `#fff7ed`, ``, { color: `#c2410c`, stroke: `#fdba74`, icon: sk, size: 28, rx: 19, title: `Weg zeigen` })), n10.prog.length || (u10 += `<text x="1128" y="532" text-anchor="middle" font-family="${qO}" font-size="21" fill="#94a3b8">Tippe oben auf die Bausteine.</text>`), o10) for (let e18 = 0; e18 < 2; e18++) u10 += w_e(t10, n10, 914 + e18 * 220, 384, 208, 298, n10.prog.slice(e18 * 2, e18 * 2 + 2), e18 * 2, !c10);
+  else u10 += s10 ? w_e(t10, n10, 914, 384, 428, 298) : __e(t10, n10, 914, 380, 428, 302, false, i10 ? `read` : a10 ? `swap` : `edit`);
+  if (n10.phase === `won`) return u10;
+  let g10 = n10.phase === `run`;
+  if (c10) return [`left`, `up`, `down`, `right`].forEach((e18, n11) => {
+    let r11 = GO + n11 * 117;
+    u10 += `<g${t10 ? ` class="lh-key" data-a="ev:${e18}"` : ``}><rect class="lh-pg-face" x="${r11.toFixed(1)}" y="790" width="${105 .toFixed(1)}" height="160" rx="22" fill="#334155" stroke="#0f172a" stroke-width="3"/><g transform="translate(${(r11 + 105 / 2).toFixed(1)} 870) scale(1.5)">${ige(cge[e18])}</g>${t10 ? `<rect class="lh-kdown" x="${r11.toFixed(1)}" y="790" width="${105 .toFixed(1)}" height="160" rx="22" fill="#000" opacity="0"/>` : ``}<title>${WD[e18]}</title></g>`;
+  }), u10;
+  if (i10) return u10 += rk(t10, t10 ? `go` : null, GO, 790, 280, 82, g10 ? `#dc2626` : `#16a34a`, g10 ? `Stopp` : `Pr\xFCfen`, { icon: g10 ? c_e : ik, size: 30, title: g10 ? `Anhalten` : `Pr\xFCfen: das Programm l\xE4uft` }), u10 += rk(t10, t10 ? `readprog` : null, 1192, 790, 164, 82, `#ffffff`, `Vorlesen`, { color: `#334155`, stroke: `#94a3b8`, icon: ak, size: 21, title: `Programm vorlesen` }), u10;
+  o10 ? u10 += rk(t10, t10 ? `go` : null, GO, 790, 280, 82, `#16a34a`, `Spielen`, { icon: ik, size: 30, title: `Spielen: die Pfeile steuern` }) : (u10 += rk(t10, t10 ? `go` : null, GO, 790, 280, 82, g10 ? `#dc2626` : `#16a34a`, g10 ? `Stopp` : `LOS`, { icon: g10 ? c_e : ik, size: 32, title: g10 ? `Anhalten` : `Los!` }), u10 += rk(t10, t10 && !g10 ? `step` : null, 1192, 790, 164, 82, `#eef2ff`, `Schritt`, { color: `#3730a3`, stroke: `#818cf8`, icon: l_e, size: 23, title: `Ein Baustein nach dem anderen` }));
+  let _10 = t10 && !g10;
+  return a10 || (u10 += rk(t10, _10 ? `back` : null, GO, 884, 144, 66, `#ffffff`, `Zur\xFCck`, { color: `#334155`, stroke: `#94a3b8`, icon: u_e, size: 19, title: `Letzten Baustein weg` }), u10 += rk(t10, _10 ? `clear` : null, 1056, 884, 144, 66, `#ffffff`, `Alle weg`, { color: `#b91c1c`, stroke: `#f87171`, icon: d_e, size: 19, title: `Alle Bausteine weg` })), u10 += rk(t10, t10 ? `readprog` : null, 1212, 884, 144, 66, `#ffffff`, `Vorlesen`, { color: `#334155`, stroke: `#94a3b8`, icon: ak, size: 19, title: `Programm vorlesen` }), u10;
+}
+function O_e(e17, t10) {
+  let n10 = t10.stats.filter((e18) => e18.end), r10 = n10.length, i10 = n10.reduce((e18, t11) => e18 + (t11.end - t11.start), 0), a10 = n10.filter((e18) => e18.tries <= 1).length, o10 = n10.reduce((e18, t11) => e18 + t11.tries, 0), s10 = `<rect width="${HO}" height="${UO}" fill="${FD(e17.mat).page}"/>`;
+  s10 += `<rect x="60" y="40" width="1280" height="910" rx="32" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>`, s10 += `<g transform="translate(300 330) scale(3.1)"><g class="lh-pg-body is-happy">${MD[e17.costume]}</g></g>`, s10 += `<g transform="translate(300 650) scale(1.6)">${e17.lesson === `collect` || e17.lesson === `pen` || e17.lesson === `music` ? ND : Zhe[e17.costume]}</g>`, s10 += `<text x="840" y="140" text-anchor="middle" font-family="${qO}" font-size="56" font-weight="700" fill="#1e293b">Super programmiert!</text>`, s10 += `<text x="840" y="190" text-anchor="middle" font-family="${qO}" font-size="26" fill="#475569">${r10 === 1 ? `Eine Aufgabe` : `${r10} Aufgaben`} geschafft</text>`;
+  let c10 = (e18) => {
+    let t11 = Math.max(0, Math.round(e18 / 1e3));
+    return t11 < 60 ? `${t11} Sek.` : `${Math.floor(t11 / 60)}:${String(t11 % 60).padStart(2, `0`)} Min.`;
+  }, l10 = [[`#2563eb`, `Zeit`, c10(i10)], [`#16a34a`, `Beim ersten Versuch`, `${a10} von ${r10}`], [`#d97706`, `Programme gestartet`, String(o10)]];
+  e17.peek && l10.push([`#ea580c`, `Weg gezeigt`, `${n10.reduce((e18, t11) => e18 + (t11.peeks ?? 0), 0)} Mal`]), e17.rate && qD(e17.lesson) && l10.push([`#ca8a04`, `Sterne`, `${n10.reduce((e18, t11) => e18 + (t11.stars ?? 0), 0)} von ${r10 * 3}`]);
+  let u10 = l10.length > 3 ? 54 : 62;
+  l10.forEach(([e18, t11, n11], r11) => {
+    let i11 = 236 + r11 * u10;
+    s10 += `<rect x="560" y="${i11}" width="560" height="50" rx="14" fill="${e18}" opacity=".09"/><circle cx="590" cy="${i11 + 25}" r="10" fill="${e18}"/>`, s10 += `<text x="616" y="${i11 + 34}" font-family="${qO}" font-size="25" fill="#334155">${t11}</text><text x="1096" y="${i11 + 34}" text-anchor="end" font-family="${qO}" font-size="27" font-weight="700" fill="#1e293b">${n11}</text>`;
+  });
+  let d10 = 236 + l10.length * u10 + 38, f10 = Math.min(42, (818 - d10) / Math.max(1, r10)), p10 = d10;
+  return s10 += `<text x="600" y="${p10}" font-family="${qO}" font-size="18" font-weight="700" fill="#94a3b8">AUFGABE</text><text x="880" y="${p10}" text-anchor="end" font-family="${qO}" font-size="18" font-weight="700" fill="#94a3b8">ZEIT</text><text x="1080" y="${p10}" text-anchor="end" font-family="${qO}" font-size="18" font-weight="700" fill="#94a3b8">VERSUCHE</text>`, s10 += `<path d="M580 ${p10 + 12}H1100" stroke="#e2e8f0" stroke-width="2"/>`, n10.forEach((e18, t11) => {
+    p10 = d10 + 14 + (t11 + 1) * f10 - 8;
+    let n11 = f10 < 34 ? 19 : 23;
+    s10 += `<text x="600" y="${p10}" font-family="${qO}" font-size="${n11}" fill="#334155">${t11 + 1}</text><text x="880" y="${p10}" text-anchor="end" font-family="${qO}" font-size="${n11}" fill="#334155">${c10(e18.end - e18.start)}</text>`, s10 += e18.tries <= 1 ? `<path d="M1056 ${p10 - 9}l8 8 16-17" fill="none" stroke="#16a34a" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>` : `<text x="1080" y="${p10}" text-anchor="end" font-family="${qO}" font-size="${n11}" font-weight="700" fill="#d97706">${e18.tries}</text>`;
+  }), s10 += rk(true, `again`, 640, 840, 400, 80, `#2563eb`, `Nochmal`, { icon: ok, size: 30, title: `Neue Aufgaben` }), s10;
+}
+function k_e(e17, t10, n10, r10 = HO, i10 = UO) {
+  let a10 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${HO} ${UO}" width="${r10}" height="${i10}">`;
+  if (n10 && t10?.phase === `summary`) return a10 + O_e(e17, t10) + `</svg>`;
+  let o10 = RO(e17, t10), s10 = t10?.at ?? PO(o10), c10 = { t: o10, at: s10, ang: s10.d * 90, got: t10 ? t10.phase === `run` || t10.phase === `step` ? t10.gotRun : t10.got : 0, stars: t10?.starsRun ?? [], trace: t10?.trace ?? [], prog: t10?.prog ?? FO(o10), done: t10?.done ?? 0, sel: t10?.sel ?? null, bad: t10?.bad ?? null, phase: t10?.phase ?? `idle`, msg: t10?.msg ?? null, happy: !!t10?.happy, mark: t10?.mark ?? null, rating: t10?.rating ?? 0, ink: t10?.ink ?? [], penDown: !!t10?.penDown, penCol: t10?.penCol ?? 0, play: !!t10?.play, pg: e17, tick: t10?.tick ?? 0, points: t10?.points ?? 0 }, l10 = `<rect width="${HO}" height="${UO}" fill="${FD(e17.mat).page}"/>`, u10 = e17.mat === `space`;
+  l10 += rk(n10, n10 ? `say` : null, 40, 30, 68, 68, `#ffffff`, ``, { color: `#2563eb`, stroke: `#93c5fd`, icon: ak, size: 34, rx: 34, title: `Aufgabe vorlesen` }), l10 += `<text x="124" y="66" font-family="${qO}" font-size="${SO(e17, o10).length > 46 ? 30 : 34}" font-weight="700" fill="${u10 ? `#f8fafc` : `#1e293b`}">${QO(SO(e17, o10))}</text>`, l10 += g_e(e17, c10, 116).replace(/fill="#475569"/g, u10 ? `fill="#c7d2fe"` : `fill="#475569"`), l10 += h_e(e17, c10, n10);
+  let d10 = LO(e17, t10);
+  if (d10.length > 1 && (l10 += `<text x="${GO}" y="180" font-family="${qO}" font-size="22" font-weight="700" fill="${u10 ? `#e0e7ff` : `#475569`}">Aufgabe ${(t10?.i ?? 0) + 1} von ${d10.length}</text>`), l10 += rk(n10, n10 ? `reset` : null, 1180, 144, 176, 50, `#ffffff`, `Neu starten`, { color: `#334155`, stroke: `#94a3b8`, icon: ok, size: 18, title: `Diese Aufgabe neu starten` }), e17.input === `pad` && !KD(e17.lesson)) {
+    l10 += T_e(e17, n10, c10);
+    let r11 = e17.pad === `store` && e17.memory ? 826 : e17.pad === `store` && e17.peek ? 768 : 712;
+    c10.phase === `won` ? l10 += A_e(e17, n10, t10, d10.length, c10.msg) : l10 += lk(c10.msg, e17.lesson === `goal` ? e17.pad === `now` ? `Jeder Pfeil bewegt sofort.` : `Erst alle Pfeile, dann LOS.` : TO(e17), GO, r11, KO, 950 - r11, 21);
+  } else l10 += D_e(e17, n10, c10), c10.phase === `won` ? (l10 += lk(c10.msg, ``, GO, 704, KO, 150, c10.rating ? 20 : 22, c10.rating), l10 += j_e(n10, t10, d10.length, GO, 868, KO, 82)) : l10 += lk(c10.msg, e17.lesson === `goal` ? `Tipp: Ziehe Karten an eine andere Stelle \u2013 oder aus dem Programm hinaus.` : e17.lesson === `loop` ? `Tipp: Ziehe Bausteine in \u201Ewiederhole\u201C hinein \u2013 oder aus dem Programm hinaus.` : TO(e17, o10), GO, 704, KO, 74, 19);
+  return a10 + l10 + `</svg>`;
+}
+function A_e(e17, t10, n10, r10, i10) {
+  let a10 = `<rect x="${GO}" y="204" width="${KO}" height="404" rx="40" fill="#f0fdf4" stroke="#22c55e" stroke-width="4"/>`;
+  return a10 += `<g transform="translate(1128 286) scale(1.15)"><g class="lh-pg-body is-happy">${MD[e17.costume]}</g></g>`, ck(i10?.t ?? ``, 28).slice(0, 3).forEach((e18, t11) => a10 += `<text x="1128" y="${398 + t11 * 34}" text-anchor="middle" font-family="${qO}" font-size="25" font-weight="700" fill="#166534">${QO(e18)}</text>`), a10 + j_e(t10, n10, r10, 926, 514, 404, 74);
+}
+function j_e(e17, t10, n10, r10, i10, a10, o10) {
+  let s10 = !t10 || t10.i + 1 >= n10;
+  return rk(e17, e17 ? `next` : null, r10, i10, a10, o10, s10 ? `#16a34a` : `#2563eb`, s10 ? n10 > 1 ? `Auswertung` : `Nochmal` : `N\xE4chste Aufgabe`, { icon: s10 && n10 <= 1 ? ok : f_e, size: 28 });
+}
+var pk = (e17) => [...document.querySelectorAll(`.lh-wg-code.is-live`)].filter((t10) => t10.dataset.pgId === e17);
+function mk(e17) {
+  for (let t10 of pk(e17)) {
+    let n10 = NO.get(e17);
+    n10 && (delete t10.dataset.k, dve(t10, n10, true));
+  }
+}
+function hk(e17) {
+  zO(e17).ver++, mk(e17);
+}
+function gk(e17, t10) {
+  e17.voice && M(vO(t10));
+}
+function _k(e17, t10 = 70, n10 = 0.1) {
+  let r10 = zr();
+  if (!r10) return;
+  let i10 = r10.currentTime, a10 = r10.createOscillator(), o10 = r10.createGain();
+  a10.type = `sine`, a10.frequency.value = e17, o10.gain.setValueAtTime(1e-4, i10), o10.gain.exponentialRampToValueAtTime(n10, i10 + 0.012), o10.gain.exponentialRampToValueAtTime(1e-4, i10 + t10 / 1e3), a10.connect(o10).connect(r10.destination), a10.start(i10), a10.stop(i10 + t10 / 1e3 + 0.03);
+}
+var vk = (e17) => e17.speed === 1 ? 760 : e17.speed === 3 ? 300 : 500;
+var yk = (e17) => new Promise((t10) => setTimeout(t10, e17));
+function bk(e17, t10, n10, r10, i10, a10, o10 = false) {
+  return new Promise((s10) => {
+    let c10 = performance.now(), l10 = (u10) => {
+      let d10 = Math.min(1, (u10 - c10) / a10), f10 = d10 < 0.5 ? 2 * d10 * d10 : 1 - (-2 * d10 + 2) ** 2 / 2, p10 = o10 ? 0.32 * Math.sin(Math.PI * d10) : f10, m10 = n10.x + (r10.x - n10.x) * p10, h10 = n10.y + (r10.y - n10.y) * p10, g10 = o10 ? i10 + Math.sin(d10 * Math.PI * 6) * 8 * (1 - d10) : i10 + (r10.ang - i10) * f10;
+      for (let n11 of pk(e17)) n11.querySelector(`.lh-pg-bot`)?.setAttribute(`transform`, tk(t10, m10, h10, g10));
+      d10 < 1 ? requestAnimationFrame(l10) : s10();
+    };
+    requestAnimationFrame(l10);
+  });
+}
+function M_e(e17, t10, n10) {
+  let r10 = n10.map(([e18, n11]) => ek(t10, e18, n11).map((e19) => e19.toFixed(1)).join(`,`)).join(` `);
+  for (let t11 of pk(e17)) t11.querySelector(`.lh-pg-trace`)?.setAttribute(`points`, r10);
+}
+function xk(e17, t10, n10, r10) {
+  for (let i10 of pk(e17)) i10.querySelectorAll(t10).forEach((e18) => e18.classList.toggle(n10, r10));
+}
+var N_e = (e17, t10, n10) => [...e17.stops, ...e17.extra].find((e18) => e18.x === t10 && e18.y === n10)?.t ?? null;
+var Sk = (e17, t10, n10) => !!e17.path?.length && !e17.path.some(([e18, r10]) => e18 === t10 && r10 === n10);
+var Ck = (e17, t10, n10) => e17.walls.some(([e18, r10]) => e18 === t10 && r10 === n10) || Sk(e17, t10, n10);
+var wk = (e17, t10) => !!e17.goal && e17.goal[0] === t10.x && e17.goal[1] === t10.y;
+function Tk(e17, t10) {
+  if (t10 === `L`) return { ...e17, d: (e17.d + 3) % 4 };
+  if (t10 === `R`) return { ...e17, d: (e17.d + 1) % 4 };
+  if (t10 === `P`) return e17;
+  let n10 = t10 === `F` ? 1 : -1;
+  return { x: e17.x + n10 * eO[e17.d], y: e17.y + n10 * tO[e17.d], d: e17.d };
+}
+var Ek = (e17) => MO.get(e17.id) === e17.r && e17.r.token === e17.token;
+async function P_e(e17, t10) {
+  let { r: n10, t: r10, pg: i10 } = e17, a10 = n10.steps[t10];
+  if (a10.cmd === `D` || a10.cmd === `U` || a10.cmd === `K`) return a10.cmd === `K` ? n10.penCol = a10.col ?? 0 : n10.penDown = a10.cmd === `D`, V_e(e17.id, n10), xk(e17.id, `[data-node="${a10.path}"]`, `is-run`, true), _k(a10.cmd === `U` ? 500 : 760, 60, 0.06), await yk(vk(i10) * 0.45), xk(e17.id, `[data-node="${a10.path}"]`, `is-run`, false), Ek(e17);
+  for (let t11 of a10.loops) for (let n11 of pk(e17.id)) n11.querySelectorAll(`[data-loopk="${t11.path}"]`).forEach((e18) => e18.textContent = t11.n ? `${t11.k}/${t11.n}` : `${t11.k}`);
+  if (a10.cmd === `V`) {
+    n10.points++;
+    for (let t11 of pk(e17.id)) t11.querySelectorAll(`.lh-pg-points`).forEach((e18) => e18.textContent = String(n10.points));
+    return xk(e17.id, `[data-node="${a10.path}"]`, `is-run`, true), _k(880, 70, 0.07), setTimeout(() => _k(1175, 90, 0.07), 80), await yk(vk(i10) * (t10 >= 40 ? 0.2 : 0.5)), xk(e17.id, `[data-node="${a10.path}"]`, `is-run`, false), Ek(e17);
+  }
+  let o10 = a10.cmd, s10 = r10.n, c10 = n10.at, l10 = Tk(c10, o10), u10 = vk(i10) * (t10 >= 40 ? 0.3 : 1), d10 = `[data-node="${a10.path}"]`;
+  xk(e17.id, d10, `is-run`, true);
+  let f10 = pO(r10, n10.tick), p10 = pO(r10, n10.tick + 1);
+  f10 && p10 && U_e(e17.id, s10, f10, p10, o10 === `P` ? u10 * 1.2 : u10);
+  let m10 = () => (n10.tick++, !mO(f10, p10, c10, n10.at) || (Dk(e17, `Die Katze hat dich erwischt! Mit \u201Ewarte\u201C l\xE4sst du sie vorbeilaufen.`, a10.path), false));
+  try {
+    if (o10 === `L` || o10 === `R`) return _k(o10 === `L` ? 520 : 600, 60), await bk(e17.id, s10, c10, { x: c10.x, y: c10.y, ang: c10.d * 90 + (o10 === `L` ? -90 : 90) }, c10.d * 90, u10 * 0.8), n10.at = l10, Ek(e17) && m10();
+    if (o10 === `P`) return _k(440, 90, 0.07), await yk(u10 * 1.2), Ek(e17) ? m10() && I_e(e17, t10, true) : false;
+    let d11 = l10.x < 0 || l10.y < 0 || l10.x >= s10 || l10.y >= s10;
+    if (d11 || Ck(r10, l10.x, l10.y)) return await bk(e17.id, s10, c10, { x: l10.x, y: l10.y, ang: c10.d * 90 }, c10.d * 90, u10 * 1.1, true), Ek(e17) && Dk(e17, d11 ? `Hier ist der Rand \u2013 da geht es nicht weiter.` : Sk(r10, l10.x, l10.y) ? `Da geht der Weg nicht weiter \u2013 bleib auf den hellen Platten.` : `Au! Da ist ${FD(i10.mat).wall} im Weg.`, a10.path), false;
+    _k(660, 55);
+    let f11 = n10.penDown ? [c10.x, c10.y, l10.x, l10.y, n10.penCol] : null;
+    return f11 && H_e(e17.id, s10, f11, u10), await bk(e17.id, s10, c10, { x: l10.x, y: l10.y, ang: c10.d * 90 }, c10.d * 90, u10), !Ek(e17) || (n10.at = l10, f11 && n10.ink.push(f11), n10.trace.push([l10.x, l10.y]), M_e(e17.id, s10, n10.trace), !m10()) ? false : (i10.lesson !== `count` && r10.stars.forEach(([t11, r11], i11) => {
+      t11 === l10.x && r11 === l10.y && !n10.starsRun.includes(i11) && (n10.starsRun.push(i11), xk(e17.id, `[data-star="${i11}"]`, `is-got`, true), _k(988, 90, 0.08), setTimeout(() => _k(1319, 110, 0.08), 90));
+    }), true);
+  } finally {
+    xk(e17.id, d10, `is-run`, false);
+  }
+}
+var F_e = (e17) => e17 === `goal` || e17 === `collect` || e17 === `loop` || e17 === `read` || e17 === `cond` || e17 === `cat` || e17 === `count`;
+function I_e(e17, t10, n10) {
+  let { r: r10, t: i10, pg: a10 } = e17;
+  if (F_e(a10.lesson)) return true;
+  let o10 = i10.stops[r10.gotRun];
+  if (!o10) return true;
+  let s10 = N_e(i10, r10.at.x, r10.at.y), c10 = r10.steps[t10]?.path ?? null;
+  if (a10.lesson === `music` && s10 && kk(s10), o10.x === r10.at.x && o10.y === r10.at.y) return r10.gotRun++, a10.lesson !== `music` && (_k(784, 90, 0.08), setTimeout(() => _k(1047, 120, 0.08), 100)), xk(e17.id, `[data-cell="${o10.x},${o10.y}"]`, `is-got`, true), true;
+  if (n10 && s10 === null) return true;
+  let l10 = a10.lesson === `math` ? `Rechne noch einmal: ${i10.sums?.[r10.gotRun] ?? ``}.` : `Du brauchst ${CO(a10, o10.t)}.`;
+  return s10 === null ? Dk(e17, a10.lesson === `word` ? `Hier ist kein Buchstabe. Fahre ${wO(a10, o10.t)}.` : a10.lesson === `music` ? `Hier ist kein Ton. Fahre ${wO(a10, o10.t)}.` : a10.lesson === `math` ? `Hier ist keine Zahl. ${l10}` : `Hier ist keine Zahl. Fahre ${wO(a10, o10.t)}.`, c10) : Dk(e17, `Hier ist ${CO(a10, s10)}. ${l10}`, c10), false;
+}
+function Dk(e17, t10, n10) {
+  let { r: r10, id: i10, pg: a10, t: o10 } = e17;
+  r10.phase = `idle`, r10.pc = 0, r10.bad = n10, r10.msg = { t: t10, k: `bad` }, r10.gotRun = r10.got, o10.kind !== `events` && (r10.starsRun = []), yi(), gk(a10, t10), hk(i10);
+  let s10 = r10.token;
+  setTimeout(() => {
+    MO.get(i10) === r10 && r10.token === s10 && r10.phase === `idle` && (r10.at = r10.origin, r10.tick = 0, o10.kind === `predict` && (r10.trace = []), hk(i10));
+  }, 1500);
+}
+function L_e(e17, t10, n10) {
+  if (!e17.rate || !qD(e17.lesson)) return { stars: 0, best: 0 };
+  let r10 = GD(n10.prog), i10 = t10.best ?? 0;
+  return !i10 && t10.goal && (i10 = aO(iO(t10.n, new Set(t10.walls.map(([e18, n11]) => n11 * t10.n + e18)), PO(t10)), t10.n, t10.goal[0], t10.goal[1])?.len ?? r10), i10 = Math.min(i10 || r10, r10), { stars: r10 <= i10 ? 3 : r10 <= i10 + 2 ? 2 : 1, best: i10 };
+}
+function Ok(e17, t10) {
+  let { r: n10, id: r10, pg: i10, t: a10 } = e17, { stars: o10, best: s10 } = L_e(i10, a10, n10), c10 = o10 ? o10 === 3 ? ` K\xFCrzer geht es nicht!` : ` Es geht noch k\xFCrzer \u2013 mit ${s10} ${s10 === 1 ? `Baustein` : `Bausteinen`}.` : ``;
+  n10.phase = `won`, n10.msg = { t: t10 + c10, k: `win` }, n10.rating = o10, n10.happy = true, n10.sel = null, BO(n10).end = Date.now(), BO(n10).stars = o10, vi(), gk(i10, t10 + c10), hk(r10);
+}
+function R_e(e17) {
+  let { r: t10, t: n10, pg: r10 } = e17, i10 = AD(r10.costume), a10 = _O(i10.nom);
+  if (r10.lesson === `pen`) {
+    if (!n10.lines?.length) return t10.phase = `idle`, t10.msg = t10.ink.length ? { t: `Fertig! Ein sch\xF6nes Bild.`, k: `ok` } : { t: `Es wurde nichts gemalt \u2013 nimm \u201EStift ab\u201C.`, k: `info` }, gk(r10, t10.msg.t), hk(e17.id);
+    if (!t10.ink.length) return Dk(e17, `Es wurde nichts gezeichnet \u2013 nimm \u201EStift ab\u201C.`, null);
+    let i11 = new Set(n10.lines.map(uO)), a11 = new Set(t10.ink.map((e18) => uO([e18[0], e18[1], e18[2], e18[3]]))), o11 = [...i11].filter((e18) => !a11.has(e18)).length, s11 = [...a11].filter((e18) => !i11.has(e18)).length;
+    return !o11 && !s11 ? Ok(e17, `Super! Du hast ${n10.shape ?? `die Form`} gezeichnet.`) : Dk(e17, [s11 ? s11 === 1 ? `Eine Linie ist zu viel.` : `${s11} Linien sind zu viel.` : ``, o11 ? o11 === 1 ? `Es fehlt noch eine Linie.` : `Es fehlen noch ${o11} Linien.` : ``].filter(Boolean).join(` `), null);
+  }
+  if (n10.kind === `predict`) return t10.mark && t10.mark[0] === t10.at.x && t10.mark[1] === t10.at.y ? Ok(e17, `Richtig! ${a10} kommt genau dort an.`) : Dk(e17, `${a10} ist woanders angekommen. Lies das Programm noch einmal.`, null);
+  if (r10.lesson === `count`) {
+    let r11 = n10.stars.length;
+    return wk(n10, t10.at) ? t10.points === r11 ? Ok(e17, `Super! ${r11} Sterne \u2013 ${r11} Punkte.`) : Dk(e17, t10.points ? `Du hast ${t10.points} ${t10.points === 1 ? `Punkt` : `Punkte`} \u2013 es sind aber ${r11} Sterne. Nimm \u201Efalls auf Stern: Punkte + 1\u201C.` : `Noch 0 Punkte. Nimm \u201Efalls auf Stern: Punkte + 1\u201C.`, null) : Dk(e17, `${a10} ist noch nicht ${i10.atGoal}.`, null);
+  }
+  if (F_e(r10.lesson)) {
+    let r11 = n10.stars.length - t10.starsRun.length;
+    return r11 > 0 ? Dk(e17, r11 === 1 ? `Es fehlt noch ein Stern.` : `Es fehlen noch ${r11} Sterne.`, null) : wk(n10, t10.at) ? Ok(e17, n10.stars.length ? `Super! Alle Sterne \u2013 und ${i10.nom} ist ${i10.atGoal}.` : `Super! ${a10} ist ${i10.atGoal}.`) : n10.stars.length ? Dk(e17, `Alle Sterne! Jetzt noch ${i10.toGoal}.`, null) : Dk(e17, n10.goal && t10.trace.some(([e18, t11]) => e18 === n10.goal[0] && t11 === n10.goal[1]) ? `${a10} ist ${i10.byGoal} vorbeigefahren \u2013 halte genau dort an.` : `${a10} ist noch nicht ${i10.atGoal}.`, null);
+  }
+  if (t10.steps[t10.steps.length - 1]?.cmd !== `P` && !I_e(e17, t10.steps.length - 1, false)) return;
+  if (t10.gotRun === t10.got) return Dk(e17, `Fahre ${wO(r10, n10.stops[t10.got]?.t ?? ``)}.`, null);
+  if (t10.got = t10.gotRun, t10.done = t10.prog.length, t10.origin = t10.at, t10.sel = null, t10.pc = 0, t10.got >= n10.stops.length) {
+    let t11 = r10.lesson === `word` ? `Super! Du bist ${n10.word ?? ``} gefahren.` : r10.lesson === `music` ? `Super! Das war der Anfang von \u201E${n10.melody ?? ``}\u201C.` : r10.lesson === `math` ? `Super! Alle Aufgaben gel\xF6st.` : `Super! Alle Zahlen der Reihe nach.`;
+    return r10.lesson === `music` && setTimeout(() => W_e(n10), 900), Ok(e17, t11);
+  }
+  let o10 = n10.stops[t10.got - 1], s10 = n10.stops[t10.got], c10 = s10.x === o10.x && s10.y === o10.y, l10 = r10.lesson === `math` ? `Richtig: ${n10.sums?.[t10.got - 1] ?? ``} = ${o10.t}! Jetzt rechne: ${n10.sums?.[t10.got] ?? ``}.` : r10.lesson === `music` && c10 ? `Richtig, ${CO(r10, o10.t)}! Jetzt noch einmal ${CO(r10, s10.t)} \u2013 nimm \u201Espielen\u201C.` : `Richtig, ${CO(r10, o10.t)}! Jetzt ${wO(r10, s10.t)}.`;
+  t10.phase = `idle`, t10.msg = { t: l10, k: `ok` }, gk(r10, l10), hk(e17.id);
+}
+async function z_e(e17, t10) {
+  let n10 = NO.get(e17), r10 = MO.get(e17);
+  if (!n10 || !r10) return;
+  let i10 = QD(n10.pg), a10 = RO(i10, r10);
+  if (r10.phase === `won` || r10.phase === `summary`) return;
+  if (r10.phase === `run`) return G_e(e17);
+  if (r10.phase === `idle`) {
+    let t11 = (t12) => {
+      r10.msg = { t: t12, k: `info` }, gk(i10, t12), hk(e17);
+    };
+    if (a10.kind === `events`) return r10.play ? void 0 : r10.prog.some((e18) => BD(e18) && e18.body.length) ? (BO(r10).tries++, Object.assign(r10, { play: true, at: PO(a10), origin: PO(a10), trace: [[a10.start[0], a10.start[1]]], starsRun: [], sel: null, bad: null, msg: { t: `Steuere mit den Pfeilen unten!`, k: `info` } }), hk(e17)) : t11(`Lege zuerst Bausteine in die Pfeile \u2013 dann \u201ESpielen\u201C.`);
+    if (a10.kind === `predict` && !r10.mark) return t11(`Tippe zuerst auf das Feld, wo ${AD(i10.costume).nom} ankommt.`);
+    if (!r10.prog.slice(r10.done).length) return t11(i10.input === `pad` && !KD(i10.lesson) ? `Tippe zuerst die Pfeile \u2013 dann LOS.` : `Lege zuerst Bausteine ins Programm.`);
+    if (i_e(r10.prog)) return t11(`F\xFClle zuerst die L\xFCcke: Tippe auf das ? und dann auf einen Baustein.`);
+    BO(r10).tries++, Object.assign(r10, { steps: [], at: r10.origin, trace: [[r10.origin.x, r10.origin.y]], ink: [], penDown: false, penCol: 0, gotRun: r10.got, starsRun: [], bad: null, msg: null, pc: 0, tick: 0, points: 0 }), r10.env = { t: a10, pose: () => r10.at, count: 0, stuck: false }, r10.gen = OO(r10.prog, r10.env, r10.done);
+  }
+  r10.phase = t10 ? `step` : `run`, r10.sel = null;
+  let o10 = { id: e17, pg: i10, t: a10, r: r10, token: ++r10.token };
+  hk(e17), await yk(t10 ? 60 : 250);
+  let s10 = () => {
+    if (r10.pc < r10.steps.length) return true;
+    let e18 = r10.gen?.next();
+    return !e18 || e18.done ? false : (r10.steps.push(e18.value), true);
+  };
+  for (; Ek(o10) && s10(); ) {
+    if (r10.steps.length > EO) return Dk(o10, `Nach ${EO} Schritten ist das Programm noch nicht fertig \u2013 f\xE4hrt die Figur im Kreis?`, null);
+    let n11 = r10.pc;
+    if (!await P_e(o10, n11) || !Ek(o10)) return;
+    if (r10.pc = n11 + 1, t10) {
+      if (s10()) return r10.phase = `step`, hk(e17);
+      break;
+    }
+    await yk(r10.steps.length > 40 ? 20 : 70);
+  }
+  if (Ek(o10)) {
+    if (r10.env?.stuck) return Dk(o10, `\u201Ewiederhole bis Ziel\u201C dreht sich im Kreis: In der Schleife bewegt sich die Figur nicht.`, null);
+    Ek(o10) && R_e(o10);
+  }
+}
+async function B_e(e17, t10) {
+  let n10 = NO.get(e17), r10 = MO.get(e17);
+  if (!n10 || !r10 || !r10.play || r10.phase !== `idle`) return;
+  let i10 = QD(n10.pg), a10 = RO(i10, r10), o10 = r10.prog.findIndex((e18) => BD(e18) && e18.on === t10), s10 = r10.prog[o10];
+  if (!s10 || !BD(s10)) return;
+  if (!s10.body.length) return r10.msg = { t: `Im ${WD[t10]} liegen noch keine Bausteine.`, k: `info` }, gk(i10, r10.msg.t), hk(e17);
+  BO(r10), r10.steps = [], r10.env = { t: a10, pose: () => r10.at, count: 0, stuck: false }, r10.gen = OO(s10.body, r10.env, 0, `${o10}.`), r10.origin = r10.at, r10.pc = 0, r10.bad = null, r10.msg = null, r10.phase = `run`;
+  let c10 = { id: e17, pg: i10, t: a10, r: r10, token: ++r10.token };
+  for (xk(e17, `[data-a="ev:${t10}"]`, `is-on`, true), hk(e17), xk(e17, `[data-a="ev:${t10}"]`, `is-on`, true); Ek(c10) && r10.steps.length <= EO; ) {
+    let e18 = r10.gen.next();
+    if (e18.done) break;
+    r10.steps.push(e18.value);
+    let t11 = r10.pc;
+    if (!await P_e(c10, t11) || !Ek(c10)) return;
+    r10.pc = t11 + 1;
+  }
+  if (!Ek(c10)) return;
+  r10.phase = `idle`;
+  let l10 = AD(i10.costume), u10 = a10.stars.length - r10.starsRun.length;
+  if (wk(a10, r10.at)) {
+    if (!u10) return Ok(c10, `Super! Alle Sterne \u2013 und ${l10.nom} ist ${l10.atGoal}.`);
+    r10.msg = { t: u10 === 1 ? `Es fehlt noch ein Stern.` : `Es fehlen noch ${u10} Sterne.`, k: `info` };
+  }
+  hk(e17);
+}
+function V_e(e17, t10) {
+  for (let n10 of pk(e17)) n10.querySelectorAll(`.lh-pg-pendot`).forEach((e18) => {
+    e18.setAttribute(`fill`, LD[t10.penCol]?.c ?? LD[0].c), e18.setAttribute(`opacity`, t10.penDown ? `1` : `0`);
+  });
+}
+function H_e(e17, t10, n10, r10) {
+  let [i10, a10] = ek(t10, n10[0], n10[1]), [o10, s10] = ek(t10, n10[2], n10[3]);
+  for (let c10 of pk(e17)) {
+    let e18 = c10.querySelector(`.lh-pg-ink`);
+    if (!e18) continue;
+    let l10 = document.createElementNS(`http://www.w3.org/2000/svg`, `line`);
+    l10.setAttribute(`x1`, i10.toFixed(1)), l10.setAttribute(`y1`, a10.toFixed(1)), l10.setAttribute(`x2`, i10.toFixed(1)), l10.setAttribute(`y2`, a10.toFixed(1)), l10.setAttribute(`stroke`, LD[n10[4]]?.c ?? LD[0].c), l10.setAttribute(`stroke-width`, ($O(t10) * 0.1).toFixed(1)), l10.setAttribute(`stroke-linecap`, `round`), e18.appendChild(l10);
+    let u10 = performance.now(), d10 = (e19) => {
+      let t11 = Math.min(1, (e19 - u10) / r10), n11 = t11 < 0.5 ? 2 * t11 * t11 : 1 - (-2 * t11 + 2) ** 2 / 2;
+      l10.setAttribute(`x2`, (i10 + (o10 - i10) * n11).toFixed(1)), l10.setAttribute(`y2`, (a10 + (s10 - a10) * n11).toFixed(1)), t11 < 1 && requestAnimationFrame(d10);
+    };
+    requestAnimationFrame(d10);
+  }
+}
+function U_e(e17, t10, n10, r10, i10) {
+  let a10 = performance.now(), o10 = (s10) => {
+    let c10 = Math.min(1, (s10 - a10) / i10), l10 = n10[0] + (r10[0] - n10[0]) * c10, u10 = n10[1] + (r10[1] - n10[1]) * c10;
+    for (let n11 of pk(e17)) n11.querySelector(`.lh-pg-cat`)?.setAttribute(`transform`, nk(t10, l10, u10, 0.78));
+    c10 < 1 && requestAnimationFrame(o10);
+  };
+  requestAnimationFrame(o10);
+}
+function kk(e17, t10) {
+  let n10 = dO[e17];
+  if (n10 === void 0) return;
+  let r10 = eh(`xylophone`, n10, t10 === void 0 ? {} : { when: t10 });
+  setTimeout(() => r10?.release(), 600);
+}
+function W_e(e17) {
+  let t10 = zr();
+  if (!t10) return;
+  let n10 = t10.currentTime + 0.1;
+  e17.stops.forEach((t11, r10) => {
+    kk(t11.t, n10), n10 += 0.55 * (e17.beats?.[r10] ?? 1);
+  });
+}
+function G_e(e17) {
+  let t10 = MO.get(e17);
+  t10 && (t10.token++, t10.phase = `idle`, t10.at = t10.origin, t10.gotRun = t10.got, t10.starsRun = [], t10.msg = { t: `Angehalten.`, k: `info` }, hk(e17));
+}
+async function K_e(e17, t10) {
+  let n10 = NO.get(e17), r10 = MO.get(e17);
+  if (!n10 || !r10 || r10.phase !== `idle`) return;
+  let i10 = QD(n10.pg), a10 = RO(i10, r10);
+  BO(r10), r10.trace.length || (r10.trace = [[r10.at.x, r10.at.y]]), r10.phase = `run`, r10.msg = null;
+  let o10 = { id: e17, pg: i10, t: a10, r: r10, token: ++r10.token }, s10 = r10.at, c10 = Tk(s10, t10), l10 = a10.n, u10 = Math.min(vk(i10), 450);
+  if (t10 === `L` || t10 === `R`) {
+    if (_k(t10 === `L` ? 520 : 600, 60), await bk(e17, l10, s10, { x: s10.x, y: s10.y, ang: s10.d * 90 + (t10 === `L` ? -90 : 90) }, s10.d * 90, u10 * 0.8), !Ek(o10)) return;
+    r10.at = c10;
+  } else {
+    let t11 = c10.x < 0 || c10.y < 0 || c10.x >= l10 || c10.y >= l10;
+    if (t11 || Ck(a10, c10.x, c10.y)) return await bk(e17, l10, s10, { x: c10.x, y: c10.y, ang: s10.d * 90 }, s10.d * 90, u10, true), Ek(o10) ? (r10.phase = `idle`, r10.msg = { t: t11 ? `Hier ist der Rand.` : Sk(a10, c10.x, c10.y) ? `Da geht der Weg nicht weiter.` : `Au! Da ist ${FD(i10.mat).wall} im Weg.`, k: `bad` }, yi(), gk(i10, r10.msg.t), hk(e17)) : void 0;
+    if (_k(660, 55), await bk(e17, l10, s10, { x: c10.x, y: c10.y, ang: s10.d * 90 }, s10.d * 90, u10), !Ek(o10)) return;
+    if (r10.at = c10, r10.trace.push([c10.x, c10.y]), i10.lesson === `music`) {
+      let e18 = N_e(a10, c10.x, c10.y);
+      e18 && kk(e18);
+    }
+    a10.stars.forEach(([e18, t12], n12) => {
+      e18 === c10.x && t12 === c10.y && !r10.starsRun.includes(n12) && (r10.starsRun.push(n12), _k(988, 90, 0.08));
+    });
+    let n11 = a10.stops[r10.got];
+    n11 && n11.x === c10.x && n11.y === c10.y && (r10.got++, r10.gotRun = r10.got, _k(784, 90, 0.08), setTimeout(() => _k(1047, 120, 0.08), 100));
+  }
+  r10.phase = `idle`;
+  let d10 = AD(i10.costume);
+  if (i10.lesson === `goal` && wk(a10, r10.at)) return Ok(o10, `Super! ${_O(d10.nom)} ist ${d10.atGoal}.`);
+  if (i10.lesson === `collect` && wk(a10, r10.at)) {
+    let e18 = a10.stars.length - r10.starsRun.length;
+    if (!e18) return Ok(o10, `Super! Alle Sterne \u2013 und ${d10.nom} ist ${d10.atGoal}.`);
+    r10.msg = { t: e18 === 1 ? `Es fehlt noch ein Stern.` : `Es fehlen noch ${e18} Sterne.`, k: `info` };
+  }
+  if (a10.stops.length && r10.got >= a10.stops.length) return Ok(o10, i10.lesson === `word` ? `Super! Du bist ${a10.word ?? ``} gefahren.` : `Super! Alle geschafft.`);
+  hk(e17);
+}
+function q_e(e17, t10, n10, r10 = 0) {
+  let i10 = t10, a10 = [[i10.x, i10.y]], o10 = [], s10 = { t: e17, pose: () => i10, count: 0, stuck: false }, c10 = 0;
+  for (let t11 of OO(n10, s10, r10)) {
+    if (++c10 > EO) break;
+    let n11 = t11.cmd;
+    if (n11 === `P`) {
+      o10.push([i10.x, i10.y]);
+      continue;
+    }
+    if (n11 === `K` || n11 === `?` || n11 === `D` || n11 === `U` || n11 === `V`) continue;
+    let r11 = Tk(i10, n11);
+    if (n11 === `F` || n11 === `B`) {
+      if (r11.x < 0 || r11.y < 0 || r11.x >= e17.n || r11.y >= e17.n || Ck(e17, r11.x, r11.y)) return { pts: a10, end: i10, bump: [r11.x, r11.y], pauses: o10 };
+      a10.push([r11.x, r11.y]);
+    }
+    i10 = r11;
+  }
+  return { pts: a10, end: i10, bump: null, pauses: o10 };
+}
+function J_e(e17, t10, n10, r10, i10) {
+  let a10 = t10.n, o10 = $O(a10), s10 = q_e(t10, n10, r10, i10), c10 = s10.pts.map(([e18, t11]) => ek(a10, e18, t11).map((e19) => e19.toFixed(1)).join(`,`)).join(` `), l10 = `<polyline points="${c10}" fill="none" stroke="#fff" stroke-width="${(o10 * 0.16).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/>`;
+  l10 += `<polyline points="${c10}" fill="none" stroke="#f97316" stroke-width="${(o10 * 0.09).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  for (let [e18, t11] of s10.pauses) {
+    let [n11, r11] = ek(a10, e18, t11), i11 = n11 + o10 * 0.3, s11 = r11 - o10 * 0.3;
+    l10 += `<circle cx="${i11.toFixed(1)}" cy="${s11.toFixed(1)}" r="${(o10 * 0.14).toFixed(1)}" fill="${XO}" stroke="#fff" stroke-width="3"/><g transform="translate(${i11.toFixed(1)} ${s11.toFixed(1)}) scale(${(o10 / 480).toFixed(3)})">${ID.P}</g>`;
+  }
+  if (l10 += `<g opacity=".5" transform="${tk(a10, s10.end.x, s10.end.y, s10.end.d * 90)}">${MD[e17.costume]}</g>`, s10.bump) {
+    let [e18, t11] = ek(a10, s10.end.x, s10.end.y), [n11, r11] = ek(a10, s10.bump[0], s10.bump[1]), i11 = (e18 + n11) / 2, c11 = (t11 + r11) / 2, u10 = o10 * 0.16;
+    l10 += `<circle cx="${i11.toFixed(1)}" cy="${c11.toFixed(1)}" r="${(u10 * 1.5).toFixed(1)}" fill="#fff" stroke="#dc2626" stroke-width="4"/>`, l10 += `<path d="M${(i11 - u10).toFixed(1)} ${(c11 - u10).toFixed(1)}L${(i11 + u10).toFixed(1)} ${(c11 + u10).toFixed(1)}M${(i11 + u10).toFixed(1)} ${(c11 - u10).toFixed(1)}L${(i11 - u10).toFixed(1)} ${(c11 + u10).toFixed(1)}" stroke="#dc2626" stroke-width="${(o10 * 0.05).toFixed(1)}" stroke-linecap="round"/>`;
+  }
+  return l10;
+}
+var Y_e = 3e3;
+function X_e(e17, t10, n10) {
+  let r10 = RO(t10, n10);
+  if (!n10.prog.slice(n10.done).length) return n10.msg = { t: t10.input === `pad` ? `Tippe zuerst die Pfeile.` : `Das Programm ist noch leer.`, k: `info` }, hk(e17);
+  BO(n10).peeks++;
+  let i10 = J_e(t10, r10, n10.origin, n10.prog, n10.done);
+  for (let t11 of pk(e17)) {
+    t11.querySelectorAll(`.lh-pg-peek`).forEach((e19) => e19.remove());
+    let e18 = t11.querySelector(`.lh-pg-trace`);
+    if (!e18) continue;
+    let n11 = document.createElementNS(`http://www.w3.org/2000/svg`, `g`);
+    n11.setAttribute(`class`, `lh-pg-peek`), n11.setAttribute(`pointer-events`, `none`), n11.innerHTML = i10, e18.after(n11), setTimeout(() => n11.remove(), 3100);
+  }
+}
+function Ak(e17, t10, n10) {
+  let r10 = LO(t10, e17);
+  e17.i = n10;
+  let i10 = r10[Math.min(n10, r10.length - 1)];
+  Object.assign(e17, { prog: FO(i10), done: 0, sel: null, steps: [], mark: null, rating: 0, at: PO(i10), origin: PO(i10), got: 0, ink: [], penDown: false, penCol: 0, play: false, gen: null, env: null, tick: 0, points: 0, phase: `idle`, pc: 0, trace: [], msg: null, bad: null, gotRun: 0, starsRun: [], happy: false }), e17.token++;
+}
+function Z_e(e17, t10) {
+  return e17.lesson === `count` ? [`star`, `red`, `blue`, `wall`, `free`] : t10.maze ? [`rightFree`, `wall`, `free`, `leftFree`] : [`red`, `blue`, `wall`, `free`];
+}
+function Q_e(e17, t10, n10, r10) {
+  return r10 === `W` ? { rep: 2, body: [] } : r10 === `Z` ? { rep: 2, until: true, body: [] } : r10 === `I` ? { cond: Z_e(e17, t10)[0], body: [] } : r10 === `K` ? { col: (n10.penCol + 1) % LD.length } : r10;
+}
+var $_e = (e17, t10) => t10 === `W` ? `wiederhole` : t10 === `Z` ? `wiederhole bis zum Ziel` : t10 === `I` ? `falls` : t10 === `K` ? `Farbe` : bO(e17, t10);
+function jk(e17, t10) {
+  let n10 = NO.get(e17);
+  if (!n10) return;
+  let r10 = QD(n10.pg), i10 = zO(e17);
+  pi();
+  let a10 = i10.phase === `idle` || i10.phase === `step`, o10 = () => {
+    i10.phase === `step` && (i10.token++, i10.phase = `idle`, i10.at = i10.origin, i10.gotRun = i10.got, i10.starsRun = []);
+  }, s10 = RO(r10, i10), c10 = s10.kind === `fix` || s10.kind === `gap`, l10 = s10.kind === `events`;
+  if (t10.startsWith(`ev:`)) return void B_e(e17, t10.slice(3));
+  if (t10.startsWith(`add:`)) {
+    let n11 = t10.slice(4);
+    if (r10.input === `pad` && r10.pad === `now` && !KD(r10.lesson)) return `WKZI`.includes(n11) ? void 0 : void K_e(e17, n11);
+    if (!a10 || s10.kind === `predict` || i10.play) return;
+    if (l10 && i10.sel === null) return i10.msg = { t: `Tippe zuerst auf einen Pfeil-Baustein (\u201EWenn \u2026 getippt\u201C) \u2013 dann auf die Bausteine.`, k: `info` }, gk(r10, i10.msg.t), hk(e17);
+    if (c10) {
+      let t11 = i10.sel === null ? null : kO(i10.prog, i10.sel);
+      return !t11 || `WKZI`.includes(n11) ? (i10.msg = { t: s10.kind === `gap` ? `Tippe zuerst auf das ? im Programm.` : `Tippe zuerst auf die Karte, die nicht stimmt.`, k: `info` }, gk(r10, i10.msg.t), hk(e17)) : (o10(), BO(i10), _i(), t11.list[t11.i] = n11, i10.bad = null, i10.msg = null, r10.voice && M(bO(r10, n11)), hk(e17));
+    }
+    let u10 = s10.limit ?? 40;
+    if (GD(i10.prog) >= u10) return i10.msg = { t: s10.limit ? `H\xF6chstens ${s10.limit} Bausteine \u2013 nimm \u201Ewiederhole\u201C.` : `Mehr als 40 Bausteine gehen nicht.`, k: `info` }, gk(r10, i10.msg.t), hk(e17);
+    o10(), BO(i10), _i();
+    let d10 = Q_e(r10, s10, i10, n11), f10 = i10.sel === null ? null : AO(i10.prog, i10.sel), p10 = f10 ? UD(f10) : null;
+    if (i10.sel !== null && f10 && p10) p10.push(d10), i10.sel = `${i10.sel}.${p10.length - 1}`;
+    else if (i10.sel !== null && f10) {
+      let e18 = kO(i10.prog, i10.sel);
+      e18.list.splice(e18.i + 1, 0, d10), i10.sel = e18.prefix + (e18.i + 1);
+    } else i10.prog.push(d10), UD(d10) && (i10.sel = String(i10.prog.length - 1));
+    return i10.bad = null, i10.msg?.k !== `ok` && (i10.msg = null), r10.voice && M($_e(r10, n11)), hk(e17);
+  }
+  if (t10.startsWith(`cond:`)) {
+    if (!a10 || i10.play) return;
+    let n11 = AO(i10.prog, t10.slice(5));
+    if (!n11 || !HD(n11)) return;
+    o10();
+    let c11 = Z_e(r10, s10);
+    return n11.cond = c11[(c11.indexOf(n11.cond) + 1) % c11.length], _i(), r10.voice && M(RD[n11.cond]), hk(e17);
+  }
+  if (t10.startsWith(`col:`)) {
+    if (!a10 || i10.play) return;
+    let n11 = AO(i10.prog, t10.slice(4));
+    return !n11 || !VD(n11) ? void 0 : (o10(), n11.col = (n11.col + 1) % LD.length, _i(), r10.voice && M(LD[n11.col].name), hk(e17));
+  }
+  if (t10.startsWith(`card:`)) {
+    if (!a10 || s10.kind === `predict` || i10.play) return;
+    let n11 = t10.slice(5);
+    if (!n11.includes(`.`) && Number(n11) < i10.done) return;
+    o10(), i10.sel = i10.sel === n11 ? null : n11;
+    let c11 = i10.sel === null ? null : AO(i10.prog, i10.sel);
+    return c11 && r10.voice && M(jO([c11])[0]?.replace(/:.*$/, ``) ?? ``), hk(e17);
+  }
+  if (t10.startsWith(`del:`)) {
+    if (!a10 || c10 || i10.play) return;
+    let n11 = t10.slice(4), r11 = kO(i10.prog, n11);
+    return !r11 || !n11.includes(`.`) && r11.i < i10.done || BD(r11.list[r11.i]) ? void 0 : (o10(), r11.list.splice(r11.i, 1), i10.sel = r11.i > 0 ? r11.prefix + (r11.i - 1) : r11.prefix ? r11.prefix.slice(0, -1) : null, i10.sel !== null && !r11.prefix && Number(i10.sel) < i10.done && (i10.sel = null), i10.bad = null, hk(e17));
+  }
+  if (t10.startsWith(`rep-:`) || t10.startsWith(`rep+:`)) {
+    if (!a10) return;
+    let n11 = AO(i10.prog, t10.slice(5));
+    return !n11 || !zD(n11) ? void 0 : (o10(), n11.rep = Math.max(2, Math.min(9, n11.rep + (t10[3] === `+` ? 1 : -1))), _i(), r10.voice && M(`${n11.rep} mal`), hk(e17));
+  }
+  if (t10.startsWith(`cell:`)) {
+    if (s10.kind !== `predict` || i10.phase !== `idle`) return;
+    let [n11, r11] = t10.slice(5).split(`,`).map(Number);
+    return i10.mark = i10.mark && i10.mark[0] === n11 && i10.mark[1] === r11 ? null : [n11, r11], i10.msg = null, BO(i10), _i(), hk(e17);
+  }
+  switch (t10) {
+    case `unsel`:
+      return i10.sel = null, hk(e17);
+    case `back`: {
+      if (!a10 || c10 || i10.play || i10.prog.length <= i10.done) return;
+      o10();
+      let t11 = i10.sel === null ? null : kO(i10.prog, i10.sel);
+      if (t11 && BD(t11.list[t11.i])) t11.list[t11.i].body.pop();
+      else if (t11 && (t11.prefix || t11.i >= i10.done)) t11.list.splice(t11.i, 1);
+      else if (l10) return;
+      else i10.prog.pop();
+      return i10.sel = null, i10.bad = null, hk(e17);
+    }
+    case `clear`:
+      return !a10 || c10 || i10.play ? void 0 : (o10(), l10 ? i10.prog.forEach((e18) => BD(e18) && e18.body.splice(0)) : i10.prog.splice(i10.done), i10.sel = null, i10.bad = null, i10.msg = null, i10.trace = i10.done ? i10.trace : [], hk(e17));
+    case `go`:
+      z_e(e17, false);
+      return;
+    case `edit`:
+      return i10.phase === `idle` ? (Object.assign(i10, { play: false, at: PO(s10), origin: PO(s10), trace: [], starsRun: [], msg: null }), hk(e17)) : void 0;
+    case `step`:
+      z_e(e17, true);
+      return;
+    case `home`:
+      return i10.phase === `run` ? void 0 : (Ak(i10, r10, i10.i), hk(e17));
+    case `reset`:
+      return Ak(i10, r10, i10.i), hk(e17);
+    case `say`: {
+      if (r10.lesson === `music`) {
+        M(vO(SO(r10, s10))).then(() => W_e(s10));
+        return;
+      }
+      let e18 = r10.lesson === `math` && s10.sums ? ` ${s10.sums[Math.min(i10.got, s10.sums.length - 1)]}.` : r10.lesson === `numbers` || r10.lesson === `word` ? ` ${s10.stops.map((e19) => e19.t).join(`, `)}.` : ``;
+      M(vO(SO(r10, s10) + e18));
+      return;
+    }
+    case `peek`:
+      r10.peek && a10 && s10.kind !== `predict` && X_e(e17, r10, i10);
+      return;
+    case `readprog`: {
+      let e18 = jO(i10.prog.slice(i10.done));
+      M(e18.length ? e18.join(`, `) : `Das Programm ist noch leer.`);
+      return;
+    }
+    case `next`: {
+      let t11 = LO(r10, i10);
+      return i10.i + 1 >= t11.length ? t11.length > 1 ? (i10.phase = `summary`, vi()) : (i10.tasks = Ik(r10), i10.stats = [], Ak(i10, r10, 0)) : Ak(i10, r10, i10.i + 1), hk(e17);
+    }
+    case `again`:
+      return MO.set(e17, IO(i10.ver + 1, (i10.tasks = Ik(r10))[0], i10.tasks)), mk(e17);
+  }
+}
+var Mk = null;
+var Nk = /* @__PURE__ */ new WeakSet();
+function Pk(e17, t10, n10) {
+  let r10 = e17.getBoundingClientRect();
+  return [(t10 - r10.left) * HO / r10.width, (n10 - r10.top) * UO / r10.height];
+}
+function eve(e17, t10) {
+  let n10 = t10.getBoundingClientRect(), [r10, i10] = Pk(e17, n10.left, n10.top), [a10, o10] = Pk(e17, n10.right, n10.bottom);
+  return { x0: r10, y0: i10, x1: a10, y1: o10 };
+}
+var tve = (e17) => e17.includes(`.`) ? e17.slice(0, e17.lastIndexOf(`.`)) : ``;
+var nve = (e17) => Number(e17.slice(e17.lastIndexOf(`.`) + 1));
+function rve(e17, t10) {
+  if (t10 === ``) return e17;
+  let n10 = AO(e17, t10);
+  return n10 ? UD(n10) : null;
+}
+function ive(e17, t10, n10 = ``) {
+  if (e17 === t10) return n10.replace(/\.$/, ``);
+  for (let r10 = 0; r10 < e17.length; r10++) {
+    let i10 = UD(e17[r10]);
+    if (!i10) continue;
+    let a10 = ive(i10, t10, n10 + r10 + `.`);
+    if (a10 !== null) return a10;
+  }
+  return null;
+}
+function ave(e17, t10, n10) {
+  let r10 = MO.get(e17.id), i10 = NO.get(e17.id);
+  if (!r10 || !i10) return { target: null, out: false, line: `` };
+  let a10 = t10 < 890 || t10 > 1366 || n10 < 326 || n10 > 702;
+  if (a10) return { target: null, out: a10, line: `` };
+  let o10 = e17.src.startsWith(`new:`) ? null : e17.src, s10 = (e18) => !!o10 && (e18 === o10 || e18.startsWith(o10 + `.`)), c10 = QD(i10.pg).lesson, l10 = hge(c10), u10 = c10 === `events`, d10 = [...e17.svg.querySelectorAll(`[data-node], [data-slot], [data-end]`)].filter((e18) => !e18.closest(`.lh-pg-ghost`)).map((t11) => ({ kind: t11.hasAttribute(`data-slot`) ? `slot` : t11.hasAttribute(`data-end`) ? `end` : t11.classList.contains(`is-loop`) ? `top` : `cmd`, path: t11.getAttribute(`data-node`) ?? t11.getAttribute(`data-slot`) ?? t11.getAttribute(`data-end`) ?? ``, ...eve(e17.svg, t11) })).filter((e18) => !(e18.kind === `cmd` || e18.kind === `top` ? s10(e18.path) : o10 && (e18.path === o10 || e18.path.startsWith(o10 + `.`)))).filter((e18) => l10 || !e18.path.includes(`.`)).filter((e18) => l10 || Number(e18.path) >= r10.done);
+  if (!d10.length) return { target: { list: ``, i: r10.prog.length }, out: false, line: `` };
+  if (!l10) {
+    let e18 = d10.filter((e19) => n10 >= e19.y0 - 6 && n10 <= e19.y1 + 6);
+    if (!e18.length) {
+      let e19 = d10.reduce((e20, t12) => t12.y1 > e20.y1 || t12.y1 === e20.y1 && t12.x1 > e20.x1 ? t12 : e20);
+      if (n10 > e19.y1) return { target: { list: ``, i: r10.prog.length }, out: false, line: `M${e19.x1 + 4} ${e19.y0 - 4}V${e19.y1 + 4}` };
+      let t11 = d10.reduce((e20, t12) => t12.y0 < e20.y0 || t12.y0 === e20.y0 && t12.x0 < e20.x0 ? t12 : e20);
+      return { target: { list: ``, i: Math.max(r10.done, Number(t11.path)) }, out: false, line: `M${t11.x0 - 4} ${t11.y0 - 4}V${t11.y1 + 4}` };
+    }
+    let i11 = e18.reduce((e19, n11) => Math.abs((n11.x0 + n11.x1) / 2 - t10) < Math.abs((e19.x0 + e19.x1) / 2 - t10) ? n11 : e19), a11 = t10 < (i11.x0 + i11.x1) / 2, o11 = Math.max(r10.done, Number(i11.path) + +!a11), s11 = a11 ? i11.x0 - 4 : i11.x1 + 4;
+    return { target: { list: ``, i: o11 }, out: false, line: `M${s11} ${i11.y0 - 4}V${i11.y1 + 4}` };
+  }
+  let f10 = d10.filter((e18) => t10 >= e18.x0 - 16 && t10 <= e18.x1 + 16);
+  f10.length && d10.splice(0, d10.length, ...f10), d10.sort((e18, t11) => e18.y0 - t11.y0);
+  let p10 = d10.find((e18) => n10 >= e18.y0 - 2 && n10 <= e18.y1 + 2) ?? (n10 < d10[0].y0 ? d10[0] : d10[d10.length - 1]), m10 = n10 < (p10.y0 + p10.y1) / 2, h10, g10;
+  if (p10.kind === `slot` ? (h10 = { list: p10.path, i: 0 }, g10 = (p10.y0 + p10.y1) / 2) : p10.kind === `end` ? (h10 = { list: tve(p10.path), i: nve(p10.path) + 1 }, g10 = p10.y1 + 2) : p10.kind === `top` && !m10 ? (h10 = { list: p10.path, i: 0 }, g10 = p10.y1 + 2) : (h10 = { list: tve(p10.path), i: nve(p10.path) + +!m10 }, g10 = m10 ? p10.y0 - 2 : p10.y1 + 2), n10 > d10[d10.length - 1].y1 + 6 && (h10 = { list: ``, i: r10.prog.length }, g10 = d10[d10.length - 1].y1 + 4), o10 && (h10.list === o10 || h10.list.startsWith(o10 + `.`)) || u10 && h10.list === ``) return { target: null, out: false, line: `` };
+  let _10 = p10.x0 + (p10.kind === `slot` ? 0 : h10.list === p10.path ? 26 : 0);
+  return { target: h10, out: false, line: `M${_10.toFixed(1)} ${g10.toFixed(1)}H${(_10 + 130).toFixed(1)}` };
+}
+function ove(e17) {
+  let t10 = Mk;
+  if (!t10 || e17.pointerId !== t10.pointerId) return;
+  if (!t10.on) {
+    if (Math.hypot(e17.clientX - t10.x0, e17.clientY - t10.y0) < 10) return;
+    t10.on = true, t10.el.classList.remove(`is-down`), t10.el.classList.add(`is-dragging`);
+    let n11 = t10.el.cloneNode(true);
+    n11.removeAttribute(`data-node`), n11.removeAttribute(`data-drag`), n11.classList.remove(`lh-key`, `is-dragging`, `is-sel`, `is-down`);
+    let r11 = document.createElementNS(`http://www.w3.org/2000/svg`, `g`);
+    r11.setAttribute(`class`, `lh-pg-ghost`), r11.setAttribute(`pointer-events`, `none`), r11.appendChild(n11), t10.svg.appendChild(r11), t10.ghost = r11;
+    let i11 = document.createElementNS(`http://www.w3.org/2000/svg`, `path`);
+    i11.setAttribute(`class`, `lh-pg-drop`), i11.setAttribute(`stroke`, `#0f172a`), i11.setAttribute(`stroke-width`, `5`), i11.setAttribute(`stroke-linecap`, `round`), i11.setAttribute(`fill`, `none`), t10.svg.appendChild(i11), t10.mark = i11;
+  }
+  let [n10, r10] = Pk(t10.svg, e17.clientX, e17.clientY), [i10, a10] = Pk(t10.svg, t10.x0, t10.y0);
+  t10.ghost?.setAttribute(`transform`, `translate(${(n10 - i10).toFixed(1)} ${(r10 - a10).toFixed(1)})`);
+  let o10 = ave(t10, n10, r10);
+  t10.target = o10.target, t10.out = o10.out && !t10.src.startsWith(`new:`), t10.ghost?.classList.toggle(`is-out`, t10.out), t10.mark?.setAttribute(`d`, o10.line);
+}
+function sve(e17, t10 = false) {
+  let n10 = Mk;
+  if (!n10 || e17.pointerId !== n10.pointerId || (Mk = null, n10.el.classList.remove(`is-down`, `is-dragging`), n10.ghost?.remove(), n10.mark?.remove(), t10)) return;
+  if (!n10.on) {
+    jk(n10.id, n10.src.startsWith(`new:`) ? `add:` + n10.src.slice(4) : `card:` + n10.src);
+    return;
+  }
+  let r10 = MO.get(n10.id), i10 = NO.get(n10.id);
+  if (!r10 || !i10 || r10.phase !== `idle` && r10.phase !== `step`) return;
+  let a10 = QD(i10.pg);
+  if (r10.phase === `step` && (r10.token++, r10.phase = `idle`, r10.at = r10.origin, r10.gotRun = r10.got, r10.starsRun = []), n10.src.startsWith(`new:`)) {
+    if (!n10.target) return;
+    let e18 = RO(a10, r10), t11 = e18.limit ?? 40;
+    if (GD(r10.prog) >= t11) return r10.msg = { t: e18.limit ? `H\xF6chstens ${e18.limit} Bausteine \u2013 nimm \u201Ewiederhole\u201C.` : `Mehr als 40 Bausteine gehen nicht.`, k: `info` }, gk(a10, r10.msg.t), hk(n10.id);
+    let i11 = n10.src.slice(4), o11 = rve(r10.prog, n10.target.list);
+    if (!o11) return;
+    let s11 = o11 === r10.prog ? Math.max(r10.done, Math.min(n10.target.i, o11.length)) : Math.min(n10.target.i, o11.length);
+    return o11.splice(s11, 0, Q_e(a10, RO(a10, r10), r10, i11)), BO(r10), _i(), r10.sel = (n10.target.list ? n10.target.list + `.` : ``) + s11, r10.bad = null, r10.msg?.k !== `ok` && (r10.msg = null), a10.voice && M($_e(a10, i11)), hk(n10.id);
+  }
+  let o10 = kO(r10.prog, n10.src);
+  if (!o10) return;
+  if (n10.out) return o10.list.splice(o10.i, 1), r10.sel = null, r10.bad = null, _i(), hk(n10.id);
+  if (!n10.target) return;
+  let s10 = rve(r10.prog, n10.target.list);
+  if (!s10) return;
+  let c10 = o10.list[o10.i], l10 = n10.target.i;
+  s10 === o10.list && o10.i < l10 && l10--, o10.list.splice(o10.i, 1), s10 === r10.prog && (l10 = Math.max(r10.done, l10)), l10 = Math.min(l10, s10.length), s10.splice(l10, 0, c10);
+  let u10 = ive(r10.prog, s10);
+  r10.sel = (u10 ? u10 + `.` : ``) + l10, r10.bad = null, _i(), hk(n10.id);
+}
+function cve(e17) {
+  Nk.has(e17) || (Nk.add(e17), e17.addEventListener(`pointerdown`, (t10) => {
+    if (t10.button > 0 || !Ti(e17) || Mk) return;
+    let n10 = t10.target?.closest?.(`[data-drag]`), r10 = e17.querySelector(`svg`);
+    if (!n10 || !r10 || !e17.contains(n10)) return;
+    let i10 = e17.dataset.pgId ?? ``, a10 = MO.get(i10);
+    !a10 || a10.play || a10.phase !== `idle` && a10.phase !== `step` || (t10.stopPropagation(), t10.preventDefault(), zr(), pi(), n10.classList.add(`is-down`), Mk = { id: i10, node: e17, svg: r10, el: n10, src: n10.getAttribute(`data-drag`) ?? ``, pointerId: t10.pointerId, x0: t10.clientX, y0: t10.clientY, on: false, ghost: null, mark: null, target: null, out: false });
+  }, true), Nk.has(document.documentElement) || (Nk.add(document.documentElement), window.addEventListener(`pointermove`, ove, { passive: true }), window.addEventListener(`pointerup`, (e18) => sve(e18)), window.addEventListener(`pointercancel`, (e18) => sve(e18, true))));
+}
+var Fk = null;
+var lve = false;
+function uve() {
+  lve || typeof window > `u` || (lve = true, window.addEventListener(`pointerdown`, (e17) => {
+    let t10 = e17.target?.closest?.(`.lh-wg-code.is-live`);
+    Fk = t10 && t10.classList.contains(`is-armed`) ? t10.dataset.pgId ?? null : t10 ? Fk : null;
+  }, true), window.addEventListener(`keydown`, (e17) => {
+    if (!Fk || e17.metaKey || e17.ctrlKey || e17.altKey) return;
+    let t10 = (document.activeElement?.tagName ?? ``).toLowerCase();
+    if (t10 === `input` || t10 === `textarea` || document.activeElement?.isContentEditable) return;
+    let n10 = pk(Fk)[0];
+    if (!n10?.isConnected || !n10.classList.contains(`is-armed`)) return;
+    let r10 = MO.get(Fk)?.play ? { ArrowUp: `ev:up`, ArrowDown: `ev:down`, ArrowLeft: `ev:left`, ArrowRight: `ev:right` }[e17.key] : { ArrowUp: `add:F`, ArrowDown: `add:B`, ArrowLeft: `add:L`, ArrowRight: `add:R`, p: `add:P`, P: `add:P`, Enter: `go`, Backspace: `back` }[e17.key];
+    r10 && (e17.preventDefault(), e17.stopPropagation(), e17.repeat || jk(Fk, r10));
+  }, true));
+}
+function dve(e17, t10, n10, r10 = {}) {
+  let i10 = QD(t10.pg), a10 = Math.max(1, Math.round(t10.w)), o10 = Math.max(1, Math.round(t10.h));
+  n10 && NO.set(t10.id, t10);
+  let s10 = n10 ? zO(t10.id) : null, c10 = `${a10}x${o10}|${n10}|${JSON.stringify(t10.pg ?? null)}|${s10 ? s10.ver : ``}`;
+  if (e17.dataset.k === c10 || s10 && s10.phase === `run` && e17.dataset.k && e17.dataset.pgId === t10.id) return;
+  e17.dataset.k = c10, e17.setAttribute(`aria-label`, fve(t10));
+  let l10 = k_e(i10, s10, n10, a10, o10);
+  if (!n10) {
+    let t11 = document.createElement(`img`);
+    t11.className = `lh-wg-pic`, t11.alt = ``, t11.draggable = false, t11.src = r10.stickerUrl ? r10.stickerUrl(l10) : `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(l10), t11.style.width = `${a10}px`, t11.style.height = `${o10}px`, e17.replaceChildren(t11);
+    return;
+  }
+  e17.dataset.pgId = t10.id;
+  let u10 = document.createElement(`div`);
+  u10.className = `lh-wg-pic`, u10.innerHTML = l10.replace(/ width="[\d.]+" height="[\d.]+"/, ` width="100%" height="100%"`), e17.replaceChildren(u10), t10.locked && e17.classList.add(`is-armed`), uve(), cve(e17), Si(e17, { slide: false, hit: (t11) => (jk(e17.dataset.pgId ?? ``, t11.getAttribute(`data-a`) ?? ``), null) });
+}
+function fve(e17) {
+  let t10 = QD(e17.pg);
+  return `Programmieren: ${SO(t10, t10.tasks[0])}`;
+}
+function Ik(e17) {
+  return gO(e17).map((t10, n10) => e17.tasks[n10]?.own && e17.tasks[n10].n === e17.size ? e17.tasks[n10] : t10);
+}
+var wve = `
+.lh-wg-code .lh-pg-card.is-done{opacity:.42}
+.lh-wg-code .lh-pg-card.is-run .lh-pg-face{stroke:#facc15;stroke-width:7}
+.lh-wg-code .lh-pg-card.is-sel .lh-pg-face{stroke:#0f172a;stroke-width:5}
+.lh-wg-code .lh-pg-card.is-bad .lh-pg-face{stroke:#dc2626;stroke-width:6}
+.lh-wg-code .lh-pg-star{transition:opacity .35s}
+.lh-wg-code .is-dragging{opacity:.3}
+.lh-wg-code .is-on .lh-pg-face{fill:#0f766e}
+.lh-wg-code .lh-pg-ghost{opacity:.9;filter:drop-shadow(0 6px 8px rgba(15,23,42,.3))}
+.lh-wg-code .lh-pg-ghost.is-out{opacity:.35}
+.lh-wg-code .lh-key.is-down .lh-pg-face{filter:brightness(.92)}
+.lh-wg-code .lh-pg-star.is-got{opacity:0}
+.lh-wg-code rect.is-got{fill:#dcfce7;stroke:#16a34a}
+.lh-pg-body{transform-box:fill-box;transform-origin:center}
+.lh-pg-body.is-happy{animation:lh-pg-happy .7s ease-in-out 4}
+.lh-wg-code .lh-pg-peek{animation:lh-pg-peek ${Y_e}ms ease-in forwards}
+@keyframes lh-pg-peek{0%{opacity:0}8%{opacity:1}75%{opacity:1}100%{opacity:0}}
+@keyframes lh-pg-happy{30%{transform:scale(1.22) rotate(-10deg)}60%{transform:scale(1.22) rotate(10deg)}}`;
+function Tve(e17) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-55 -55 110 110" width="110" height="110">${MD[e17]}</svg>`;
+}
+function Eve(e17) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-6 -6 112 112" width="112" height="112">${tge(e17, 3, 0, 0, 100)}<g transform="translate(50 50) scale(.26)">${FD(e17).wallSvg}</g></svg>`;
+}
+var kZe = [{ value: `cards`, label: `Bausteine (Pfeilkarten)` }, { value: `pad`, label: `Tasten wie beim Bodenroboter` }];
+var AZe = [{ value: `store`, label: `Merken, dann LOS` }, { value: `now`, label: `Sofort fahren` }];
+var jZe = [{ value: `easy`, label: `Leicht` }, { value: `medium`, label: `Mittel` }, { value: `hard`, label: `Schwer` }];
+var MZe = [{ value: `none`, label: `Keine` }, { value: `few`, label: `Wenige` }, { value: `many`, label: `Viele` }];
+var NZe = [{ value: `add`, label: `Plus` }, { value: `sub`, label: `Minus` }, { value: `both`, label: `Plus und Minus` }];
+var PZe = [{ value: 1, label: `Langsam` }, { value: 2, label: `Normal` }, { value: 3, label: `Schnell` }];
+function FZe(e17) {
+  switch (e17.lesson) {
+    case `word`:
+      return e17.level === `easy` ? `Nur die Buchstaben des Worts liegen auf dem Teppich.` : e17.level === `medium` ? `Dazu zwei andere Buchstaben.` : `Dazu f\xFCnf andere Buchstaben.`;
+    case `math`:
+      return e17.level === `easy` ? `Zwei Aufgaben je Teppich.` : e17.level === `medium` ? `Drei Aufgaben, dazu Zahlen in der N\xE4he der Ergebnisse.` : `Vier Aufgaben, mehr Zahlen zum Verwechseln.`;
+    case `numbers`:
+      return e17.level === `easy` ? `Drei Zahlen der Reihe nach.` : e17.level === `medium` ? `Vier Zahlen.` : `F\xFCnf Zahlen.`;
+    case `collect`:
+      return e17.level === `easy` ? `Zwei Sterne.` : e17.level === `medium` ? `Drei Sterne.` : `F\xFCnf Sterne.`;
+    case `read`:
+      return e17.level === `easy` ? `Programme mit 3 bis 5 Karten.` : e17.level === `medium` ? `Programme mit 5 bis 8 Karten, mit Drehungen.` : `Programme mit 8 bis 12 Karten, auch r\xFCckw\xE4rts.`;
+    case `pen`:
+      return e17.level === `easy` ? `10 Formen: Linien, Ecken, kleines Quadrat und Rechteck, Treppe, L, Br\xFCcke, Schale \u2013 jede einmal je Reihe.` : e17.level === `medium` ? `11 Formen: gro\xDFes Quadrat, Rechteck, Treppen, Plus, Fahne, Buchstaben T, U, C, F, P.` : `7 Formen: E, H, S, Schlange, Spirale, Berg, Fenster \u2013 mit r\xFCckw\xE4rts oder Umwegen.`;
+    case `music`:
+      return e17.level === `easy` ? `Die ersten 4 T\xF6ne eines Lieds, nur diese T\xF6ne liegen auf dem Teppich.` : e17.level === `medium` ? `Die ersten 6 T\xF6ne, dazu zwei andere T\xF6ne.` : `Die ersten 8 T\xF6ne, alle T\xF6ne von C bis c liegen auf dem Teppich.`;
+    case `events`:
+      return e17.level === `easy` ? `Zwei Sterne.` : e17.level === `medium` ? `Drei Sterne.` : `F\xFCnf Sterne.`;
+    case `cond`:
+      return e17.level === `easy` ? `Ein Weg mit roten Ecken (rot = rechts drehen): \u201Ewiederhole bis Ziel\u201C mit \u201Efalls Feld rot\u201C.` : e17.level === `medium` ? `Rote und blaue Ecken (blau = links drehen): zwei \u201Efalls\u201C-Bausteine.` : `Ein Labyrinth: \u201Efalls rechts frei\u201C, \u201Efalls Wand vor mir\u201C \u2013 die rechte Hand an der Wand.`;
+    case `cat`:
+      return e17.level === `easy` ? `Eine Katze l\xE4uft \xFCber drei Felder quer \xFCber den Weg.` : e17.level === `medium` ? `L\xE4ngere Wege, die Katze l\xE4uft \xFCber vier Felder.` : `Lange Wege mit Hindernissen.`;
+    case `count`:
+      return e17.level === `easy` ? `Ein gerader Weg mit zwei Sternen.` : e17.level === `medium` ? `Ein Weg mit roten Ecken und drei Sternen.` : `Rote und blaue Ecken, vier Sterne.`;
+    case `loop`:
+      return e17.level === `easy` ? `Gerade Strecken: \u201Ewiederhole n mal: vorw\xE4rts\u201C.` : e17.level === `medium` ? `Treppen und Haken: ein Muster aus 3 bis 4 Bausteinen.` : `L\xE4ngere Muster aus 5 bis 8 Bausteinen.`;
+    default:
+      return e17.level === `easy` ? `Kurze Wege: 1 bis 4 Befehle.` : e17.level === `medium` ? `Wege mit 4 bis 7 Befehlen.` : `Lange Wege mit 7 bis 13 Befehlen.`;
+  }
+}
+var LZe = [{ value: `shapes`, label: `Formen nachzeichnen` }, { value: `free`, label: `Freies Malen` }];
 var WZe = [{ label: `H\xE4nde waschen`, title: `H\xE4nde waschen`, steps: [[`Wasser an`, `Wasserhahn`], [`H\xE4nde nass machen`, `H\xE4nde waschen`], [`Seife nehmen`, `Seife`], [`H\xE4nde reiben`, `H\xE4nde`], [`Absp\xFClen`, `Wasser`], [`Wasser aus`, `Wasserhahn`], [`Abtrocknen`, `Handtuch`]] }, { label: `Z\xE4hne putzen`, title: `Z\xE4hne putzen`, steps: [[`Zahnpasta auf die B\xFCrste`, `Zahnpasta`], [`Z\xE4hne putzen`, `Z\xE4hne putzen`], [`Ausspucken`, `ausspucken`], [`Mund aussp\xFClen`, `Becher`], [`B\xFCrste auswaschen`, `Zahnb\xFCrste`]] }, { label: `Anziehen im Winter`, title: `Anziehen`, steps: [[`Unterhose`, `Unterhose`], [`Socken`, `Socken`], [`Hose`, `Hose`], [`Pullover`, `Pullover`], [`Jacke`, `Jacke`], [`M\xFCtze`, `M\xFCtze`], [`Schal`, `Schal`], [`Handschuhe`, `Handschuhe`], [`Schuhe`, `Schuhe`]] }, { label: `Toilette`, title: `Auf die Toilette gehen`, steps: [[`Hose runter`, `Hose`], [`Auf die Toilette`, `Toilette`], [`Papier nehmen`, `Toilettenpapier`], [`Sp\xFClen`, `sp\xFClen`], [`Hose hoch`, `anziehen`], [`H\xE4nde waschen`, `H\xE4nde waschen`]] }, { label: `Obstsalat`, title: `Obstsalat machen`, steps: [[`H\xE4nde waschen`, `H\xE4nde waschen`], [`Obst waschen`, `Obst`], [`Obst schneiden`, `Messer`], [`In die Sch\xFCssel`, `Sch\xFCssel`], [`Umr\xFChren`, `L\xF6ffel`], [`Guten Appetit!`, `essen`]] }, { label: `Der Schultag`, title: `Mein Schultag`, steps: [[`Ankommen`, `Schule`], [`Morgenkreis`, `Stuhlkreis`], [`Lernen`, `lernen`], [`Pause`, `Pause`], [`Mittagessen`, `Mittagessen`], [`Spielen`, `spielen`], [`Nach Hause`, `Bus`]] }, { label: `Tisch decken`, title: `Den Tisch decken`, steps: [[`Tischset hinlegen`, `Tischset`], [`Teller in die Mitte`, `Teller`], [`Gabel links`, `Gabel`], [`Messer rechts`, `Messer`], [`L\xF6ffel oben`, `L\xF6ffel`], [`Glas rechts oben`, `Glas`], [`Serviette dazu`, `Serviette`]] }, { label: `Vor dem Kochen`, title: `Bevor ich koche`, steps: [[`H\xE4nde waschen`, `H\xE4nde waschen`], [`Haare zusammenbinden`, `Haargummi`], [`Sch\xFCrze umbinden`, `Sch\xFCrze`], [`Lappen und Handtuch hinlegen`, `Lappen`], [`Rezept lesen`, `Rezept`], [`Zutaten holen`, `Zutaten`], [`Ger\xE4te hinlegen`, `Sch\xFCssel`], [`Sch\xFCssel f\xFCr Abfall`, `Abfall`]] }, { label: `Nach dem Kochen`, title: `Aufr\xE4umen nach dem Kochen`, steps: [[`Herd ausschalten`, `Herd`], [`Reste in den K\xFChlschrank`, `K\xFChlschrank`], [`Geschirr sp\xFClen`, `sp\xFClen`], [`Arbeitsfl\xE4che abwischen`, `Lappen`], [`Boden kehren`, `kehren`], [`M\xFCll trennen`, `M\xFClltrennung`], [`Licht aus`, `Lichtschalter`]] }, { label: `Von Hand sp\xFClen`, title: `Von Hand sp\xFClen`, steps: [[`Warmes Wasser einlassen`, `Sp\xFClbecken`], [`Wenig Sp\xFClmittel dazu`, `Sp\xFClmittel`], [`Gl\xE4ser zuerst`, `Glas`], [`Dann Besteck und Teller`, `Teller`], [`T\xF6pfe zum Schluss`, `Topf`], [`Mit klarem Wasser absp\xFClen`, `Wasser`], [`Abtrocknen`, `Geschirrtuch`], [`Wegr\xE4umen`, `Schrank`]] }, { label: `Sp\xFClmaschine`, title: `Sp\xFClmaschine einr\xE4umen`, steps: [[`Essensreste in den M\xFCll`, `M\xFCll`], [`Teller nach unten`, `Teller`], [`Tassen und Gl\xE4ser nach oben`, `Tasse`], [`Besteck in den Korb`, `Besteck`], [`Tab einlegen`, `Sp\xFClmaschinentab`], [`T\xFCr zu`, `Sp\xFClmaschine`], [`Programm starten`, `Knopf`]] }, { label: `W\xE4sche waschen`, title: `W\xE4sche waschen`, steps: [[`W\xE4sche sortieren`, `W\xE4sche`], [`Taschen leeren`, `Hosentasche`], [`W\xE4sche in die Maschine`, `Waschmaschine`], [`Waschmittel dosieren`, `Waschmittel`], [`Programm w\xE4hlen`, `Waschprogramm`], [`Start dr\xFCcken`, `Knopf`], [`W\xE4sche aufh\xE4ngen`, `W\xE4scheleine`]] }];
 var tQe = [[`Obst`, `Apfel
 Banane
@@ -3834,7 +5685,11 @@ winken
 strecken`]];
 var aQe = (e17, t10) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${e17 === `random` ? `<circle cx="50" cy="52" r="40" fill="#ffffff" stroke="#868e96" stroke-width="4" stroke-dasharray="9 7"/><text x="50" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="52" font-weight="700" fill="#495057">?</text>` : pc(e17 === `any` ? `circle` : e17, 50, 52, 40, t10)}</svg>`)}`;
 var yQe = (e17) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">${Om(e17, 60, 60, 54)}</svg>`)}`;
+var f1e = [{ value: `cards`, label: `Karten` }, { value: `list`, label: `Liste` }, { value: `tiles`, label: `Kacheln` }, { value: `buttons`, label: `Kn\xF6pfe` }];
 var s2e = [{ value: `phone`, label: `Telefon` }, ...ed.filter((e17) => [`boss`, `colleague`, `cook`, `builder`, `teacher`, `man`, `woman`, `grandpa`].includes(e17.id)).map((e17) => ({ value: e17.id, label: e17.name }))];
+var CODE_CHOICES = { lesson: pge, read: mge, penMode: LZe, input: kZe, ops: NZe, level: jZe, walls: MZe, speed: PZe, pad: AZe };
+var FIGURE_CHOICES = { hair: Bu, hat: Gu, eyes: Vu, mouth: Hu, beard: Uu, glasses: Wu, top: Ku, pattern: qu, bottom: Ju, feel: ku };
+var FIGURE_COLORS = { skin: Fu, hairColor: Iu, hatColor: Ru, eyeColor: Lu, topColor: Ru, bottomColor: Ru, shoes: zu };
 var TOOLS_CSS = Eee;
 var TOOL_REGISTRY = { "listen": { kind: "listen", field: "listen", draw: toe, label: eoe, config: (raw, media) => pg(raw, media, media), redraw: vg.redraw },
   "tally": { kind: "tally", field: "tally", draw: Us, label: Vs, config: (raw, media) => As(raw, media, media), redraw: Hs.redraw, register: Ps, state: ["counts"] },
@@ -3858,4 +5713,4 @@ var TOOL_REGISTRY = { "listen": { kind: "listen", field: "listen", draw: toe, la
   "traffic": { kind: "traffic", field: "traffic", draw: $ie, label: Cm, config: (raw, media) => $p(raw, media, media), redraw: wm.redraw },
   "vote": { kind: "vote", field: "vote", draw: Pre, label: Nre, config: (raw, media) => _f(raw, media, media), redraw: Cf.redraw, register: kre, state: ["counts"] },
   "week": { kind: "week", field: "week", draw: mie, label: pie, config: (raw, media) => sp(raw, media, media), redraw: pp.redraw } };
-export { toe as renderListen, eoe as listenLabel, pg as listenConfig, yg as resetListen, noe as stopListen, lh as LISTEN_SOUNDS, dg as LISTEN_INSTRUMENTS, yae as playListenSound, Hh as listenSoundPicture, ic as SEEK_SHAPES, ac as SEEK_COLORS, aQe as seekPicture, Sc as PATTERN_RULES, tQe as SPIN_PRESETS, Os as TALLY_COLORS, Ks as SPIN_COLORS, Tm as MOOD_FEELS, yQe as moodPicture, jp as CHECK_PRESETS, WZe as STEPS_PRESETS, gs as STEPS_COLORS, Nne as PRACTICE_PRESETS, s2e as PRACTICE_PARTNERS, hp as STRESS_IDEAS, Up as RATING_PRESETS, Ef as CIRCLE_RINGS, wf as CIRCLE_COLORS, rp as WEEK_DAYS, op as weekStart, Ud as budgetStart, ore as registerBudget, qne as MACHINE_KINDS, Od as machineStart, TOOLS_CSS, TOOL_REGISTRY };
+export { toe as renderListen, eoe as listenLabel, pg as listenConfig, yg as resetListen, noe as stopListen, lh as LISTEN_SOUNDS, dg as LISTEN_INSTRUMENTS, yae as playListenSound, Hh as listenSoundPicture, ic as SEEK_SHAPES, ac as SEEK_COLORS, aQe as seekPicture, Sc as PATTERN_RULES, tQe as SPIN_PRESETS, Os as TALLY_COLORS, Ks as SPIN_COLORS, Tm as MOOD_FEELS, yQe as moodPicture, jp as CHECK_PRESETS, WZe as STEPS_PRESETS, gs as STEPS_COLORS, Nne as PRACTICE_PRESETS, s2e as PRACTICE_PARTNERS, hp as STRESS_IDEAS, Up as RATING_PRESETS, Ef as CIRCLE_RINGS, wf as CIRCLE_COLORS, rp as WEEK_DAYS, op as weekStart, Ud as budgetStart, ore as registerBudget, qne as MACHINE_KINDS, Od as machineStart, Mue as renderBookmarks, Qb as bookmarksLabel, Hb as bookmarksConfig, Nue as tapBookmarks, Pue as BOOKMARKS_CSS, f1e as BOOKMARK_LAYOUTS, zb as BOOKMARK_COLORS, dve as renderCode, fve as codeLabel, QD as codeConfig, CODE_CHOICES, uge as CODE_SIZES, dge as CODE_RANGES, kD as CODE_COSTUMES, Tve as costumePicture, PD as CODE_CARPETS, Eve as carpetPicture, FZe as codeLevelHint, KD as codeWithoutPad, wve as CODE_CSS, One as renderFigure, $u as figureConfig, ld as figureSvg, fd as figureView, lu as FIGURE_PITCHES, FIGURE_CHOICES, FIGURE_COLORS, Mne as FIGURE_CSS, TOOLS_CSS, TOOL_REGISTRY };

@@ -42,6 +42,8 @@ export type Field = When & (
   | { t: 'colors'; key: string; label: string; colors: string[] }
   | { t: 'picture'; key: string; label: string; query?: (d: Draft) => string }
   | { t: 'pick'; key: string; label: string; options: { id: string; label: string; src: string }[]; min?: number; hint?: string }
+  /** One of several pictures (e.g. the figure). */
+  | { t: 'gallery'; key: string; label: string; options: { id: string; label: string; src: string }[] | ((d: Draft) => { id: string; label: string; src: string }[]); hint?: string }
   | { t: 'presets'; label: string; options: { label: string; apply: (d: Draft) => Draft }[] }
   | { t: 'button'; label: string; apply: (d: Draft) => Draft; disabled?: (d: Draft) => boolean }
   | { t: 'note'; text: string | ((d: Draft) => string) }
@@ -231,6 +233,21 @@ export default function ToolForm({ fields, value, onChange, upload, busy }: { fi
               </div>
             );
           }
+          case 'gallery':
+            return (
+              <div key={n} className="receipt-option">
+                <strong>{f.label}</strong>
+                {f.hint && <p className="option-hint">{f.hint}</p>}
+                <div className="listen-picks" role="radiogroup" aria-label={f.label}>
+                  {(typeof f.options === 'function' ? f.options(draft) : f.options).map((o) => (
+                    <button key={o.id} type="button" role="radio" className="listen-pick" aria-checked={draft[f.key] === o.id} onClick={() => set({ [f.key]: o.id })}>
+                      <img src={o.src} alt="" />
+                      <small>{o.label}</small>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
           case 'presets':
             return (
               <div key={n} className="receipt-option">

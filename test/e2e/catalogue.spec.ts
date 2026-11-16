@@ -93,6 +93,18 @@ test('Alle Lernwerkzeuge und Übungen lassen sich im Heft öffnen', async ({
       await expect(page.locator('.interaction-surface .talk-key, .interaction-surface .lh-wg-strip').first()).toBeVisible();
       continue;
     }
+    if (catalogue[i].kind === 'linksammlung') {
+      await expect(page.locator('.interaction-surface .lh-wg-bookmarks')).toHaveAttribute('aria-label', /Linksammlung|Meine Links/);
+      continue;
+    }
+    if (catalogue[i].kind === 'programmieren') {
+      await expect(page.locator('.interaction-surface .lh-wg-code')).toHaveAttribute('aria-label', /^Programmieren/);
+      continue;
+    }
+    if (catalogue[i].kind === 'figur') {
+      await expect(page.locator('.interaction-surface .lh-wg-avatar svg').first()).toBeVisible();
+      continue;
+    }
     if (catalogue[i].kind === 'werkzeug') {
       await expect(page.locator('.interaction-surface [class*="lh-wg-"] .lh-ls svg').first()).toBeVisible();
       continue;

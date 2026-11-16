@@ -59,7 +59,6 @@ test('Abstimmung, Checkliste, Stückzähler und Einschätzung speichern, was ang
     const before = (el?.settings?.werkzeug?.counts as number[] | undefined) ?? [], after = (el?.response?.werkzeug?.state.counts as number[] | undefined) ?? [];
     return [(after[0] ?? 0) - (before[0] ?? 0), (after[1] ?? 0) - (before[1] ?? 0)];
   }).toEqual([2, 1]);
-  await vote.evaluate((el) => el.closest('.page-element')?.remove());
 
   dialog = await openBlock(page, 'Alltag', 'Checkliste');
   await dialog.getByRole('button', { name: 'Barriereanalyse', exact: true }).click();
@@ -162,7 +161,6 @@ test('Nähe und Distanz: Personen in Kreise legen bleibt gespeichert; Wochen- un
   await page.reload();
   await expect(page.locator('.interaction-surface .lh-wg-circles svg')).toContainText('Oma');
   expect(((await stateOf(page, id, 'circles'))?.rings as number[])[0]).toBe(0);
-  await page.locator('.interaction-surface .lh-wg-circles').evaluate((el) => el.closest('.page-element')?.remove());
 
   dialog = await openBlock(page, 'Alltag', 'Wochenplan');
   await dialog.getByRole('tab', { name: 'Mittwoch', exact: true }).click();
@@ -206,13 +204,12 @@ test('Sortieren und Bild-Quiz: fertige Sets mit mitgelieferten Bildern', async (
   await expect(sort.locator('img.lh-ls-pic').first()).toHaveJSProperty('complete', true);
   expect(await sort.locator('img.lh-ls-pic').first().evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
   await sort.locator('svg [data-a^="b:"]').first().click();
-  await sort.evaluate((el) => el.closest('.page-element')?.remove());
 
   dialog = await openBlock(page, 'Beruf & Praktikum', 'Bild-Quiz: Was bedeutet das?');
   await expect(dialog.getByLabel('Frage', { exact: true })).toHaveValue('Was bedeutet das Schild?');
   await expect(dialog.getByRole('img', { name: 'Bild: Karte 1', exact: true })).toHaveAttribute('src', /^\/sortieren\/sign-[\w-]+\.svg$/);
   await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
-  const quiz = page.locator('.interaction-surface .lh-wg-sort');
+  const quiz = page.locator('.interaction-surface .lh-wg-sort').last();
   await expect(quiz.locator('svg [data-a^="a:"]')).toHaveCount(3);
   await page.screenshot({ path: test.info().outputPath('bild-quiz.png') });
   expect(errors).toEqual([]);
@@ -256,5 +253,76 @@ test('Geld-Planer: auf der Heftseite eingetragene Wünsche bleiben gespeichert',
   await expect.poll(async () => ((await stateOf(page, id, 'budget'))?.bud as { wishes?: { text: string; cent: number }[] } | undefined)?.wishes?.find((w) => w.text === 'Zoo')?.cent).toBe(1850);
   await page.reload();
   await expect(page.locator('.interaction-surface .lh-wg-budget svg')).toContainText('Zoo');
+  expect(errors).toEqual([]);
+});
+
+test('Linksammlung und Nachrichten in leichter Sprache: Links öffnen in einem neuen Fenster', async ({ page, context }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await context.route(/^https:\/\/(?!localhost)/, (route) => route.fulfill({ status: 200, body: 'ok' }));
+  await login(page);
+  const id = await fresh(page, 'Links');
+  let dialog = await openBlock(page, 'Medien & Präsentation', 'Nachrichten in leichter Sprache');
+  await expect(dialog.getByLabel('Link 1: Webadresse', { exact: true })).toHaveValue('https://www.nachrichtenleicht.de/');
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(page.locator('.interaction-surface .lh-wg-bookmarks .lh-bm-link').first()).toBeVisible();
+  // The next collection is inserted on the same page; the checks below look at the last one.
+
+  dialog = await openBlock(page, 'Medien & Präsentation', 'Linksammlung');
+  await dialog.getByRole('button', { name: '＋ Link', exact: true }).click();
+  await dialog.getByLabel('Link 5', { exact: true }).fill('Schulseite');
+  await dialog.getByLabel('Link 5: Webadresse', { exact: true }).fill('beispiel-schule.de');
+  await dialog.getByRole('radio', { name: 'Liste', exact: true }).click();
+  await expect(dialog.locator('.tool-preview .lh-bm')).toContainText('Schulseite');
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  const links = page.locator('.interaction-surface .lh-wg-bookmarks').last().locator('.lh-bm-link');
+  await expect(links).toHaveCount(5);
+  const popup = page.waitForEvent('popup');
+  await links.nth(4).click();
+  const opened = await popup;
+  await expect.poll(() => opened.url()).toBe('https://beispiel-schule.de/');
+  await expect(page.getByText('✓ Gespeichert', { exact: true })).toBeVisible();
+  const saved = (await elements(page, id)).filter((e) => e.widgetKind === 'linksammlung').pop()?.settings as { bm: { layout: string; links: { url: string }[] } };
+  expect(saved.bm.layout).toBe('list');
+  expect(saved.bm.links[4].url).toBe('https://beispiel-schule.de/');
+  expect(errors).toEqual([]);
+});
+
+test('Programmieren, Figur und Gefühle-Karten', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  const id = await fresh(page, 'Programmieren und Figuren');
+  let dialog = await openBlock(page, 'Programmieren', 'Zum Ziel: Pfeilkarten legen');
+  await expect(dialog.locator('.tool-preview .lh-wg-code svg').first()).toBeVisible();
+  await dialog.getByRole('radio', { name: 'Wörter abfahren', exact: true }).click();
+  await expect(dialog.getByLabel('Wörter', { exact: true })).toBeVisible();
+  await dialog.getByRole('radio', { name: '7 × 7', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  const code = page.locator('.interaction-surface .lh-wg-code');
+  await expect(code.locator('svg').first()).toBeVisible();
+  await code.locator('[data-a^="add:"]').first().click();
+  await code.locator('[data-a="go"]').first().click();
+  await page.screenshot({ path: test.info().outputPath('programmieren.png') });
+
+  dialog = await openBlock(page, 'Für alle Fächer', 'Figur');
+  await dialog.getByRole('radio', { name: 'Erwachsen', exact: true }).click();
+  await dialog.getByLabel('Name', { exact: true }).fill('Herr Ober');
+  await dialog.getByLabel('Das sagt die Figur beim Antippen', { exact: true }).fill('Guten Tag!');
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(page.locator('.interaction-surface .lh-wg-avatar svg').first()).toBeVisible();
+
+  dialog = await openBlock(page, 'Klassenführung', 'Gefühle-Karten');
+  await expect(dialog).toHaveCount(0);
+  await page.getByLabel('Seite 2 öffnen', { exact: true }).click();
+  await expect(page.locator('.interaction-surface .lh-wg-avatar')).toHaveCount(6);
+  await expect(page.locator('.interaction-surface')).toContainText('fröhlich');
+  await page.screenshot({ path: test.info().outputPath('gefuehle.png') });
+  await expect(page.getByText('✓ Gespeichert', { exact: true })).toBeVisible();
+  const figure = (await elements(page, id)).find((e) => e.widgetKind === 'figur' && (e.settings as { av?: { name?: string } }).av?.name === 'Herr Ober')?.settings as { av: { child: boolean }; say: { text: string } };
+  expect(figure.av.child).toBe(false);
+  expect(figure.say.text).toBe('Guten Tag!');
+  const coding = (await elements(page, id)).find((e) => e.widgetKind === 'programmieren')?.settings as { pg: { lesson: string; size: number } };
+  expect(coding.pg).toMatchObject({ lesson: 'word', size: 7 });
   expect(errors).toEqual([]);
 });

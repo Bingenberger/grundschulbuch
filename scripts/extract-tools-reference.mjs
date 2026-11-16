@@ -162,24 +162,75 @@ Object.assign(aliases, {
   [pick('machine start', machineText, /let a11 = ([\w$]+)\(e18\);/)]: 'machineStart',
 });
 
+// Linksammlung (also “Nachrichten in leichter Sprache”): a widget of its own,
+// drawn as HTML; a tap on a link opens it in a new window (the host checks
+// first whether links to the internet are allowed).
+const bmDraw = pick('bookmarks render', code, /case `bookmarks`:\s*([\w$]+)\(e17, t10, n10, r10\);/);
+const bmDialog = fns.get(find('bookmarks dialog', t => t.startsWith('function') && t.includes('Lernpfad: der Reihe nach')));
+Object.assign(aliases, {
+  [bmDraw]: 'renderBookmarks',
+  [pick('bookmarks label', code, /case `bookmarks`:\s*return ([\w$]+)\(e17\);/)]: 'bookmarksLabel',
+  [pick('bookmarks config', fns.get(bmDraw), /t10\.bm \? ([\w$]+)\(t10\.bm/)]: 'bookmarksConfig',
+  [find('bookmarks tap', t => t.startsWith('function') && t.includes('[data-a="reset"]') && t.includes('.links[a10]') && t.includes('window.open('))]: 'tapBookmarks',
+  [find('bookmarks styles', t => t.startsWith('`\n.lh-bm{'))]: 'BOOKMARKS_CSS',
+  [pick('bookmark layouts', bmDialog, /options: ([\w$]+), onChange: \w+ \}\), z\(`h3`, \{ children: `Farbe` \}\)/)]: 'BOOKMARK_LAYOUTS',
+  [pick('bookmark colours', bmDialog, /children: ([\w$]+)\.map\(\(e18\) => z\(`button`, \{ type: `button`, role: `radio`, "aria-checked": \w+ === e18, "aria-label": e18, class: `bmd-color/)]: 'BOOKMARK_COLORS',
+});
+
+// Programmieren: the coding widget (its own host, drawn into the element), its
+// settings and the choices of its dialog.
+const codeDraw = pick('coding render', code, /case `code`:\s*([\w$]+)\(e17, t10, n10, r10\);/);
+const codeDialog = fns.get(find('coding dialog', t => t.startsWith('function') && t.includes('label: `Lektion`') && t.includes('Aufgaben nacheinander')));
+const codeChoices = [...codeDialog.matchAll(/value: t10\.(\w+), options: ([\w$]+), onChange/g)].map(([, key, list]) => `${key}: ${list}`);
+codeChoices.push(`pad: ${pick('pad choices', codeDialog, /options: t10\.lesson === `music` \? ([\w$]+)\.slice\(0, 1\)/)}`);
+code += `\nvar CODE_CHOICES = { ${codeChoices.join(', ')} };\n`;
+Object.assign(aliases, {
+  [codeDraw]: 'renderCode',
+  [pick('coding label', code, /case `code`:\s*return ([\w$]+)\(e17\);/)]: 'codeLabel',
+  [pick('coding config', fns.get(codeDraw), /let i10 = ([\w$]+)\(t10\.pg\)/)]: 'codeConfig',
+  CODE_CHOICES: 'CODE_CHOICES',
+  [pick('carpet sizes', codeDialog, /options: ([\w$]+)\.map\(\(e18\) => \(\{ value: e18, label: `\$\{e18\} \\xD7 \$\{e18\}` \}\)\)/)]: 'CODE_SIZES',
+  [pick('number ranges', codeDialog, /options: ([\w$]+)\.map\(\(e18\) => \(\{ value: e18, label: `bis \$\{e18\}` \}\)\)/)]: 'CODE_RANGES',
+  [pick('costumes', codeDialog, /options: ([\w$]+)\.map\(\(e18\) => \(\{ value: e18\.id, label: e18\.nom/)]: 'CODE_COSTUMES',
+  [pick('costume pictures', codeDialog, /svg: ([\w$]+)\(e18\.id\) \}\)\), onChange: \(e18\) => \w+\(\{ costume/)]: 'costumePicture',
+  [pick('carpets', codeDialog, /options: ([\w$]+)\.map\(\(e18\) => \(\{ value: e18\.id, label: e18\.label, svg/)]: 'CODE_CARPETS',
+  [pick('carpet pictures', codeDialog, /svg: ([\w$]+)\(e18\.id\) \}\)\), onChange: \(e18\) => \w+\(\{ mat/)]: 'carpetPicture',
+  [pick('level hint', codeDialog, /label: `Schwierigkeit`, hint: ([\w$]+)\(t10\)/)]: 'codeLevelHint',
+  [pick('free lessons', codeDialog, /!([\w$]+)\(t10\.lesson\)/)]: 'codeWithoutPad',
+  [find('coding styles', t => t.startsWith('`') && t.includes('.lh-wg-code .lh-pg-card.is-run'))]: 'CODE_CSS',
+});
+
+// Figuren (Gefühle-Karten): the figure widget, its drawing for the editor
+// (a picture per choice) and the choices of the figure editor.
+const avatarDraw = pick('figure render', code, /case `avatar`:\s*([\w$]+)\(e17, t10, n10, r10\);/);
+const figureDialog = fns.get(find('figure dialog', t => t.startsWith('function') && t.includes('label: `Kopfbedeckung`') && t.includes('label: `Hautfarbe`')));
+const figureChoices = [...figureDialog.matchAll(/value: t10\.(\w+), options: ([\w$]+), look/g)].map(([, key, list]) => `${key}: ${list}`);
+const figureColors = [...new Set([...figureDialog.matchAll(/colors: ([\w$]+), value: t10\.(\w+)/g)].map(([, list, key]) => `${key}: ${list}`))];
+const figureFeelings = pick('figure feelings', figureDialog, /\.\.\.([\w$]+)\.map\(\(e18\) => \(\{ id: e18\.id, label: e18\.label \}\)\)\], look/);
+const figureChoice = fns.get(find('figure choice', t => t.startsWith('function') && t.includes('avd-pics') && t.includes('e17.part')));
+const sayEditor = fns.get(find('say editor', t => t.startsWith('function') && t.includes('pitch, options:') && t.includes('say-row')));
+code += `\nvar FIGURE_CHOICES = { ${figureChoices.join(', ')}, feel: ${figureFeelings} };\nvar FIGURE_COLORS = { ${figureColors.join(', ')} };\n`;
+Object.assign(aliases, {
+  [avatarDraw]: 'renderFigure',
+  [pick('figure config', fns.get(find('figure editor start', t => t.startsWith('async function') && t.includes('(e17.av)') && t.includes('say: ') && t.includes('move: e17.move'))), /old: ([\w$]+)\(e17\.av\)/)]: 'figureConfig',
+  [pick('figure picture', figureChoice, /__html: ([\w$]+)\(n10, \{\}, \{ view: [\w$]+\(n10, e17\.part\) \}\)/)]: 'figureSvg',
+  [pick('figure part view', figureChoice, /view: ([\w$]+)\(n10, e17\.part\)/)]: 'figureView',
+  [pick('voice pitches', sayEditor, /pitch, options: ([\w$]+)\.map/)]: 'FIGURE_PITCHES',
+  FIGURE_CHOICES: 'FIGURE_CHOICES', FIGURE_COLORS: 'FIGURE_COLORS',
+  [find('figure styles', t => t.startsWith('`\n.lh-av{position:absolute;inset:0}'))]: 'FIGURE_CSS',
+});
+
 const toolCss = find('tool styles', t => t.startsWith('`\n.lh-ls{position:absolute;inset:0;overflow:hidden}'));
 
-// The catalogue entries of these tools: their pages are the presets.
+// The catalogue of the reference (all entries); those with a page of these tools are the presets.
+const catalogName = [...inits.entries()].find(([, t]) => t.startsWith('[') && t.includes('id: `labels`') && t.includes('id: `math`'))?.[0];
+if (!catalogName) throw Error('Catalogue of the reference not found.');
 const kinds = new Set(Object.values(TOOLS));
-const entries = [];
-(function walk(node) {
-  if (ts.isObjectLiteralExpression(node)) {
-    const prop = (name) => node.properties.find(p => ts.isPropertyAssignment(p) && p.name.getText(file) === name);
-    const items = prop('items')?.initializer.getText(file) ?? '';
-    if (prop('id') && prop('group') && [...kinds].some(k => items.includes(`kind: \`${k}\``))) entries.push(node.getText(file));
-  }
-  ts.forEachChild(node, walk);
-})(file);
 
 code += `
 var TOOLS_CSS = ${toolCss};
 var TOOL_REGISTRY = { ${registry.join(',\n  ')} };
-var TOOL_CATALOG = [${entries.join(',\n')}];
+var TOOL_CATALOG = ${catalogName};
 `;
 Object.assign(aliases, { TOOLS_CSS: 'TOOLS_CSS', TOOL_REGISTRY: 'TOOL_REGISTRY' });
 
@@ -214,7 +265,7 @@ function extract(roots) {
 }
 
 let runtime = extract(Object.keys(aliases));
-if (/https?:\/\//.test(runtime.replace(/http:\/\/www\.w3\.org\/[\w/]+/g, ''))) throw Error('The tools would reach an outside address.');
+{ const outside = runtime.replace(/http:\/\/www\.w3\.org\/[\w/]+/g, '').replaceAll('`https://${t10}`', '') /* completing a typed address, no request */.match(/.{0,60}https?:\/\/.{0,60}/g); if (outside) { console.error(outside.join('\n')); throw Error('The tools would reach an outside address.'); } }
 const pages = runtime.match(/\.closest\(`\.lh-page`\)/g)?.length ?? 0;
 runtime = runtime.replaceAll('.closest(`.lh-page`)', '.closest(`.lh-page, .interaction-surface, .paper`)');
 for (const [from, to] of Object.entries({ 'LH Andika': 'Andika', 'LH Nunito': 'Nunito', 'LH Grundschrift': 'Playwrite DE Grund', 'LH Schreibschrift SAS': 'Playwrite DE SAS', 'LH Schreibschrift': 'Playwrite DE VA', 'LH Druckschrift': 'Andika', 'LH Lexend': 'Lexend', 'LH Atkinson Hyperlegible': 'Atkinson Hyperlegible', 'LH Merriweather': 'Merriweather', 'LH Caveat': 'Caveat', 'LH Comic': 'Bangers' })) runtime = runtime.replaceAll(from, to);
@@ -229,7 +280,13 @@ export { ${Object.entries(aliases).map(([a, b]) => a === b ? a : a + ' as ' + b)
 // Presets: the catalogue entries with their items (as the reference creates them).
 const catalogCode = extract(['TOOL_CATALOG']);
 const { TOOL_CATALOG } = await import('data:text/javascript;base64,' + Buffer.from(catalogCode + '\nexport { TOOL_CATALOG };').toString('base64'));
-const presets = TOOL_CATALOG.map(meta => ({ id: meta.id, title: meta.label, group: meta.group, items: meta.items().map(item => { const copy = { ...item }; delete copy.id; return copy; }) }));
+const presets = TOOL_CATALOG.flatMap(meta => {
+  if (typeof meta.items !== 'function') return [];
+  let items;
+  try { items = meta.items(); } catch { return []; }
+  if (!items.some(item => item.type === 'widget' && (kinds.has(item.kind) || item.kind === 'bookmarks' || item.kind === 'code' || item.kind === 'avatar'))) return [];
+  return [{ id: meta.id, title: meta.label, group: meta.group, items: items.map(item => { const copy = { ...item }; delete copy.id; return copy; }) }];
+});
 await fs.writeFile('src/lib/learning/werkzeug-presets.json', JSON.stringify(presets, null, 1) + '\n');
 console.log('Tools reference:', runtime.length, 'bytes;', Object.keys(TOOLS).length, 'tools;', presets.length, 'presets;', pages, 'page lookups;', [...savers.keys()].length, 'savers found');
 

@@ -5307,3 +5307,4 @@ input[type='checkbox'] {
 @media (max-width: 760px) { .tool-options .tool-row { grid-template-columns: 48px 1fr; } .tool-options .tool-row > .learning-actions { grid-column: 1 / -1; justify-content: flex-start; } }
 .receipt-options.tool-options { max-width: 920px; }
 .tool-options .tool-row > .learning-actions .knopf.compact { padding-inline: 8px; }
+.tool-preview.figure-preview { aspect-ratio: auto; height: 220px; display: flex; justify-content: center; } .figure-preview img { height: 100%; }

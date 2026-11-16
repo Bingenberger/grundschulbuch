@@ -132,20 +132,36 @@ gespeichert. Füllen die Kinder den Geld-Planer auf der Seite aus, speichert
 die Vorlage den ganzen Plan; bei uns ist das die Antwort des Elements. Bilder
 dazu kommen aus unserer Bildsuche und liegen auf dem Schulserver.
 
+## Sechste Ausbaustufe: Programmieren, Linksammlung, Figuren
+
+80 der 89 Einträge sind integriert.
+
+- **Programmieren** (neues Fach wie in der Vorlage, 20 Bausteine): ein
+  Bodenroboter auf einem Teppich, gesteuert mit Pfeilkarten oder Tasten;
+  Lektionen Zum Ziel, Wörter abfahren, Rechnen und fahren, Zahlen der Reihe
+  nach, Sterne sammeln, Programme lesen (Wo kommt die Figur an?, Fehler
+  finden, Was fehlt?), Schleifen, Stift, Musik, Bedingungen, Achtung Katze!,
+  Punkte zählen, Pfeile programmieren. Der Dialog bietet alle Einstellungen der
+  Vorlage mit spielbarer Vorschau, Figur und Teppich als Bilder; eigene
+  Aufgaben auf dem Teppich zu zeichnen bietet er noch nicht.
+- **Linksammlung** und **Nachrichten in leichter Sprache** (Medien &
+  Präsentation): Karten, Liste, Kacheln oder Knöpfe, Farbe, Lernpfad. Links
+  öffnen in einem neuen Fenster, bei Kindern nur mit eingeschaltetem
+  „Internet“. Titel und Bild einer Seite holt die Vorlage selbst aus dem Netz;
+  das entfällt hier, sie werden eingetragen bzw. gesucht.
+- **Figur** (Für alle Fächer) und **Gefühle-Karten** (Klassenführung): der
+  Figuren-Editor der Vorlage mit einem Bild der Figur je Auswahl (Kind oder
+  Erwachsen, Haut, Haare, Kopfbedeckung, Gefühl, Augen, Mund, Bart, Brille,
+  Kleidung, Schuhe) und dem Satz, den sie beim Antippen sagt; die Bewegungen
+  des Editors fehlen noch.
+- **Praktikumsmappe: Einschätzung** (Beruf & Praktikum) als Voreinstellung der
+  Selbst- und Fremdeinschätzung.
+
 ## Noch offene Übernahmen
 
-33 neue Katalogeinträge sind noch offen: Programmieren (21), „Laute hören“,
-KI-Partner bauen (zurückgestellt), Nachrichten in leichter Sprache,
-Linksammlung, Figuren, Puppentheater, Erklärbär und weitere einzelne Einträge. Dazu gehören insbesondere:
-
-- „Laute hören“ (einstellbares Arbeitsblatt, gehört zu Vorlagen › Einstellbar);
-- Programmieren sowie die interaktiven Werkzeuge für Alltag und Beruf;
-- Gefühle-Karten und die interaktive Praktikumseinschätzung;
-- die vollständige Zusammenstellung der Praktikumsmappe;
-- Puppentheater, Erklärbär, Medien und KI.
-
-Zusätzlich bleiben die gemeinsamen Erweiterungen des Bildquellenablaufs, der
-Übungseditoren und des PDF-Arbeitsblattexports eigenständige Arbeitspakete.
+Noch offen sind „Laute hören“, Karopapier-Aufgaben, Rechnen im Alltag und
+Programmieren: Arbeitsblatt (einstellbare Arbeitsblätter), Etiketten,
+Puppentheater und Erklärbär; KI-Partner bauen ist zurückgestellt.
 
 ## Prüfung
 

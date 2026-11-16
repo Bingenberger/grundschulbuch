@@ -127,11 +127,16 @@ export function toolSettings(tool: ToolId, config: unknown, title: string): Lear
 }
 
 /** The tools of a preset page (undefined: a tool not taken over yet). */
-export const presetTools = (preset: ToolPreset) => preset.items.filter((i) => i.type === 'widget').map((i) => toolOfKind(i.kind));
+export const presetTools = (preset: ToolPreset) => preset.items.filter((i) => i.type === 'widget' && !['avatar', 'bookmarks', 'code'].includes(String(i.kind))).map((i) => toolOfKind(i.kind));
 /** The elements of a preset page (the reference's items in mm; texts and read-aloud keys as in the page designs). */
 export function presetElements(preset: ToolPreset): PageElement[] {
   return preset.items.flatMap((item) => {
     if (item.type !== 'widget') return [referenceElement(item, MM)];
+    const box = { id: uuid(), type: 'widget' as const, x: mm(item.x), y: mm(item.y), width: mm(item.w), height: mm(item.h), rotation: 0, locked: false, color: '#253c42' };
+    // Widgets of the reference that are kinds of their own here.
+    if (item.kind === 'avatar') return [{ ...box, widgetKind: 'figur', settings: { title: 'Figur', av: item.av, ...(item.say ? { say: item.say } : {}) } } as PageElement];
+    if (item.kind === 'bookmarks') return [{ ...box, widgetKind: 'linksammlung', settings: { title: 'Linksammlung', bm: item.bm } } as PageElement];
+    if (item.kind === 'code') return [{ ...box, widgetKind: 'programmieren', settings: { title: 'Programmieren', pg: item.pg } } as PageElement];
     const tool = toolOfKind(item.kind);
     if (!tool) return [];
     const field = REGISTRY[tool].field;
