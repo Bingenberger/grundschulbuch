@@ -33,12 +33,22 @@ Vorlagenregister anhand ihrer Struktur, prüft die ausgewählten Kennungen und
 bricht bei unbekannten Elementtypen ab. Die vollständigen eingebetteten Editoren
 werden nicht versehentlich als Hauptprogramm gelesen.
 
+## Zweite Ausbaustufe: Kommunikationsbuch
+
+Die sechs neuen Themen-Tafeln sind integriert (24 der 89 Einträge): Arbeit und
+Praktikum, Werkzeuge, Wohnen und Haushalt, Beim Arzt, Kochen und
+Gesprächsrunde. Sie stehen unter Lernwerkzeuge › Unterstützte Kommunikation und
+im Kommunikationsbuch, dessen Startseite nun alle 16 Tafeln im Raster 4 × 4
+zeigt. `scripts/extract-class-reference.mjs` übernimmt Tafelliste, Buchsymbole
+und Buch-Raster aus `Lernsachen-Heft-komplett.html`; Tasten, Satzleiste und
+Layout sind in beiden Versionen gleich. Die Bildersammlung wächst von 121 auf
+190 ARASAAC-Bilder; die bisherigen sind bytegleich.
+
 ## Noch offene Übernahmen
 
-71 neue Katalogeinträge sind noch offen. Dazu gehören insbesondere:
+65 neue Katalogeinträge sind noch offen. Dazu gehören insbesondere:
 
 - die neuen Hörwerkzeuge und „Laute hören“;
-- sechs zusätzliche Kommunikationstafeln;
 - Programmieren sowie die interaktiven Werkzeuge für Alltag und Beruf;
 - Gefühle-Karten und die interaktive Praktikumseinschätzung;
 - die vollständige Zusammenstellung der Praktikumsmappe;

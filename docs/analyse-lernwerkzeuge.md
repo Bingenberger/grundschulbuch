@@ -444,10 +444,13 @@ nimmt das letzte Wort zurück oder leert alles. Einzeln einfügbar: Sprechtaste
 (Einstellungen `TalkOptions.tsx`: Wort, Satz, Farbe, Bild über ARASAAC oder
 eigenes, eigene Aufnahme, ohne Wort, Zurück-Taste; Verknüpfung mit „Link“),
 Satzleiste, Zurück-Taste. Tafeln mit 2–20 Feldern, Satzleiste + 15 Felder, die
-zehn Themen-Tafeln und das Kommunikationsbuch (Startseite mit einer Taste je
+16 Themen-Tafeln und das Kommunikationsbuch (Startseite mit einer Taste je
 Tafel, jede Tafel mit Zurück-Taste) entstehen als Seiten aus solchen Tasten, mit
-dem Layout der Vorlage (`lib/learning/uk.ts`); die 121 ARASAAC-Bilder liegen in
-`public/uk/`. Damit die Links der Buchseiten gültig bleiben, behält der Server
+dem Layout der Vorlage (`lib/learning/uk.ts`); die 190 ARASAAC-Bilder liegen in
+`public/uk/`. Seit 16.11.2026 kommen Tafeln, Buch-Raster und Bilder aus
+Lernsachen-Heft 1.47.3: sechs weitere Tafeln (Arbeit und Praktikum, Werkzeuge,
+Wohnen und Haushalt, Beim Arzt, Kochen, Gesprächsrunde), Startseite des Buchs
+4 × 4 statt 5 × 2. Damit die Links der Buchseiten gültig bleiben, behält der Server
 beim Einfügen eine mitgeschickte freie Seiten-ID. Die frühere eigene
 Kommunikationstafel ist nicht mehr auswählbar; vorhandene Seiten damit
 funktionieren weiter.

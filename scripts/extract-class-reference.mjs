@@ -141,10 +141,41 @@ const omit = runtime.match(/credentials: `omit`/g)?.length ?? 0;
 if (omit !== 2) throw Error('Expected two outside requests, found ' + omit);
 runtime = runtime.replaceAll('credentials: `omit`', 'credentials: `same-origin`');
 if (/https:\/\/[a-z-]*\.?open-meteo\.com\/v1/.test(runtime)) throw Error('A direct weather request is left.');
+// Lernsachen-Heft 1.47.3 (Lernsachen-Heft-komplett.html) has six more theme
+// boards (Arbeit und Praktikum, Werkzeuge, Wohnen und Haushalt, Beim Arzt,
+// Kochen, Gesprächsrunde) and lays out the communication book for all boards
+// (4 × 4 instead of 5 × 2). The keys, the strip and the layout are unchanged,
+// so only the board list, the book icons and the book grid come from there.
+const htmlNew = await fs.readFile('Lernsachen-Heft-komplett.html', 'utf8');
+const mainNew = [...htmlNew.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map(m => m[1]).find(s => s.includes('talk-arbeit') && s.includes('talk-book'));
+if (!mainNew) throw Error('Main module of Lernsachen-Heft-komplett.html not found.');
+const codeNew = transformSync(mainNew, { loader: 'js', minify: false }).code;
+const fileNew = ts.createSourceFile('reference-new.js', codeNew, ts.ScriptTarget.Latest, true);
+const initNew = {}, fnNew = {};
+for (const statement of fileNew.statements) {
+  if (ts.isVariableStatement(statement)) for (const d of statement.declarationList.declarations) if (ts.isIdentifier(d.name) && d.initializer) initNew[d.name.text] = d.initializer.getText(fileNew);
+  if (ts.isFunctionDeclaration(statement) && statement.name) fnNew[statement.name.text] = statement.getText(fileNew);
+}
+const boardsName = Object.keys(initNew).find(n => initNew[n].startsWith('[{ id: `talk-basis`') && initNew[n].includes('`talk-runde`'));
+const iconsName = Object.keys(initNew).find(n => initNew[n].startsWith('{ "talk-basis":') && initNew[n].includes('"talk-runde"'));
+const gridName = Object.keys(fnNew).find(n => fnNew[n].includes(`${boardsName}.length`) && fnNew[n].includes('[6, 5, 4]'));
+if (!boardsName || !iconsName || !gridName) throw Error('Talk boards of 1.47.3 not as expected.');
+const replaceInit = (name, value) => {
+  const file = ts.createSourceFile('runtime.js', runtime, ts.ScriptTarget.Latest, true);
+  for (const statement of file.statements) if (ts.isVariableStatement(statement)) for (const d of statement.declarationList.declarations)
+    if (ts.isIdentifier(d.name) && d.name.text === name && d.initializer) { runtime = runtime.slice(0, d.initializer.getStart(file)) + value + runtime.slice(d.initializer.getEnd()); return; }
+  throw Error('Declaration not found: ' + name);
+};
+replaceInit('kk', initNew[boardsName]);
+replaceInit('pue', initNew[iconsName]);
+runtime += '\n' + fnNew[gridName].replace(new RegExp(`^function ${gridName.replace('$', '\\$')}\\(`), 'function talkBookGrid(').replaceAll(`${boardsName}.`, 'kk.') + '\n';
+aliases.talkBookGrid = 'talkBookGrid';
+
 for (const [from, to] of Object.entries({ 'LH Andika': 'Andika', 'LH Nunito': 'Nunito', 'LH Grundschrift': 'Playwrite DE Grund', 'LH Schreibschrift SAS': 'Playwrite DE SAS', 'LH Schreibschrift': 'Playwrite DE VA', 'LH Druckschrift': 'Andika', 'LH Lexend': 'Lexend', 'LH Atkinson Hyperlegible': 'Atkinson Hyperlegible', 'LH Merriweather': 'Merriweather', 'LH Caveat': 'Caveat', 'LH Comic': 'Bangers' })) runtime = runtime.replaceAll(from, to);
 await fs.writeFile('src/lib/reference/class-runtime.ts', `/* eslint-disable */
 // @ts-nocheck
-// Generated from Lernsachen-Heft.html by scripts/extract-class-reference.mjs:
+// Generated from Lernsachen-Heft.html (talk boards from Lernsachen-Heft-komplett.html, 1.47.3)
+// by scripts/extract-class-reference.mjs:
 // Uhr, Timer, Datum (Regal › Zeit) and the Multi-Timer of the reference,
 // unchanged except that the weather is asked through /api/wetter.
 ${runtime}
@@ -182,7 +213,8 @@ await fs.writeFile('src/lib/reference/calendar-pictures.json', JSON.stringify(si
 console.log('Calendar pictures:', Object.keys(sizes).length);
 
 // The pictures of the communication boards (pack “talk-pictos”: ARASAAC id → WebP).
-const talk = html.match(/<script type="text\/plain" id="lh-pack-talk-pictos">([^<]*)<\/script>/);
+// From 1.47.3: 190 pictures; the 121 of the older file are byte-identical.
+const talk = htmlNew.match(/<script type="text\/plain" id="lh-pack-talk-pictos">([^<]*)<\/script>/);
 if (!talk) throw Error('Picture pack talk-pictos not found.');
 await fs.mkdir('public/uk', { recursive: true });
 let talkPictures = 0;

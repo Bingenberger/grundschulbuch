@@ -5,7 +5,7 @@
 // pages of single keys, laid out by the reference (reference/class-runtime.ts);
 // the ARASAAC pictures of the boards ship with the app (/uk/<id>.webp).
 import { newPage, uuid, type Page, type PageElement } from '../notebook-model';
-import { bookCells, TALK_BOARDS, TALK_GRIDS, talkLayout, WORD_CLASSES } from '../reference/class-runtime';
+import { bookCells, TALK_BOARDS, TALK_GRIDS, talkBookGrid, talkLayout, WORD_CLASSES } from '../reference/class-runtime';
 
 export type TalkConfig = {
   label: string;
@@ -96,9 +96,11 @@ export function relink(pages: Page[], from: string, to: string): Page[] {
   }));
 }
 
-/** The communication book: a first page with a key per board, each board with a back key (cye of the reference). */
+/** The communication book: a first page with a key per board, each board with a back key (cye of the reference).
+ *  The first page is laid out for all boards (4 × 4 for the 16 boards of 1.47.3). */
 export function bookPages(): Page[] {
-  const index = boardPage(5, 2, true, bookCells() as Cell[], 'Kommunikationsbuch');
+  const [cols, rows] = talkBookGrid() as [number, number];
+  const index = boardPage(cols, rows, true, bookCells() as Cell[], 'Kommunikationsbuch');
   const boards = BOARDS.map((b) => boardPage(b.cols, b.rows, true, b.cells, b.label, true));
   const keys = index.elements.filter((e) => e.widgetKind === 'sprechtaste');
   keys.forEach((e, i) => { if (boards[i]) (e.settings!.talk as unknown as TalkConfig).link = boards[i].id; });

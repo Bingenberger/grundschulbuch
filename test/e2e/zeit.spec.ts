@@ -189,12 +189,21 @@ test('Unterstützte Kommunikation: Tafel mit Satzleiste und Kommunikationsbuch m
   await open('Kommunikationsbuch mit allen Tafeln');
   // The book comes after the board: its first page has a key for each board.
   await page.getByLabel('Seite 2 öffnen', { exact: true }).click();
-  await expect(surface.locator('.lh-talk.is-folder')).toHaveCount(10);
+  // 16 boards since Lernsachen-Heft 1.47.3, laid out 4 × 4.
+  await expect(surface.locator('.lh-talk.is-folder')).toHaveCount(16);
   await surface.locator('.lh-talk.is-folder').filter({ hasText: 'Gefühle' }).locator('.lh-talk-card').click();
   await expect(surface.locator('.lh-talk-card').filter({ hasText: 'zurück' })).toHaveCount(1, { timeout: 10000 });
   await page.screenshot({ path: test.info().outputPath('uk-gefuehle.png') });
   await surface.locator('.lh-talk-card').filter({ hasText: 'zurück' }).click();
-  await expect(surface.locator('.lh-talk.is-folder')).toHaveCount(10, { timeout: 10000 });
+  await expect(surface.locator('.lh-talk.is-folder')).toHaveCount(16, { timeout: 10000 });
+  // One of the six boards of 1.47.3: Beim Arzt, with its pictures shipped in /uk.
+  await surface.locator('.lh-talk.is-folder').filter({ hasText: 'Arzt' }).locator('.lh-talk-card').click();
+  await expect(surface.getByRole('button', { name: 'Ich habe Kopfschmerzen.', exact: true })).toBeVisible({ timeout: 10000 });
+  const picture = surface.locator('.lh-talk-card').filter({ hasText: 'Kopfschmerzen' }).locator('img');
+  await expect(picture).toHaveJSProperty('complete', true);
+  expect(await picture.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+  await surface.locator('.lh-talk-card').filter({ hasText: 'zurück' }).click();
+  await expect(surface.locator('.lh-talk.is-folder')).toHaveCount(16, { timeout: 10000 });
   expect(errors).toEqual([]);
 });
 
