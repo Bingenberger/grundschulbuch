@@ -370,7 +370,7 @@ export function widgetSettings(value) {
   if (result.syllablePrompt !== undefined) check('words', words => words.length <= 30 && words.every(word => typeof word === 'string' && word.length <= 80 && word.split('-').filter(Boolean).length <= 12));
 
   // Werkzeuge of Lernsachen-Heft 1.47.3 (lib/learning/werkzeuge.ts).
-  check('tool', (v) => ['tally', 'spin', 'seek', 'pattern', 'mood', 'vote', 'rating', 'check', 'stress', 'steps', 'traffic', 'pieces', 'body', 'timeline', 'phone', 'practice', 'circles', 'week', 'sort'].includes(v));
+  check('tool', (v) => ['tally', 'spin', 'seek', 'pattern', 'mood', 'vote', 'rating', 'check', 'stress', 'steps', 'traffic', 'pieces', 'body', 'timeline', 'phone', 'practice', 'circles', 'week', 'sort', 'budget', 'machine'].includes(v));
   check('letterGuessLives', Number.isInteger);
   array('letterGuessItems', value => value && typeof value.word === 'string' && value.word.length <= 80 && optional(value, 'image', string) && optional(value, 'audio', string), 20);
   if (result.letterGuessLives !== undefined) check('words', words => words.length <= 20 && words.every(word => typeof word === 'string' && (!word.trim() || word.normalize('NFC').replace(/-/g, '').trim().length <= 40 && /[a-zäöüßẞ]/i.test(word.normalize('NFC').replace(/-/g, '')) && /^[a-zäöüßẞ '’]+$/i.test(word.normalize('NFC').replace(/-/g, '').trim()))));

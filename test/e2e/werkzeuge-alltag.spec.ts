@@ -217,3 +217,24 @@ test('Sortieren und Bild-Quiz: fertige Sets mit mitgelieferten Bildern', async (
   await page.screenshot({ path: test.info().outputPath('bild-quiz.png') });
   expect(errors).toEqual([]);
 });
+
+test('Geld-Planer und Automat: Beträge in Euro', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  const id = await fresh(page, 'Geld');
+  let dialog = await openBlock(page, 'Alltag', 'Geld-Planer: Mein Monat');
+  await dialog.getByLabel('Wunsch 1: Betrag in Euro', { exact: true }).fill('15,50');
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(page.locator('.interaction-surface .lh-wg-budget')).toHaveCount(1);
+  dialog = await openBlock(page, 'Alltag', 'Fahrkartenautomat üben');
+  await dialog.getByRole('radio', { name: 'Getränkeautomat', exact: true }).click();
+  await expect(dialog.getByLabel('Eintrag 1', { exact: true })).toHaveValue('Wasser');
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(page.locator('.interaction-surface .lh-wg-machine')).toHaveCount(1);
+  await expect(page.getByText('✓ Gespeichert', { exact: true })).toBeVisible();
+  const els = await elements(page, id);
+  expect((els.find((e) => e.settings?.tool === 'budget')?.settings?.werkzeug?.wishes as { cent: number }[])[0].cent).toBe(1550);
+  expect(els.find((e) => e.settings?.tool === 'machine')?.settings?.werkzeug).toMatchObject({ kind: 'drinks', title: 'Getränkeautomat' });
+  expect(errors).toEqual([]);
+});

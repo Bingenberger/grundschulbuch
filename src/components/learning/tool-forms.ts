@@ -3,7 +3,7 @@
 // reference's dialogs.
 import { SORT_COLORS, SORT_SETS, type ToolId } from '@/lib/learning/werkzeuge';
 import {
-  CHECK_PRESETS, CIRCLE_COLORS, CIRCLE_RINGS, MOOD_FEELS, WEEK_DAYS, weekStart, moodPicture, PRACTICE_PARTNERS, PRACTICE_PRESETS, RATING_PRESETS, STEPS_PRESETS, STEPS_COLORS, STRESS_IDEAS,
+  budgetStart, CHECK_PRESETS, CIRCLE_COLORS, MACHINE_KINDS, machineStart, CIRCLE_RINGS, MOOD_FEELS, WEEK_DAYS, weekStart, moodPicture, PRACTICE_PARTNERS, PRACTICE_PRESETS, RATING_PRESETS, STEPS_PRESETS, STEPS_COLORS, STRESS_IDEAS,
 } from '@/lib/reference/tools-runtime';
 import type { Draft, Field } from './ToolForm';
 
@@ -11,7 +11,26 @@ type Row = Record<string, unknown>;
 const rowsOf = (items: [string, string?][]): Row[] => items.map(([text, q]) => ({ text, ...(q ? { q } : {}) }));
 const numbers = (values: number[], unit = '') => values.map((v) => ({ value: v, label: `${v}${unit}` }));
 
-export type ToolForm = { fields: Field[]; hint: string | ((d: Draft) => string) };
+export type ToolForm = {
+  fields: Field[];
+  hint: string | ((d: Draft) => string);
+  /** Settings → what the form edits (e.g. amounts in cent → “12,50”), and back. */
+  toDraft?: (config: Draft) => Draft;
+  fromDraft?: (draft: Draft) => Draft;
+};
+
+/** Cent → “12,50” and back (null if it is no amount). */
+export const toEuro = (cent: unknown) => (typeof cent === 'number' ? (cent / 100).toFixed(2).replace('.', ',') : '');
+export function parseEuro(text: unknown): number | null {
+  const t = String(text ?? '').trim().replace(/\s|€/g, '');
+  if (!t) return null;
+  const m = /^(\d{1,6})(?:[,.](\d{1,2}))?$/.exec(t);
+  return m ? Number(m[1]) * 100 + Number((m[2] ?? '0').padEnd(2, '0')) : null;
+}
+const withEuro = (rows: unknown, key = 'cent') => ((rows as Row[]) ?? []).map((r) => ({ ...r, euro: toEuro(r[key]) }));
+const withCent = (rows: unknown, key = 'cent') => ((rows as Row[]) ?? []).map(({ euro, ...r }) => ({ ...r, [key]: parseEuro(euro) ?? 0 }));
+const titleOf = (start: unknown) => (start as { title: string }).title;
+const euro = { key: 'euro', label: 'Betrag in Euro', placeholder: '0,00', max: 10, numeric: true };
 
 export const TOOL_FORMS: Partial<Record<ToolId, ToolForm>> = {
   mood: {
@@ -146,6 +165,42 @@ export const TOOL_FORMS: Partial<Record<ToolId, ToolForm>> = {
       { t: 'list', key: 'boxes', label: 'Kästen', what: 'Kasten', min: 2, max: 4, text: 'label', textMax: 30, color: { key: 'color', colors: SORT_COLORS }, fresh: (rows) => ({ label: `Kasten ${rows.length + 1}`, color: SORT_COLORS[(rows.length * 3) % SORT_COLORS.length] }), when: (d) => d.mode !== 'quiz' },
       { t: 'list', key: 'items', label: 'Karten', what: 'Karte', max: 24, placeholder: 'z. B. Apfel (im Quiz: die richtige Antwort)', textMax: 60, picture: true, fresh: () => ({ text: '', box: 0 }),
         choice: { key: 'box', label: 'Kasten', options: (d) => (d.mode === 'quiz' ? [] : ((d.boxes as Row[]) ?? []).map((b, i) => ({ value: i, label: String(b.label || `Kasten ${i + 1}`) }))) } },
+    ],
+  },
+  budget: {
+    hint: (d) => (d.fill ? 'Probier es aus: Mit + kommt eine Zeile dazu, mit dem Stift änderst du sie. Gerechnet wird von selbst.' : d.mode === 'cash' ? 'Jede Zeile ändert den Kassenstand. Ein Tipp auf eine Zeile liest sie vor.' : 'Probier es aus: Tippe Wünsche an – unten steht sofort, was übrig bleibt (oder fehlt).'),
+    toDraft: (c) => ({ ...c, income: withEuro(c.income), spend: withEuro(c.spend), wishes: withEuro(c.wishes), book: withEuro(c.book).map((r) => ({ ...r, out: !!(r as Row).out })), startEuro: toEuro(c.start) }),
+    fromDraft: ({ startEuro, ...d }) => ({ ...d, income: withCent(d.income), spend: withCent(d.spend), wishes: withCent(d.wishes), book: withCent(d.book), start: parseEuro(startEuro) ?? 0 }),
+    fields: [
+      { t: 'choice', key: 'mode', label: 'Art', options: [{ value: 'month', label: 'Monatsplan' }, { value: 'cash', label: 'Kassenbuch' }],
+        apply: (d, mode) => ({ mode, title: d.title === titleOf(budgetStart(d.mode as string)) ? titleOf(budgetStart(mode as string)) : d.title }) },
+      { t: 'text', key: 'title', label: 'Überschrift' },
+      { t: 'toggle', key: 'fill', label: 'Auf der Heftseite ausfüllen', hint: 'Plus-Knöpfe auf der Seite: Name, Betrag und auf Wunsch ein Bild direkt im Heft eintragen. Gerechnet wird von selbst. Die Zeilen hier dürfen leer bleiben.' },
+      { t: 'list', key: 'income', label: 'Einnahmen', what: 'Einnahme', max: 10, placeholder: 'z. B. Lohn', textMax: 50, picture: true, extra: euro, when: (d) => d.mode !== 'cash' },
+      { t: 'list', key: 'spend', label: 'Feste Ausgaben', what: 'Ausgabe', max: 10, placeholder: 'z. B. Miete', textMax: 50, picture: true, extra: euro, when: (d) => d.mode !== 'cash' },
+      { t: 'list', key: 'wishes', label: 'Wünsche (zum Antippen)', what: 'Wunsch', max: 10, placeholder: 'z. B. Kino', textMax: 50, picture: true, extra: euro, when: (d) => d.mode !== 'cash' },
+      { t: 'note', text: 'Beispielbeträge – mit der Klasse echte Preise aus der Umgebung suchen.', when: (d) => d.mode !== 'cash' },
+      { t: 'text', key: 'startEuro', label: 'Anfangsbestand (€)', placeholder: '0,00', max: 10, when: (d) => d.mode === 'cash' },
+      { t: 'list', key: 'book', label: 'Buchungen', what: 'Buchung', max: 10, placeholder: 'Was?', textMax: 50, when: (d) => d.mode === 'cash',
+        extras: [{ key: 'date', label: 'Datum', placeholder: '3.11.', max: 12 }, euro], fresh: () => ({ text: '', date: '', euro: '' }),
+        choice: { key: 'out', label: 'Art', options: () => [{ value: false, label: 'Einnahme' }, { value: true, label: 'Ausgabe' }] } },
+    ],
+  },
+  machine: {
+    hint: (d) => (d.kind === 'atm' ? 'Probier es aus: Karte antippen, Übungs-PIN eintippen, Betrag wählen – zuerst die Karte nehmen, dann das Geld.' : 'Probier es aus: Etwas wählen, mit Münzen und Scheinen aus dem Geldbeutel bezahlen, dann alles aus der Ausgabe nehmen.'),
+    toDraft: (c) => ({ ...c, items: withEuro(c.items) }),
+    fromDraft: (d) => ({ ...d, items: withCent(d.items) }),
+    fields: [
+      { t: 'choice', key: 'kind', label: 'Welcher Automat?', options: (MACHINE_KINDS as unknown as { id: string; label: string }[]).map((k) => ({ value: k.id, label: k.label })),
+        apply: (d, kind) => {
+          const start = machineStart(kind as string) as Draft;
+          return { kind, title: d.title === titleOf(machineStart(d.kind as string)) ? start.title : d.title, ...(kind !== 'atm' && (d.kind === 'atm' || kind !== d.kind) ? { items: withEuro(start.items) } : {}) };
+        } },
+      { t: 'text', key: 'title', label: 'Name am Automaten', max: 60 },
+      { t: 'text', key: 'pin', label: 'Übungs-PIN (4 Ziffern)', placeholder: '1234', max: 4, when: (d) => d.kind === 'atm' },
+      { t: 'note', text: 'Steht für die Übung im Geldbeutel. Nie eine echte PIN verwenden.', when: (d) => d.kind === 'atm' },
+      { t: 'list', key: 'items', label: 'Angebot und Preise', what: 'Eintrag', max: 6, text: 'name', textMax: 40, placeholder: 'z. B. Tageskarte oder Wasser', extra: { ...euro, label: 'Preis in Euro' }, fresh: () => ({ name: '', euro: '' }), when: (d) => d.kind !== 'atm' },
+      { t: 'note', text: 'Am besten die Preise des eigenen Verkehrsverbunds oder des Automaten in der Werkstatt nehmen.', when: (d) => d.kind !== 'atm' },
     ],
   },
   week: {

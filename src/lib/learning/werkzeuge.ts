@@ -5,13 +5,14 @@
 // goes into the response, tied to the configuration it belongs to.
 import presetData from './werkzeug-presets.json';
 import sortData from './sort-sets.json';
-import { TOOL_REGISTRY } from '../reference/tools-runtime';
+import { registerBudget, TOOL_REGISTRY } from '../reference/tools-runtime';
+import { findPicture } from './picture-search';
 import { uuid, type PageElement } from '../notebook-model';
 import { referenceElement } from './page-designs';
 import type { JsonValue, LearningSettings } from './catalog';
 
 /** Tools available as “werkzeug” (Hör-Memory has its own kind “hoeren”). */
-export const TOOL_IDS = ['tally', 'spin', 'seek', 'pattern', 'mood', 'vote', 'rating', 'check', 'stress', 'steps', 'traffic', 'pieces', 'body', 'timeline', 'phone', 'practice', 'circles', 'week', 'sort'] as const;
+export const TOOL_IDS = ['tally', 'spin', 'seek', 'pattern', 'mood', 'vote', 'rating', 'check', 'stress', 'steps', 'traffic', 'pieces', 'body', 'timeline', 'phone', 'practice', 'circles', 'week', 'sort', 'budget', 'machine'] as const;
 export type ToolId = (typeof TOOL_IDS)[number];
 type ToolSpec = {
   kind: string;
@@ -26,6 +27,19 @@ type ToolSpec = {
   state?: string[];
 };
 const REGISTRY = TOOL_REGISTRY as unknown as Record<ToolId, ToolSpec>;
+// The Geld-Planer saves its whole plan (rows filled in on the page, maybe with
+// a picture); pictures come from our picture search and are kept on the school server.
+REGISTRY.budget = {
+  ...REGISTRY.budget,
+  state: ['bud'],
+  register: (save) => registerBudget({
+    save: (id: string, bud: unknown) => save(id, bud),
+    picture: async (query?: string) => {
+      if (!query?.trim()) return null;
+      try { const src = await findPicture(query.trim(), new AbortController().signal); return src ? { id: src, kind: 'image', dataUrl: src } : null; } catch { return null; }
+    },
+  }),
+};
 export const toolSpec = (tool: ToolId) => REGISTRY[tool];
 /** Names of the tools (catalogue labels of the reference). */
 export const TOOL_TITLES: Record<ToolId, string> = {
@@ -33,7 +47,7 @@ export const TOOL_TITLES: Record<ToolId, string> = {
   mood: 'Wie geht es dir heute?', vote: 'Abstimmung und Wahl', rating: 'Selbst- und Fremdeinschätzung', check: 'Checkliste',
   stress: 'Stressbarometer', steps: 'Ablaufplan', traffic: 'Fußgängerampel', pieces: 'Stückzähler', body: 'Wo tut es weh?',
   timeline: 'Zeitleiste', phone: 'Telefonieren üben', practice: 'Gespräche üben',
-  circles: 'Nähe und Distanz', week: 'Wochenplan', sort: 'Sortieren',
+  circles: 'Nähe und Distanz', week: 'Wochenplan', sort: 'Sortieren', budget: 'Geld-Planer', machine: 'Automat',
 };
 export const isTool = (v: unknown): v is ToolId => typeof v === 'string' && (TOOL_IDS as readonly string[]).includes(v);
 
@@ -84,6 +98,8 @@ export function toolCurrent(tool: ToolId, settings: LearningSettings | undefined
   const keys = REGISTRY[tool].state;
   if (!keys || !saved || saved.base !== fingerprint(settings?.werkzeug)) return config;
   const state = Object.fromEntries(keys.filter((k) => k in saved.state).map((k) => [k, saved.state[k]]));
+  // The Geld-Planer keeps its whole plan.
+  if (state.bud) return toolConfig(tool, state.bud);
   // Nähe und Distanz keeps the ring of each person (as the reference saves it).
   if (Array.isArray(state.rings)) return toolConfig(tool, { ...config, people: (config.people as { ring: number }[]).map((p, i) => ({ ...p, ring: (state.rings as number[])[i] ?? -1 })) });
   return toolConfig(tool, { ...config, ...state });

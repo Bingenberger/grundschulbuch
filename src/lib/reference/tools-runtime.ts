@@ -2013,6 +2013,7 @@ var zd = `#1f2937`;
 var Bd = `#2f9e44`;
 var Vd = `#e03131`;
 var Hd = `#2b6cb0`;
+var Ud = (e17 = `month`) => ({ title: e17 === `cash` ? `Kassenbuch Sch\xFClercaf\xE9` : `Mein Geld im Monat`, mode: e17, income: [{ text: `Lohn aus der Werkstatt`, cent: 32e3 }, { text: `Grundsicherung`, cent: 56300 }], spend: [{ text: `Miete`, cent: 38e3 }, { text: `Strom`, cent: 4500 }, { text: `Handy`, cent: 1500 }, { text: `Essen und Trinken`, cent: 25e3 }], wishes: [{ text: `Kino`, cent: 1200 }, { text: `Konzert`, cent: 4500 }, { text: `Neue Schuhe`, cent: 6e3 }, { text: `Ausflug`, cent: 2500 }], book: [{ date: `3.11.`, text: `Verkauf Pausenbrote`, cent: 4250 }, { date: `4.11.`, text: `Einkauf Brot und K\xE4se`, cent: 1890, out: true }, { date: `5.11.`, text: `Verkauf Kaffee`, cent: 1800 }, { date: `6.11.`, text: `Einkauf Becher`, cent: 650, out: true }], start: 5e3, fill: false });
 function Wd(e17, t10) {
   let n10 = e17 && typeof e17 == `object` ? e17 : {}, r10 = (e18) => (Array.isArray(e18) ? e18 : []).slice(0, 10).flatMap((e19) => {
     let n11 = e19 && typeof e19 == `object` ? e19 : {}, r11 = typeof n11.text == `string` ? n11.text.slice(0, 50) : ``, i10 = typeof n11.cent == `number` && Number.isFinite(n11.cent) ? Math.max(0, Math.min(1e7, Math.round(n11.cent))) : 0, a10 = t10(n11.img), o10 = typeof n11.date == `string` && n11.date.trim() ? n11.date.slice(0, 12) : void 0;
@@ -2037,6 +2038,9 @@ function Jd(e17) {
 }
 var Yd = (e17) => `${Math.floor(e17 / 100)},${String(e17 % 100).padStart(2, `0`)}`;
 var Xd = null;
+function ore(e17) {
+  Xd = e17;
+}
 var Zd = /* @__PURE__ */ new Map();
 function Qd(e17) {
   let t10 = Wd(e17.bud, are), n10 = JSON.stringify(t10), r10 = Zd.get(e17.id);
@@ -3854,4 +3858,4 @@ var TOOL_REGISTRY = { "listen": { kind: "listen", field: "listen", draw: toe, la
   "traffic": { kind: "traffic", field: "traffic", draw: $ie, label: Cm, config: (raw, media) => $p(raw, media, media), redraw: wm.redraw },
   "vote": { kind: "vote", field: "vote", draw: Pre, label: Nre, config: (raw, media) => _f(raw, media, media), redraw: Cf.redraw, register: kre, state: ["counts"] },
   "week": { kind: "week", field: "week", draw: mie, label: pie, config: (raw, media) => sp(raw, media, media), redraw: pp.redraw } };
-export { toe as renderListen, eoe as listenLabel, pg as listenConfig, yg as resetListen, noe as stopListen, lh as LISTEN_SOUNDS, dg as LISTEN_INSTRUMENTS, yae as playListenSound, Hh as listenSoundPicture, ic as SEEK_SHAPES, ac as SEEK_COLORS, aQe as seekPicture, Sc as PATTERN_RULES, tQe as SPIN_PRESETS, Os as TALLY_COLORS, Ks as SPIN_COLORS, Tm as MOOD_FEELS, yQe as moodPicture, jp as CHECK_PRESETS, WZe as STEPS_PRESETS, gs as STEPS_COLORS, Nne as PRACTICE_PRESETS, s2e as PRACTICE_PARTNERS, hp as STRESS_IDEAS, Up as RATING_PRESETS, Ef as CIRCLE_RINGS, wf as CIRCLE_COLORS, rp as WEEK_DAYS, op as weekStart, TOOLS_CSS, TOOL_REGISTRY };
+export { toe as renderListen, eoe as listenLabel, pg as listenConfig, yg as resetListen, noe as stopListen, lh as LISTEN_SOUNDS, dg as LISTEN_INSTRUMENTS, yae as playListenSound, Hh as listenSoundPicture, ic as SEEK_SHAPES, ac as SEEK_COLORS, aQe as seekPicture, Sc as PATTERN_RULES, tQe as SPIN_PRESETS, Os as TALLY_COLORS, Ks as SPIN_COLORS, Tm as MOOD_FEELS, yQe as moodPicture, jp as CHECK_PRESETS, WZe as STEPS_PRESETS, gs as STEPS_COLORS, Nne as PRACTICE_PRESETS, s2e as PRACTICE_PARTNERS, hp as STRESS_IDEAS, Up as RATING_PRESETS, Ef as CIRCLE_RINGS, wf as CIRCLE_COLORS, rp as WEEK_DAYS, op as weekStart, Ud as budgetStart, ore as registerBudget, qne as MACHINE_KINDS, Od as machineStart, TOOLS_CSS, TOOL_REGISTRY };

@@ -217,7 +217,7 @@ export default function ToolOptions({ tool, value, onChange, upload, busy }: Pro
     <div className="receipt-options tool-options">
       <Preview tool={tool} config={c} width={w} height={h} />
       <p className="option-hint">{form ? (typeof form.hint === 'function' ? form.hint(c) : form.hint) : HINTS[tool]}</p>
-      {form && <ToolForm fields={form.fields} value={c} onChange={(d) => onChange(toolConfig(tool, d) as unknown as JsonValue)} upload={upload} busy={busy} />}
+      {form && <ToolForm fields={form.fields} value={form.toDraft ? form.toDraft(c) : c} onChange={(d) => onChange(toolConfig(tool, form.fromDraft ? form.fromDraft(d) : d) as unknown as JsonValue)} upload={upload} busy={busy} />}
       {tool === 'tally' && <TallyOptions c={c} set={set} upload={upload} busy={busy} />}
       {tool === 'spin' && <SpinOptions c={c} set={set} />}
       {tool === 'seek' && <SeekOptions c={c} set={set} />}

@@ -151,6 +151,17 @@ Object.assign(aliases, {
   [pick('week plans', fns.get(find('week dialog', t => t.startsWith('function') && t.includes('`Dienstplan` : `Wochenplan`') && t.includes('close: () => e17.close(null)'))), /title: t10\.title === ([\w$]+)\(t10\.mode\)\.title/)]: 'weekStart',
 });
 
+// Geld-Planer and Automat: the start of each kind, the machines, and how the
+// Geld-Planer saves what is filled in on the page (with pictures).
+const budgetText = dialog('Geld-Planer'), machineText = dialog('Automat');
+const budgetHook = pick('budget hook', code, /([\w$]+) && \1\.save\(e17, t10, n10\)/);
+Object.assign(aliases, {
+  [pick('budget start', budgetText, /t10 === ([\w$]+)\(r10\)\.title/)]: 'budgetStart',
+  [find('budget register', t => new RegExp(`^function [\\w$]+\\(e17\\) \\{\\s*${escape(budgetHook)} = e17;\\s*\\}$`).test(t))]: 'registerBudget',
+  [pick('machines', machineText, /options: ([\w$]+)\.map\(\(e18\) => \(\{ value: e18\.id, label: e18\.label \}\)\)/)]: 'MACHINE_KINDS',
+  [pick('machine start', machineText, /let a11 = ([\w$]+)\(e18\);/)]: 'machineStart',
+});
+
 const toolCss = find('tool styles', t => t.startsWith('`\n.lh-ls{position:absolute;inset:0;overflow:hidden}'));
 
 // The catalogue entries of these tools: their pages are the presets.

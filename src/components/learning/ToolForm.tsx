@@ -14,13 +14,16 @@ export type Draft = Record<string, unknown>;
 type When = { when?: (d: Draft) => boolean };
 type Row = Record<string, unknown>;
 type Option = { value: string | number | boolean; label: string };
+type Extra = { key: string; label: string; placeholder: string; max?: number; wide?: boolean; numeric?: boolean; clean?: (v: string) => string };
 /** A list of entries: word (and a second text), picture, colour, a switch. */
 export type ListSpec = {
   what: string; max: number; min?: number;
   /** Main text of a row and its placeholder. */
   text?: string; placeholder?: string; textMax?: number;
   /** A second text (time, number, year, a rule …). */
-  extra?: { key: string; label: string; placeholder: string; max?: number; wide?: boolean; clean?: (v: string) => string };
+  extra?: Extra;
+  /** Further short texts (e.g. date and amount of a booking). */
+  extras?: Extra[];
   /** A switch per row (e.g. who speaks). */
   flag?: { key: string; on: string; off: string };
   /** A colour per row. */
@@ -107,7 +110,9 @@ function ListEditor({ spec, label, rows, draft, onRows, upload, busy }: { spec: 
               <div className="tool-row-texts">
                 {spec.flag && <button type="button" className="knopf compact" aria-pressed={!!r[spec.flag.key]} aria-label={`${name}: ${r[spec.flag.key] ? spec.flag.on : spec.flag.off}`} onClick={() => row(i, { [spec.flag!.key]: !r[spec.flag!.key] })}>{r[spec.flag.key] ? spec.flag.on : spec.flag.off}</button>}
                 <input className="text-input" aria-label={name} placeholder={spec.placeholder} value={String(r[textKey] ?? '')} maxLength={spec.textMax ?? 120} onChange={(e) => row(i, { [textKey]: e.target.value, q: undefined })} />
-                {spec.extra && <input className={`text-input${spec.extra.wide ? '' : ' tool-row-extra'}`} aria-label={`${name}: ${spec.extra.label}`} placeholder={spec.extra.placeholder} value={String(r[spec.extra.key] ?? '')} maxLength={spec.extra.max ?? 20} onChange={(e) => row(i, { [spec.extra!.key]: spec.extra!.clean ? spec.extra!.clean(e.target.value) : e.target.value })} />}
+                {[...(spec.extra ? [spec.extra] : []), ...(spec.extras ?? [])].map((x) => (
+                  <input key={x.key} className={`text-input${x.wide ? '' : ' tool-row-extra'}`} aria-label={`${name}: ${x.label}`} placeholder={x.placeholder} inputMode={x.numeric ? 'decimal' : undefined} value={String(r[x.key] ?? '')} maxLength={x.max ?? 20} onChange={(e) => row(i, { [x.key]: x.clean ? x.clean(e.target.value) : e.target.value })} />
+                ))}
               </div>
               <div className="learning-actions">
                 {spec.choice && spec.choice.options(draft).map((o) => (
