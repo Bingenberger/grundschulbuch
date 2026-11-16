@@ -19,7 +19,7 @@ const look = (d: Draft, change: Draft, part: string) => { const av = figureLook(
 const gallery = (key: string, label: string, part: string, extra: (id: string) => Draft = () => ({}), list: Choice[] = choices[key]): Field =>
   ({ t: 'gallery', key, label, options: (d) => list.map((c) => ({ id: c.id, label: c.label, src: look(d, { [key]: c.id, ...extra(c.id) }, part) })) });
 
-const FIELDS: Field[] = [
+export const FIGURE_FIELDS: Field[] = [
   { t: 'text', key: 'name', label: 'Name', placeholder: 'z. B. Mia', max: 40 },
   { t: 'gallery', key: 'kind', label: 'Figur', options: (d) => [{ id: 'child', label: 'Kind' }, { id: 'adult', label: 'Erwachsen' }].map((c) => ({ ...c, src: look(d, { child: c.id === 'child' }, 'all') })) },
   { t: 'colors', key: 'skin', label: 'Hautfarbe', colors: colors.skin },
@@ -47,24 +47,24 @@ const FIELDS: Field[] = [
 ];
 
 /** Figure settings ↔ what the form edits (the figure, “Kind/Erwachsen”, its speech). */
-const toDraft = (s: LearningSettings): Draft => {
+export const figureDraft = (s: LearningSettings): Draft => {
   const av = figureLook(s.av), say = sayOf(s.say);
   return { ...av, kind: av.child ? 'child' : 'adult', feel: av.feel ?? 'none', sayText: say.text, sayPitch: say.pitch };
 };
-const fromDraft = ({ kind, feel, sayText, sayPitch, ...av }: Draft) => ({
+export const figureFromDraft = ({ kind, feel, sayText, sayPitch, ...av }: Draft) => ({
   av: figureLook({ ...av, child: kind === 'child', ...(feel && feel !== 'none' ? { feel } : { feel: undefined }), name: String(av.name ?? '').trim() }) as unknown as JsonValue,
   say: { text: String(sayText ?? ''), pitch: String(sayPitch ?? 'normal') } as unknown as JsonValue,
 });
 
 export default function FigureOptions({ settings, onChange, upload, busy }: { settings: LearningSettings; onChange: (patch: Partial<LearningSettings>) => void; upload: (file: File, done: (src: string) => void) => Promise<void>; busy: boolean }) {
-  const draft = toDraft(settings);
+  const draft = figureDraft(settings);
   const preview = svg(figureSvg(figureLook(settings.av), {}, {}));
   return (
     <div className="receipt-options tool-options">
       <style>{FIGURE_CSS}</style>
       <div className="tool-preview figure-preview"><img src={preview} alt="Vorschau der Figur" /></div>
       <p className="option-hint">Ein Tipp auf die Figur: sie winkt und sagt „Hallo, ich bin …“ oder ihren Text.</p>
-      <ToolForm fields={FIELDS} value={draft} onChange={(d) => onChange(fromDraft(d))} upload={upload} busy={busy} />
+      <ToolForm fields={FIGURE_FIELDS} value={draft} onChange={(d) => onChange(figureFromDraft(d))} upload={upload} busy={busy} />
     </div>
   );
 }

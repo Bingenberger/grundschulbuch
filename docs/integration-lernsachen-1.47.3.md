@@ -157,11 +157,36 @@ dazu kommen aus unserer Bildsuche und liegen auf dem Schulserver.
 - **Praktikumsmappe: Einschätzung** (Beruf & Praktikum) als Voreinstellung der
   Selbst- und Fremdeinschätzung.
 
+## Siebte Ausbaustufe: Arbeitsblätter und Puppentheater
+
+87 der 89 Einträge sind integriert.
+
+- **Einstellbare Arbeitsblätter** (Vorlagen › Einstellbar): Laute hören,
+  Karopapier: Symmetrie, Muster, Messen, Rechnen im Alltag: Lohn, Fahrplan,
+  Geld, Programmieren: Arbeitsblatt und Etiketten. Die Generatoren der Vorlage
+  sind unverändert übernommen (`src/lib/sheets/sheets-1473.ts`, vom
+  Extraktionsskript), die Dialoge folgen ihnen mit unseren Bausteinen
+  (Übungen, Stufe, Seiten, Lösungsseiten, Vorschau). Die Prüfen-Option der
+  Vorlage (✓/✗ beim Eintippen) bieten unsere Arbeitsblätter noch nicht an.
+  „Laute hören“ nimmt die Anlautbilder des Hefts; weitere Bilder holt ein
+  Knopf über den Schulserver bei ARASAAC, sonst steht das Wort da. Etiketten
+  suchen ihre Bilder über die Bildsuche und werden mit „Vorlesen beim
+  Antippen“ zu Sprechtasten. Die eingebauten Wortlisten der Vorlage fehlen
+  noch; die Wörter werden eingetippt.
+- **Puppentheater** (Medien & Präsentation): Bühne mit Figuren, Aufnahme von
+  Stimme und Bewegungen, Abspielen und Video wie in der Vorlage. Die Aufnahme
+  wird auf den Schulserver geladen (Kinder dürfen hier auch ohne Ton-Freigabe
+  aufnehmen, wie beim Kassettenrekorder); Bewegungen und Figurenpositionen
+  stehen in der Antwort des Elements. Im Dialog: Titel, Bühnenbild oder eigenes
+  Bild, bis zu sechs Figuren mit dem Figuren-Editor, automatischer
+  Seitenwechsel.
+
 ## Noch offene Übernahmen
 
-Noch offen sind „Laute hören“, Karopapier-Aufgaben, Rechnen im Alltag und
-Programmieren: Arbeitsblatt (einstellbare Arbeitsblätter), Etiketten,
-Puppentheater und Erklärbär; KI-Partner bauen ist zurückgestellt.
+Offen ist nur noch **Erklärbär**: ein Modus des vollständigen
+Textsachen-Editors von 1.47.3 (Erklärfilme mit Wortbildern, Händen und
+Szenen). Dafür braucht es den neueren Textsachen-Spieler und einen eigenen
+Editor; KI-Partner bauen ist zurückgestellt.
 
 ## Prüfung
 

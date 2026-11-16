@@ -141,7 +141,7 @@ export async function materialize(pages: Page[], upload: (png: Blob) => Promise<
         page.elements.map(async (el) =>
           el.type === 'image' && el.src?.startsWith('data:image/svg+xml')
             ? { ...el, src: await store(el) }
-            : el.type === 'image' && el.src && (/^\/(kasse|bilder)\/[a-z0-9-]+\.webp$/.test(el.src) || /^data:image\/(png|webp|jpeg);/.test(el.src))
+            : el.type === 'image' && el.src && (/^\/(kasse|bilder|anlaut)\/[a-z0-9-]+\.webp$/.test(el.src) || /^data:image\/(png|webp|jpeg);/.test(el.src))
               ? { ...el, src: await copy(el.src) }
               : el,
         ),

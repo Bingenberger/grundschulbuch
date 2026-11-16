@@ -101,6 +101,10 @@ test('Alle Lernwerkzeuge und Übungen lassen sich im Heft öffnen', async ({
       await expect(page.locator('.interaction-surface .lh-wg-code')).toHaveAttribute('aria-label', /^Programmieren/);
       continue;
     }
+    if (catalogue[i].kind === 'puppentheater') {
+      await expect(page.locator('.interaction-surface .lh-wg-theater .lh-th')).toBeVisible();
+      continue;
+    }
     if (catalogue[i].kind === 'figur') {
       await expect(page.locator('.interaction-surface .lh-wg-avatar svg').first()).toBeVisible();
       continue;

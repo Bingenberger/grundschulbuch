@@ -1,5 +1,6 @@
 import { CLOCK_DEFAULTS, MATH_DEFAULTS, MAZE_DEFAULTS, MONEY_DEFAULTS, NOTE_DEFAULTS, LETTER_DEFAULTS, DIGIT_DEFAULTS, makeLetterPages, makeClockPages, makeMazePages, makeNotePages, makeMathPages, makeMoneyPages } from '@/lib/sheets/reference-sheets';
-import { toPages } from '@/lib/sheets/convert';
+import { toPages, type RefPage } from '@/lib/sheets/convert';
+import { LABEL_DEFAULTS, labelPages, CODING_DEFAULTS, codingClean, codingPages, GRID_DEFAULTS, gridClean, gridPages, LIFE_DEFAULTS, lifeClean, lifePages, PHON_DEFAULTS, phonClean, phonPages } from '@/lib/sheets/sheets-1473';
 import { clone, rulings, uuid, type Page, type Ruling, type Template } from '@/lib/notebook-model';
 import { blueprintPages, blueprints } from '@/lib/learning/templates';
 import { isInteractiveBlueprint } from '@/lib/learning/blocks';
@@ -24,7 +25,7 @@ export type TemplateEntry = {
   /** A school template takes the place of the built-in one. */
   replaced?: boolean;
   /** “Einstellbar”: opens the worksheet settings instead of inserting right away. */
-  configure?: { kind: WorksheetKind; words?: string };
+  configure?: { kind: WorksheetKind | SheetKind1473; words?: string };
   words: string;
 };
 
@@ -54,7 +55,17 @@ const categoryIcons: Record<string, IconName> = {
 };
 
 /** The settable worksheets of the reference: a dialog, then a static page. */
-const configurable: [string, WorksheetKind, string?][] = [
+/** The worksheets of Lernsachen-Heft 1.47.3 (lib/sheets/sheets-1473.ts). */
+export type SheetKind1473 = 'alltagsrechnen' | 'karopapier' | 'programmierblatt' | 'laute' | 'etiketten';
+const SAMPLES_1473: Record<SheetKind1473, () => RefPage[]> = {
+  alltagsrechnen: () => lifePages(lifeClean({ ...LIFE_DEFAULTS, formats: ['depart', 'wage'], layout: 'mixed', pages: 1, solutions: false }), { placed: new Set() }),
+  karopapier: () => gridPages(gridClean({ ...GRID_DEFAULTS, formats: ['sym', 'measure'], layout: 'mixed', pages: 1, solutions: false }), { placed: new Set() }),
+  programmierblatt: () => codingPages(codingClean({ ...CODING_DEFAULTS, solutions: false })),
+  etiketten: () => labelPages(['Apfel', 'Banane', 'Birne', 'Tasse', 'Teller', 'Löffel'].map((text) => ({ text })), LABEL_DEFAULTS),
+  laute: () => phonPages(phonClean({ ...PHON_DEFAULTS, formats: ['first', 'syl'], layout: 'mixed', solutions: false }), new Map(), { placed: new Set() }),
+};
+const is1473 = (kind: string): kind is SheetKind1473 => kind in SAMPLES_1473;
+const configurable: [string, WorksheetKind | SheetKind1473, string?][] = [
   ['Buchstaben üben', 'nachspuren', 'A, a, B, b, C, c, D, d'],
   ['Ziffern üben', 'nachspuren', '0, 1, 2, 3, 4, 5, 6, 7, 8, 9'],
   ['Mathe-Aufgaben', 'rechnen'],
@@ -62,6 +73,11 @@ const configurable: [string, WorksheetKind, string?][] = [
   ['Rechnen mit Geld', 'moneycalc'],
   ['Labyrinth', 'mazes'],
   ['Noten lernen', 'notenames'],
+  ['Laute hören', 'laute'],
+  ['Karopapier: Symmetrie, Muster, Messen', 'karopapier'],
+  ['Rechnen im Alltag: Lohn, Fahrplan, Geld', 'alltagsrechnen'],
+  ['Programmieren: Arbeitsblatt', 'programmierblatt'],
+  ['Etiketten', 'etiketten'],
 ];
 /** Preview of “Mathe-Aufgaben” like in the reference: plus, Rechenmauern, Zahlenstrahl. */
 function mathSample() {
@@ -154,7 +170,7 @@ export function templateCatalog(saved: Template[], hidden: string[] = [], withHi
     title,
     category: CONFIGURABLE,
     // A fixed seed keeps the preview calm.
-    build: () => (kind === 'rechnen' ? mathSample() : kind === 'uhr' ? clockSample() : kind === 'moneycalc' ? moneySample() : kind === 'mazes' ? mazeSample() : kind === 'notenames' ? noteSample() : kind === 'nachspuren' ? letterSample(title === 'Ziffern üben') : generatePages({ kind, title, words: words || '', maximum: 20, seed: 7, showSolutions: false }).slice(0, 1)),
+    build: () => (is1473(kind) ? toPages(SAMPLES_1473[kind]().slice(0, 1), `sheet-${kind}`) : kind === 'rechnen' ? mathSample() : kind === 'uhr' ? clockSample() : kind === 'moneycalc' ? moneySample() : kind === 'mazes' ? mazeSample() : kind === 'notenames' ? noteSample() : kind === 'nachspuren' ? letterSample(title === 'Ziffern üben') : generatePages({ kind, title, words: words || '', maximum: 20, seed: 7, showSolutions: false }).slice(0, 1)),
     orientation: 'landscape',
     configure: { kind, words },
     words: `${title} ${CONFIGURABLE} arbeitsblatt einstellbar`,

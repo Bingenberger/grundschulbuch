@@ -5308,3 +5308,9 @@ input[type='checkbox'] {
 .receipt-options.tool-options { max-width: 920px; }
 .tool-options .tool-row > .learning-actions .knopf.compact { padding-inline: 8px; }
 .tool-preview.figure-preview { aspect-ratio: auto; height: 220px; display: flex; justify-content: center; } .figure-preview img { height: 100%; }
+
+/* Puppentheater */
+.theater-cast { display: flex; flex-wrap: wrap; gap: 10px; }
+.theater-figure { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px; border: 1px solid #d5dde0; border-radius: 10px; }
+.theater-figure img { height: 110px; }
+.theater-edit { border: 2px solid #d5dde0; border-radius: 12px; padding: 12px; }

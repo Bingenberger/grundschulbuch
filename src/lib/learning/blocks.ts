@@ -39,7 +39,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', hoeren: 'Musik', werkzeug: 'Mathematik', linksammlung: 'Medien & Präsentation', programmieren: 'Programmieren', figur: 'Klassenführung', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', diaschau: 'Medien & Präsentation', trickfilm: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', hoeren: 'Musik', werkzeug: 'Mathematik', linksammlung: 'Medien & Präsentation', programmieren: 'Programmieren', figur: 'Klassenführung', puppentheater: 'Medien & Präsentation', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', diaschau: 'Medien & Präsentation', trickfilm: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -142,6 +142,7 @@ const SKIP = new Set([
   'widget-linksammlung',
   'widget-programmieren',
   'widget-figur',
+  'widget-puppentheater',
   // Replaced by the Bilder-Stundenplan of the reference.
   'widget-timetable',
   'widget-stundenplan',
@@ -412,6 +413,11 @@ for (const preset of TOOL_PRESETS) {
     toolBlocks.push({ id: `werkzeug-${preset.id}`, title: preset.title, subject, preview, type: 'widget', kind: 'werkzeug', preset: { ...defaultSettings('werkzeug'), ...toolSettings(tool, item[toolSpec(tool).field], preset.title) }, words });
   } else
     toolBlocks.push({ id: `werkzeug-${preset.id}`, title: preset.title, subject, preview, type: 'widget', kind: 'werkzeug', pages: () => { const page = newPage('blanko', 'landscape'); page.elements = presetElements(preset); return [page]; }, words });
+}
+// Puppentheater of Lernsachen-Heft 1.47.3 (Comic & Film): a stage with figures, recording and video.
+for (const preset of TOOL_PRESETS.filter((p) => p.items.some((i) => i.kind === 'theater'))) {
+  const th = preset.items.find((i) => i.kind === 'theater')!.th as JsonValue;
+  toolBlocks.push({ id: `theater-${preset.id}`, title: preset.title, subject: 'Medien & Präsentation', preview: `/previews/tools/theater-${preset.id}.webp`, type: 'widget', kind: 'puppentheater', preset: { ...defaultSettings('puppentheater'), title: preset.title, th }, words: `${preset.title} Puppentheater Figuren Theater spielen aufnehmen Video Bühne Geschichte erzählen` });
 }
 // Figuren of Lernsachen-Heft 1.47.3: a single figure, and the Gefühle-Karten (a page of figures with words).
 toolBlocks.push({ id: 'figur', title: 'Figur', subject: 'Für alle Fächer', preview: '/previews/tools/figur.webp', type: 'widget', kind: 'figur', preset: { ...defaultSettings('figur'), title: 'Figur' }, words: 'Figur Person Avatar Mensch Kind sprechen winken gestalten' });

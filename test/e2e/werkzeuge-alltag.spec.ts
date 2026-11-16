@@ -326,3 +326,29 @@ test('Programmieren, Figur und Gefühle-Karten', async ({ page }) => {
   expect(coding.pg).toMatchObject({ lesson: 'word', size: 7 });
   expect(errors).toEqual([]);
 });
+
+test('Puppentheater: Bühne, Figuren und Titel einstellen', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await login(page);
+  const id = await fresh(page, 'Puppentheater');
+  const dialog = await openBlock(page, 'Medien & Präsentation', 'Puppentheater');
+  await dialog.getByLabel('Titel', { exact: true }).fill('Der verlorene Ball');
+  await dialog.getByRole('radio', { name: 'Wald', exact: true }).click();
+  const before = await dialog.locator('.theater-figure').count();
+  await dialog.getByRole('button', { name: '＋ Figur', exact: true }).click();
+  await expect(dialog.locator('.theater-figure')).toHaveCount(before + 1);
+  await dialog.getByRole('radio', { name: 'Erwachsen', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  const stage = page.locator('.interaction-surface .lh-wg-theater');
+  await expect(stage.locator('.lh-th')).toBeVisible();
+  await expect(stage).toContainText('Der verlorene Ball');
+  await page.screenshot({ path: test.info().outputPath('puppentheater.png') });
+  await expect(page.getByText('✓ Gespeichert', { exact: true })).toBeVisible();
+  const th = (await elements(page, id)).find((e) => e.widgetKind === 'puppentheater')?.settings as { th: { title: string; back: string; cast: { av: { child: boolean } }[] } };
+  expect(th.th.title).toBe('Der verlorene Ball');
+  expect(th.th.back).toBe('forest');
+  expect(th.th.cast).toHaveLength(before + 1);
+  expect(th.th.cast[before].av.child).toBe(false);
+  expect(errors).toEqual([]);
+});

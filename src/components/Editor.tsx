@@ -1688,8 +1688,9 @@ export default function Editor({
               else if (entry.configure.kind === 'moneycalc') setSheetDialog('money');
               else if (entry.configure.kind === 'mazes') setSheetDialog('maze');
               else if (entry.configure.kind === 'notenames') setSheetDialog('notes');
+              else if (['alltagsrechnen', 'karopapier', 'programmierblatt', 'laute', 'etiketten'].includes(entry.configure.kind)) setSheetDialog(entry.configure.kind as SheetKind);
               else if (entry.configure.kind === 'nachspuren') setSheetDialog(entry.title === 'Ziffern üben' ? 'digits' : 'letters');
-              else setShowGenerator({ ...entry.configure, title: entry.title });
+              else setShowGenerator({ ...entry.configure, kind: entry.configure.kind as WorksheetKind, title: entry.title });
               return;
             }
             if (templateMode === 'change') {

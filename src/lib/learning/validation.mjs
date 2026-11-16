@@ -48,6 +48,7 @@ export const WIDGET_KINDS = [
   'linksammlung',
   'programmieren',
   'figur',
+  'puppentheater',
   'stundenplan',
   'kalenderblatt',
   'karte',
@@ -172,7 +173,8 @@ export function learningSettings(value) {
 export function learningResponse(value) {
   const result = learningSettings(value);
   if (result.musicConfig !== undefined) validateMusicConfig(result.musicConfig);
-  if (JSON.stringify(result).length > (result.musicConfig ? 200000 : 50000))
+  // Music and a recorded Puppentheater (movements of up to six figures) need more room.
+  if (JSON.stringify(result).length > (result.musicConfig || result.theater ? 200000 : 50000))
     throw new Error('Die Antwort ist zu groß.');
   for (const [key, min, max] of [
     ['index', 0, 1000000],

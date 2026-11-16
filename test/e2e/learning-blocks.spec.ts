@@ -62,7 +62,7 @@ test('Lernwerkzeuge nach Fächern, Vorlagen nur gestalterisch, einstellbare Arbe
     expect(names.length).toBeGreaterThan(0);
     for (const name of names) expect(designs.some(title => name.replace(/^Vorlage /, '').startsWith(title)), name).toBe(true);
   }
-  await categories.getByRole('button', { name: /^Einstellbar · 7$/ }).click();
+  await categories.getByRole('button', { name: /^Einstellbar · 12$/ }).click();
   await page.screenshot({ path: test.info().outputPath('einstellbar.png') });
   await templates.getByRole('button', { name: 'Vorlage Uhrzeiten üben' }).click();
   // The settings dialog of the reference.

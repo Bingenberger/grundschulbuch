@@ -10,6 +10,7 @@ import ToolOptions from './ToolOptions';
 import LinksOptions from './LinksOptions';
 import CodeOptions from './CodeOptions';
 import FigureOptions from './FigureOptions';
+import TheaterOptions from './TheaterOptions';
 import { isTool, toolCurrent, toolSize } from '@/lib/learning/werkzeuge';
 import TimetableOptions from './TimetableOptions';
 import MapOptions from './MapOptions';
@@ -94,7 +95,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', hoeren: 'headset', werkzeug: 'puzzle', linksammlung: 'link', programmieren: 'tree_structure', figur: 'businesswoman', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', elevator: 'podium_with_speaker', medienseite: 'camcorder_pro', diaschau: 'stack_of_photos', trickfilm: 'film_reel', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', hoeren: 'headset', werkzeug: 'puzzle', linksammlung: 'link', programmieren: 'tree_structure', figur: 'businesswoman', puppentheater: 'clapperboard', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', elevator: 'podium_with_speaker', medienseite: 'camcorder_pro', diaschau: 'stack_of_photos', trickfilm: 'film_reel', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -125,6 +126,8 @@ function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) 
   if (kind === 'programmieren') return { width: 276, height: 185 };
   // A Figur of the reference: 180 × 300 of 1400 page width.
   if (kind === 'figur') return { width: 38, height: 64 };
+  // The Puppentheater of the reference fills the page.
+  if (kind === 'puppentheater') return { width: 277, height: 196 };
   if (kind === 'placevalue' || kind === 'dienes') return { width: 220, height: 160 };
   if (kind === 'numberline') return { width: 250, height: 80 };
   if (kind === 'hundredfield') return { width: 200, height: 150 };
@@ -839,6 +842,7 @@ export default function LearningDialog({
             {kind === 'karte' && <MapOptions value={settings.map} isNew={!element} onChange={(map) => patch({ map })} />}
             {kind === 'stundenplan' && <TimetableOptions value={settings.tt ?? (defaultTimetable() as unknown as JsonValue)} onChange={(tt) => patch({ tt })} upload={media} busy={busy} />}
             {kind === 'ampel' && <ApplauseOptions value={settings.applause} onChange={(applause) => patch({ applause })} />}
+            {kind === 'puppentheater' && <TheaterOptions value={settings.th} onChange={(th) => patch({ th })} upload={media} busy={busy} />}
             {kind === 'figur' && <FigureOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
             {kind === 'programmieren' && <CodeOptions value={settings.pg} onChange={(pg) => patch({ pg })} upload={media} busy={busy} />}
             {kind === 'linksammlung' && <LinksOptions value={settings.bm} onChange={(bm) => patch({ bm })} upload={media} busy={busy} />}

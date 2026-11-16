@@ -220,6 +220,26 @@ Object.assign(aliases, {
   [find('figure styles', t => t.startsWith('`\n.lh-av{position:absolute;inset:0}'))]: 'FIGURE_CSS',
 });
 
+// Puppentheater: the stage with figures, recording (sound and movements),
+// playing and the video export; the host provides the pages, saves the
+// recording (uploaded to the school server) and the positions.
+const theaterDraw = pick('theatre render', code, /case `theater`:\s*([\w$]+)\(e17, t10, n10, r10\);/);
+const theaterDialog = fns.get(find('theatre dialog', t => t.startsWith('function') && t.includes('Titel des St\\xFCcks') && t.includes('Automatischer Seitenwechsel')));
+const theaterSetters = {
+  host: pick('theatre host hook', code, /(?:^|\), )([\w$]+)\(\{ pages: \(\) => /m),
+  save: pick('theatre save hook', code, /(?:^|\), )([\w$]+)\(\(e17, t10, n10, r10\) => \{\s*\(async \(\) => \{\s*let i10 = t10\.blob/m),
+  move: pick('theatre positions hook', code, /(?:^|\), )([\w$]+)\(\(e17, t10\) => \{\s*\w+\(\((\w+)\) => \{\s*let (\w+) = \w+\(\2, e17\);\s*\3\?\.type === `widget` && \3\.th && \3\.th\.cast\.forEach/m),
+};
+Object.assign(aliases, {
+  [theaterDraw]: 'renderTheater',
+  [pick('theatre label', code, /case `theater`:\s*return ([\w$]+)\(e17\);/)]: 'theaterLabel',
+  [pick('theatre config', fns.get(find('theatre editor start', t => t.startsWith('async function') && t.includes('(e17.th, ') && t.includes('kind === n11'))), /= ([\w$]+)\(e17\.th, /)]: 'theaterConfig',
+  [theaterSetters.host]: 'registerTheaterHost', [theaterSetters.save]: 'registerTheaterSave', [theaterSetters.move]: 'registerTheaterPositions',
+  [pick('stage pictures', theaterDialog, /children: \[([\w$]+)\.map\(\(e18\) => z\(`button`, \{ type: `button`, role: `radio`, "aria-checked": !\w+ && t10\.back === e18\.id/)]: 'THEATER_BACKS',
+  [pick('stage picture', theaterDialog, /z\(`img`, \{ src: ([\w$]+)\(e18\.id\), alt: `` \}\), z\(`span`, \{ children: e18\.label \}\)/)]: 'theaterBackPicture',
+  [find('theatre styles', t => t.startsWith('`\n.lh-th{position:absolute'))]: 'THEATER_CSS',
+});
+
 const toolCss = find('tool styles', t => t.startsWith('`\n.lh-ls{position:absolute;inset:0;overflow:hidden}'));
 
 // The catalogue of the reference (all entries); those with a page of these tools are the presets.
@@ -284,7 +304,7 @@ const presets = TOOL_CATALOG.flatMap(meta => {
   if (typeof meta.items !== 'function') return [];
   let items;
   try { items = meta.items(); } catch { return []; }
-  if (!items.some(item => item.type === 'widget' && (kinds.has(item.kind) || item.kind === 'bookmarks' || item.kind === 'code' || item.kind === 'avatar'))) return [];
+  if (!items.some(item => item.type === 'widget' && (kinds.has(item.kind) || item.kind === 'bookmarks' || item.kind === 'code' || item.kind === 'avatar' || item.kind === 'theater'))) return [];
   return [{ id: meta.id, title: meta.label, group: meta.group, items: items.map(item => { const copy = { ...item }; delete copy.id; return copy; }) }];
 });
 await fs.writeFile('src/lib/learning/werkzeug-presets.json', JSON.stringify(presets, null, 1) + '\n');
@@ -329,3 +349,55 @@ for (const set of sortRef.sets) {
 }
 await fs.writeFile('src/lib/learning/sort-sets.json', JSON.stringify({ colors: sortRef.colors, sets: sortSets }, null, 1) + '\n');
 console.log('Sort sets:', sortSets.length, 'with', Object.keys(pack).length, 'pictures');
+
+// The four worksheet generators of 1.47.3 (Vorlagen › Einstellbar): Rechnen
+// im Alltag, Karopapier, Programmieren: Arbeitsblatt, Laute hören. Each is
+// found by the key under which its dialog keeps the last settings.
+const sheetDialog = (key) => {
+  const keyVar = [...inits.entries()].find(([, t]) => t === `\`${key}\``)?.[0];
+  const text = keyVar && [...fns.values()].find(t => t.includes(`F(() => Z3(${keyVar},`));
+  if (!text) throw Error('Worksheet dialog not found: ' + key);
+  const [, defaults, clean] = new RegExp(`Z3\\(${escape(keyVar)}, ([\\w$]+), ([\\w$]+)\\)`).exec(text);
+  return { text, defaults, clean };
+};
+const life = sheetDialog('lernheft-life-v1'), grid = sheetDialog('lernheft-grid-v1'), coding = sheetDialog('lernheft-coding-sheet-v1'), phon = sheetDialog('lernheft-phon-v1');
+const formatsOf = (d) => pick('sheet formats', d.text, /children: ([\w$]+)\.map\(\(e18\) => z\(e6/);
+const phonPictures = fns.get(find('phon pictures', t => t.startsWith('function') && t.includes('`anlaut-pictos`') && t.includes('pack === `picto`')));
+const sheetAliases = {
+  [life.defaults]: 'LIFE_DEFAULTS', [life.clean]: 'lifeClean', [pick('life sheet', life.text, /\? ([\w$]+)\(t10, e18\) : \[\]/)]: 'lifePages', [formatsOf(life)]: 'LIFE_FORMATS',
+  [grid.defaults]: 'GRID_DEFAULTS', [grid.clean]: 'gridClean', [pick('grid sheet', grid.text, /\? ([\w$]+)\(t10, e18\) : \[\]/)]: 'gridPages', [formatsOf(grid)]: 'GRID_FORMATS',
+  [coding.defaults]: 'CODING_DEFAULTS', [coding.clean]: 'codingClean', [pick('coding sheet', coding.text, /\(\(\) => ([\w$]+)\(t10\), \[t10, r10\]\)/)]: 'codingPages',
+  [pick('coding kinds', coding.text, /label: `Arbeitsblatt`, value: t10\.kind, options: ([\w$]+)/)]: 'CODING_KINDS',
+  [pick('coding levels', coding.text, /label: `Schwierigkeit`, value: t10\.level, options: ([\w$]+)/)]: 'CODING_LEVELS',
+  [pick('coding walls', coding.text, /label: `Hindernisse`, value: t10\.walls, options: ([\w$]+)/)]: 'CODING_WALLS',
+  [phon.defaults]: 'PHON_DEFAULTS', [phon.clean]: 'phonClean', [pick('phon sheet', phon.text, /\? ([\w$]+)\(t10, a10, e18\) : \[\]/)]: 'phonPages', [formatsOf(phon)]: 'PHON_FORMATS',
+  [pick('phon sounds', phon.text, /children: ([\w$]+)\.map\(\(e18\) => z\(`button`, \{ type: `button`, role: `radio`, "aria-checked": t10\.sound/)]: 'PHON_SOUNDS',
+  [pick('phon words', phonPictures, /for \(let r10 of ([\w$]+)\) r10\.no &&/)]: 'PHON_WORDS',
+};
+// Etiketten: cards with picture and word (or Sprechtasten), from a list of words.
+const labelsKey = [...inits.entries()].find(([, t]) => t === '`lernheft-labels`')?.[0];
+const labelsDialog = [...fns.values()].find(t => t.startsWith('function') && t.includes('Farbe des Rahmens') && t.includes('Vorlesen beim Antippen'));
+if (!labelsKey || !labelsDialog) throw Error('Etiketten not found.');
+const labelsFonts = /options: ([\w$]+)\.filter\(([\w$]+)\)\.map\(\(e18\) => \(\{ value: e18, label: ([\w$]+)\(e18\)\.label \}\)\)/.exec(labelsDialog);
+if (!labelsFonts) throw Error('Etiketten fonts not found.');
+Object.assign(sheetAliases, {
+  [pick('labels pages', labelsDialog, /MR\(\(\) => ([\w$]+)\(\w+, t10\), \[/)]: 'labelPages',
+  [pick('labels sizes', labelsDialog, /children: ([\w$]+)\.map\(\(e18\) => z\(`button`, \{ type: `button`, role: `radio`, "aria-checked": t10\.grid/)]: 'LABEL_SIZES',
+  [pick('labels colours', labelsDialog, /Farbe des Rahmens`, children: ([\w$]+)\.map/)]: 'LABEL_COLORS',
+  [labelsFonts[1]]: 'LABEL_FONTS', [labelsFonts[2]]: 'labelFontAvailable', [labelsFonts[3]]: 'labelFont',
+  [pick('labels case', labelsDialog, /label: ([\w$]+)\(`GROSS`, `upper`\)/)]: 'labelCase',
+  [pick('labels defaults', fns.get(find('labels load', t => t.startsWith('function') && t.includes(`localStorage.getItem(${labelsKey})`))), /return ([\w$]+);/)]: 'LABEL_DEFAULTS',
+});
+const sheets = extract(Object.keys(sheetAliases));
+{ const outside = sheets.replace(/http:\/\/www\.w3\.org\/[\w/]+/g, '').replaceAll('https://www.latex-project.org/lppl/', '').replaceAll('https://github.com/hyphenation/tex-hyphen', '') /* licence texts of the hyphenation patterns, no requests */.match(/.{0,60}https?:\/\/.{0,60}/g); if (outside) { console.error(outside.join('\n')); throw Error('The worksheets would reach an outside address.'); } }
+let sheetCode = sheets;
+for (const [from, to] of Object.entries({ 'LH Andika': 'Andika', 'LH Nunito': 'Nunito', 'LH Grundschrift': 'Playwrite DE Grund', 'LH Schreibschrift SAS': 'Playwrite DE SAS', 'LH Schreibschrift': 'Playwrite DE VA', 'LH Druckschrift': 'Andika' })) sheetCode = sheetCode.replaceAll(from, to);
+await fs.writeFile('src/lib/sheets/sheets-1473.ts', `/* eslint-disable */
+// @ts-nocheck
+// Generated from Lernsachen-Heft-komplett.html (1.47.3) by scripts/extract-tools-reference.mjs:
+// the worksheet generators Rechnen im Alltag, Karopapier, Programmieren: Arbeitsblatt and
+// Laute hören, unchanged. They build pages of text and sticker items (units 1400 × 990).
+${sheetCode}
+export { ${Object.entries(sheetAliases).map(([a, b]) => a + ' as ' + b).join(', ')} };
+`);
+console.log('Worksheets:', sheetCode.length, 'bytes');

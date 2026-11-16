@@ -177,7 +177,7 @@ test('Formen, Bildgestaltung, Vorlagenkategorien, Zoom und Tastatur sind verfüg
   // Templates are design only; interactive boards moved to “Lernwerkzeuge”.
   const categories = templates.getByRole('navigation', { name: 'Kategorien' });
   await expect(categories.getByRole('button', { name: /^Kommunikation · \d+$/ })).toHaveCount(0);
-  await expect(categories.getByRole('button', { name: /^Einstellbar · 7$/ })).toBeVisible();
+  await expect(categories.getByRole('button', { name: /^Einstellbar · 12$/ })).toBeVisible();
   await templates.getByRole('button', { name: 'Schließen', exact: true }).click();
   await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
   const learning = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });

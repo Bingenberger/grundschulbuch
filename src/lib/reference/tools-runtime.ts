@@ -138,6 +138,15 @@ function yr(e17, t10) {
     gr === r10 && (gr = null, Cr());
   }, holds: () => gr === r10 };
 }
+function br() {
+  let e17 = gr;
+  gr = null;
+  try {
+    e17?.stop();
+  } catch {
+  }
+  Cr();
+}
 var xr = () => gr?.kind ?? null;
 function Sr(e17) {
   gr ? _r.add(e17) : e17();
@@ -1402,6 +1411,29 @@ var al = Uo({ cls: `lh-ct-phone`, view: qc, label: il, sounds: true, hit(e17, t1
   al.redraw(e17);
 } });
 var ol = al.draw;
+function cl(e17, t10) {
+  let n10 = e17[0]?.length ?? 0, r10 = Math.max(1, e17.length), i10 = new DataView(new ArrayBuffer(44 + n10 * r10 * 2)), a10 = (e18, t11) => [...t11].forEach((t12, n11) => i10.setUint8(e18 + n11, t12.charCodeAt(0)));
+  a10(0, `RIFF`), i10.setUint32(4, 36 + n10 * r10 * 2, true), a10(8, `WAVEfmt `), i10.setUint32(16, 16, true), i10.setUint16(20, 1, true), i10.setUint16(22, r10, true), i10.setUint32(24, t10, true), i10.setUint32(28, t10 * r10 * 2, true), i10.setUint16(32, r10 * 2, true), i10.setUint16(34, 16, true), a10(36, `data`), i10.setUint32(40, n10 * r10 * 2, true);
+  let o10 = 44;
+  for (let t11 = 0; t11 < n10; t11++) for (let n11 = 0; n11 < r10; n11++) {
+    let r11 = Math.max(-1, Math.min(1, e17[n11][t11]));
+    i10.setInt16(o10, r11 < 0 ? r11 * 32768 : r11 * 32767, true), o10 += 2;
+  }
+  return new Blob([i10.buffer], { type: `audio/wav` });
+}
+async function dl(e17, t10) {
+  let n10 = new File([e17], t10, { type: e17.type || `application/octet-stream` });
+  try {
+    if (typeof navigator.share == `function` && navigator.canShare?.({ files: [n10] }) && matchMedia(`(pointer: coarse)`).matches) {
+      await navigator.share({ files: [n10] });
+      return;
+    }
+  } catch (e18) {
+    if (e18 instanceof DOMException && e18.name === `AbortError`) return;
+  }
+  let r10 = URL.createObjectURL(n10), i10 = document.createElement(`a`);
+  i10.href = r10, i10.download = t10, i10.rel = `noopener`, i10.style.display = `none`, document.body.appendChild(i10), i10.click(), i10.remove(), setTimeout(() => URL.revokeObjectURL(r10), 6e4);
+}
 var _te = `
 .lh-kp-back{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.45);display:flex;align-items:flex-start;justify-content:center;padding:max(16px,env(safe-area-inset-top)) 16px 16px;overflow:auto;font-family:'Andika',Andika,system-ui,sans-serif;-webkit-user-select:text;user-select:text}
 .lh-kp-sheet{background:#fff;color:#1f2937;border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,.3);width:min(640px,100%);padding:20px 22px 18px;border-top:10px solid var(--kp,#7048e8)}
@@ -1439,7 +1471,161 @@ var Il = (e17, t10 = ``, n10 = ``) => {
   return t10 && (r10.className = t10), n10 && (r10.textContent = n10), r10;
 };
 var lu = [{ id: `low`, label: `Tief`, k: 0.62 }, { id: `normal`, label: `Normal`, k: 1 }, { id: `high`, label: `Hoch`, k: 1.45 }];
+var pu = 30;
+var mu = /* @__PURE__ */ new Map();
+function hu(e17) {
+  let t10 = mu.get(e17);
+  return t10 || (t10 = (async () => {
+    try {
+      let t11 = await (await fetch(e17)).arrayBuffer(), n10 = window.OfflineAudioContext ?? window.webkitOfflineAudioContext;
+      if (!n10) return null;
+      let r10 = new n10(1, 1, 22050), i10 = await new Promise((e18, n11) => {
+        let i11 = r10.decodeAudioData(t11, e18, n11);
+        i11 && typeof i11.then == `function` && i11.then(e18, n11);
+      }), a10 = i10.getChannelData(0), o10 = Math.max(1, Math.floor(i10.sampleRate / pu)), s10 = Math.ceil(a10.length / o10), c10 = new Float32Array(s10);
+      for (let e18 = 0; e18 < s10; e18++) {
+        let t12 = 0, n11 = Math.min(a10.length, (e18 + 1) * o10);
+        for (let r11 = e18 * o10; r11 < n11; r11++) t12 += a10[r11] * a10[r11];
+        c10[e18] = Math.sqrt(t12 / Math.max(1, n11 - e18 * o10));
+      }
+      let l10 = Array.from(c10).filter((e18) => e18 > 4e-3).sort((e18, t12) => e18 - t12), u10 = l10.length ? l10[Math.floor(l10.length * 0.9)] : 1, d10 = new Float32Array(s10);
+      for (let e18 = 0; e18 < s10; e18++) {
+        let t12 = c10[e18] / (u10 * 0.85);
+        d10[e18] = t12 < 0.18 ? 0 : Math.min(1, t12);
+      }
+      return d10;
+    } catch {
+      return null;
+    }
+  })(), mu.set(e17, t10), t10);
+}
+function gu(e17) {
+  let t10 = true, n10 = 0, r10 = 0, i10 = 0, a10 = false, o10 = performance.now(), s10 = e17.url ? hu(e17.url) : null, c10 = null;
+  s10?.then((e18) => {
+    c10 = e18;
+  });
+  let l10 = lu.find((t11) => t11.id === e17.pitch)?.k ?? 1, u10 = e17.url ? M(``, e17.url, { onVoice: () => r10 = performance.now() }) : M(e17.text ?? ``, void 0, { pitch: l10, rate: l10 < 1 ? 0.92 : 1, onVoice: () => r10 = performance.now() }), d10 = -1, f10 = (s11) => {
+    if (a10) return;
+    let l11 = 0;
+    if (t10 && r10) {
+      let e18 = s11 - r10;
+      l11 = c10 ? c10[Math.floor(e18 / 1e3 * pu)] ?? 0 : Math.abs(Math.sin(e18 / 85)) * (0.4 + 0.6 * Math.abs(Math.sin(e18 / 270 + 1)));
+    }
+    let u11 = Math.round(l11 * 6) / 6;
+    u11 !== d10 && (d10 = u11, e17.mouth(u11)), e17.frame?.(s11 - o10, t10), !t10 && !n10 && (n10 = s11), t10 || s11 - o10 < Math.max(300, e17.minMs ?? 0) || s11 - n10 < (e17.after ?? 0) ? i10 = requestAnimationFrame(f10) : (e17.mouth(-1), e17.frame?.(s11 - o10, false));
+  };
+  return i10 = requestAnimationFrame(f10), { done: u10.then(() => {
+    t10 = false;
+  }), stop: () => {
+    a10 = true, t10 = false, cancelAnimationFrame(i10), e17.mouth(-1);
+  } };
+}
+function _u(e17, t10) {
+  let n10 = t10?.width || 800, r10 = t10?.height || 600, i10 = e17.x1 * n10, a10 = e17.y1 * r10, o10 = e17.x2 * n10, s10 = e17.y2 * r10;
+  return { W: n10, H: r10, cx: (i10 + o10) / 2, cy: (a10 + s10) / 2, len: Math.max(8, Math.hypot(o10 - i10, s10 - a10)), angle: Math.atan2(s10 - a10, o10 - i10) * 180 / Math.PI };
+}
+var vu = (e17) => e17.toFixed(1);
+function yu(e17, t10, n10, r10, i10) {
+  let a10 = t10.len, o10 = a10 / 2;
+  if (e17.style === `comic`) {
+    let e18 = Math.max(0, r10);
+    if (e18 < 0.05) return `<path d="M${vu(-o10)} 0Q0 ${vu(a10 * 0.22)} ${vu(o10)} 0" fill="none" stroke="#111827" stroke-width="${vu(Math.max(3, a10 * 0.06))}" stroke-linecap="round"/>`;
+    let t11 = a10 * (0.15 + 0.55 * e18);
+    return `<path d="M${vu(-o10)} 0Q0 ${vu(t11 * 1.6)} ${vu(o10)} 0Q0 ${vu(t11 * 0.2)} ${vu(-o10)} 0Z" fill="#7f1d1d" stroke="#111827" stroke-width="${vu(Math.max(3, a10 * 0.055))}" stroke-linejoin="round"/><ellipse cx="0" cy="${vu(t11 * 0.62)}" rx="${vu(o10 * 0.42)}" ry="${vu(t11 * 0.22)}" fill="#f87171"/>`;
+  }
+  let s10 = Math.max(0, r10);
+  if (s10 < 0.04) return ``;
+  let c10 = a10 * (e17.style === `normal` ? 0.32 : e17.style === `animal` ? 0.5 : 0.55) * s10, l10 = o10 * (e17.style === `normal` ? 0.92 : 1.05), u10 = e17.style === `monster` ? `#14070a` : e17.style === `animal` ? `#4c0519` : `#2a0a0a`, d10 = `<path d="M${vu(-l10)} 0Q0 ${vu(-c10 * 0.12)} ${vu(l10)} 0L${vu(l10 * 0.8)} ${vu(c10 * 0.9)}Q0 ${vu(c10 * 1.25)} ${vu(-l10 * 0.8)} ${vu(c10 * 0.9)}Z" fill="${u10}"/>`;
+  if (e17.style === `animal` && (d10 += `<ellipse cx="0" cy="${vu(c10 * 0.85)}" rx="${vu(l10 * 0.55)}" ry="${vu(c10 * 0.3)}" fill="#fb7185"/>`), e17.style === `normal` && c10 > a10 * 0.08 && (d10 += `<path d="M${vu(-l10 * 0.7)} ${vu(c10 * 0.02)}H${vu(l10 * 0.7)}V${vu(c10 * 0.16)}Q0 ${vu(c10 * 0.24)} ${vu(-l10 * 0.7)} ${vu(c10 * 0.16)}Z" fill="#f8fafc" opacity=".85"/>`), e17.style === `monster`) {
+    let e18 = 2 * l10 / 6, t11 = ``;
+    for (let n11 = 0; n11 < 6; n11++) t11 += `M${vu(-l10 + n11 * e18)} 0l${vu(e18 / 2)} ${vu(Math.min(c10 * 0.45, a10 * 0.16))}l${vu(e18 / 2)} ${vu(-Math.min(c10 * 0.45, a10 * 0.16))}`;
+    d10 += `<path d="${t11}Z" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>`;
+  }
+  let f10 = a10 * 0.75;
+  if (d10 += `<g transform="translate(0 ${vu(c10)})"><clipPath id="${i10}"><path d="M${vu(-o10 * 1.5)} 0A${vu(o10 * 1.5)} ${vu(f10)} 0 0 0 ${vu(o10 * 1.5)} 0Z"/></clipPath><g clip-path="url(#${i10})"><use href="#${n10}" transform="rotate(${vu(-t10.angle)}) translate(${vu(-t10.cx)} ${vu(-t10.cy)})"/></g>`, e17.style === `monster`) {
+    let e18 = 2 * l10 * 0.9 / 5, t11 = `M${vu(-l10 * 0.9)} 0`;
+    for (let n11 = 0; n11 < 5; n11++) t11 += `l${vu(e18 / 2)} ${vu(-Math.min(c10 * 0.4, a10 * 0.14))}l${vu(e18 / 2)} ${vu(Math.min(c10 * 0.4, a10 * 0.14))}`;
+    d10 += `<path d="${t11}Z" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>`;
+  }
+  return d10 + `</g>`;
+}
+function bu(e17, t10, n10, r10, i10 = -1) {
+  let a10 = _u(e17, t10);
+  return `<svg xmlns="http://www.w3.org/2000/svg" class="lh-pt-svg" viewBox="0 0 ${a10.W} ${a10.H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"><image id="lh-pti-${r10}" href="${n10}" width="${a10.W}" height="${a10.H}"/><g transform="translate(${vu(a10.cx)} ${vu(a10.cy)}) rotate(${vu(a10.angle)})" class="lh-pt-mouth">${yu(e17, a10, `lh-pti-${r10}`, i10, `lh-pt-${r10}`)}</g></svg>`;
+}
+function xu(e17, t10, n10, r10, i10) {
+  e17.innerHTML = yu(t10, _u(t10, n10), `lh-pti-${r10}`, i10, `lh-pt-${r10}`);
+}
+var Cu = /* @__PURE__ */ new Map();
+var wu = /* @__PURE__ */ new WeakMap();
+var Tu = /* @__PURE__ */ new Set();
+var Eu = /* @__PURE__ */ new Set();
+function Du(e17, t10) {
+  let n10 = t10?.querySelector(`svg.lh-pt-svg`), r10 = e17.pt;
+  if (!n10 || !r10 || !t10) return;
+  let i10 = Cu.get(e17.id)?.assets, a10 = Cu.get(e17.id)?.assetUrl, o10 = i10?.[r10.img], s10 = n10.querySelector(`.lh-pt-mouth`);
+  if (!s10) return;
+  wu.get(n10)?.stop();
+  let c10 = e17.say, l10 = c10?.sound ? i10?.[c10.sound] : void 0, u10 = l10 ? a10 ? a10(l10) : l10.dataUrl : void 0, d10 = c10?.text?.trim() || (u10 ? `` : `Hallo!`);
+  for (let n11 of Eu) if (n11(e17, t10, !!u10)) return;
+  let f10 = gu({ text: d10, url: u10, pitch: c10?.pitch ?? (r10.style === `monster` ? `low` : `normal`), mouth: (t11) => xu(s10, r10, o10, e17.id, t11) });
+  wu.set(n10, f10);
+  for (let t11 of Tu) t11(e17.id, f10.done);
+  return f10;
+}
+function Ou(e17, t10, n10, r10) {
+  let i10 = t10?.querySelector(`svg.lh-pt-svg`), a10 = e17.pt, o10 = i10?.querySelector(`.lh-pt-mouth`);
+  if (!i10 || !a10 || !o10) return;
+  let s10 = Cu.get(e17.id)?.assets?.[a10.img];
+  wu.get(i10)?.stop();
+  let c10 = performance.now(), l10 = 0, u10 = NaN, d10 = (t11) => {
+    t11 !== u10 && (u10 = t11, xu(o10, a10, s10, e17.id, t11));
+  }, f10 = (e18) => {
+    let t11 = e18 - c10;
+    d10(t11 < n10 ? Math.round(r10(t11) * 6) / 6 : -1), t11 < n10 && (l10 = requestAnimationFrame(f10));
+  };
+  l10 = requestAnimationFrame(f10), wu.set(i10, { done: new Promise((e18) => setTimeout(e18, n10)), stop: () => (cancelAnimationFrame(l10), d10(-1)) });
+}
 var ku = [{ id: `happy`, label: `fr\xF6hlich`, say: `Ich bin fr\xF6hlich.` }, { id: `sad`, label: `traurig`, say: `Ich bin traurig.` }, { id: `angry`, label: `w\xFCtend`, say: `Ich bin w\xFCtend.` }, { id: `scared`, label: `\xE4ngstlich`, say: `Ich habe Angst.` }, { id: `surprised`, label: `\xFCberrascht`, say: `Ich bin \xFCberrascht.` }, { id: `tired`, label: `m\xFCde`, say: `Ich bin m\xFCde.` }];
+var Au = [{ id: `talk`, label: `Mit den H\xE4nden reden` }, { id: `wave`, label: `Winken` }, { id: `cross`, label: `Arme verschr\xE4nken` }, { id: `dance`, label: `Tanzen` }, { id: `jump`, label: `H\xFCpfen` }, { id: `bow`, label: `Verbeugen` }, { id: `clap`, label: `Klatschen` }, { id: `cheer`, label: `Jubeln` }, { id: `random`, label: `Zuf\xE4llig` }];
+var ju = { armL: 7, armR: -7, legL: 0, legR: 0, bob: 0, up: 0, dip: 0, squash: 0 };
+var Mu = (e17) => e17 <= 0 ? 0 : e17 >= 1 ? 1 : e17 * e17 * (3 - 2 * e17);
+function Nu(e17, t10) {
+  let n10 = Math.sin;
+  switch (e17) {
+    case `wave`:
+      return { armR: -150 + 18 * n10(t10 / 130) };
+    case `cross`:
+      return { armL: -64 + 2 * n10(t10 / 700), armR: 66 - 2 * n10(t10 / 700) };
+    case `dance`: {
+      let e18 = n10(t10 / 260);
+      return { armL: 40 + 70 * (0.5 + 0.5 * e18), armR: -40 - 70 * (0.5 - 0.5 * e18), legL: 12 * e18, legR: 12 * e18, bob: -7 * Math.abs(e18), up: 7 * n10(t10 / 520) };
+    }
+    case `jump`: {
+      let e18 = n10(t10 % 620 / 620 * Math.PI);
+      return { armL: 7 + 55 * e18, armR: -7 - 55 * e18, legL: 9 * e18, legR: -9 * e18, bob: -34 * e18 };
+    }
+    case `bow`: {
+      let e18 = t10 < 650 ? Mu(t10 / 650) : t10 < 1500 ? 1 : Mu(1 - (t10 - 1500) / 600), n11 = Nu(`talk`, t10), r10 = t10 < 2100 ? 0 : Mu((t10 - 2100) / 400);
+      return { armL: 7 + 14 * e18 + ((n11.armL ?? 7) - 7) * r10, armR: -7 + 47 * e18 + ((n11.armR ?? -7) + 7) * r10, up: 6 * e18, dip: 22 * e18, squash: 0.18 * e18 };
+    }
+    case `clap`: {
+      let e18 = Math.abs(n10(t10 / 150));
+      return { armL: 7 - 50 * e18, armR: -7 + 50 * e18 };
+    }
+    case `cheer`: {
+      let e18 = n10(t10 / 210);
+      return { armL: 145 + 12 * e18, armR: -145 - 12 * e18, bob: -14 * Math.abs(e18) };
+    }
+    default:
+      return { armR: -7 - (18 + 14 * n10(t10 / 380)), armL: 7 + (10 + 10 * n10(t10 / 520 + 2)) };
+  }
+}
+function hne(e17, t10) {
+  let n10 = {};
+  for (let r10 of Object.keys(ju)) n10[r10] = ju[r10] + ((e17[r10] ?? ju[r10]) - ju[r10]) * t10;
+  return n10;
+}
 var Fu = [`#fbe3cf`, `#f6d3b8`, `#eebd94`, `#d9a066`, `#b9794a`, `#8d5a3b`, `#6b4129`];
 var Iu = [`#2b1d16`, `#5a3825`, `#8a4b22`, `#c47a35`, `#e8c170`, `#f3e2b0`, `#9ca3af`, `#e5e7eb`, `#d33f6a`, `#3b82f6`];
 var Lu = [`#5b3a1e`, `#2f6fb3`, `#3f8f4a`, `#6b7280`];
@@ -1725,6 +1911,12 @@ function ld(e17, t10 = {}, n10 = {}) {
   return f10 += `<g class="av-up" transform="${p10}">${_ne(e17, r10)}</g>`, f10 += `<g class="av-legL" transform="rotate(${cd(t10.legL ?? 0)} ${l10} ${r10.hip})"><g transform="translate(${l10} ${r10.hip})">${sd(e17, r10, -1)}</g></g>`, f10 += `<g class="av-legR" transform="rotate(${cd(t10.legR ?? 0)} ${u10} ${r10.hip})"><g transform="translate(${u10} ${r10.hip})">${sd(e17, r10, 1)}</g></g>`, f10 += `<g class="av-up" transform="${p10}">`, f10 += `<rect x="${r10.hx - 11}" y="${r10.hy + r10.ry - 14}" width="22" height="${r10.sy - r10.hy - r10.ry + 22}" rx="8" fill="${e17.skin}" stroke="${td(e17.skin)}" stroke-width="2"/>`, f10 += Dne(e17, r10), f10 += `<g class="av-armL" transform="rotate(${cd(i10)} ${o10} ${c10})"><g transform="translate(${o10} ${c10})">${od(e17, r10)}</g></g>`, f10 += `<g class="av-armR" transform="rotate(${cd(a10)} ${s10} ${c10})"><g transform="translate(${s10} ${c10})">${od(e17, r10)}</g></g>`, f10 += `<g class="av-head">${Tne(e17, r10, t10)}${vne(e17, r10)}${wne(e17, r10)}${yne(e17, r10)}</g>`, f10 += `</g></g></svg>`, f10;
 }
 var ud = (e17, t10) => t10.up || t10.dip || t10.squash ? `translate(${e17.hx} ${cd(e17.hip + (t10.dip ?? 0))}) rotate(${cd(t10.up ?? 0)}) scale(1 ${cd(1 - (t10.squash ?? 0))}) translate(${-e17.hx} ${-e17.hip})` : ``;
+function dd(e17, t10, n10) {
+  let r10 = id(t10), i10 = r10.sy + 14, a10 = (t11, n11, r11, i11) => e17.querySelector(t11)?.setAttribute(`transform`, `rotate(${cd(n11)} ${r11} ${i11})`);
+  a10(`.av-armL`, n10.armL ?? 7, r10.hx - r10.ax, i10), a10(`.av-armR`, n10.armR ?? -7, r10.hx + r10.ax, i10), a10(`.av-legL`, n10.legL ?? 0, r10.hx - r10.lx, r10.hip), a10(`.av-legR`, n10.legR ?? 0, r10.hx + r10.lx, r10.hip), e17.querySelector(`.av-all`)?.setAttribute(`transform`, `translate(0 ${cd(n10.bob ?? 0)})`);
+  let o10 = ud(r10, n10);
+  e17.querySelectorAll(`.av-up`).forEach((e18) => e18.setAttribute(`transform`, o10));
+}
 function fd(e17, t10) {
   let n10 = id(e17), r10 = (e18, t11, n11) => `${(e18 - n11 / 2).toFixed(1)} ${(t11 - n11 / 2).toFixed(1)} ${n11.toFixed(1)} ${n11.toFixed(1)}`;
   switch (t10) {
@@ -1751,6 +1943,48 @@ function One(e17, t10, n10, r10 = {}) {
   n10 && r10.assets && hd.set(t10.id, { assets: r10.assets, assetUrl: r10.assetUrl });
   let i10 = $u(t10.av), a10 = `${n10}|${JSON.stringify(i10)}`;
   e17.dataset.k !== a10 && (e17.dataset.k = a10, e17.setAttribute(`aria-label`, t10.say?.text || md(i10)), e17.innerHTML = n10 ? `<div class="lh-av">${ld(i10)}</div>` : `<img class="lh-av-img" src="${pd(i10)}" alt="" draggable="false">`);
+}
+var gd = /* @__PURE__ */ new WeakMap();
+var kne = Au.map((e17) => e17.id).filter((e17) => e17 !== `random`);
+var _d = (e17, t10) => e17 === `random` ? kne[Math.floor(Math.random() * kne.length)] : e17 ?? (t10 ? `talk` : `wave`);
+function vd(e17, t10, n10) {
+  gd.get(e17)?.stop();
+  let r10 = id(t10), i10 = e17.querySelector(`.av-mouth`), a10 = 0, o10 = 0, s10 = (r11, i11) => {
+    let s11 = Math.max(0, r11 - o10);
+    o10 = r11, a10 = i11 ? Math.min(1, a10 + s11 / 260) : Math.max(0, a10 - s11 / 320), dd(e17, t10, hne(Nu(n10.move, r11), Mu(a10)));
+  }, c10;
+  if (!n10.text && !n10.url) {
+    let o11 = performance.now(), l10 = n10.mime ? Math.max(n10.mime.ms, n10.move === `bow` ? 2100 : 0) : n10.move === `bow` ? 2200 : 1700, u10 = 0, d10 = NaN, f10 = (e18) => {
+      e18 !== d10 && i10 && (d10 = e18, i10.innerHTML = e18 < 0 ? ad(t10, r10) : ad(t10, r10, e18));
+    }, p10 = (t11) => {
+      let r11 = t11 - o11;
+      s10(r11, r11 < l10), n10.mime && f10(r11 < n10.mime.ms ? Math.round(n10.mime.level(r11) * 6) / 6 : -1), r11 < l10 || a10 > 0 ? u10 = requestAnimationFrame(p10) : gd.delete(e17);
+    };
+    u10 = requestAnimationFrame(p10), c10 = { stop: () => (cancelAnimationFrame(u10), dd(e17, t10, {}), f10(-1)), done: new Promise((e18) => setTimeout(e18, l10)) };
+  } else {
+    let a11 = gu({ text: n10.text, url: n10.url, pitch: n10.pitch, minMs: n10.move === `bow` ? 2100 : 0, after: 450, mouth: (e18) => {
+      i10 && (i10.innerHTML = e18 < 0 ? ad(t10, r10) : ad(t10, r10, e18));
+    }, frame: (e18, t11) => s10(e18, t11 || n10.move === `bow` && e18 < 2100) });
+    c10 = { stop: () => {
+      a11.stop(), dd(e17, t10, {});
+    }, done: a11.done };
+  }
+  return gd.set(e17, c10), c10;
+}
+function Ane(e17, t10, n10, r10) {
+  let i10 = t10?.querySelector(`svg.lh-av-svg`);
+  if (!i10) return;
+  let a10 = !!(e17.say?.text.trim() || e17.say?.sound);
+  vd(i10, $u(e17.av), { text: ``, move: _d(e17.move, a10), mime: { ms: n10, level: r10 } });
+}
+function jne(e17, t10) {
+  let n10 = t10?.querySelector(`svg.lh-av-svg`);
+  if (!n10 || !t10) return;
+  let r10 = $u(e17.av), i10 = hd.get(e17.id), a10 = e17.say?.sound ? i10?.assets[e17.say.sound] : void 0, o10 = a10 ? i10?.assetUrl ? i10.assetUrl(a10) : a10.dataUrl : void 0, s10 = !!(e17.say?.text.trim() || o10), c10 = s10 ? e17.say?.text.trim() ?? `` : r10.name ? `Hallo, ich bin ${r10.name}!` : ``;
+  for (let n11 of Eu) if (n11(e17, t10, !!o10)) return;
+  let l10 = vd(n10, r10, { text: c10, url: o10, pitch: e17.say?.pitch, move: _d(e17.move, s10) });
+  for (let t11 of Tu) t11(e17.id, l10.done);
+  return l10;
 }
 var Mne = `
 .lh-av{position:absolute;inset:0}
@@ -3997,6 +4231,877 @@ var Pue = `
 .lh-bm-link.is-nope{animation:lh-bm-nope .45s ease-in-out}
 @keyframes lh-bm-nope{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
 .lh-bm-reset{position:absolute;border:0;border-radius:999px;background:#fff;color:#334155;font-weight:700;padding:.35em .9em;box-shadow:0 2px 6px rgba(15,23,42,.18);cursor:pointer;font-family:inherit}`;
+var $b = 1400;
+var ex = 6e4;
+var tx = 400;
+var nx = [{ id: `meadow`, label: `Wiese` }, { id: `forest`, label: `Wald` }, { id: `room`, label: `Zimmer` }, { id: `street`, label: `Stadt` }, { id: `beach`, label: `Strand` }, { id: `space`, label: `Weltraum` }, { id: `stage`, label: `B\xFChne` }];
+var rx = /* @__PURE__ */ new WeakSet();
+var ix = (e17, t10) => !!e17.heard || t10.h === 1;
+var ax = (e17, t10, n10) => Math.max(t10, Math.min(n10, e17));
+var ox = (e17, t10, n10, r10) => typeof e17 == `number` && Number.isFinite(e17) ? ax(e17, n10, r10) : t10;
+function sx(e17, t10) {
+  let n10 = e17 && typeof e17 == `object` ? e17 : {}, r10 = [];
+  for (let e18 of Array.isArray(n10.cast) ? n10.cast.slice(0, 6) : []) {
+    let t11 = e18 && typeof e18 == `object` ? e18 : {};
+    r10.push({ av: $u(t11.av), x: Math.round(ox(t11.x, 700, 0, $b)), y: Math.round(ox(t11.y, 760, 200, 860)), s: ox(t11.s, 1, 0.5, 1.8) });
+  }
+  let i10 = t10(n10.img, `image`), a10, o10 = n10.take, s10 = o10 ? t10(o10.sound, `audio`) : void 0;
+  if (o10 && s10 && Array.isArray(o10.moves) && o10.moves.length === r10.length) {
+    let e18 = (e19, t11) => Array.isArray(e19) ? e19.filter((e20) => typeof e20 == `number` && Number.isFinite(e20)).slice(0, t11).map((e20) => Math.round(e20)) : [];
+    if (a10 = { sound: s10, dur: Math.round(ox(o10.dur, 0, 0, 62e3)), moves: o10.moves.map((t11) => {
+      let n11 = e18(t11, 4500);
+      return n11.slice(0, n11.length - n11.length % 3);
+    }), talk: (() => {
+      let t11 = e18(o10.talk, 1200);
+      return t11.slice(0, t11.length - t11.length % 2);
+    })() }, Array.isArray(o10.vis) && o10.vis.length === r10.length && (a10.vis = o10.vis.map((t11) => e18(t11, 200).sort((e19, t12) => e19 - t12))), Array.isArray(o10.acts)) {
+      let e19 = o10.acts.filter((e20) => !!e20 && typeof e20 == `object` && typeof e20.id == `string`).slice(0, 200).map((e20) => ({ t: Math.round(ox(e20.t, 0, 0, 6200)), id: String(e20.id).slice(0, 60), d: Math.round(ox(e20.d, 100, 1, 6200)), ...e20.h === 1 ? { h: 1 } : {} }));
+      e19.length && (a10.acts = e19);
+    }
+    o10.heard === true && (a10.heard = true);
+  }
+  return { title: typeof n10.title == `string` ? n10.title.slice(0, 80) : ``, back: nx.some((e18) => e18.id === n10.back) ? n10.back : `meadow`, ...i10 ? { img: i10 } : {}, cast: r10, ...a10 ? { take: a10 } : {}, ...n10.next === true ? { next: true } : {} };
+}
+var cx = (e17, t10) => `<defs><linearGradient id="thsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${e17}"/><stop offset="1" stop-color="${t10}"/></linearGradient></defs><rect width="1400" height="860" fill="url(#thsky)"/>`;
+var lx = (e17, t10, n10 = 1) => `<g transform="translate(${e17} ${t10}) scale(${n10})" fill="#fff" opacity=".92"><ellipse cx="0" cy="0" rx="70" ry="34"/><ellipse cx="-50" cy="12" rx="48" ry="26"/><ellipse cx="55" cy="10" rx="50" ry="28"/></g>`;
+var ux = (e17, t10, n10 = 1, r10 = `#16a34a`) => `<g transform="translate(${e17} ${t10}) scale(${n10})"><rect x="-14" y="-40" width="28" height="120" rx="8" fill="#92400e"/><circle cx="0" cy="-90" r="80" fill="${r10}"/><circle cx="-50" cy="-50" r="55" fill="${r10}"/><circle cx="50" cy="-50" r="55" fill="${r10}"/></g>`;
+var Iue = (e17, t10, n10 = 1) => `<g transform="translate(${e17} ${t10}) scale(${n10})"><rect x="-12" y="-20" width="24" height="70" fill="#78350f"/><path d="M0-260L90-20H-90Z" fill="#166534"/><path d="M0-300L70-120H-70Z" fill="#15803d"/></g>`;
+function Lue(e17) {
+  let t10 = ``;
+  switch (e17) {
+    case `forest`:
+      t10 = cx(`#a7f3d0`, `#ecfccb`) + `<rect y="600" width="1400" height="260" fill="#65a30d"/>`;
+      for (let e18 = 0; e18 < 9; e18++) t10 += Iue(60 + e18 * 160, 560 + e18 % 2 * 30, 0.9 + e18 % 3 * 0.12);
+      t10 += `<ellipse cx="300" cy="760" rx="120" ry="18" fill="#4d7c0f"/><ellipse cx="1100" cy="740" rx="150" ry="20" fill="#4d7c0f"/>`;
+      for (let e18 = 0; e18 < 6; e18++) t10 += `<circle cx="${140 + e18 * 230}" cy="${780 + e18 % 2 * 40}" r="10" fill="#ef4444"/><circle cx="${140 + e18 * 230}" cy="${780 + e18 % 2 * 40}" r="4" fill="#fde047"/>`;
+      break;
+    case `room`:
+      t10 = `<rect width="1400" height="860" fill="#fde68a"/><rect y="620" width="1400" height="240" fill="#b45309"/>`;
+      for (let e18 = 0; e18 < 8; e18++) t10 += `<path d="M${e18 * 180} 620V860" stroke="#92400e" stroke-width="4"/>`;
+      t10 += `<rect y="600" width="1400" height="24" fill="#92400e"/><rect x="900" y="140" width="300" height="250" rx="10" fill="#bae6fd" stroke="#fff" stroke-width="16"/><path d="M1050 140V390M900 265H1200" stroke="#fff" stroke-width="12"/>`, t10 += `<rect x="220" y="170" width="200" height="150" fill="#fff" stroke="#78350f" stroke-width="12"/><path d="M240 300l50-60 40 40 30-30 40 50z" fill="#22c55e"/><circle cx="380" cy="210" r="16" fill="#facc15"/>`, t10 += `<path d="M640 0V80" stroke="#334155" stroke-width="4"/><path d="M600 80h80l-15 40h-50z" fill="#f97316"/>`;
+      break;
+    case `street`:
+      t10 = cx(`#7dd3fc`, `#e0f2fe`) + lx(300, 120) + lx(1050, 90, 0.8), [[40, 260, 240, `#fca5a5`], [300, 200, 220, `#fde68a`], [540, 300, 260, `#a5b4fc`], [820, 230, 230, `#86efac`], [1070, 280, 290, `#fdba74`]].forEach(([e18, n10, r10, i10]) => {
+        t10 += `<rect x="${e18}" y="${n10}" width="${r10}" height="${620 - n10}" fill="${i10}" stroke="#475569" stroke-width="4"/><path d="M${e18} ${n10}l${r10 / 2} -70 ${r10 / 2} 70z" fill="#b91c1c" stroke="#475569" stroke-width="4"/>`;
+        for (let i11 = 0; i11 < 3; i11++) for (let a10 = 0; a10 < 2; a10++) n10 + 40 + i11 * 110 < 560 && (t10 += `<rect x="${e18 + 30 + a10 * (r10 - 100)}" y="${n10 + 40 + i11 * 110}" width="40" height="55" fill="#e0f2fe" stroke="#475569" stroke-width="3"/>`);
+      }), t10 += `<rect y="620" width="1400" height="90" fill="#cbd5e1"/><rect y="700" width="1400" height="160" fill="#475569"/>`;
+      for (let e18 = 0; e18 < 8; e18++) t10 += `<rect x="${40 + e18 * 180}" y="772" width="100" height="14" fill="#f8fafc"/>`;
+      break;
+    case `beach`:
+      t10 = cx(`#38bdf8`, `#e0f2fe`) + `<circle cx="1180" cy="140" r="70" fill="#fde047"/>` + lx(380, 130, 0.9), t10 += `<rect y="470" width="1400" height="200" fill="#0ea5e9"/><path d="M0 520q60-20 120 0t120 0 120 0 120 0 120 0 120 0 120 0 120 0 120 0 120 0 120 0 120 0" fill="none" stroke="#e0f2fe" stroke-width="6"/>`, t10 += `<path d="M0 640q350-60 700 0t700 0V860H0z" fill="#fde68a"/>`, t10 += `<path d="M180 760q-10-200 40-330" stroke="#92400e" stroke-width="26" fill="none" stroke-linecap="round"/><g fill="#16a34a"><path d="M220 430q-120-30-170 40 90-40 170-40z"/><path d="M220 430q120-40 170 30-90-30-170-30z"/><path d="M220 430q-40-110 30-150-10 90-30 150z"/><path d="M220 430q-110 20-130 120 50-80 130-120z"/></g>`, t10 += `<circle cx="1000" cy="760" r="34" fill="#ef4444"/><path d="M966 760h68" stroke="#fff" stroke-width="10"/>`;
+      break;
+    case `space`:
+      t10 = `<rect width="1400" height="860" fill="#0f172a"/>`;
+      for (let e18 = 0; e18 < 70; e18++) t10 += `<circle cx="${e18 * 197 % 1400}" cy="${e18 * 113 % 560}" r="${1 + e18 % 3}" fill="#fff" opacity="${0.4 + e18 % 5 * 0.12}"/>`;
+      t10 += `<circle cx="1100" cy="170" r="90" fill="#f97316"/><ellipse cx="1100" cy="170" rx="150" ry="26" fill="none" stroke="#fde68a" stroke-width="10" transform="rotate(-18 1100 170)"/><circle cx="260" cy="150" r="40" fill="#a5b4fc"/>`, t10 += `<path d="M0 640q350-50 700 0t700 0V860H0z" fill="#94a3b8"/><ellipse cx="400" cy="760" rx="70" ry="16" fill="#64748b"/><ellipse cx="1050" cy="720" rx="90" ry="18" fill="#64748b"/>`;
+      break;
+    case `stage`:
+      t10 = `<rect width="1400" height="860" fill="#1f2937"/><path d="M200 0h1000l-140 620H340z" fill="#fef3c7" opacity=".14"/><rect y="620" width="1400" height="240" fill="#a16207"/>`;
+      for (let e18 = 0; e18 < 8; e18++) t10 += `<path d="M${e18 * 180} 620V860" stroke="#854d0e" stroke-width="4"/>`;
+      t10 += `<path d="M0 0V720Q120 560 260 300 300 120 330 0Z" fill="#b91c1c"/><path d="M1400 0V720Q1280 560 1140 300 1100 120 1070 0Z" fill="#b91c1c"/>`, t10 += `<path d="M60 0v700M140 0v600M220 0v420M1340 0v700M1260 0v600M1180 0v420" stroke="#991b1b" stroke-width="10"/><rect width="1400" height="70" fill="#991b1b"/><path d="M0 70q70 40 140 0t140 0 140 0 140 0 140 0 140 0 140 0 140 0 140 0 140 0" fill="#b91c1c"/>`;
+      break;
+    default:
+      t10 = cx(`#7dd3fc`, `#e0f2fe`) + `<circle cx="1200" cy="130" r="64" fill="#fde047"/>` + lx(280, 120) + lx(800, 80, 0.8), t10 += `<path d="M0 560q300-120 700-20t700 0V860H0z" fill="#86efac"/><path d="M0 640q400-80 800 0t600 -10V860H0z" fill="#4ade80"/>`, t10 += ux(180, 560, 0.9) + ux(1240, 600, 1.05, `#22c55e`);
+      for (let e18 = 0; e18 < 12; e18++) {
+        let n10 = 90 + e18 * 115, r10 = 720 + e18 % 3 * 40;
+        t10 += `<circle cx="${n10}" cy="${r10}" r="9" fill="${[`#f472b6`, `#facc15`, `#fff`][e18 % 3]}"/><circle cx="${n10}" cy="${r10}" r="3.5" fill="#f59e0b"/>`;
+      }
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 860" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">${t10}</svg>`;
+}
+var dx = (e17) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(Lue(e17))}`;
+function fx(e17, t10, n10, r10) {
+  let i10 = e17.moves[t10];
+  if (!i10 || i10.length < 3) return { x: n10.x, y: n10.y };
+  let a10 = r10 / 10;
+  if (a10 <= i10[0]) return { x: i10[1], y: i10[2] };
+  for (let e18 = 3; e18 < i10.length; e18 += 3) if (i10[e18] >= a10) {
+    let t11 = i10[e18 - 3], n11 = i10[e18] === t11 ? 1 : (a10 - t11) / (i10[e18] - t11);
+    return { x: i10[e18 - 2] + (i10[e18 + 1] - i10[e18 - 2]) * n11, y: i10[e18 - 1] + (i10[e18 + 2] - i10[e18 - 1]) * n11 };
+  }
+  return { x: i10[i10.length - 2], y: i10[i10.length - 1] };
+}
+var px = (e17, t10) => e17?.vis?.[t10]?.length === 0 && (e17.moves[t10]?.length ?? 0) < 3;
+function mx(e17, t10, n10) {
+  let r10 = e17?.vis?.[t10];
+  if (!r10) return true;
+  let i10 = n10 / 10, a10 = false;
+  for (let e18 = 0; e18 < r10.length && r10[e18] <= i10; e18++) a10 = e18 % 2 == 0;
+  return a10;
+}
+function hx(e17, t10) {
+  let n10 = t10 / 10, r10 = -1;
+  for (let t11 = 0; t11 + 1 < e17.talk.length && !(e17.talk[t11] > n10); t11 += 2) r10 = e17.talk[t11 + 1];
+  return r10;
+}
+var gx = /* @__PURE__ */ new Map();
+var _x = /* @__PURE__ */ new Map();
+var vx = /* @__PURE__ */ new Map();
+function yx(e17) {
+  return sx(e17.th, (e18) => typeof e18 == `string` ? e18 : void 0);
+}
+function bx(e17) {
+  let t10 = gx.get(e17.id);
+  return t10?.cast ?? t10?.mem?.cast ?? yx(e17).cast;
+}
+function xx(e17) {
+  let t10 = gx.get(e17.id), n10 = yx(e17);
+  t10?.cast && t10.mode === `idle` && n10.cast.length === t10.cast.length && (t10.cast = void 0);
+  let r10 = t10?.cast ?? t10?.mem?.cast ?? n10.cast;
+  if (!t10 || t10.figs.length !== r10.length) {
+    let i10 = t10?.mem?.take ?? n10.take, a10 = Math.min(t10?.pos ?? 0, i10?.dur ?? 0);
+    t10 = { mode: `idle`, figs: r10.map((e18, t11) => {
+      let n11 = i10 ? fx(i10, t11, e18, a10) : e18;
+      return { x: n11.x, y: n11.y, phase: 0, walk: 0, mouth: -1, on: px(i10, t11) || mx(i10, t11, a10) };
+    }), speaker: -1, t0: 0, raf: 0, pos: a10, moves: [], talk: [], vis: [], acts: [], lastSample: [], token: 0, ...t10?.mem ? { mem: t10.mem } : {}, ...t10?.cast ? { cast: t10.cast } : {} }, gx.set(e17.id, t10);
+  }
+  return t10;
+}
+var Sx = null;
+function zue(e17) {
+  Sx = e17;
+}
+var Cx = null;
+function Bue(e17) {
+  Cx = e17;
+}
+var wx = null;
+function Vue(e17) {
+  wx = e17;
+}
+var Tx = () => !!wx?.playOnly;
+function Ex(e17, t10) {
+  return tS(e17)?.parentElement?.querySelector(`.lh-item[data-id="${CSS.escape(t10)}"]`) ?? null;
+}
+var Dx = (e17) => {
+  for (let t10 of wx?.pages() ?? []) for (let n10 of t10.items) if (n10.id === e17 && n10.type === `widget`) return n10;
+};
+var Ox = (e17) => !!e17?.say?.sound;
+function Wue(e17, t10, n10) {
+  let r10 = Dx(t10.id), i10 = Ex(e17, t10.id);
+  if (!r10 || !i10) return;
+  if (Ox(r10) && !ix(n10, t10)) {
+    r10.kind === `avatar` ? jne(r10, i10) : r10.kind === `phototalk` && Du(r10, i10);
+    return;
+  }
+  let a10 = gx.get(e17)?.env, o10 = (e18) => a10 ? a10[Math.floor((t10.t * 10 + e18) / 1e3 * 30)] ?? 0 : 0;
+  r10.kind === `avatar` ? Ane(r10, i10, t10.d * 10, o10) : r10.kind === `phototalk` && Ou(r10, i10, t10.d * 10, o10);
+}
+var Ax = (e17, t10) => !!e17.acts?.some((n10) => t10 >= n10.t * 10 && t10 < (n10.t + n10.d) * 10 && (ix(e17, n10) || !Ox(Dx(n10.id))));
+function jx(e17, t10) {
+  if (!t10) return;
+  let n10 = vx.get(e17), r10 = n10?.assets[t10];
+  return r10 ? n10?.assetUrl ? n10.assetUrl(r10) : r10.dataUrl : wx?.src(t10);
+}
+function Mx(e17) {
+  let t10 = gx.get(e17.id);
+  if (t10?.mem) return t10.mem;
+  let n10 = yx(e17), r10 = n10.take ? jx(e17.id, n10.take.sound) : void 0;
+  return n10.take && r10 ? { take: n10.take, url: r10, cast: n10.cast } : null;
+}
+var Nx = (e17) => e17?.items.find((e18) => e18.type === `widget` && e18.kind === `theater`);
+function Px(e17) {
+  let t10 = wx?.pages() ?? [], n10 = t10.findIndex((t11) => t11.items.some((t12) => t12.id === e17.id));
+  if (n10 < 0) return [e17];
+  let r10 = (e18) => {
+    let t11 = Nx(e18);
+    return t11 && Mx(t11) ? t11 : void 0;
+  }, i10 = n10, a10 = n10;
+  for (; r10(t10[i10 - 1]); ) i10--;
+  for (; r10(t10[a10 + 1]); ) a10++;
+  return t10.slice(i10, a10 + 1).map((r11) => r11.id === t10[n10].id ? e17 : Nx(r11));
+}
+var Fx = null;
+function Kue(e17) {
+  let t10 = wx?.pages() ?? [], n10 = t10.findIndex((t11) => t11.items.some((t12) => t12.id === e17.id)), r10 = Nx(t10[n10 + 1]);
+  n10 < 0 || !r10 || !wx || (Fx = r10.id, wx.show(n10 + 1));
+}
+var Ix = (e17) => {
+  let t10 = Math.max(0, Math.round(e17 / 1e3));
+  return `${Math.floor(t10 / 60)}:${String(t10 % 60).padStart(2, `0`)}`;
+};
+var Lx = (e17) => e17.mode === `rec` ? performance.now() - e17.t0 : e17.pos;
+var Rx = (e17) => ax(e17 / ex * 100, 0, 100).toFixed(2);
+var zx = (e17) => e17.replace(/&/g, `&amp;`).replace(/</g, `&lt;`).replace(/"/g, `&quot;`);
+var Bx = (e17) => `${Math.round(e17 * 10) / 10}px`;
+function Vx(e17, t10, n10) {
+  let r10 = tx * e17.s;
+  return { left: t10 - r10 / 4, top: n10 - r10, w: r10 / 2, h: r10 };
+}
+var Hx = 150;
+var Ux = 120;
+function Wx(e17, t10, n10) {
+  let r10 = Vx(e17, t10, n10), i10 = id(e17.av), a10 = r10.top + (i10.hy - i10.ry - 12) / 400 * r10.h;
+  return { left: t10 - Hx / 2, top: Math.max(0, a10 - Ux + 6), w: Hx, h: Ux };
+}
+var que = (e17) => Math.min(856, 24 + tx * e17.s * 0.94);
+var Gx = (e17) => tx * e17.s / 4;
+var Jue = 24;
+var Kx = (e17) => e17 < 700 ? Jue : 1376;
+var Yue = (e17, t10) => t10 < 700 ? -(Gx(e17) + 30) : $b + Gx(e17) + 30;
+var qx = (e17, t10) => !Tx() && (t10.mode === `rec` || t10.mode === `idle` && !!Mx(e17));
+function Jx(e17, t10, n10) {
+  return n10.on ? { x: n10.x, y: n10.y, cls: `` } : qx(e17, t10) ? { x: Kx(n10.x), y: n10.y, cls: ` is-wing` } : { x: n10.x, y: n10.y, cls: ` is-off` };
+}
+var Xue = `<svg viewBox="0 0 ${Hx} ${Ux}" width="100%" height="100%" aria-hidden="true"><g stroke="#0f172a" stroke-opacity=".38" stroke-width="2" stroke-linecap="round"><path d="M25 34L47 ${Ux}M125 34L103 ${Ux}M75 58V${Ux}" fill="none"/></g><rect x="13" y="14" width="124" height="22" rx="11" fill="#fff" fill-opacity=".6" stroke="#0f172a" stroke-opacity=".4" stroke-width="3"/><rect x="64" y="3" width="22" height="58" rx="11" fill="#fff" fill-opacity=".6" stroke="#0f172a" stroke-opacity=".4" stroke-width="3"/><circle cx="75" cy="25" r="7" fill="#2563eb" fill-opacity=".55"/></svg>`;
+var Zue = { rec: { label: `Aufnehmen`, icon: `<circle cx="12" cy="12" r="7" fill="currentColor"/>`, cls: `is-rec` }, stop: { label: `Stopp`, icon: `<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>` }, play: { label: `Abspielen`, icon: `<path d="M8 5l11 7-11 7z" fill="currentColor"/>`, cls: `is-play` }, reset: { label: `Anfang`, icon: `<rect x="4" y="5" width="3" height="14" rx="1" fill="currentColor"/><path d="M20 5v14L9 12z" fill="currentColor"/>` }, video: { label: `Video`, icon: `<rect x="3" y="6" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M16 10l5-3v10l-5-3z" fill="currentColor"/>` } };
+function Yx(e17, t10, n10) {
+  if (!t10) return Tx() ? `Hier gibt es noch kein St\xFCck zum Abspielen.` : `Zieh die Figuren an den Griffen \xFCber dem Kopf \u2013 \u25CF nimmt Stimme und Bewegung auf (bis 1 Minute)`;
+  let r10 = `${Ix(n10)} / ${Ix(t10)}`;
+  return Tx() ? r10 : `${r10} \xB7 \u25CF ${n10 <= 0 ? `nimmt neu auf` : n10 >= t10 - 300 ? `nimmt weiter auf` : `nimmt ab hier neu auf`}`;
+}
+function Xx(e17, t10) {
+  let n10 = yx(e17), r10 = gx.get(e17.id), i10 = r10?.mode ?? `idle`, a10 = (t10 ? Mx(e17)?.take.dur : n10.take?.dur) ?? 0, o10 = a10 > 0, s10 = Math.min(r10?.pos ?? 0, ex), c10 = (e18, t11) => {
+    let n11 = Zue[e18];
+    return `<button type="button" class="lh-th-btn lh-key ${n11.cls ?? ``}" data-a="${e18}"${t11 ? `` : ` disabled`}><svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true">${n11.icon}</svg><span>${n11.label}</span></button>`;
+  }, l10 = i10 !== `idle`, u10 = `<div class="lh-th-bar" style="top:860px;height:130px">`;
+  u10 += l10 ? c10(`stop`, true) : (Tx() ? `` : c10(`rec`, bx(e17).length > 0)) + c10(`play`, o10);
+  let d10 = i10 === `count` ? `Gleich geht es los \u2026` : i10 === `rec` ? `${Ix(s10)} / 1:00` : l10 ? `${Ix(s10)} / ${Ix(a10)}` : Yx(e17, a10, s10);
+  return u10 += `<div class="lh-th-mid"><div class="lh-th-title">${zx(n10.title || `Puppentheater`)}</div><div class="lh-th-time" data-time>${zx(d10)}</div>`, u10 += `<div class="lh-th-prog${o10 ? ` is-seek` : ``}" data-track title="Stelle w\xE4hlen"><b data-took style="width:${Rx(a10)}%"></b><i data-prog style="width:${Rx(s10)}%"></i><span class="lh-th-knob" data-knob style="left:${Rx(s10)}%"></span></div></div>`, l10 || (u10 += (Tx() ? `` : c10(`reset`, true)) + c10(`video`, o10)), u10 + `</div>`;
+}
+function Que(e17) {
+  if (!e17.over) return ``;
+  let t10 = (e18, t11, n10 = ``) => `<button type="button" class="lh-key ${n10}" data-a="${e18}">${t11}</button>`;
+  return `<div class="lh-th-over"><div class="lh-th-box"><div class="lh-th-head">Was soll ins Video?</div><div class="lh-th-asks">${t10(`v1`, `Nur diese Seite`, `lh-th-ask`)}${t10(`vall`, `Alle ${e17.over.ask} Seiten \u2013 das ganze St\xFCck`, `lh-th-ask is-main`)}</div>${t10(`close`, `Abbrechen`, `lh-th-close`)}</div></div>`;
+}
+function Zx(e17, t10, n10, r10) {
+  n10 && r10.assets && vx.set(t10.id, { assets: r10.assets, assetUrl: r10.assetUrl });
+  let i10 = r10.assets ? { assets: r10.assets, assetUrl: r10.assetUrl } : vx.get(t10.id), a10 = yx(t10), o10 = a10.img ? i10?.assets[a10.img] : void 0, s10 = o10 ? i10?.assetUrl ? i10.assetUrl(o10) : o10.dataUrl : ``, c10 = n10 ? xx(t10) : null, l10 = n10 ? bx(t10) : a10.cast, u10 = `${n10}|${JSON.stringify(a10)}|${s10.length}|${Math.round(t10.w)}x${Math.round(t10.h)}|${l10.length}`;
+  if (n10 && _x.set(t10.id, t10), n10 && Fx === t10.id && (Fx = null, setTimeout(() => {
+    let e18 = _x.get(t10.id);
+    if (!e18 || !tS(t10.id)) return;
+    let n11 = xx(e18);
+    n11.mode === `idle` && (n11.pos = 0, dS(e18));
+  }, 700)), e17.dataset.k === u10) return;
+  e17.dataset.k = u10, e17.dataset.thId = t10.id, e17.setAttribute(`aria-label`, `${a10.title || `Puppentheater`}: ${l10.length} Figuren`);
+  let d10 = t10.w / $b, f10 = t10.h / 990, p10 = `<div class="lh-th${c10 && (c10.mode === `play` || c10.mode === `video`) ? ` is-playing` : ``}" style="width:${$b}px;height:990px;transform:scale(${d10},${f10})">`;
+  p10 += `<div class="lh-th-stage" style="height:860px">`, p10 += s10 ? `<img class="lh-th-back" src="${zx(s10)}" alt="" draggable="false">` : `<img class="lh-th-back" src="${dx(a10.back)}" alt="" draggable="false">`, l10.forEach((e18, r11) => {
+    let i11 = c10 ? c10.figs[r11]?.on !== false : mx(a10.take, r11, 0);
+    if (!c10 && !i11) return;
+    let o11 = c10 && c10.figs[r11] ? Jx(t10, c10, c10.figs[r11]) : { x: e18.x, y: e18.y, cls: `` }, s11 = { x: o11.x, y: o11.y }, l11 = Vx(e18, s11.x, s11.y), u11 = o11.cls, d11 = n10 ? ld(e18.av) : `<img src="${pd(e18.av)}" alt="" draggable="false">`;
+    if (p10 += `<div class="lh-th-fig${u11}" data-f="${r11}" style="left:${Bx(l11.left)};top:${Bx(l11.top)};width:${Bx(l11.w)};height:${Bx(l11.h)};z-index:${Math.round(s11.y)}">${d11}</div>`, n10 && !Tx()) {
+      let t11 = Wx(e18, s11.x, s11.y);
+      p10 += `<div class="lh-th-grip${u11}" data-f="${r11}" title="Hier anfassen und ziehen" style="left:${Bx(t11.left)};top:${Bx(t11.top)};width:${Bx(t11.w)};height:${Bx(t11.h)}">${Xue}</div>`;
+    }
+  }), p10 += `<div class="lh-th-count" hidden></div><div class="lh-th-note" hidden></div>${c10 ? Que(c10) : ``}</div>`, p10 += Xx(t10, n10), e17.innerHTML = p10 + `</div>`, n10 && ($ue(e17), Si(e17, { slide: false, silent: true, hit: (e18) => eS(t10.id, e18) }));
+}
+function Qx(e17) {
+  let t10 = _x.get(e17), n10 = tS(e17);
+  t10 && n10 && (n10.dataset.k = ``, Zx(n10, t10, true, {}));
+}
+function $x(e17) {
+  let t10 = _x.get(e17), n10 = tS(e17);
+  if (!t10 || !n10) return;
+  let r10 = n10.querySelector(`.lh-th-bar`);
+  if (!r10) return;
+  let i10 = document.createElement(`div`);
+  i10.innerHTML = Xx(t10, true), r10.replaceWith(i10.firstElementChild);
+  let a10 = gx.get(e17);
+  n10.querySelector(`.lh-th`)?.classList.toggle(`is-playing`, a10?.mode === `play` || a10?.mode === `video`), Si(n10, { slide: false, silent: true, hit: (t11) => eS(e17, t11) });
+}
+function eS(e17, t10) {
+  let n10 = t10.getAttribute(`data-a`);
+  if (!n10) return null;
+  let r10 = false;
+  return { release: () => {
+    if (r10) return;
+    r10 = true;
+    let t11 = _x.get(e17);
+    t11 && nde(t11, n10);
+  } };
+}
+function tS(e17) {
+  for (let t10 of document.querySelectorAll(`.lh-wg-theater.is-live`)) if (t10.dataset.thId === e17) return t10;
+  return null;
+}
+function nS(e17) {
+  let t10 = _x.get(e17), n10 = gx.get(e17), r10 = tS(e17);
+  if (!t10 || !n10 || !r10) return;
+  let i10 = bx(t10);
+  r10.querySelectorAll(`.lh-th-fig`).forEach((e18) => {
+    let a10 = Number(e18.dataset.f), o10 = i10[a10], s10 = n10.figs[a10];
+    if (!o10 || !s10) return;
+    let c10 = Jx(t10, n10, s10), l10 = Vx(o10, c10.x, c10.y);
+    e18.style.left = Bx(l10.left), e18.style.top = Bx(l10.top), e18.style.zIndex = String(Math.round(c10.y)), e18.classList.toggle(`is-speaker`, n10.speaker === a10 && n10.mode !== `idle`), e18.classList.toggle(`is-off`, c10.cls === ` is-off`), e18.classList.toggle(`is-wing`, c10.cls === ` is-wing`);
+    let u10 = r10.querySelector(`.lh-th-grip[data-f="${a10}"]`);
+    if (u10) {
+      let e19 = Wx(o10, c10.x, c10.y);
+      u10.style.left = Bx(e19.left), u10.style.top = Bx(e19.top), u10.classList.toggle(`is-off`, c10.cls === ` is-off`), u10.classList.toggle(`is-wing`, c10.cls === ` is-wing`);
+    }
+    let d10 = e18.querySelector(`svg`);
+    if (!d10) return;
+    let f10 = id(o10.av), p10 = s10.phase, m10 = s10.walk, h10 = 26 * Math.sin(p10) * m10, g10 = 14 * Math.sin(p10) * m10, _10 = -Math.abs(Math.sin(p10)) * 7 * m10;
+    d10.querySelector(`.av-legL`)?.setAttribute(`transform`, `rotate(${h10.toFixed(1)} ${f10.hx - f10.lx} ${f10.hip})`), d10.querySelector(`.av-legR`)?.setAttribute(`transform`, `rotate(${(-h10).toFixed(1)} ${f10.hx + f10.lx} ${f10.hip})`), d10.querySelector(`.av-armL`)?.setAttribute(`transform`, `rotate(${(7 - g10).toFixed(1)} ${f10.hx - f10.ax} ${f10.sy + 14})`), d10.querySelector(`.av-armR`)?.setAttribute(`transform`, `rotate(${(-7 - g10).toFixed(1)} ${f10.hx + f10.ax} ${f10.sy + 14})`), d10.querySelector(`.av-all`)?.setAttribute(`transform`, `translate(0 ${_10.toFixed(1)})`);
+    let v10 = d10.querySelector(`.av-mouth`), y10 = s10.mouth < 0 ? -1 : Math.round(s10.mouth * 5) / 5;
+    v10 && v10.dataset.q !== String(y10) && (v10.dataset.q = String(y10), v10.innerHTML = y10 < 0 ? ad(o10.av, f10) : ad(o10.av, f10, y10));
+  });
+}
+function rS(e17, t10, n10) {
+  e17.figs.forEach((e18, r10) => {
+    if (!t10[r10]) return;
+    let i10 = Math.hypot(e18.x - t10[r10].x, e18.y - t10[r10].y), a10 = +((n10 > 0 && i10 < 260 ? i10 / n10 : 0) > 0.06);
+    e18.walk += (a10 - e18.walk) * Math.min(1, n10 / 120), e18.phase += i10 < 260 ? Math.min(0.5, i10 * 0.035) : 0, e18.walk < 0.02 && (e18.phase = 0);
+  });
+}
+function iS(e17, t10) {
+  let n10 = xx(e17), r10 = Mx(e17)?.take;
+  bx(e17).forEach((e18, i10) => {
+    let a10 = n10.figs[i10];
+    if (a10) {
+      if (r10 && i10 < r10.moves.length) {
+        let n11 = fx(r10, i10, e18, t10);
+        Object.assign(a10, { x: n11.x, y: n11.y, on: px(r10, i10) || mx(r10, i10, t10) });
+      } else r10 || Object.assign(a10, { x: e18.x, y: e18.y });
+      Object.assign(a10, { walk: 0, phase: 0, mouth: -1 });
+    }
+  }), r10 && (n10.speaker = hx(r10, t10)), nS(e17.id);
+}
+var aS = /* @__PURE__ */ new WeakSet();
+function $ue(e17) {
+  aS.has(e17) || (aS.add(e17), e17.addEventListener(`pointerdown`, (t10) => {
+    if (t10.button > 0 || !Ti(e17)) return;
+    let n10 = e17.dataset.thId ?? ``, r10 = _x.get(n10);
+    if (!r10) return;
+    let i10 = t10.target.closest?.(`[data-track]`);
+    if (i10) {
+      let e18 = xx(r10), a11 = Mx(r10)?.take.dur ?? 0;
+      if (e18.mode !== `idle` || !a11) return;
+      t10.stopPropagation(), t10.preventDefault();
+      let o11 = (t11) => {
+        let o12 = i10.getBoundingClientRect();
+        e18.pos = Math.round(ax((t11 - o12.left) / Math.max(1, o12.width) * ex, 0, a11)), iS(r10, e18.pos), oS(n10, e18.pos, Yx(r10, a11, e18.pos));
+      };
+      o11(t10.clientX);
+      let s11 = (e19) => e19.pointerId === t10.pointerId && o11(e19.clientX), c11 = (e19) => {
+        e19.pointerId === t10.pointerId && (window.removeEventListener(`pointermove`, s11), window.removeEventListener(`pointerup`, c11, true), window.removeEventListener(`pointercancel`, c11, true));
+      };
+      window.addEventListener(`pointermove`, s11), window.addEventListener(`pointerup`, c11, true), window.addEventListener(`pointercancel`, c11, true);
+      return;
+    }
+    let a10 = t10.target.closest?.(`.lh-th-grip, .lh-th-fig`);
+    if (!a10 || a10.classList.contains(`is-off`) || Tx()) return;
+    let o10 = e17.querySelector(`.lh-th-fig[data-f="${a10.dataset.f}"]`), s10 = e17.querySelector(`.lh-th-grip[data-f="${a10.dataset.f}"]`);
+    if (!o10) return;
+    let c10 = xx(r10);
+    if (c10.mode === `play` || c10.mode === `video` || c10.mode === `count` || c10.over) return;
+    t10.stopPropagation(), t10.preventDefault();
+    let l10 = Number(o10.dataset.f), u10 = e17.querySelector(`.lh-th-stage`).getBoundingClientRect(), d10 = $b / u10.width, f10 = 860 / u10.height, p10 = c10.figs[l10], m10 = bx(r10)[l10];
+    if (!p10.on) {
+      if (!qx(r10, c10)) return;
+      if (p10.x = Kx(p10.x), p10.on = true, c10.mode === `rec`) {
+        let e18 = Lx(c10), t11 = Math.round(e18 / 10);
+        c10.vis[l10]?.push(t11), c10.moves[l10]?.push(t11, Math.round(p10.x), Math.round(p10.y)), c10.lastSample[l10] = { x: p10.x, y: p10.y, t: e18 };
+      }
+      nS(n10);
+    }
+    let h10 = p10.x - (t10.clientX - u10.left) * d10, g10 = p10.y - (t10.clientY - u10.top) * f10;
+    c10.speaker !== l10 && (c10.speaker = l10, c10.mode === `rec` && c10.talk.push(Math.round(Lx(c10) / 10), l10)), o10.classList.add(`is-held`), s10?.classList.add(`is-held`);
+    let _10 = que(m10), v10 = qx(r10, c10), y10 = v10 ? Gx(m10) + 40 : -40, b10 = (e18) => {
+      e18.pointerId === t10.pointerId && (p10.x = ax((e18.clientX - u10.left) * d10 + h10, -y10, $b + y10), p10.y = ax((e18.clientY - u10.top) * f10 + g10, _10, 856));
+    }, x10 = (e18) => {
+      e18.pointerId === t10.pointerId && (window.removeEventListener(`pointermove`, b10), window.removeEventListener(`pointerup`, x10, true), window.removeEventListener(`pointercancel`, x10, true), o10.classList.remove(`is-held`), s10?.classList.remove(`is-held`), v10 && (p10.x < 0 || p10.x > 1400) && ede(r10, c10, l10), c10.mode === `idle` && !Mx(r10) && !c10.cast && (Cx?.(n10, c10.figs.map((e19) => ({ x: Math.round(e19.x), y: Math.round(e19.y) }))), nS(n10)));
+    };
+    window.addEventListener(`pointermove`, b10), window.addEventListener(`pointerup`, x10, true), window.addEventListener(`pointercancel`, x10, true), c10.mode === `idle` && tde(n10);
+  }, true));
+}
+function ede(e17, t10, n10) {
+  let r10 = t10.figs[n10], i10 = bx(e17)[n10];
+  if (!r10 || !i10) return;
+  let a10 = r10.x, o10 = Yue(i10, r10.x), s10 = performance.now(), c10 = t10.token, l10 = (i11) => {
+    if (t10.token !== c10 || !r10.on) return;
+    let u10 = Math.min(1, (i11 - s10) / 250);
+    if (r10.x = a10 + (o10 - a10) * u10, t10.mode !== `rec` && nS(e17.id), u10 < 1) return void requestAnimationFrame(l10);
+    if (r10.on = false, t10.mode === `rec`) {
+      let e18 = Lx(t10), i12 = Math.round(e18 / 10);
+      t10.moves[n10]?.push(i12, Math.round(r10.x), Math.round(r10.y)), t10.lastSample[n10] = { x: r10.x, y: r10.y, t: e18 }, t10.vis[n10]?.push(i12);
+    }
+    t10.speaker === n10 && (t10.speaker = -1), nS(e17.id);
+  };
+  requestAnimationFrame(l10);
+}
+function tde(e17) {
+  let t10 = gx.get(e17);
+  if (!t10 || t10.mode !== `idle` || t10.raf) return;
+  let n10 = performance.now(), r10 = t10.figs.map((e18) => ({ x: e18.x, y: e18.y })), i10 = 0, a10 = (o10) => {
+    let s10 = o10 - n10;
+    n10 = o10, rS(t10, r10, s10);
+    let c10 = t10.figs.some((e18, t11) => e18.x !== r10[t11].x || e18.y !== r10[t11].y);
+    r10 = t10.figs.map((e18) => ({ x: e18.x, y: e18.y })), nS(e17), i10 = c10 ? 0 : i10 + s10, t10.mode === `idle` && i10 < 600 ? t10.raf = requestAnimationFrame(a10) : t10.raf = 0;
+  };
+  t10.raf = requestAnimationFrame(a10);
+}
+function nde(e17, t10) {
+  let n10 = xx(e17);
+  if (!Tx() || [`play`, `stop`, `video`, `v1`, `vall`, `close`].includes(t10)) {
+    if (t10 === `rec`) sde(e17);
+    else if (t10 === `stop`) uS(e17.id);
+    else if (t10 === `play`) dS(e17);
+    else if (t10 === `reset`) rde(e17);
+    else if (t10 === `video`) {
+      let t11 = Px(e17).length;
+      t11 > 1 && n10.mode === `idle` ? (n10.over = { ask: t11 }, Qx(e17.id)) : hS(e17, false);
+    } else t10 === `v1` || t10 === `vall` ? (n10.over = void 0, Qx(e17.id), hS(e17, t10 === `vall`)) : t10 === `close` && (n10.over = void 0, Qx(e17.id));
+  }
+}
+function rde(e17) {
+  let t10 = xx(e17);
+  if (t10.mode !== `idle`) return;
+  gx.delete(e17.id);
+  let n10 = xx(e17);
+  t10.mem && (n10.mem = t10.mem), n10.pos = 0, iS(e17, 0), Qx(e17.id);
+}
+function oS(e17, t10, n10, r10) {
+  let i10 = tS(e17), a10 = i10?.querySelector(`[data-time]`);
+  a10 && (a10.textContent = n10 ?? `${Ix(t10)} / 1:00`);
+  let o10 = r10 === void 0 ? Rx(t10) : ax(r10 * 100, 0, 100).toFixed(2), s10 = i10?.querySelector(`[data-prog]`), c10 = i10?.querySelector(`[data-knob]`);
+  s10 && (s10.style.width = `${o10}%`), c10 && (c10.style.left = `${o10}%`);
+}
+var ide = [`audio/mp4`, `audio/webm;codecs=opus`, `audio/webm`, `audio/ogg;codecs=opus`];
+async function ade(e17, t10, n10, r10) {
+  let i10 = (t11) => {
+    let n11 = tS(e17)?.querySelector(`.lh-th-count`);
+    n11 && (n11.hidden = t11 === null, n11.textContent = t11 ?? ``);
+  };
+  for (let e18 of [`3`, `2`, `1`]) {
+    if (n10 !== t10.token || !r10()) return i10(null), false;
+    i10(e18), await new Promise((e19) => setTimeout(e19, 800));
+  }
+  return i10(null), n10 === t10.token && r10();
+}
+var sS = () => navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: true, autoGainControl: true } });
+function cS(e17) {
+  let t10 = null;
+  try {
+    let e18 = window.AudioContext ?? window.webkitAudioContext;
+    t10 = e18 ? new e18() : null;
+  } catch {
+    t10 = null;
+  }
+  if (!t10) return { level: () => 0, close: () => void 0 };
+  let n10 = t10;
+  n10.resume().catch(() => void 0);
+  try {
+    let t11 = n10.createMediaStreamSource(e17), r10 = n10.createAnalyser();
+    r10.fftSize = 1024;
+    let i10 = n10.createGain();
+    i10.gain.value = 0, t11.connect(r10), r10.connect(i10), i10.connect(n10.destination);
+    let a10 = new Float32Array(r10.fftSize), o10 = 0, s10 = performance.now();
+    return Pr(`theater-meter`, { state: n10.state, rate: n10.sampleRate }), { level: () => {
+      n10.state !== `running` && n10.resume().catch(() => void 0), r10.getFloatTimeDomainData(a10);
+      let e18 = 0;
+      for (let t13 of a10) e18 += t13 * t13;
+      let t12 = Math.sqrt(e18 / a10.length);
+      return o10 = Math.max(o10, t12), performance.now() - s10 > 2e3 && (Pr(`theater-level`, { state: n10.state, peak: +o10.toFixed(4) }), o10 = 0, s10 = performance.now()), ax((t12 - 0.012) / 0.07, 0, 1);
+    }, close: () => {
+      try {
+        t11.disconnect(), i10.disconnect();
+      } catch {
+      }
+      n10.close().catch(() => void 0);
+    } };
+  } catch (e18) {
+    return Pr(`theater-meter-error`, { msg: String(e18).slice(0, 60) }), n10.close().catch(() => void 0), { level: () => 0, close: () => void 0 };
+  }
+}
+async function ode(e17, t10, n10, r10) {
+  let i10 = e17.filter((e18) => e18.chunks.length);
+  if (!i10.length && !r10) return null;
+  if (!r10 && i10.length === 1 && i10[0].at < 60) return new Blob(i10[0].chunks, { type: n10 });
+  let a10 = zr();
+  if (!a10) return i10.length ? new Blob(i10[0].chunks, { type: n10 }) : null;
+  let o10 = a10.sampleRate, s10 = new Float32Array(Math.ceil(t10 / 1e3 * o10) + 1), c10 = (e18, t11, n11 = 1 / 0) => {
+    let r11 = e18.numberOfChannels, i11 = Array.from({ length: r11 }, (t12, n12) => e18.getChannelData(n12)), a11 = Math.round(t11 / 1e3 * o10), c11 = Math.min(e18.length, Math.round(n11 / 1e3 * o10));
+    for (let e19 = 0; e19 < c11 && a11 + e19 < s10.length; e19++) {
+      let t12 = 0;
+      for (let n12 of i11) t12 += n12[e19];
+      s10[a11 + e19] += t12 / r11;
+    }
+  };
+  if (r10 && r10.keep > 0) try {
+    c10(await a10.decodeAudioData(await (await fetch(r10.url)).arrayBuffer()), 0, r10.keep);
+  } catch {
+  }
+  for (let e18 of i10) try {
+    c10(await a10.decodeAudioData(await new Blob(e18.chunks, { type: n10 }).arrayBuffer()), e18.at);
+  } catch {
+  }
+  return cl([s10], o10);
+}
+async function sde(e17) {
+  let t10 = xx(e17);
+  if (t10.mode !== `idle` || Tx() || typeof MediaRecorder > `u` || !navigator.mediaDevices?.getUserMedia) {
+    typeof MediaRecorder > `u` && oS(e17.id, 0, `Dieser Browser kann nicht aufnehmen.`);
+    return;
+  }
+  let n10 = ++t10.token, r10 = Mx(e17), i10 = r10 ? Math.round(ax(t10.pos, 0, r10.take.dur)) : 0;
+  t10.mode = `count`, t10.over = void 0, Qx(e17.id), oS(e17.id, i10, `Gleich geht es los \u2026`);
+  let a10 = ni(), o10;
+  try {
+    o10 = await sS();
+  } catch {
+    a10(), t10.mode = `idle`, Qx(e17.id), oS(e17.id, t10.pos, `Ohne Mikrofon geht keine Aufnahme \u2013 erlaube es im Browser.`);
+    return;
+  }
+  let s10 = { stream: o10, meter: cS(o10) }, c10 = (e18) => e18.getTracks().forEach((e19) => e19.stop()), l10 = () => {
+    s10.meter.close(), c10(s10.stream), a10(), a10 = () => void 0;
+  };
+  if (n10 !== t10.token) return l10();
+  try {
+    t10.guestMic = o10.getAudioTracks()[0]?.getSettings?.().echoCancellation === false;
+  } catch {
+    t10.guestMic = false;
+  }
+  t10.guestBusy = 0, t10.micLost = false;
+  let u10 = ide.find((e18) => {
+    try {
+      return MediaRecorder.isTypeSupported(e18);
+    } catch {
+      return false;
+    }
+  }), d10 = [], f10 = (u10 ?? `audio/webm`).split(`;`)[0], p10 = (e18, t11) => {
+    let n11 = new MediaRecorder(e18, u10 ? { mimeType: u10 } : {}), r11 = [];
+    n11.ondataavailable = (e19) => e19.data.size && r11.push(e19.data);
+    let i11 = { rec: n11, chunks: r11, at: t11, stopped: new Promise((e19) => n11.onstop = () => e19()) };
+    return d10.push(i11), n11.mimeType && (f10 = n11.mimeType.split(`;`)[0]), i11;
+  }, m10 = (e18) => e18.getAudioTracks().forEach((e19) => {
+    e19.onmute = e19.onended = () => {
+      Pr(`theater-mic-lost`, { muted: e19.muted, state: e19.readyState }), t10.micLost = true;
+      for (let e20 of t10.openActs ?? []) rx.add(e20);
+    };
+  });
+  m10(o10);
+  let h10;
+  try {
+    h10 = p10(o10, i10);
+  } catch {
+    l10(), t10.mode = `idle`, Qx(e17.id);
+    return;
+  }
+  if (!await ade(e17.id, t10, n10, () => t10.mode === `count`)) return l10();
+  h10.rec.start(1e3), t10.mode = `rec`, t10.t0 = performance.now() - i10, t10.endMs = void 0, t10.level = s10.meter.level;
+  let g10 = Math.round(i10 / 10), _10 = r10?.take, v10 = _10?.moves.length ?? 0;
+  t10.cast = bx(e17).map((e18) => ({ ...e18 })), t10.moves = t10.figs.map((e18, n11) => {
+    let r11 = Math.round(e18.x), a11 = Math.round(e18.y);
+    if (!_10 || i10 === 0 || n11 >= v10) return [g10, r11, a11];
+    let o11 = [];
+    for (let e19 = 0; e19 + 2 < _10.moves[n11].length && _10.moves[n11][e19] < g10; e19 += 3) o11.push(_10.moves[n11][e19], _10.moves[n11][e19 + 1], _10.moves[n11][e19 + 2]);
+    let s11 = fx(_10, n11, t10.cast[n11], i10);
+    return o11.push(g10, Math.round(s11.x), Math.round(s11.y)), (Math.abs(s11.x - r11) > 1.5 || Math.abs(s11.y - a11) > 1.5) && o11.push(g10, r11, a11), o11;
+  }), t10.vis = t10.figs.map((e18, t11) => {
+    if (!_10 || i10 === 0 || t11 >= v10) return e18.on ? [g10] : [];
+    let n11 = (_10.vis?.[t11] ?? [0]).filter((e19) => e19 < g10);
+    return mx(_10, t11, i10) !== e18.on && n11.push(g10), n11;
+  }), t10.acts = _10 && i10 > 0 ? (_10.acts ?? []).filter((e18) => e18.t < g10).map((e18) => ({ ...e18, d: Math.min(e18.d, g10 - e18.t) })) : [], t10.openActs = /* @__PURE__ */ new Set(), t10.lastSample = t10.figs.map((e18) => ({ x: e18.x, y: e18.y, t: i10 })), t10.speaker >= 0 && !t10.figs[t10.speaker]?.on && (t10.speaker = -1);
+  let y10 = t10.figs.flatMap((e18, t11) => e18.on ? [t11] : []);
+  t10.speaker < 0 && y10.length === 1 && (t10.speaker = y10[0]);
+  let b10 = [];
+  if (_10 && i10 > 0) for (let e18 = 0; e18 + 1 < _10.talk.length; e18 += 2) _10.talk[e18] < g10 && b10.push(_10.talk[e18], _10.talk[e18 + 1]);
+  t10.talk = [...b10, ...t10.speaker >= 0 ? [g10, t10.speaker] : []], Qx(e17.id);
+  let x10 = false, S10 = async () => {
+    if (x10) return;
+    x10 = true;
+    let e18 = Lx(t10);
+    try {
+      h10.rec.state !== `inactive` && h10.rec.stop();
+    } catch {
+    }
+    s10.meter.close(), c10(s10.stream);
+    try {
+      let r11 = await sS();
+      if (n10 !== t10.token || t10.mode !== `rec`) {
+        c10(r11);
+        return;
+      }
+      s10 = { stream: r11, meter: cS(r11) }, m10(r11), h10 = p10(r11, Math.max(e18, Lx(t10))), h10.rec.start(1e3), t10.level = s10.meter.level, t10.micLost = false, Pr(`theater-mic-new`, {});
+    } catch {
+      t10.level = () => 0;
+    } finally {
+      x10 = false;
+    }
+  };
+  t10.stopRec = async () => {
+    try {
+      h10.rec.state !== `inactive` && h10.rec.stop();
+    } catch {
+    }
+    await Promise.all(d10.map((e18) => e18.stopped)), E10();
+  };
+  let C10 = performance.now(), w10 = t10.figs.map((e18) => ({ x: e18.x, y: e18.y })), T10 = (r11) => {
+    if (t10.mode !== `rec` || n10 !== t10.token) return;
+    let a11 = Math.max(i10, r11 - t10.t0), o11 = r11 - C10;
+    C10 = r11, rS(t10, w10, o11), w10 = t10.figs.map((e18) => ({ x: e18.x, y: e18.y })), t10.figs.forEach((e18, n11) => {
+      let r12 = t10.lastSample[n11];
+      e18.on && r12 && a11 - r12.t >= 80 && (Math.abs(e18.x - r12.x) > 1.5 || Math.abs(e18.y - r12.y) > 1.5) && (a11 - r12.t > 160 && t10.moves[n11].push(Math.round((a11 - 80) / 10), Math.round(r12.x), Math.round(r12.y)), t10.moves[n11].push(Math.round(a11 / 10), Math.round(e18.x), Math.round(e18.y)), t10.lastSample[n11] = { x: e18.x, y: e18.y, t: a11 });
+    }), t10.micLost && !t10.guestBusy && !x10 && S10();
+    let s11 = t10.level?.() ?? 0;
+    t10.figs.forEach((e18, n11) => e18.mouth = n11 === t10.speaker && !t10.guestBusy ? s11 : -1), nS(e17.id), t10.pos = a11, oS(e17.id, a11), a11 >= 6e4 ? uS(e17.id) : t10.raf = requestAnimationFrame(T10);
+  };
+  t10.raf = requestAnimationFrame(T10);
+  let E10 = () => {
+    let a11 = Math.min(ex, t10.endMs ?? performance.now() - t10.t0);
+    t10.figs.forEach((e18, n11) => e18.on && t10.moves[n11].push(Math.round(a11 / 10), Math.round(e18.x), Math.round(e18.y)));
+    let o11 = t10.vis.every((e18) => e18.length === 1 && e18[0] === 0) ? void 0 : t10.vis.map((e18) => [...e18]), s11 = t10.acts.map((e18) => ({ ...e18, d: e18.d || Math.max(1, Math.round(a11 / 10) - e18.t) })), c11 = { dur: Math.round(a11), moves: t10.moves.map((e18) => [...e18]), talk: [...t10.talk], ...o11 ? { vis: o11 } : {}, ...s11.length ? { acts: s11 } : {} }, u11 = (t10.cast ?? bx(e17)).map((e18, n11) => ({ ...e18, x: t10.moves[n11]?.[1] ?? e18.x, y: t10.moves[n11]?.[2] ?? e18.y }));
+    l10(), n10 === t10.token && ode(d10, a11, f10, r10 && i10 > 0 ? { url: r10.url, keep: i10 } : null).then((n11) => {
+      n11 && (Sx ? Sx(e17.id, { blob: n11, mime: n11.type || f10 }, c11, u11) : (t10.mem && URL.revokeObjectURL(t10.mem.url), t10.mem = { take: { ...c11, sound: `` }, url: URL.createObjectURL(n11), cast: u11 }, t10.cast = void 0, Qx(e17.id)));
+    });
+  };
+}
+var lS = null;
+async function uS(e17, t10 = false) {
+  let n10 = gx.get(e17);
+  if (!n10) return;
+  cancelAnimationFrame(n10.raf), n10.raf = 0;
+  let r10 = n10.mode;
+  r10 === `rec` && (n10.endMs = Math.min(ex, performance.now() - n10.t0), n10.pos = n10.endMs), n10.mode = `idle`, n10.over = void 0, (r10 === `count` || r10 === `video`) && n10.token++, r10 === `rec` && await n10.stopRec?.(), r10 === `play` && (t10 || br(), lS && (lS.pause(), lS.removeAttribute(`src`), lS.load())), n10.figs.forEach((e18) => Object.assign(e18, { walk: 0, phase: 0, mouth: -1 }));
+  let i10 = _x.get(e17);
+  i10 && (Qx(e17), r10 === `play` && iS(i10, n10.pos), nS(e17), r10 === `play` && t10 && yx(i10).next && Kue(i10));
+}
+async function dS(e17) {
+  let t10 = xx(e17), n10 = Mx(e17);
+  if (t10.mode !== `idle` || !n10) return;
+  let r10 = n10.take.dur, i10 = t10.pos >= r10 - 300 ? 0 : t10.pos, a10 = ++t10.token;
+  lS ??= new Audio();
+  let o10 = lS;
+  o10.preload = `auto`, o10.src = n10.url;
+  let s10 = () => {
+    try {
+      i10 > 0 && (o10.currentTime = i10 / 1e3);
+    } catch {
+    }
+  };
+  o10.readyState >= 1 ? s10() : o10.addEventListener(`loadedmetadata`, s10, { once: true }), t10.mode = `play`, t10.over = void 0, Qx(e17.id), o10.play().catch(() => void 0), t10.env = null, hu(n10.url).then((e18) => a10 === t10.token && (t10.env = e18));
+  let c10 = n10.cast, l10 = [...n10.take.acts ?? []].sort((e18, t11) => e18.t - t11.t), u10 = l10.findIndex((e18) => e18.t * 10 >= i10);
+  u10 < 0 && (u10 = l10.length);
+  let d10 = performance.now(), f10 = d10, p10 = t10.figs.map((e18) => ({ x: e18.x, y: e18.y })), m10 = (s11) => {
+    if (t10.mode !== `play` || a10 !== t10.token) return;
+    let h10 = o10.currentTime * 1e3, g10 = h10 > 0 && h10 >= i10 - 50 ? h10 : i10 + Math.min(300, s11 - d10);
+    c10.forEach((e18, r11) => {
+      if (!t10.figs[r11]) return;
+      let i11 = fx(n10.take, r11, e18, g10);
+      t10.figs[r11].x = i11.x, t10.figs[r11].y = i11.y, t10.figs[r11].on = mx(n10.take, r11, g10);
+    }), rS(t10, p10, s11 - f10), f10 = s11, p10 = t10.figs.map((e18) => ({ x: e18.x, y: e18.y })), t10.speaker = hx(n10.take, g10);
+    let _10 = t10.env ? t10.env[Math.floor(g10 / 1e3 * 30)] ?? 0 : 0, v10 = Ax(n10.take, g10);
+    for (t10.figs.forEach((e18, n11) => e18.mouth = n11 === t10.speaker && !v10 ? _10 : -1), nS(e17.id); u10 < l10.length && l10[u10].t * 10 <= g10; ) Wue(e17.id, l10[u10++], n10.take);
+    t10.pos = Math.min(g10, r10), oS(e17.id, g10, `${Ix(g10)} / ${Ix(r10)}`), o10.ended || g10 >= r10 + 400 ? (t10.pos = r10, uS(e17.id, true)) : t10.raf = requestAnimationFrame(m10);
+  };
+  t10.raf = requestAnimationFrame(m10);
+}
+function cde() {
+  if (typeof MediaRecorder > `u` || typeof HTMLCanvasElement.prototype.captureStream != `function`) return null;
+  for (let e17 of [`video/mp4;codecs=avc1.42E01E,mp4a.40.2`, `video/mp4`, `video/webm;codecs=vp9,opus`, `video/webm;codecs=vp8,opus`, `video/webm`]) if (MediaRecorder.isTypeSupported(e17)) return { mime: e17, ext: e17.startsWith(`video/mp4`) ? `mp4` : `webm` };
+  return null;
+}
+var fS = (e17) => new Promise((t10) => {
+  let n10 = new Image();
+  n10.onload = () => t10(n10), n10.onerror = () => t10(null), n10.src = e17;
+});
+var pS = 80;
+var lde = 31;
+var mS = { l: 40, t: 60, w: 280, h: 470 };
+async function ude(e17, t10, n10, r10) {
+  let i10 = (wx?.pages() ?? []).find((t11) => t11.items.some((t12) => t12.id === e17.id));
+  if (!i10) return [];
+  let a10 = i10.items.findIndex((t11) => t11.id === e17.id), o10 = e17.w / $b, s10 = e17.h / 990, c10 = [];
+  for (let l10 of i10.items.slice(a10 + 1)) {
+    if (l10.type !== `widget` || l10.kind !== `avatar` && l10.kind !== `phototalk`) continue;
+    let i11 = (l10.x - e17.x) / o10 * r10, a11 = (l10.y - e17.y) / s10 * r10, u10 = l10.w / o10 * r10, d10 = l10.h / s10 * r10;
+    if (i11 > 1400 * r10 || a11 > 860 * r10 || i11 + u10 < 0 || a11 + d10 < 0) continue;
+    let f10 = l10.say?.sound ? wx?.src(l10.say.sound) ?? void 0 : void 0, p10 = !!(l10.say?.text.trim() || f10), m10 = (t10.acts ?? []).filter((e18) => e18.id === l10.id).map((e18) => ({ t: e18.t, d: e18.d, move: l10.kind === `avatar` ? _d(l10.move, p10) : ``, heard: ix(t10, e18) })), h10 = null, g10 = null;
+    if (f10 && m10.some((e18) => !e18.heard)) try {
+      h10 = await n10.decodeAudioData(await (await fetch(f10)).arrayBuffer()), g10 = await hu(f10);
+    } catch {
+      h10 = null;
+    }
+    let _10 = { x: i11, y: a11, w: u10, h: d10, photo: l10.kind === `phototalk`, rest: null, open: null, moves: /* @__PURE__ */ new Map(), own: !!f10, buf: h10, env: g10, acts: m10 };
+    if (l10.kind === `avatar`) {
+      let e18 = $u(l10.av), t11 = (t12) => fS(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(ld(e18, t12, { view: `${-mS.l} ${-mS.t} ${mS.w} ${mS.h}`, width: String(mS.w), height: String(mS.h) }))}`);
+      _10.rest = await t11({});
+      for (let e19 of new Set(m10.map((e20) => e20.move))) {
+        let n11 = [];
+        for (let r11 = 0; r11 < lde; r11++) {
+          let i12 = Nu(e19, r11 * pS);
+          n11.push([await t11(i12), await t11({ ...i12, mouth: 0.7 })]);
+        }
+        _10.moves.set(e19, n11);
+      }
+    } else if (l10.pt) {
+      let e18 = wx?.asset?.(l10.pt.img), t11 = e18?.dataUrl ?? wx?.src(l10.pt.img);
+      if (!t11) continue;
+      let n11 = `width="${e18?.width ?? 800}" height="${e18?.height ?? 600}"`, r11 = (r12) => fS(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(bu(l10.pt, e18, t11, `v${l10.id}`, r12).replace(`width="100%" height="100%"`, n11))}`);
+      _10.rest = await r11(-1), m10.length && (_10.open = await r11(0.7));
+    }
+    c10.push(_10);
+  }
+  return c10;
+}
+function dde(e17, t10, n10) {
+  let r10 = t10.acts.find((e18) => n10 >= e18.t * 10 && n10 < e18.t * 10 + e18.d * 10 + 450), i10 = r10 ? n10 - r10.t * 10 : 0, a10 = !!r10 && i10 < r10.d * 10, o10 = r10 && (r10.heard || !t10.own) && t10.takeEnv ? t10.takeEnv[Math.floor(n10 / 1e3 * 30)] ?? 0 : t10.env ? t10.env[Math.floor(i10 / 1e3 * 30)] ?? 0 : null, s10 = a10 && (o10 === null ? Math.floor(i10 / 110) % 2 == 0 : o10 > 0.15), c10 = t10.rest;
+  if (r10 && t10.photo) c10 = s10 ? t10.open : t10.rest;
+  else if (r10) {
+    let e18 = t10.moves.get(r10.move), n11 = r10.move === `bow` ? Math.min(30, Math.floor(i10 / pS)) : Math.floor(i10 % 2480 / pS);
+    c10 = (a10 || r10.move === `bow` ? e18?.[n11]?.[+!!s10] : null) ?? t10.rest;
+  }
+  if (c10) {
+    if (t10.photo) {
+      let n11 = Math.min(t10.w / c10.naturalWidth, t10.h / c10.naturalHeight) || 1;
+      e17.drawImage(c10, t10.x + (t10.w - c10.naturalWidth * n11) / 2, t10.y + (t10.h - c10.naturalHeight * n11) / 2, c10.naturalWidth * n11, c10.naturalHeight * n11);
+    } else {
+      let n11 = Math.min(t10.w / 200, t10.h / 400), r11 = t10.x + (t10.w - 200 * n11) / 2, i11 = t10.y + t10.h - 400 * n11;
+      e17.drawImage(c10, r11 - mS.l * n11, i11 - mS.t * n11, mS.w * n11, mS.h * n11);
+    }
+  }
+}
+async function hS(e17, t10) {
+  let n10 = xx(e17), r10 = cde(), i10 = zr(), a10 = t10 ? Px(e17) : [e17];
+  if (n10.mode !== `idle` || !Mx(e17)) return;
+  if (!r10 || !i10) {
+    oS(e17.id, n10.pos, `Dieser Browser kann keine Videos aufnehmen.`);
+    return;
+  }
+  pi();
+  let o10 = ++n10.token;
+  n10.mode = `video`, $x(e17.id);
+  let s10 = [-1, 0.25, 0.5, 0.75, 1], c10 = [];
+  for (let [t11, r11] of a10.entries()) {
+    oS(e17.id, 0, a10.length > 1 ? `Video wird vorbereitet \u2026 (Seite ${t11 + 1} von ${a10.length})` : `Video wird vorbereitet \u2026`, t11 / a10.length);
+    let l11 = Mx(r11);
+    if (!l11) continue;
+    let u11 = yx(r11), d11 = await fS(u11.img ? jx(r11.id, u11.img) ?? dx(u11.back) : dx(u11.back)), f11 = [];
+    for (let e18 of l11.cast) {
+      let t12 = [];
+      for (let n11 = 0; n11 < 9; n11++) {
+        let r12 = [], i11 = n11 === 0 ? 0 : (n11 - 1) / 8 * Math.PI * 2, a11 = n11 === 0 ? 0 : 1;
+        for (let t13 of s10) {
+          let n12 = ld(e18.av, { legL: 26 * Math.sin(i11) * a11, legR: -26 * Math.sin(i11) * a11, armL: 7 - 14 * Math.sin(i11) * a11, armR: -7 - 14 * Math.sin(i11) * a11, bob: -Math.abs(Math.sin(i11)) * 7 * a11, ...t13 < 0 ? {} : { mouth: t13 } }, { width: `200`, height: `400` });
+          r12.push(await fS(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(n12)}`));
+        }
+        t12.push(r12);
+      }
+      if (f11.push(t12), o10 !== n10.token) return;
+    }
+    let p11;
+    try {
+      p11 = await i10.decodeAudioData(await (await fetch(l11.url)).arrayBuffer());
+    } catch {
+      n10.mode = `idle`, $x(e17.id), oS(e17.id, n10.pos, a10.length > 1 ? `Die Aufnahme von Seite ${t11 + 1} lie\xDF sich nicht lesen.` : `Die Aufnahme lie\xDF sich nicht lesen.`);
+      return;
+    }
+    let m11 = await hu(l11.url), h11 = await ude(r11, l11.take, i10, 1280 / $b);
+    for (let e18 of h11) e18.takeEnv = m11;
+    if (c10.push({ t: u11, tk: l11, back: d11, poses: f11, buf: p11, env: m11, guests: h11 }), o10 !== n10.token) return;
+  }
+  if (!c10.length) {
+    n10.mode = `idle`, $x(e17.id);
+    return;
+  }
+  let l10 = 1280, u10 = Math.round(l10 * 860 / $b / 2) * 2, d10 = l10 / $b, f10 = document.createElement(`canvas`);
+  f10.width = l10, f10.height = u10;
+  let p10 = f10.getContext(`2d`), m10 = i10.createMediaStreamDestination(), h10 = new MediaStream([...f10.captureStream(30).getVideoTracks(), ...m10.stream.getAudioTracks()]), g10 = [], _10 = new MediaRecorder(h10, { mimeType: r10.mime, videoBitsPerSecond: 4e6 });
+  _10.ondataavailable = (e18) => e18.data.size && g10.push(e18.data);
+  let v10 = new Promise((e18) => _10.onstop = () => e18()), y10 = (e18) => {
+    let { t: t11, tk: n11, back: r11, poses: i11, env: a11 } = e18, o11 = n11.cast.map(() => 0), s11 = n11.cast.map(() => 0), c11 = n11.cast.map((e19, t12) => fx(n11.take, t12, e19, 0));
+    return (f11, m11) => {
+      if (r11) {
+        let e19 = Math.max(l10 / r11.naturalWidth, u10 / r11.naturalHeight) || 1;
+        p10.drawImage(r11, (l10 - r11.naturalWidth * e19) / 2, (u10 - r11.naturalHeight * e19) / 2, r11.naturalWidth * e19, r11.naturalHeight * e19);
+      } else p10.fillStyle = `#e0f2fe`, p10.fillRect(0, 0, l10, u10);
+      let h11 = hx(n11.take, f11), g11 = a11 ? a11[Math.floor(f11 / 1e3 * 30)] ?? 0 : 0, _11 = n11.cast.map((e19, t12) => fx(n11.take, t12, e19, f11)), v11 = _11.map((e19, t12) => t12).sort((e19, t12) => _11[e19].y - _11[t12].y);
+      for (let e19 of v11) {
+        let t12 = n11.cast[e19], r12 = _11[e19], a12 = Math.hypot(r12.x - c11[e19].x, r12.y - c11[e19].y), l11 = m11 > 0 && a12 < 260 && a12 / m11 > 0.06;
+        if (s11[e19] += (+!!l11 - s11[e19]) * Math.min(1, m11 / 120), o11[e19] += a12 < 260 ? Math.min(0.5, a12 * 0.035) : 0, !mx(n11.take, e19, f11)) continue;
+        let u11 = s11[e19] < 0.3 ? 0 : 1 + Math.floor(o11[e19] % (Math.PI * 2) / (Math.PI * 2) * 8) % 8, v12 = e19 === h11 && !Ax(n11.take, f11) ? g11 < 0.12 ? 0 : 1 + Math.min(3, Math.floor(g11 * 4)) : 0, y11 = i11[e19][u11][v12], b11 = Vx(t12, r12.x, r12.y);
+        y11 && p10.drawImage(y11, b11.left * d10, b11.top * d10, b11.w * d10, b11.h * d10);
+      }
+      c11 = _11;
+      for (let t12 of e18.guests) dde(p10, t12, f11);
+      if (t11.title) {
+        p10.font = `700 ${Math.round(u10 * 0.045)}px "Nunito", system-ui, sans-serif`, p10.fillStyle = `rgba(255,255,255,.85)`;
+        let e19 = p10.measureText(t11.title).width;
+        p10.fillRect(16, 16, e19 + 32, u10 * 0.075), p10.fillStyle = `#1f2937`, p10.fillText(t11.title, 32, 59.23);
+      }
+    };
+  }, b10 = c10.reduce((e18, t11) => e18 + t11.tk.take.dur + 600, 0);
+  y10(c10[0])(0, 0), _10.start(1e3);
+  let x10 = 0;
+  for (let [t11, r11] of c10.entries()) {
+    if (o10 !== n10.token) break;
+    let a11 = y10(r11), s11 = i10.createBufferSource();
+    s11.buffer = r11.buf, s11.connect(m10), s11.connect(i10.destination);
+    let l11 = i10.currentTime + 0.25;
+    s11.start(l11);
+    let u11 = [];
+    for (let e18 of r11.guests) for (let t12 of e18.buf ? e18.acts.filter((e19) => !e19.heard) : []) {
+      let n11 = i10.createBufferSource();
+      n11.buffer = e18.buf, n11.connect(m10), n11.connect(i10.destination), n11.start(l11 + t12.t / 100), u11.push(n11);
+    }
+    let d11 = 0;
+    await new Promise((s12) => {
+      let u12 = () => {
+        if (o10 !== n10.token) return s12();
+        let f11 = Math.max(0, (i10.currentTime - l11) * 1e3);
+        if (a11(f11, f11 - d11), d11 = f11, oS(e17.id, x10 + f11, `Video${c10.length > 1 ? ` (Seite ${t11 + 1} von ${c10.length})` : ``}: ${Ix(x10 + f11)} / ${Ix(b10)}`, (x10 + f11) / b10), f11 >= r11.tk.take.dur + 600) return s12();
+        requestAnimationFrame(u12);
+      };
+      requestAnimationFrame(u12);
+    }), x10 += r11.tk.take.dur + 600;
+    for (let e18 of [s11, ...u11]) {
+      try {
+        e18.stop();
+      } catch {
+      }
+      e18.disconnect();
+    }
+  }
+  _10.state !== `inactive` && _10.stop(), await v10;
+  let S10 = o10 !== n10.token;
+  n10.mode = `idle`, $x(e17.id);
+  let C10 = c10[0].t.title.trim() || `Puppentheater`;
+  !S10 && g10.length && await dl(new Blob(g10, { type: r10.mime.split(`;`)[0] }), `${C10.replace(/[\\/:*?"<>|]+/g, ` `)} (Puppentheater).${r10.ext}`);
+}
+function pde(e17) {
+  let t10 = yx(e17);
+  return `${t10.title || `Puppentheater`}: ${t10.cast.length === 1 ? `eine Figur` : `${t10.cast.length} Figuren`}`;
+}
+var mde = `
+.lh-th{position:absolute;left:0;top:0;transform-origin:0 0;font-family:'Nunito',Nunito,system-ui,sans-serif;-webkit-user-select:none;user-select:none}
+.lh-th-stage{position:absolute;left:0;top:0;width:100%;overflow:hidden;border-radius:18px 18px 0 0;background:#e0f2fe}
+.lh-th-back{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.lh-th-fig{position:absolute;touch-action:none;cursor:grab}
+.lh-th-fig svg,.lh-th-fig img{display:block;width:100%;height:100%;pointer-events:none}
+.lh-th-fig.is-held{cursor:grabbing;filter:drop-shadow(0 10px 10px rgba(15,23,42,.3))}
+.lh-th-grip{position:absolute;z-index:1500;touch-action:none;cursor:grab;opacity:.75;transition:opacity .15s}
+.lh-th-grip svg{display:block;pointer-events:none}
+.lh-th-grip.is-held{opacity:1;cursor:grabbing}
+.lh-th.is-playing .lh-th-grip{display:none}
+.lh-th-fig.is-off,.lh-th-grip.is-off{display:none}
+.lh-th-fig.is-wing{opacity:.45}
+.lh-th-grip.is-wing{opacity:.55}
+.lh-th-note{position:absolute;left:50%;top:24px;transform:translateX(-50%);max-width:1100px;padding:16px 28px;border-radius:18px;background:rgba(15,23,42,.82);color:#fff;font-size:30px;font-weight:700;text-align:center;z-index:2400;pointer-events:none}
+.lh-th-note[hidden]{display:none}
+.lh-th-over{position:absolute;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.45)}
+.lh-th-box{width:1200px;max-height:800px;overflow:auto;box-sizing:border-box;padding:32px 36px;border-radius:28px;background:#fff;color:#1f2937;display:flex;flex-direction:column;align-items:center;gap:22px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.lh-th-head{font-size:44px;font-weight:800}
+.lh-th-asks{display:flex;flex-wrap:wrap;justify-content:center;gap:20px}
+.lh-th-ask{padding:26px 34px;border:0;border-radius:20px;background:#e2e8f0;font:inherit;font-size:30px;font-weight:800;color:#1f2937;cursor:pointer}
+.lh-th-ask.is-main{background:#2563eb;color:#fff}
+.lh-th-close{padding:14px 30px;border:0;border-radius:16px;background:#f1f5f9;font:inherit;font-size:26px;font-weight:700;color:#475569;cursor:pointer}
+.lh-th-count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:260px;font-weight:900;color:#fff;text-shadow:0 8px 30px rgba(15,23,42,.6);pointer-events:none;z-index:2000}
+.lh-th-count[hidden]{display:none}
+.lh-th-bar{position:absolute;left:0;width:100%;display:flex;align-items:center;gap:16px;padding:0 24px;box-sizing:border-box;background:#1f2937;border-radius:0 0 18px 18px;color:#f8fafc}
+.lh-th-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:118px;height:104px;border:0;border-radius:20px;background:#334155;color:#f8fafc;font-family:inherit;font-size:19px;font-weight:700;line-height:1;cursor:pointer}
+.lh-th-btn.is-rec{color:#f87171}
+.lh-th-btn.is-play{color:#4ade80}
+.lh-th-btn[disabled]{opacity:.35;cursor:default}
+.lh-th-mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.lh-th-title{font-size:30px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lh-th-time{font-size:22px;color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lh-th-prog{position:relative;height:12px;margin:8px 15px;border-radius:6px;background:#475569;touch-action:none}
+.lh-th-prog::before{content:'';position:absolute;left:-15px;right:-15px;top:-18px;bottom:-18px}
+.lh-th-prog.is-seek{cursor:pointer}
+.lh-th-prog b,.lh-th-prog i{position:absolute;left:0;top:0;height:100%;border-radius:6px}
+.lh-th-prog b{background:#94a3b8}
+.lh-th-prog i{background:#f87171}
+.lh-th-knob{position:absolute;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:#fff;border:5px solid #f87171;box-sizing:border-box;box-shadow:0 2px 6px rgba(0,0,0,.35);pointer-events:none}`;
 var kD = [{ id: `bee`, nom: `die Biene`, dat: `der Biene`, goal: `Blume`, toGoal: `zur Blume`, atGoal: `bei der Blume`, byGoal: `an der Blume` }, { id: `robot`, nom: `der Roboter`, dat: `dem Roboter`, goal: `Akku`, toGoal: `zum Akku`, atGoal: `beim Akku`, byGoal: `am Akku` }, { id: `mouse`, nom: `die Maus`, dat: `der Maus`, goal: `K\xE4se`, toGoal: `zum K\xE4se`, atGoal: `beim K\xE4se`, byGoal: `am K\xE4se` }, { id: `car`, nom: `das Auto`, dat: `dem Auto`, goal: `Garage`, toGoal: `in die Garage`, atGoal: `in der Garage`, byGoal: `an der Garage` }, { id: `rocket`, nom: `die Rakete`, dat: `der Rakete`, goal: `Planet`, toGoal: `zum Planeten`, atGoal: `beim Planeten`, byGoal: `am Planeten` }, { id: `turtle`, nom: `die Schildkr\xF6te`, dat: `der Schildkr\xF6te`, goal: `Teich`, toGoal: `zum Teich`, atGoal: `am Teich`, byGoal: `am Teich` }, { id: `dog`, nom: `der Hund`, dat: `dem Hund`, goal: `Knochen`, toGoal: `zum Knochen`, atGoal: `beim Knochen`, byGoal: `am Knochen` }, { id: `ladybug`, nom: `der Marienk\xE4fer`, dat: `dem Marienk\xE4fer`, goal: `Blatt`, toGoal: `zum Blatt`, atGoal: `beim Blatt`, byGoal: `am Blatt` }];
 var AD = (e17) => kD.find((t10) => t10.id === e17) ?? kD[0];
 var jD = `#1f2937`;
@@ -5713,4 +6818,4 @@ var TOOL_REGISTRY = { "listen": { kind: "listen", field: "listen", draw: toe, la
   "traffic": { kind: "traffic", field: "traffic", draw: $ie, label: Cm, config: (raw, media) => $p(raw, media, media), redraw: wm.redraw },
   "vote": { kind: "vote", field: "vote", draw: Pre, label: Nre, config: (raw, media) => _f(raw, media, media), redraw: Cf.redraw, register: kre, state: ["counts"] },
   "week": { kind: "week", field: "week", draw: mie, label: pie, config: (raw, media) => sp(raw, media, media), redraw: pp.redraw } };
-export { toe as renderListen, eoe as listenLabel, pg as listenConfig, yg as resetListen, noe as stopListen, lh as LISTEN_SOUNDS, dg as LISTEN_INSTRUMENTS, yae as playListenSound, Hh as listenSoundPicture, ic as SEEK_SHAPES, ac as SEEK_COLORS, aQe as seekPicture, Sc as PATTERN_RULES, tQe as SPIN_PRESETS, Os as TALLY_COLORS, Ks as SPIN_COLORS, Tm as MOOD_FEELS, yQe as moodPicture, jp as CHECK_PRESETS, WZe as STEPS_PRESETS, gs as STEPS_COLORS, Nne as PRACTICE_PRESETS, s2e as PRACTICE_PARTNERS, hp as STRESS_IDEAS, Up as RATING_PRESETS, Ef as CIRCLE_RINGS, wf as CIRCLE_COLORS, rp as WEEK_DAYS, op as weekStart, Ud as budgetStart, ore as registerBudget, qne as MACHINE_KINDS, Od as machineStart, Mue as renderBookmarks, Qb as bookmarksLabel, Hb as bookmarksConfig, Nue as tapBookmarks, Pue as BOOKMARKS_CSS, f1e as BOOKMARK_LAYOUTS, zb as BOOKMARK_COLORS, dve as renderCode, fve as codeLabel, QD as codeConfig, CODE_CHOICES, uge as CODE_SIZES, dge as CODE_RANGES, kD as CODE_COSTUMES, Tve as costumePicture, PD as CODE_CARPETS, Eve as carpetPicture, FZe as codeLevelHint, KD as codeWithoutPad, wve as CODE_CSS, One as renderFigure, $u as figureConfig, ld as figureSvg, fd as figureView, lu as FIGURE_PITCHES, FIGURE_CHOICES, FIGURE_COLORS, Mne as FIGURE_CSS, TOOLS_CSS, TOOL_REGISTRY };
+export { toe as renderListen, eoe as listenLabel, pg as listenConfig, yg as resetListen, noe as stopListen, lh as LISTEN_SOUNDS, dg as LISTEN_INSTRUMENTS, yae as playListenSound, Hh as listenSoundPicture, ic as SEEK_SHAPES, ac as SEEK_COLORS, aQe as seekPicture, Sc as PATTERN_RULES, tQe as SPIN_PRESETS, Os as TALLY_COLORS, Ks as SPIN_COLORS, Tm as MOOD_FEELS, yQe as moodPicture, jp as CHECK_PRESETS, WZe as STEPS_PRESETS, gs as STEPS_COLORS, Nne as PRACTICE_PRESETS, s2e as PRACTICE_PARTNERS, hp as STRESS_IDEAS, Up as RATING_PRESETS, Ef as CIRCLE_RINGS, wf as CIRCLE_COLORS, rp as WEEK_DAYS, op as weekStart, Ud as budgetStart, ore as registerBudget, qne as MACHINE_KINDS, Od as machineStart, Mue as renderBookmarks, Qb as bookmarksLabel, Hb as bookmarksConfig, Nue as tapBookmarks, Pue as BOOKMARKS_CSS, f1e as BOOKMARK_LAYOUTS, zb as BOOKMARK_COLORS, dve as renderCode, fve as codeLabel, QD as codeConfig, CODE_CHOICES, uge as CODE_SIZES, dge as CODE_RANGES, kD as CODE_COSTUMES, Tve as costumePicture, PD as CODE_CARPETS, Eve as carpetPicture, FZe as codeLevelHint, KD as codeWithoutPad, wve as CODE_CSS, One as renderFigure, $u as figureConfig, ld as figureSvg, fd as figureView, lu as FIGURE_PITCHES, FIGURE_CHOICES, FIGURE_COLORS, Mne as FIGURE_CSS, Zx as renderTheater, pde as theaterLabel, sx as theaterConfig, Vue as registerTheaterHost, zue as registerTheaterSave, Bue as registerTheaterPositions, nx as THEATER_BACKS, dx as theaterBackPicture, mde as THEATER_CSS, TOOLS_CSS, TOOL_REGISTRY };

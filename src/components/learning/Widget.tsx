@@ -33,6 +33,7 @@ import ToolWidget from './ToolWidget';
 import BookmarksWidget from './BookmarksWidget';
 import CodeWidget from './CodeWidget';
 import FigureWidget from './FigureWidget';
+import TheaterWidget from './TheaterWidget';
 import TimetableWidget from './TimetableWidget';
 import CalendarSheet from './CalendarSheet';
 import MapSheet from './MapSheet';
@@ -69,6 +70,7 @@ export default function Widget({ element }: { element: PageElement }) {
   if (kind === 'linksammlung') return <BookmarksWidget element={element} />;
   if (kind === 'programmieren') return <CodeWidget element={element} />;
   if (kind === 'figur') return <FigureWidget element={element} />;
+  if (kind === 'puppentheater') return <TheaterWidget element={element} />;
   if (kind === 'stundenplan') return <TimetableWidget element={element} />;
   if (kind === 'kalenderblatt') return <CalendarSheet element={element} />;
   if (kind === 'karte') return <MapSheet element={element} />;

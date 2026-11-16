@@ -26,7 +26,7 @@ export async function POST(request: Request) {
             (el) =>
               el.id === elementId &&
               ((el.type === 'audio' && typeof el.placeholder === 'string') ||
-                (el.type === 'widget' && (['recorder', 'soundstudio', 'karaoke'].includes(el.widgetKind || '') || musicInvitesAudio(el.settings)))),
+                (el.type === 'widget' && (['recorder', 'soundstudio', 'karaoke', 'puppentheater'].includes(el.widgetKind || '') || musicInvitesAudio(el.settings)))),
           ),
         );
       if ((!data.book.allowChildAudio && !child.features.includes('audio') && !invited) || data.book.trashed)
