@@ -176,11 +176,13 @@ export function appendSamples(target: Point[], samples: Point[]) {
 }
 
 /** Use all hardware samples when available, including actual zero pressure. */
-export function pointerSamples(event: PointerEvent, rect: DOMRect, width: number, height: number): Point[] {
+/** Pointer positions in page mm. `left`/`top` are the page origin of the
+ *  visible area (negative on endless paper, see dimensions). */
+export function pointerSamples(event: PointerEvent, rect: DOMRect, width: number, height: number, left = 0, top = 0): Point[] {
   const samples = event.getCoalescedEvents?.() || [];
   return (samples.length ? samples : [event]).map(p => ({
-    x: Math.max(0, Math.min(width, (p.clientX - rect.left) / rect.width * width)),
-    y: Math.max(0, Math.min(height, (p.clientY - rect.top) / rect.height * height)),
+    x: left + Math.max(0, Math.min(width, (p.clientX - rect.left) / rect.width * width)),
+    y: top + Math.max(0, Math.min(height, (p.clientY - rect.top) / rect.height * height)),
     pressure: p.pointerType === 'pen' ? p.pressure : 0.5,
     time: p.timeStamp,
     ...(p.pointerType === 'pen' ? { tiltX: p.tiltX || 0, tiltY: p.tiltY || 0 } : {}),

@@ -34,28 +34,28 @@ export function fillObject(elements: PageElement[], point: XY, color: string,
 
 /** Reserve the full rotated bounds of protected elements. A fill cannot paint
  * over an exercise's locked contents or leak through them to the other side. */
-export function protectedPixels(elements: PageElement[], width: number, height: number, pageWidth: number, pageHeight: number) {
+export function protectedPixels(elements: PageElement[], width: number, height: number, pageWidth: number, pageHeight: number, pageLeft = 0, pageTop = 0) {
   const mask = new Uint8Array(width * height);
   for (const el of elements) {
     if (!el.locked) continue;
     const radius = Math.hypot(el.width, el.height) / 2;
-    const cx = el.x + el.width / 2, cy = el.y + el.height / 2;
+    const cx = el.x - pageLeft + el.width / 2, cy = el.y - pageTop + el.height / 2;
     const left = Math.max(0, Math.floor((cx - radius) / pageWidth * width));
     const right = Math.min(width, Math.ceil((cx + radius) / pageWidth * width));
     const top = Math.max(0, Math.floor((cy - radius) / pageHeight * height));
     const bottom = Math.min(height, Math.ceil((cy + radius) / pageHeight * height));
     for (let y = top; y < bottom; y++) for (let x = left; x < right; x++)
-      if (withinElement({ x: (x + 0.5) / width * pageWidth, y: (y + 0.5) / height * pageHeight }, el)) mask[y * width + x] = 1;
+      if (withinElement({ x: pageLeft + (x + 0.5) / width * pageWidth, y: pageTop + (y + 0.5) / height * pageHeight }, el)) mask[y * width + x] = 1;
   }
   return mask;
 }
 
 export function filledRegion(mask: Uint8Array, width: number, height: number,
-  pageWidth: number, pageHeight: number, color: string, opacity: number): PageElement | null {
+  pageWidth: number, pageHeight: number, color: string, opacity: number, pageLeft = 0, pageTop = 0): PageElement | null {
   const polygon = regionPolygon(mask, width, height);
   if (!polygon.length) return null;
   const points: Point[] = polygon.map(p => ({ x: p.x / width * pageWidth, y: p.y / height * pageHeight, pressure: 0.5 }));
-  return compactStroke({ id: uuid(), type: 'stroke', x: 0, y: 0, width: pageWidth, height: pageHeight,
+  return compactStroke({ id: uuid(), type: 'stroke', x: pageLeft, y: pageTop, width: pageWidth, height: pageHeight,
     rotation: 0, locked: false, color, fill: color, fillOnly: true, brushVersion: 2,
     penStyle: 'pen', penWidth: 0.1, opacity, points });
 }

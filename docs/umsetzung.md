@@ -285,8 +285,11 @@ Bearbeitung mit anschließender Veröffentlichung als Schulvorlage.
 ## Endlospapier
 
 „Neue Seite → Format → Endlospapier“ oder „Seite → Papier → Endlospapier“ legt
-eine nach unten wachsende Seite an (`paperMode: "endless"`, Breite A4 quer).
-Hefte mit Endlospapier lassen sich nicht drucken oder als PDF ausgeben.
+eine in alle Richtungen offene Fläche an (`paperMode: "endless"`). Sie wächst
+mit den Inhalten nach links, rechts, oben und unten; die Lineatur läuft überall
+weiter. Verschieben mit zwei Fingern, Mausrad, mittlerer Maustaste oder
+Leertaste + Ziehen. Hefte mit Endlospapier lassen sich nicht drucken oder als
+PDF ausgeben.
 Einzelheiten: [endlospapier.md](endlospapier.md).
 
 ## Verwaltung (Admin-Konten)

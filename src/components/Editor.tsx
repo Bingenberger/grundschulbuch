@@ -17,8 +17,11 @@ import {
   type PageElement,
   type Point,
   type Template,
+  ENDLESS_LIMIT,
+  sheetSize,
 } from '@/lib/notebook-model';
-import { ElementView } from './PageView';
+import { ElementView, World } from './PageView';
+import { groupIntoView, intoView, visibleCenter } from './editor/view-place';
 import ScaledPage from './ScaledPage';
 import BoardPointer, { type BoardPointerMode } from './BoardPointer';
 import { useShapeRecognition } from '@/lib/use-shape-recognition';
@@ -290,7 +293,8 @@ export default function Editor({
     (setSquare) => {
       s.chooseBrush('pen');
       useEditor.setState({ selected: [] });
-      setGuide({ kind: setSquare ? 'triangle' : 'ruler', x: size.width / 2, y: size.height * 0.72, angle: 0 });
+      const sheet = sheetSize(page || initial.pages[0]), view = visibleCenter(scroller.current, surface.current, size);
+      setGuide({ kind: setSquare ? 'triangle' : 'ruler', ...(view || { x: sheet.width / 2, y: sheet.height * 0.72 }), angle: 0 });
     },
   );
   const pageIndex = s.book?.pageIds.indexOf(page?.id || '') ?? -1;
@@ -329,8 +333,8 @@ export default function Editor({
       const [dx, dy] = directions[command];
       editSelected((el) => ({
         ...el,
-        x: Math.max(-297, Math.min(594, el.x + dx)),
-        y: Math.max(-297, Math.min(page.paperMode ? size.height : 594, el.y + dy)),
+        x: page.paperMode === 'endless' ? Math.max(-ENDLESS_LIMIT, Math.min(ENDLESS_LIMIT, el.x + dx)) : Math.max(-297, Math.min(594, el.x + dx)),
+        y: page.paperMode === 'endless' ? Math.max(-ENDLESS_LIMIT, Math.min(ENDLESS_LIMIT, el.y + dy)) : Math.max(-297, Math.min(594, el.y + dy)),
       }));
       return;
     }
@@ -426,9 +430,10 @@ export default function Editor({
         break;
       case 'paste':
       case 'duplicate': {
-        const elements = cloneElements(
+        let elements: PageElement[] = cloneElements(
           command === 'paste' ? clipboard : selected,
         );
+        if (page.paperMode === 'endless') elements = groupIntoView(elements, scroller.current, surface.current, size);
         s.edit((p) => ({ ...p, elements: [...p.elements, ...elements] }));
         s.select(elements.map((el) => el.id));
         break;
@@ -565,6 +570,7 @@ export default function Editor({
     });
   }
   function insert(el: PageElement) {
+    if (page?.paperMode === 'endless') el = intoView(el, scroller.current, surface.current, size);
     s.edit((p) => ({ ...p, elements: [...p.elements, el] }));
     s.select([el.id]);
     useEditor.setState({ tool: 'select' });
@@ -607,8 +613,8 @@ export default function Editor({
   function stampAt(point: { x: number; y: number }) {
     const made = findStamp(stamp)?.make();
     if (!made) return;
-    const x = Math.max(0, Math.min(size.width - made.width, point.x - made.width / 2));
-    const y = Math.max(0, Math.min(size.height - made.height, point.y - made.height / 2));
+    const x = Math.max(size.left, Math.min(size.left + size.width - made.width, point.x - made.width / 2));
+    const y = Math.max(size.top, Math.min(size.top + size.height - made.height, point.y - made.height / 2));
     s.edit((p) => ({ ...p, elements: [...p.elements, { ...made, x, y }] }));
   }
   /** Deletes pages right away; “Rückgängig” brings them back for a while. */
@@ -753,7 +759,7 @@ export default function Editor({
     closeImages();
   }
   function pointer(event: React.PointerEvent): Point {
-    const samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+    const samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height, size.left, size.top);
     return samples[samples.length - 1];
   }
 
@@ -855,7 +861,7 @@ export default function Editor({
     const g = gesture.current;
     if (!g || g.pointer !== event.pointerId) return;
     event.preventDefault();
-    let samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+    let samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height, size.left, size.top);
     if (g.guideEdge) samples = samples.map(point => projectToGuideEdge(point, g.guideEdge!));
     const point = samples[samples.length - 1];
     if (g.type === 'frame') {
@@ -876,8 +882,8 @@ export default function Editor({
           if (g.type === 'move')
             return {
               ...el,
-              x: Math.max(-el.width + 5, Math.min(size.width - 5, el.x + dx)),
-              y: Math.max(-el.height + 5, Math.min(size.height - 5, el.y + dy)),
+              x: Math.max(size.left - el.width + 5, Math.min(size.left + size.width - 5, el.x + dx)),
+              y: Math.max(size.top - el.height + 5, Math.min(size.top + size.height - 5, el.y + dy)),
             };
           if (g.type === 'rotate') return rotateTo(el, g.pivot || elementCenter(el), g.start, point, event.shiftKey);
           return resizeAtCorner(el, g.corner || 'se', g.start, point, event.shiftKey || el.type === 'image');
@@ -889,7 +895,7 @@ export default function Editor({
     const g = gesture.current;
     if (!g || g.pointer !== event.pointerId) return;
     if (!cancel && (g.type === 'draw' || g.type === 'erase')) {
-      let samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+      let samples = pointerSamples(event.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height, size.left, size.top);
       if (g.guideEdge) samples = samples.map(point => projectToGuideEdge(point, g.guideEdge!));
       appendSamples(g.points, samples);
     }
@@ -1139,8 +1145,9 @@ export default function Editor({
         <section className="canvas-area">
           <LinkContext.Provider value={links}>
           <div className="canvas-scroll" ref={scroller}>
-            <div className="canvas-sheet">
+            <div className={`canvas-sheet${page.paperMode === 'endless' ? ' endless' : ''}`}>
               <ScaledPage
+                canvas
                 page={page}
                 maxScale={board ? 1.8 : 1}
                 zoom={board ? 1 : zoom}
@@ -1181,6 +1188,7 @@ export default function Editor({
                     onPointerCancel={(e) => end(e, true)}
                     onLostPointerCapture={(e) => end(e, true)}
                   >
+                    <World page={page}>
                     {inkPaintOrder((erasePreview || page.elements).filter(el => el.id !== recognition.replaceId), draft).map((el) => (
                       <ElementView
                         key={el.id}
@@ -1243,6 +1251,7 @@ export default function Editor({
                     )}
                     <LinkLayer elements={page.elements.map((el) => preview?.find((p) => p.id === el.id) || el)} />
                     {guide && (!board || boardPointer === 'none') && <DrawingRuler guide={guide} onChange={setGuide} onClose={() => setGuide(null)} />}
+                    </World>
                     {board && boardPointer !== 'none' && <BoardPointer key={`${page.id}-${boardPointer}`} mode={boardPointer} width={size.width} height={size.height} size={lightSize} onClose={() => setBoardPointer('none')} />}
                   </div>
                 </LearningRuntime>
@@ -1485,7 +1494,8 @@ export default function Editor({
         <CollectionDialog
           onClose={() => setShowCollection(false)}
           onInsert={(elements) => {
-            const copies = cloneElements(elements, 0);
+            let copies: PageElement[] = cloneElements(elements, 0);
+            if (page.paperMode === 'endless') copies = groupIntoView(copies, scroller.current, surface.current, size);
             s.edit((p) => ({ ...p, elements: [...p.elements, ...copies] }));
             s.select(copies.map((el) => el.id));
           }}

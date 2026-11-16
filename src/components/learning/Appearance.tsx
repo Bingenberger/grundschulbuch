@@ -228,7 +228,8 @@ export function PageDecoration({ page }: { page: Page }) {
           }}
         />
       )}
-      {frame !== 'none' && (
+      {/* An open surface has no edge to frame. */}
+      {frame !== 'none' && page.paperMode !== 'endless' && (
         <svg
           className="page-decoration"
           viewBox={`0 0 ${width} ${height}`}

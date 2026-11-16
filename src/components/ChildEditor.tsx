@@ -17,7 +17,8 @@ import {
   type PageElement,
   type Point,
 } from '@/lib/notebook-model';
-import { ElementView } from './PageView';
+import { ElementView, World } from './PageView';
+import { intoView, visibleCenter } from './editor/view-place';
 import { LearningRuntime, pageDrawing } from './learning/Runtime';
 import { uploadAudio } from '@/lib/client-api';
 import AudioDialog, { AudioEditDialog } from './AudioDialog';
@@ -179,7 +180,8 @@ export default function ChildEditor({
     (setSquare) => {
       s.chooseBrush('pen');
       useEditor.setState({ selected: [] });
-      setGuide({ kind: setSquare ? 'triangle' : 'ruler', x: size.width / 2, y: size.height * 0.72, angle: 0 });
+      const view = visibleCenter(scroller.current, surface.current, size);
+      setGuide({ kind: setSquare ? 'triangle' : 'ruler', ...(view || { x: size.left + size.width / 2, y: size.top + size.height * 0.72 }), angle: 0 });
     },
   );
   async function leave(url: string, logout = false) {
@@ -201,7 +203,7 @@ export default function ChildEditor({
     speak(label);
   }
   function point(e: React.PointerEvent): Point {
-    const samples = pointerSamples(e.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+    const samples = pointerSamples(e.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height, size.left, size.top);
     return samples[samples.length - 1];
   }
 
@@ -288,7 +290,7 @@ export default function ChildEditor({
   function move(e: React.PointerEvent) {
     const g = gesture.current;
     if (!g || g.pointer !== e.pointerId) return;
-    let samples = pointerSamples(e.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+    let samples = pointerSamples(e.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height, size.left, size.top);
     if (g.guideEdge) samples = samples.map(point => projectToGuideEdge(point, g.guideEdge!));
     const p = samples[samples.length - 1];
     if (g.erase) {
@@ -303,8 +305,8 @@ export default function ChildEditor({
     else if (g.move)
       setDraft({
         ...g.el,
-        x: Math.max(0, Math.min(size.width - 5, g.el.x + p.x - g.start.x)),
-        y: Math.max(0, Math.min(size.height - 5, g.el.y + p.y - g.start.y)),
+        x: Math.max(size.left, Math.min(size.left + size.width - 5, g.el.x + p.x - g.start.x)),
+        y: Math.max(size.top, Math.min(size.top + size.height - 5, g.el.y + p.y - g.start.y)),
       });
     else if (g.points.length < 19000) {
       appendSamples(g.points, samples);
@@ -316,7 +318,7 @@ export default function ChildEditor({
     const g = gesture.current;
     if (!g || g.pointer !== e.pointerId) return;
     if (!cancel && !g.move) {
-      let samples = pointerSamples(e.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height);
+      let samples = pointerSamples(e.nativeEvent, surface.current!.getBoundingClientRect(), size.width, size.height, size.left, size.top);
       if (g.guideEdge) samples = samples.map(point => projectToGuideEdge(point, g.guideEdge!));
       appendSamples(g.points, samples);
     }
@@ -374,6 +376,7 @@ export default function ChildEditor({
     }));
   }
   function insert(el: PageElement) {
+    if (page?.paperMode === 'endless') el = intoView(el, scroller.current, surface.current, size);
     s.edit((page) => ({ ...page, elements: [...page.elements, el] }));
     s.select([el.id]);
     useEditor.setState({ tool: 'select' });
@@ -456,8 +459,8 @@ export default function ChildEditor({
   function stampAt(point: Point) {
     const made = findStamp(stamp)?.make();
     if (!made) return;
-    const x = Math.max(0, Math.min(size.width - made.width, point.x - made.width / 2));
-    const y = Math.max(0, Math.min(size.height - made.height, point.y - made.height / 2));
+    const x = Math.max(size.left, Math.min(size.left + size.width - made.width, point.x - made.width / 2));
+    const y = Math.max(size.top, Math.min(size.top + size.height - made.height, point.y - made.height / 2));
     s.edit((p) => ({ ...p, elements: [...p.elements, { ...made, locked: false, x, y }] }));
   }
   function chooseRail(item: RailItem) {
@@ -585,9 +588,9 @@ export default function ChildEditor({
           <section className="canvas-area">
             <LinkContext.Provider value={links}>
             <div className="canvas-scroll" ref={scroller}>
-              <div className="canvas-sheet">
+              <div className={`canvas-sheet${page.paperMode === 'endless' ? ' endless' : ''}`}>
 
-        <ScaledPage page={page} zoom={zoom}>
+        <ScaledPage canvas page={page} zoom={zoom}>
           <LearningRuntime
                   drawing={drawing}
                   uploadAudio={(id, file) => uploadAudio(file, s.book!.id, id)}
@@ -617,6 +620,7 @@ export default function ChildEditor({
               onPointerCancel={(e) => up(e, true)}
               onLostPointerCapture={(e) => up(e, true)}
             >
+              <World page={page}>
               {inkPaintOrder((erasePreview || page.elements).filter(el => el.id !== recognition.replaceId), draft).map((el) => (
                 <ElementView
                   element={draft?.id === el.id ? draft : el}
@@ -664,6 +668,7 @@ export default function ChildEditor({
               )}
               <LinkLayer elements={page.elements.map((el) => (draft?.id === el.id ? draft : el))} />
               {guide && <DrawingRuler guide={guide} onChange={setGuide} onClose={() => setGuide(null)} />}
+              </World>
             </div>
           </LearningRuntime>
         </ScaledPage>

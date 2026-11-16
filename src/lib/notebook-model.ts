@@ -198,12 +198,41 @@ export type Template = {
   replaces?: string;
 };
 export type BookData = { book: Notebook; pages: Page[] };
+/** Free room around the content of endless paper, in mm. */
+export const ENDLESS_MARGIN = 200;
+/** Endless paper grows and shrinks in steps of this size, so the view stays calm. */
+export const ENDLESS_STEP = 100;
+/** Furthest an element of endless paper may lie from the origin, in mm. */
+export const ENDLESS_LIMIT = 50000;
+/**
+ * Visible area of a page in mm. A4 pages start at the origin. Endless paper is
+ * an open surface: elements may lie anywhere (also at negative coordinates) and
+ * the area covers the first sheet and all content with free room on every side,
+ * so it grows (and shrinks again) in all four directions.
+ */
 export function dimensions(page: Pick<Page, 'orientation'> & Partial<Pick<Page,'paperMode'|'elements'>>) {
   const width=page.orientation==='landscape'?297:210;
   const base=page.orientation==='landscape'?210:297;
-  if(page.paperMode!=='endless')return {width,height:base};
-  const bottom=(page.elements||[]).reduce((max,el)=>Math.max(max,el.y+el.height),0);
-  return {width,height:Math.max(594,Math.ceil((bottom+150)/100)*100)};
+  if(page.paperMode!=='endless')return {width,height:base,left:0,top:0};
+  let x0=0,y0=0,x1=width,y1=base;
+  for(const el of page.elements||[]){
+    if(!Number.isFinite(el.x)||!Number.isFinite(el.y))continue;
+    x0=Math.min(x0,el.x);y0=Math.min(y0,el.y);
+    x1=Math.max(x1,el.x+(el.width||0));y1=Math.max(y1,el.y+(el.height||0));
+  }
+  const low=(v:number)=>Math.floor((v-ENDLESS_MARGIN)/ENDLESS_STEP)*ENDLESS_STEP;
+  const high=(v:number)=>Math.ceil((v+ENDLESS_MARGIN)/ENDLESS_STEP)*ENDLESS_STEP;
+  const left=low(x0),top=low(y0);
+  return {width:high(x1)-left,height:high(y1)-top,left,top};
+}
+/** Whether all content of a page lies on one A4 sheet (needed to leave endless paper). */
+export function fitsSheet(page: Pick<Page, 'elements'>, orientation: Page['orientation']) {
+  const { width, height } = sheetSize({ orientation });
+  return page.elements.every(e => e.x >= -0.5 && e.y >= -0.5 && e.x + e.width <= width + 0.5 && e.y + e.height <= height + 0.5);
+}
+/** Size of the first sheet: A4 in the page's orientation. */
+export function sheetSize(page: Pick<Page, 'orientation'>) {
+  return page.orientation==='landscape'?{width:297,height:210}:{width:210,height:297};
 }
 export function newPage(
   ruling: Ruling = 'blanko',

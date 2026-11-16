@@ -21,7 +21,8 @@ export function normaliseGuideAngle(angle: number) {
   return ((angle % 360) + 360) % 360;
 }
 
-export function manipulateGuide(gesture: GuideManipulation, points: XY[], page: { width: number; height: number }, coarse = false): DrawingGuide {
+export function manipulateGuide(gesture: GuideManipulation, points: XY[], page: { width: number; height: number; left?: number; top?: number }, coarse = false): DrawingGuide {
+  const left = page.left || 0, top = page.top || 0;
   const [a, b] = points;
   if (!a) return gesture.guide;
   const midpoint = b ? { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 } : a;
@@ -37,8 +38,8 @@ export function manipulateGuide(gesture: GuideManipulation, points: XY[], page: 
     const x = gesture.guide.x - gesture.point.x, y = gesture.guide.y - gesture.point.y;
     // Rotate about the fingers' midpoint, including an off-centre grip, so that
     // the ruler does not slide underneath the two touching fingers.
-    next.x = Math.max(15, Math.min(page.width - 15, midpoint.x + x * Math.cos(rotation) - y * Math.sin(rotation)));
-    next.y = Math.max(15, Math.min(page.height - 15, midpoint.y + x * Math.sin(rotation) + y * Math.cos(rotation)));
+    next.x = Math.max(left + 15, Math.min(left + page.width - 15, midpoint.x + x * Math.cos(rotation) - y * Math.sin(rotation)));
+    next.y = Math.max(top + 15, Math.min(top + page.height - 15, midpoint.y + x * Math.sin(rotation) + y * Math.cos(rotation)));
   }
   return next;
 }

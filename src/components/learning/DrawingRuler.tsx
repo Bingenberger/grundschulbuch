@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
+import { paperFrame } from '../PageView';
 import { guideShape, manipulateGuide, normaliseGuideAngle, type DrawingGuide, type GuideManipulation } from '@/lib/drawing-guide';
 
 type XY = { x: number; y: number };
@@ -18,10 +19,10 @@ export default function DrawingRuler({ guide, onChange, onClose }: {
 
   function point(event: React.PointerEvent) {
     const paper = event.currentTarget.closest('.paper') as HTMLElement;
-    const rect = paper.getBoundingClientRect();
+    const rect = paper.getBoundingClientRect(), frame = paperFrame(paper);
     return {
-      x: (event.clientX - rect.left) / rect.width * parseFloat(paper.style.width),
-      y: (event.clientY - rect.top) / rect.height * parseFloat(paper.style.height),
+      x: frame.left + (event.clientX - rect.left) / rect.width * frame.width,
+      y: frame.top + (event.clientY - rect.top) / rect.height * frame.height,
     };
   }
   function rebase(mode: 'move' | 'rotate' = 'move') {
@@ -50,9 +51,7 @@ export default function DrawingRuler({ guide, onChange, onClose }: {
     event.stopPropagation();
     pointers.current.set(event.pointerId, point(event));
     const paper = event.currentTarget.closest('.paper') as HTMLElement;
-    const next = manipulateGuide(gesture.current, [...pointers.current.values()], {
-      width: parseFloat(paper.style.width), height: parseFloat(paper.style.height),
-    }, event.shiftKey);
+    const next = manipulateGuide(gesture.current, [...pointers.current.values()], paperFrame(paper), event.shiftKey);
     latest.current = next;
     onChange(next);
   }
@@ -76,9 +75,9 @@ export default function DrawingRuler({ guide, onChange, onClose }: {
     const next = { ...latest.current };
     if (rotate) next.angle = normaliseGuideAngle(next.angle + (delta[0] || delta[1]));
     else {
-      const paper = event.currentTarget.closest('.paper') as HTMLElement;
-      next.x = Math.max(15, Math.min(parseFloat(paper.style.width) - 15, next.x + delta[0]));
-      next.y = Math.max(15, Math.min(parseFloat(paper.style.height) - 15, next.y + delta[1]));
+      const frame = paperFrame(event.currentTarget.closest('.paper') as HTMLElement);
+      next.x = Math.max(frame.left + 15, Math.min(frame.left + frame.width - 15, next.x + delta[0]));
+      next.y = Math.max(frame.top + 15, Math.min(frame.top + frame.height - 15, next.y + delta[1]));
     }
     latest.current = next;
     onChange(next);

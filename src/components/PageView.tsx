@@ -18,23 +18,35 @@ import {
   EmbedContent,
 } from './learning/Appearance';
 import { dimensions, type Page, type PageElement } from '@/lib/notebook-model';
+/** How the original papers repeat on endless paper, in units of the 1400 × 990 original:
+ *  x/y = start of one tile inside the line area, w/h = tile size. */
+const ENDLESS_TILES: Record<string, { x: number; w: number }> = {
+  squares: { x: 595, w: 30 },
+  'squares-big': { x: 575, w: 50 },
+  dots: { x: 556, w: 36 },
+};
 export function RulingView({ page }: { page: Page }) {
   const uid = useId().replace(/:/g, '');
   const original=page.paperReferenceId?pageDesigns.find(d=>d.id===page.paperReferenceId):undefined;
   if(original&&page.paperMode==='endless'){
-    const size=dimensions(page),height=size.height/size.width*1400;
+    // The surface is open in all directions: one tile of the original paper repeats everywhere.
+    const size=dimensions(page),k=297/1400;
+    if(!original.svg)return null;
     const top=original.grid?.top||(original.id==='music'?110:0);
     const period=original.grid?.pitch||({'squares':30,'squares-big':50,'dots':36,'music':128}[original.id]||990);
-    return <svg className="lineatur" width="100%" height="100%" viewBox={`0 0 1400 ${height}`} aria-hidden="true"><defs><pattern id={uid} width="1400" height={period} y={top} patternUnits="userSpaceOnUse"><g transform={`translate(0,${-top})`} dangerouslySetInnerHTML={{__html:page.lineColor?original.svg.replaceAll(original.line,page.lineColor):original.svg}}/></pattern></defs><rect y={top} width="1400" height={height-top} fill={`url(#${uid})`}/></svg>;
+    const tile=ENDLESS_TILES[original.id]||{x:800,w:100};
+    return <svg className="lineatur" width="100%" height="100%" viewBox={`${size.left} ${size.top} ${size.width} ${size.height}`} aria-hidden="true"><defs><pattern id={uid} x={tile.x*k} y={top*k} width={tile.w*k} height={period*k} patternUnits="userSpaceOnUse"><g transform={`scale(${k}) translate(${-tile.x},${-top})`} dangerouslySetInnerHTML={{__html:page.lineColor?original.svg.replaceAll(original.line,page.lineColor):original.svg}}/></pattern></defs><rect x={size.left} y={size.top} width={size.width} height={size.height} fill={`url(#${uid})`}/></svg>;
   }
   if(original)return <svg className="lineatur" width="100%" height="100%" viewBox="0 0 1400 990" preserveAspectRatio="xMidYMid meet" aria-hidden="true" dangerouslySetInnerHTML={{__html:page.lineColor?original.svg.replaceAll(original.line,page.lineColor):original.svg}}/>;
-  const { width, height } = dimensions(page);
+  const { width, height, left, top } = dimensions(page);
+  const endless = page.paperMode === 'endless';
   const r = page.ruling;
   const blue = page.lineColor || '#a0bcd3';
   const red = '#d99b9b';
   let pattern: React.ReactNode;
   let period = 10;
-  let patternWidth = width;
+  // Endless paper: lines repeat sideways too, so a short tile is enough.
+  let patternWidth = endless ? 10 : width;
   if (r.startsWith('karo') || r === 'rechnen') {
     period = r === 'karo10' || r === 'rechnen' ? 10 : 5;
     patternWidth = period;
@@ -67,7 +79,7 @@ export function RulingView({ page }: { page: Page }) {
       <line
         key={y}
         x1="0"
-        x2={width}
+        x2={patternWidth}
         y1={y}
         y2={y}
         stroke="#8d969b"
@@ -82,7 +94,7 @@ export function RulingView({ page }: { page: Page }) {
       r === 'linie4' || r === 'bildzeilen' ? (
         <line
           x1="0"
-          x2={width}
+          x2={patternWidth}
           y1="9"
           y2="9"
           stroke={blue}
@@ -95,7 +107,7 @@ export function RulingView({ page }: { page: Page }) {
             <line
               key={i}
               x1="0"
-              x2={width}
+              x2={patternWidth}
               y1={y + 0.15}
               y2={y + 0.15}
               stroke={i === 2 ? red : blue}
@@ -108,10 +120,20 @@ export function RulingView({ page }: { page: Page }) {
   return (
     <svg
       className="lineatur"
-      viewBox={`0 0 ${width} ${height}`}
+      viewBox={`${left} ${top} ${width} ${height}`}
       aria-hidden="true"
     >
-      {r !== 'blanko' && (
+      {r !== 'blanko' && endless && (
+        <>
+          <defs>
+            <pattern id={uid} width={patternWidth} height={period} patternUnits="userSpaceOnUse">
+              {pattern}
+            </pattern>
+          </defs>
+          <rect x={left} y={top} width={width} height={height} fill={`url(#${uid})`} />
+        </>
+      )}
+      {r !== 'blanko' && !endless && (
         <>
           <defs>
             <pattern
@@ -333,20 +355,41 @@ export default function PageView({
   page: Page;
   children?: React.ReactNode;
 }) {
-  const { width, height } = dimensions(page);
+  const { width, height, left, top } = dimensions(page);
   return (
     <div
       className="paper"
       style={{ width: `${width}mm`, height: `${height}mm` }}
+      data-left={left || undefined}
+      data-top={top || undefined}
     >
       <PageDecoration page={page} />
       <RulingView page={page} />
       {children || (
-        <>
+        <World page={page}>
           {inkPaintOrder(page.elements).map((el) => <ElementView key={el.id} element={el} />)}
           <LinkLayer elements={page.elements} />
-        </>
+        </World>
       )}
     </div>
   );
+}
+/**
+ * Places page coordinates inside the visible area. On endless paper the area
+ * starts left of and above the origin, so the content moves by that much;
+ * A4 pages start at the origin and need no wrapper.
+ */
+export function World({ page, children }: { page: Page; children?: React.ReactNode }) {
+  const { left, top } = dimensions(page);
+  if (!left && !top) return <>{children}</>;
+  return <div className="page-world" style={{ position: 'absolute', left: `${-left}mm`, top: `${-top}mm`, width: 0, height: 0 }}>{children}</div>;
+}
+/** Page coordinates (mm) of the visible area of a rendered `.paper`. */
+export function paperFrame(paper: HTMLElement) {
+  return {
+    left: Number(paper.dataset.left || 0),
+    top: Number(paper.dataset.top || 0),
+    width: parseFloat(paper.style.width),
+    height: parseFloat(paper.style.height),
+  };
 }

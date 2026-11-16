@@ -114,7 +114,9 @@ export function validatePage(input) {
   )
     throw new BookError('Ungültige Seite.');
   if(input.paperMode!==undefined && input.paperMode!=='endless')throw new BookError('Ungültiger Papiermodus.');
-  const maxY=input.paperMode==='endless'?1000000:594;
+  // Endless paper is open in every direction (see dimensions in notebook-model).
+  const endless=input.paperMode==='endless',far=50000;
+  const maxY=endless?2*far:594;
   const seen = new Set();
   let count = 0;
   const elements = input.elements.map((el) => {
@@ -139,9 +141,9 @@ export function validatePage(input) {
     const result = {
       id: el.id,
       type: el.type,
-      x: num(el.x, -297, 594),
-      y: num(el.y, -297, maxY),
-      width: num(el.width, 0.1, 594),
+      x: endless?num(el.x, -far, far):num(el.x, -297, 594),
+      y: endless?num(el.y, -far, far):num(el.y, -297, maxY),
+      width: num(el.width, 0.1, endless?2*far:594),
       height: num(el.height, 0.1, maxY),
       rotation: num(el.rotation, -360, 360),
       locked: el.locked,
@@ -370,7 +372,7 @@ export function validatePage(input) {
         throw new BookError('Zu viele Zeichenpunkte.');
       Object.assign(result, {
         points: el.points.map((p) => {
-          const result = { x: num(p.x, -594, 594), y: num(p.y, -594, maxY), pressure: num(p.pressure, 0, 1) };
+          const result = { x: endless?num(p.x, -2*far, 2*far):num(p.x, -594, 594), y: endless?num(p.y, -2*far, 2*far):num(p.y, -594, maxY), pressure: num(p.pressure, 0, 1) };
           for (const key of ['time', 'tiltX', 'tiltY']) {
             if (p[key] !== undefined) result[key] = num(p[key], key === 'time' ? 0 : -90, key === 'time' ? Number.MAX_SAFE_INTEGER : 90);
           }
@@ -419,11 +421,11 @@ export function validatePage(input) {
             throw new BookError('Ungültige Radierform.');
           return {
             id: key, size: num(erasure.size, 0.1, 40), opacity: num(erasure.opacity, 0.05, 1),
-            soft: erasure.soft, width: num(erasure.width, 0.1, 594), height: num(erasure.height, 0.1, maxY),
+            soft: erasure.soft, width: num(erasure.width, 0.1, endless?2*far:594), height: num(erasure.height, 0.1, maxY),
             ...(erasure.tip !== undefined ? { tip: erasure.tip } : {}),
             points: erasure.points.map(p => {
               if (!p || typeof p !== 'object') throw new BookError('Ungültiger Radierpunkt.');
-              return { x: num(p.x, -1500, 1500), y: num(p.y, -1500, input.paperMode==='endless'?1000000:1500) };
+              return endless?{ x: num(p.x, -2*far, 2*far), y: num(p.y, -2*far, 2*far) }:{ x: num(p.x, -1500, 1500), y: num(p.y, -1500, 1500) };
             }),
           };
         });

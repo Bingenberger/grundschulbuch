@@ -769,6 +769,13 @@ input[type='checkbox'] {
   max-width: 815px;
   margin: auto;
 }
+/* Endless paper fills the whole scroll area; no centred sheet with grey margins. */
+.canvas-sheet.endless,
+.board-mode .canvas-sheet.endless {
+  max-width: none;
+  width: auto;
+  margin: 0;
+}
 .canvas-sheet .paper {
   box-shadow: 0 5px 30px #2d4b3010;
 }
@@ -779,6 +786,15 @@ input[type='checkbox'] {
   height: 100%;
   user-select: none;
   -webkit-user-select: none;
+}
+/* Endless paper: move the view with the space bar or the middle mouse button. */
+.canvas-scroll.panning-ready,
+.canvas-scroll.panning-ready * {
+  cursor: grab !important;
+}
+.canvas-scroll.panning,
+.canvas-scroll.panning * {
+  cursor: grabbing !important;
 }
 .interaction-surface.tool-pen,
 .interaction-surface.tool-marker {

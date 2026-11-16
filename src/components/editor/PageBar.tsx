@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useEditor } from '@/lib/editor-store';
-import { rulings, type Page } from '@/lib/notebook-model';
+import { fitsSheet, rulings, type Page } from '@/lib/notebook-model';
 import { PAGE_FRAMES } from '@/lib/learning/validation.mjs';
 import { uploadImage } from '@/lib/client-api';
 import {referencePaper} from '@/lib/learning/reference-paper';
@@ -139,13 +139,13 @@ export default function PageBar({
                   icon={<PageGlyph page={{ ...page, orientation,paperMode:undefined }} />}
                   label={orientation === 'portrait' ? 'Hochformat' : 'Querformat'}
                   pressed={!page.paperMode && page.orientation === orientation}
-                  disabled={page.paperMode==='endless'&&page.elements.some(e=>e.y+e.height>(orientation==='landscape'?210:297))}
+                  disabled={page.paperMode==='endless'&&!fitsSheet(page,orientation)}
                   title={page.paperMode==='endless'?'Alle Inhalte müssen auf das gewählte Papierformat passen.':undefined}
                   onClick={() => pagePatch({ orientation, paperMode:undefined })}
                 />
               ))}
               <ChoiceButton icon="seiten" label="Endlospapier" pressed={page.paperMode==='endless'} onClick={()=>pagePatch({paperMode:'endless',orientation:'landscape'})}/>
-              {page.paperMode==='endless'&&<span className="option-hint">Die Schreibfläche wächst nach unten mit. Speichere sie als Heftdatei oder HTML; Drucken und PDF entfallen.</span>}
+              {page.paperMode==='endless'&&<span className="option-hint">Die Fläche ist in alle Richtungen offen und wächst mit. Verschieben mit zwei Fingern, Mausrad, mittlerer Maustaste oder Leertaste + Ziehen. Speichere sie als Heftdatei oder HTML; Drucken und PDF entfallen.</span>}
             </OptionGroup>
           </>
         ),

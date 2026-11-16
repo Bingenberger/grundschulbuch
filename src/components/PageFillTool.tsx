@@ -26,7 +26,7 @@ export default function PageFillTool({ surface, disabled = false }: {
       const snapshot = state.pages.find(p => p.id === state.activeId);
       if (!snapshot) return;
       const rect = layer.getBoundingClientRect(), size = dimensions(snapshot);
-      const point = { x: (event.clientX - rect.left) / rect.width * size.width, y: (event.clientY - rect.top) / rect.height * size.height };
+      const point = { x: size.left + (event.clientX - rect.left) / rect.width * size.width, y: size.top + (event.clientY - rect.top) / rect.height * size.height };
       if (state.fillMode === 'object') {
         const shapeHit = (el: PageElement) => {
           const view = [...layer.querySelectorAll<HTMLElement>('[data-element-id]')].find(node => node.dataset.elementId === el.id);
@@ -42,8 +42,10 @@ export default function PageFillTool({ surface, disabled = false }: {
       pending = true; setBusy(true); const request = ++generation;
       try {
         const { toCanvas } = await import('html-to-image');
+        const resolution = Math.min(4, 6000 / Math.max(size.width, size.height));
         const canvas = await toCanvas(paper, {
-          pixelRatio: 1, canvasWidth: Math.round(size.width * 4), canvasHeight: Math.round(size.height * 4),
+          // 4 pixels per mm; a large endless surface is read more coarsely to stay within canvas limits.
+          pixelRatio: 1, canvasWidth: Math.round(size.width * resolution), canvasHeight: Math.round(size.height * resolution),
           filter: node => !(node instanceof Element && (node.classList.contains('drawing-ruler') || node.classList.contains('selection-handles'))),
         });
         if (stopped || request !== generation) return;
@@ -53,9 +55,9 @@ export default function PageFillTool({ surface, disabled = false }: {
         const seed = canvasPoint({ x: event.clientX, y: event.clientY }, rect, canvas.width, canvas.height);
         const offset = (seed.y * canvas.width + seed.x) * 4;
         if (state.penOpacity === 1 && rgbaHex(image.data.slice(offset, offset + 4)) === state.color.toLowerCase()) return;
-        const blocked = protectedPixels(snapshot.elements, canvas.width, canvas.height, size.width, size.height);
+        const blocked = protectedPixels(snapshot.elements, canvas.width, canvas.height, size.width, size.height, size.left, size.top);
         const region = floodRegion(image.data, canvas.width, canvas.height, seed, 28, blocked);
-        const element = filledRegion(region, canvas.width, canvas.height, size.width, size.height, state.color, state.penOpacity);
+        const element = filledRegion(region, canvas.width, canvas.height, size.width, size.height, state.color, state.penOpacity, size.left, size.top);
         const current = useEditor.getState();
         if (current.activeId !== snapshot.id) return;
         if (element) current.edit(p => applyRegionFill(snapshot, p, element));

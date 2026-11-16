@@ -28,12 +28,22 @@ const ptToMm = 25.4 / 72;
 
 /** Writing rows of the page, or null for pages without lines. */
 export function rulingRows(page: Pick<Page, 'ruling' | 'orientation' | 'templateRuling'> & Partial<Pick<Page,'paperMode'|'elements'>>): RulingRows | null {
-  if(page.templateRuling){const g=page.templateRuling;return{period:g.pitch,first:g.top+g.baseline,last:page.paperMode==='endless'?dimensions(page).height-g.pitch:g.top+g.baseline+(g.count-1)*g.pitch,xHeight:g.xHeight,ascender:g.baseline||g.pitch*.65};}
+  const endless = page.paperMode === 'endless';
+  if(page.templateRuling){
+    const g=page.templateRuling,first=g.top+g.baseline;
+    if(endless){
+      // The rows go on above and below the first sheet.
+      const area=dimensions(page);
+      return{period:g.pitch,first:first+Math.ceil((area.top-first)/g.pitch)*g.pitch,last:first+Math.floor((area.top+area.height-g.pitch-first)/g.pitch)*g.pitch,xHeight:g.xHeight,ascender:g.baseline||g.pitch*.65};
+    }
+    return{period:g.pitch,first,last:first+(g.count-1)*g.pitch,xHeight:g.xHeight,ascender:g.baseline||g.pitch*.65};
+  }
   const r = page.ruling;
   if (!lined.includes(r)) return null;
-  const { height } = dimensions(page);
-  const top = r === 'bildzeilen' ? height * 0.53 : 15;
-  const bottom = height - 15;
+  const area = dimensions(page);
+  const height = area.height;
+  const top = endless ? area.top : r === 'bildzeilen' ? height * 0.53 : 15;
+  const bottom = endless ? area.top + area.height : height - 15;
   // Must match RulingView: the pattern repeats from y = 0 of the page.
   const single = r === 'linie4' || r === 'bildzeilen';
   const gap = r === 'linie1' ? 5 : r === 'linie2' ? 4 : 3;
@@ -41,7 +51,7 @@ export function rulingRows(page: Pick<Page, 'ruling' | 'orientation' | 'template
   const offset = single ? 9 : gap * 2 + 0.15;
   const above = single ? 0 : gap * 2;
   const below = single ? 0 : gap;
-  let first = offset;
+  let first = offset + Math.floor((top - offset) / period) * period;
   while (first - above < top - 0.3) first += period;
   let last = first;
   while (last + period + below <= bottom + 0.3) last += period;
@@ -70,7 +80,7 @@ export function fitTextToRuling(
   if ((el.borderWidth ?? 0) > 0 || (el.background && el.background !== 'none')) return null;
   const font = fontFamilyFor(el);
   const g=page.templateRuling;
-  if(g&&(el.x+el.width<=g.left||el.x>=g.right||el.y>rows.last||el.y+el.height<g.top-g.pitch))return null;
+  if(g&&page.paperMode!=='endless'&&(el.x+el.width<=g.left||el.x>=g.right||el.y>rows.last||el.y+el.height<g.top-g.pitch))return null;
   if(el.textLinePitch&&g)return {...el,lineHeight:el.textLinePitch/((el.fontSize||18)*ptToMm),...(lines!==undefined?{height:round(Math.max(1,lines)*el.textLinePitch,3)}:{})};
   let fontMm = (el.fontSize || 18) * ptToMm;
   if (autoSize) {

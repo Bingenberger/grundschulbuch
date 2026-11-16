@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import pageDesigns from '../../src/lib/reference/page-templates.json' with { type: 'json' };
 const origin = { Origin: 'http://localhost:3100' };
 async function login(page: Page) {
   await page.goto('/anmelden'); await page.getByLabel('Name', { exact: true }).fill('Frau Beispiel'); await page.getByLabel('PIN', { exact: true }).fill('483920');
@@ -50,8 +51,17 @@ test('Lernwerkzeuge nach Fächern, Vorlagen nur gestalterisch, einstellbare Arbe
   await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Neue Seite', exact: true }).click();
   const templates = page.getByRole('dialog', { name: 'Neue Seite' });
   const categories = templates.getByRole('navigation', { name: 'Kategorien' });
-  for (const gone of ['Kommunikation', 'Interaktive Übungen', 'Mathe', 'Schule', 'Lesen & Schreiben'])
+  for (const gone of ['Kommunikation', 'Interaktive Übungen', 'Lesen & Schreiben'])
     await expect(categories.getByRole('button', { name: new RegExp(`^${gone} · [1-9]`) })).toHaveCount(0);
+  // „Schule“ and „Mathe“ hold only the static page designs of the reference
+  // (Lernsachen-Heft 1.47.3), no interactive tools.
+  for (const category of ['Schule', 'Mathe']) {
+    const designs = pageDesigns.filter(d => d.category === category).map(d => d.title);
+    await categories.getByRole('button', { name: new RegExp(`^${category} · \\d+$`) }).click();
+    const names = await templates.getByRole('button', { name: /^Vorlage / }).evaluateAll(nodes => nodes.map(n => n.getAttribute('aria-label') || n.textContent || ''));
+    expect(names.length).toBeGreaterThan(0);
+    for (const name of names) expect(designs.some(title => name.replace(/^Vorlage /, '').startsWith(title)), name).toBe(true);
+  }
   await categories.getByRole('button', { name: /^Einstellbar · 7$/ }).click();
   await page.screenshot({ path: test.info().outputPath('einstellbar.png') });
   await templates.getByRole('button', { name: 'Vorlage Uhrzeiten üben' }).click();
