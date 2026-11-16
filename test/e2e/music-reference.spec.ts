@@ -103,7 +103,8 @@ test('Musikauswahl fügt vollständige Seiten ein und öffnet die Einstellvarian
     await dialog.getByRole('navigation', { name: 'Fächer' }).getByRole('button', { name: /^Musik · / }).click(); return dialog;
   };
   let dialog = await open();
-  await expect(dialog.locator('.learning-block-preview img')).toHaveCount(36);
+  // 36 + Hör-Memory and Was hörst du? of Lernsachen-Heft 1.47.3.
+  await expect(dialog.locator('.learning-block-preview img')).toHaveCount(38);
   const pianoPreview = dialog.getByRole('button', { name: 'Klavier', exact: true }).getByRole('img', { name: 'Vorschau: Klavier', exact: true });
   await expect.poll(() => pianoPreview.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth === 480)).toBe(true);
   await page.screenshot({ path: test.info().outputPath('musik-vorschaubilder.png') });

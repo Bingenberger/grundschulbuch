@@ -34,7 +34,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', diaschau: 'Medien & Präsentation', trickfilm: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', hoeren: 'Musik', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', diaschau: 'Medien & Präsentation', trickfilm: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -130,6 +130,8 @@ const SKIP = new Set([
   'widget-noise',
   'widget-applause',
   'widget-ampel',
+  // Hör-Memory and Was hörst du? are two blocks of one tool.
+  'widget-hoeren',
   // Replaced by the Bilder-Stundenplan of the reference.
   'widget-timetable',
   'widget-stundenplan',
@@ -379,6 +381,12 @@ toolBlocks.push({ id: 'elevator', title: 'Elevator Pitch', subject: 'Medien & Pr
 toolBlocks.push({ id: 'karte', title: 'Karte', subject: 'Sachunterricht', type: 'widget', kind: 'karte', preset: { ...defaultSettings('karte'), title: 'Meine Karte' }, words: 'Karte Stadtplan Ort Schulweg Weg Markierung Entfernung messen OpenStreetMap Heimatort' });
 toolBlocks.push({ id: 'kalenderblatt', title: 'Das sprechende Kalenderblatt', subject: 'Sachunterricht', type: 'widget', kind: 'kalenderblatt', preset: { ...defaultSettings('kalenderblatt'), title: 'Das sprechende Kalenderblatt' }, pages: () => fullPageWidget('kalenderblatt', { ...defaultSettings('kalenderblatt'), title: 'Das sprechende Kalenderblatt' }), words: 'Kalender Kalenderblatt Datum Wochentag Monat Jahr Jahreszeit Morgenkreis heute sprechen' });
 toolBlocks.push({ id: 'stundenplan', title: 'Bilder-Stundenplan', subject: 'Klassenführung', type: 'widget', kind: 'stundenplan', preset: { ...defaultSettings('stundenplan'), title: 'Bilder-Stundenplan' }, words: 'Stundenplan Bilder Fächer Woche Pausen Nach der Schule Tagesablauf Piktogramme' });
+// Hör-Memory and Was hörst du? of Lernsachen-Heft 1.47.3: one tool, two games.
+for (const [id, mode, title, words] of [
+  ['hoeren-memory', 'memory', 'Hör-Memory', 'Hör-Memory Memory hören Geräusche Paare Klänge Instrumente Aufnahmen'],
+  ['hoeren-quiz', 'quiz', 'Was hörst du?', 'Was hörst du Hörquiz hören Geräusche raten Klänge Instrumente Aufnahmen'],
+] as const)
+  toolBlocks.push({ id, title, subject: 'Musik', type: 'widget', kind: 'hoeren', preset: { ...defaultSettings('hoeren'), listen: { mode, set: 'fx', picks: ['rain', 'thunder', 'birds', 'knock', 'bell', 'clock'], own: [] }, title }, words });
 toolBlocks.push({ id: 'zeit-multitimer', title: 'Multi-Timer', subject: 'Klassenführung', type: 'widget', kind: 'phasen', preset: { ...defaultSettings('phasen'), title: 'Multi-Timer' }, words: 'Multi-Timer Phasen Think Pair Share Arbeitszeit Uhr Ringe' });
 // Quiz of Quizsachen and Memory of Textsachen, as in Lernsachen-Heft (Interaktive Übungen).
 toolBlocks.push(

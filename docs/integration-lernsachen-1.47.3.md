@@ -44,11 +44,29 @@ und Buch-Raster aus `Lernsachen-Heft-komplett.html`; Tasten, Satzleiste und
 Layout sind in beiden Versionen gleich. Die Bildersammlung wächst von 121 auf
 190 ARASAAC-Bilder; die bisherigen sind bytegleich.
 
+## Dritte Ausbaustufe: Hörwerkzeuge und Werkzeug-Grundlage
+
+Hör-Memory und Was hörst du? sind integriert (26 der 89 Einträge): ein
+Werkzeug mit zwei Spielen unter Lernwerkzeuge › Musik. Geräusche aus Alltag
+und Natur oder Instrumente (höchstens acht, beim Antippen im Dialog zu hören)
+oder eigene Aufnahmen mit Wort und Bild. Die eingebauten Klänge entstehen auf
+dem Gerät; eigene Aufnahmen und Bilder liegen auf dem Schulserver. Der
+Einstellungsdialog zeigt das Spiel spielbar als Vorschau.
+
+Grundlage ist der neue Werkzeug-Host der Vorlage (SVG mit antippbaren Teilen),
+auf dem in 1.47.3 rund 20 weitere neue Werkzeuge aufbauen, etwa Strichliste,
+Glücksrad, Suchbild, Muster, Ampel, Sortieren, Stressbarometer, Wochenplan,
+Telefon, Automaten, Gefühle und die Praktikumseinschätzung.
+`scripts/extract-tools-reference.mjs` übernimmt ihn unverändert nach
+`src/lib/reference/tools-runtime.ts` und findet jedes Werkzeug über seine
+Widget-Klasse statt über die (versionsabhängigen) Kurznamen. Weitere Werkzeuge
+werden dort ergänzt.
+
 ## Noch offene Übernahmen
 
-65 neue Katalogeinträge sind noch offen. Dazu gehören insbesondere:
+63 neue Katalogeinträge sind noch offen. Dazu gehören insbesondere:
 
-- die neuen Hörwerkzeuge und „Laute hören“;
+- „Laute hören“ (einstellbares Arbeitsblatt, gehört zu Vorlagen › Einstellbar);
 - Programmieren sowie die interaktiven Werkzeuge für Alltag und Beruf;
 - Gefühle-Karten und die interaktive Praktikumseinschätzung;
 - die vollständige Zusammenstellung der Praktikumsmappe;
