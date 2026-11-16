@@ -20,9 +20,12 @@ export class SourceError extends Error {
   }
 }
 
-/** Origin of the school gallery, or '' when none is set up. */
+export const DEFAULT_GALLERY = 'https://bilder.gsndk.de';
+
+/** Origin of the school gallery, or '' when none is set up.
+ *  Unset means the school's gallery; an empty GALLERY_ORIGIN switches it off. */
 export function galleryOrigin() {
-  const origin = (process.env.GALLERY_ORIGIN || '').trim().replace(/\/+$/, '');
+  const origin = (process.env.GALLERY_ORIGIN ?? DEFAULT_GALLERY).trim().replace(/\/+$/, '');
   try {
     const url = new URL(origin);
     return ['http:', 'https:'].includes(url.protocol) && url.pathname === '/' ? url.origin : '';

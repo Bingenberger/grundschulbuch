@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { searchImages, allowedImageUrl, loadImage } from '../src/lib/image-sources.mjs';
+import { searchImages, allowedImageUrl, loadImage, galleryOrigin } from '../src/lib/image-sources.mjs';
 
 function answer(body, { status = 200, type = 'application/json' } = {}) {
   const bytes = typeof body === 'string' || Buffer.isBuffer(body) ? Buffer.from(body) : Buffer.from(JSON.stringify(body));
@@ -85,8 +85,10 @@ test('Schulgalerie: Token wird mitgeschickt, Medienpfade werden zu Adressen der 
   assert.equal(result.more, true);
   assert.ok(allowedImageUrl('galerie', result.items[0].thumb));
   assert.ok(!allowedImageUrl('galerie', 'https://bilder.example.org/api/v1/images'));
-  delete process.env.GALLERY_ORIGIN;
+  process.env.GALLERY_ORIGIN = '';
   await assert.rejects(searchImages('galerie', ''), /nicht eingerichtet/);
+  delete process.env.GALLERY_ORIGIN;
+  assert.equal(galleryOrigin(), 'https://bilder.gsndk.de');
 });
 
 test('Nur Adressen der Suchen werden geladen, nur Rasterbilder werden angenommen', async () => {

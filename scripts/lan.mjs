@@ -86,7 +86,6 @@ const app = spawn(process.execPath, [path.join(standalone, 'server.js')], {
   env: {
     GRUNDSCHULBUCH_DATA_DIR: path.join(root, 'data'),
     SESSION_SECRET_FILE: path.join(root, '.private', 'session-key'),
-    GALLERY_ORIGIN: 'https://bilder.gsndk.de',
     ...process.env,
     BASE_URL: origin,
     HOSTNAME: '127.0.0.1',
