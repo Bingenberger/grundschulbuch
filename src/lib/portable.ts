@@ -1,9 +1,10 @@
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
-import { uuid } from './notebook-model';
+import { uuid, dimensions } from './notebook-model';
 import type { BookData, Page } from './notebook-model';
 import { mediaReferences } from './learning/validation.mjs';
 import { downloadBlob } from './learning/audio';
 import { api, uploadImage } from './client-api';
+import {fontFamilyFor} from './template-font';
 export type PortableBook = BookData & {
   format: 'grundschulbuch';
   version: 1;
@@ -26,6 +27,9 @@ export function bytesBase64(bytes: Uint8Array) {
 export function base64Bytes(text: string) {
   const raw = atob(text);
   return Uint8Array.from(raw, (c) => c.charCodeAt(0));
+}
+function fontMime(url:string) {
+  return /\.woff2(?:$|[?#])/.test(url)?'font/woff2':/\.woff(?:$|[?#])/.test(url)?'font/woff':/\.otf(?:$|[?#])/.test(url)?'font/otf':'font/ttf';
 }
 async function bytes(url: string) {
   const response = await fetch(url, { cache: 'no-store' });
@@ -84,7 +88,7 @@ async function embeddedFonts(css: string, data: BookData) {
   const used = new Set([
     'Andika',
     ...data.pages.flatMap((p) =>
-      p.elements.flatMap(el => [el.font, el.settings?.font].filter((font): font is string => !!font)),
+      p.elements.flatMap(el => [fontFamilyFor(el), el.font, el.settings?.font].filter((font): font is string => !!font)),
     ),
   ]);
   const rules = Array.from(css.matchAll(/@font-face\s*\{[^}]+\}/g));
@@ -100,7 +104,7 @@ async function embeddedFonts(css: string, data: BookData) {
       const font = await bytes(found[1]);
       rule = rule.replace(
         found[0],
-        `url(data:font/ttf;base64,${bytesBase64(font)})`,
+        `url(data:${fontMime(found[1])};base64,${bytesBase64(font)})`,
       );
     }
     result = result.replace(match[0], rule);
@@ -152,7 +156,7 @@ export async function exportEpub(data: BookData) {
   const usedFonts = new Set([
     'Andika',
     ...data.pages.flatMap((p) =>
-      p.elements.flatMap(el => [el.font, el.settings?.font]).filter(Boolean),
+      p.elements.flatMap(el => [fontFamilyFor(el), el.font, el.settings?.font]).filter(Boolean),
     ),
   ]);
   for (const match of Array.from(css.matchAll(/@font-face\s*\{[^}]+\}/g))) {
@@ -168,7 +172,7 @@ export async function exportEpub(data: BookData) {
       files['OEBPS/' + path] = await bytes(found[1]);
       rule = rule.replace(found[0], `url('${path}')`);
       manifest.push(
-        `<item id="font-${manifest.length}" href="${escape(path)}" media-type="font/ttf"/>`,
+        `<item id="font-${manifest.length}" href="${escape(path)}" media-type="${fontMime(found[1])}"/>`,
       );
     }
     css = css.replace(match[0], rule);
@@ -205,8 +209,7 @@ export async function exportEpub(data: BookData) {
       licenses: r.licenses,
       sourceArchive: 'quellcode.zip',
     };
-    const w = page.orientation === 'landscape' ? 1123 : 794,
-      h = page.orientation === 'landscape' ? 794 : 1123;
+    const size=dimensions(page),w=Math.round(size.width*96/25.4),h=Math.round(size.height*96/25.4);
     const name = `page-${i + 1}.xhtml`;
     files['OEBPS/' + name] = strToU8(
       `<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><title>${escape(data.book.title)} · ${i + 1}</title><meta name="viewport" content="width=${w},height=${h}"/><link rel="stylesheet" href="styles.css"/></head><body><div id="grundschulbuch-viewer">${markup}</div><script id="grundschulbuch-data" type="application/json">${JSON.stringify(book).replace(/&/g, '&amp;').replace(/</g, '\\u003c')}</script><script src="viewer.js"></script></body></html>`,
@@ -492,6 +495,7 @@ export async function exportPdf(
   data: BookData,
   onProgress: (message: string) => void,
 ): Promise<Blob> {
+  if(data.pages.some(p=>p.paperMode==='endless'))throw new Error('Endlospapier wird als Heftdatei oder HTML gespeichert und nicht als PDF gedruckt.');
   const { PDFDocument } = await import('pdf-lib');
   const pdf = await PDFDocument.create();
   pdf.setTitle(data.book.title);

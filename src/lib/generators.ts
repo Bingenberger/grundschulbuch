@@ -1,4 +1,5 @@
 import { uuid, compactStroke, newPage, type Page } from './notebook-model';
+import {designPage} from './learning/page-designs';
 export type GeneratorKind =
   'zahlenhaus' | 'rechnen' | 'uhr' | 'nachspuren' | 'silben' | 'wortsuche';
 export const generators: Record<GeneratorKind, string> = {
@@ -330,66 +331,11 @@ export function generateWorksheet(options: GeneratorOptions): Page[] {
     ? [page, solution]
     : [page];
 }
-export function starterTemplates(): {
-  title: string;
-  category: string;
-  page: Page;
-}[] {
-  const profile = newPage();
-  heading(profile, 'Das bin ich');
-  box(profile, 135, 50, 55, 65);
-  text(
-    profile,
-    'Mein Name: ___________________\n\nDas mag ich: __________________\n\nMeine Lieblingsfarbe: __________\n\nDas kann ich gut: ______________',
-    18,
-    53,
-    115,
-    14,
-  );
-  text(profile, 'Hier male ich mich und meine Welt:', 18, 135, 175, 14);
-  box(profile, 18, 153, 172, 122);
-  const story = newPage('linie4');
-  heading(story, 'Meine Bildergeschichte');
-  for (let i = 0; i < 3; i++) box(story, 18, 48 + i * 74, 172, 40);
-  const timetable = newPage('blanko', 'landscape');
-  text(timetable, 'Mein Stundenplan', 17, 12, 250, 24);
-  ['Zeit', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag'].forEach(
-    (day, i) => text(timetable, day, 17 + i * 44, 36, 43, 12),
-  );
-  for (let row = 0; row < 7; row++)
-    for (let col = 0; col < 6; col++) {
-      const x = 15 + col * 44,
-        y = 48 + row * 20;
-      timetable.elements.push({
-        id: uuid(),
-        type: 'stroke',
-        x: 0,
-        y: 0,
-        width: 297,
-        height: 210,
-        rotation: 0,
-        locked: false,
-        color: '#82957f',
-        penWidth: 0.25,
-        opacity: 1,
-        points: [
-          [x, y],
-          [x + 44, y],
-          [x + 44, y + 20],
-          [x, y + 20],
-          [x, y],
-        ].map(([x, y]) => ({ x, y, pressure: 0.5 })),
-      });
-    }
-  for (const p of [profile, story, timetable])
-    p.elements = p.elements.map(compactStroke);
+export function starterTemplates(): {title:string;category:string;page:Page}[] {
+  // Preserve existing starter keys while replacing the old approximations.
   return [
-    {
-      title: 'Steckbrief · Das bin ich',
-      category: 'Kennenlernen',
-      page: profile,
-    },
-    { title: 'Bildergeschichte', category: 'Deutsch', page: story },
-    { title: 'Stundenplan', category: 'Organisation', page: timetable },
+    {title: "Steckbrief · Das bin ich", category: "Kennenlernen", page: designPage("profile")[0]},
+    {title: "Bildergeschichte", category: "Deutsch", page: designPage("comic3")[0]},
+    {title: "Stundenplan", category: "Organisation", page: designPage("timetable")[0]},
   ];
 }

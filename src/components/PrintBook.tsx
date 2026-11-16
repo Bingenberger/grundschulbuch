@@ -14,6 +14,7 @@ export default function PrintBook({ data }: { data: BookData }) {
     orientation === 'all'
       ? data.pages
       : data.pages.filter((p) => p.orientation === orientation);
+  if(data.pages.some(p=>p.paperMode==='endless'))return <main className="print-book"><Link className="knopf" href={`/heft/${data.book.id}`}>‹ Zurück zum Heft</Link><p>Dieses Heft enthält Endlospapier. Speichere es als Heftdatei oder HTML.</p></main>;
   return (
     <main className="print-book">
       <div className="print-controls">

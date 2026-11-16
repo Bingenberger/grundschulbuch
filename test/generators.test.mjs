@@ -1,33 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-// Exercise the pure generator using the project's TypeScript compiler.
-import fs from 'node:fs/promises';
-import ts from 'typescript';
-const stripTypeScriptTypes = (source) =>
-  ts.transpileModule(source, {
-    compilerOptions: {
-      module: ts.ModuleKind.ESNext,
-      target: ts.ScriptTarget.ES2022,
-    },
-  }).outputText;
-const model = stripTypeScriptTypes(
-  await fs.readFile(
-    new URL('../src/lib/notebook-model.ts', import.meta.url),
-    'utf8',
-  ),
-);
-const modelUrl = `data:text/javascript;base64,${Buffer.from(model).toString('base64')}`;
-const source = stripTypeScriptTypes(
-  (
-    await fs.readFile(
-      new URL('../src/lib/generators.ts', import.meta.url),
-      'utf8',
-    )
-  ).replace("'./notebook-model'", JSON.stringify(modelUrl)),
-);
-const { generateWorksheet, starterTemplates, generators } = await import(
-  `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`
-);
+// Bundle the pure generator and its original-layout dependencies.
+import {build} from 'esbuild';
+import {createRequire} from 'node:module';
+const compiled=await build({entryPoints:['src/lib/generators.ts'],bundle:true,write:false,platform:'node',format:'cjs',packages:'external'});
+const mod={exports:{}};
+new Function('require','module','exports',compiled.outputFiles[0].text)(createRequire(import.meta.url),mod,mod.exports);
+const {generateWorksheet,starterTemplates,generators}=mod.exports;
 const { validatePage } = await import('../src/lib/notebooks.mjs');
 
 test('Alle Generatoren erzeugen gültige, bearbeitbare A4-Seiten; Lösungen werden getrennt angefügt', () => {

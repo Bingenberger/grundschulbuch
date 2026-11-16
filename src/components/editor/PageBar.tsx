@@ -4,6 +4,7 @@ import { useEditor } from '@/lib/editor-store';
 import { rulings, type Page } from '@/lib/notebook-model';
 import { PAGE_FRAMES } from '@/lib/learning/validation.mjs';
 import { uploadImage } from '@/lib/client-api';
+import {referencePaper} from '@/lib/learning/reference-paper';
 import type { Feature } from '@/lib/features';
 import Icon from '../Icon';
 import ScaledPage from '../ScaledPage';
@@ -39,6 +40,32 @@ function PageGlyph({ page }: { page: Page }) {
   );
 }
 
+export type SchoolDraft = {
+  title: string;
+  category: string;
+  /** Categories already in use, offered as buttons. */
+  categories: string[];
+  /** What publishing does, e.g. “Ersetzt die Vorlage „Brief“ für alle.” */
+  note: string;
+};
+
+/** Admins: publish the current page as school template. */
+function SchoolPublish({ draft, busy, onPublish }: { draft: SchoolDraft; busy?: boolean; onPublish: (title: string, category: string) => void }) {
+  const [title, setTitle] = useState(draft.title);
+  const [category, setCategory] = useState(draft.category);
+  return (
+    <OptionGroup label="Schulvorlage für alle" plain>
+      <input className="option-input" placeholder="Name der Schulvorlage" aria-label="Name der Schulvorlage" maxLength={120} value={title} onChange={(e) => setTitle(e.target.value)} />
+      <input className="option-input" placeholder="Kategorie" aria-label="Kategorie der Schulvorlage" maxLength={40} value={category} onChange={(e) => setCategory(e.target.value)} />
+      {draft.categories.slice(0, 12).map((c) => (
+        <ChoiceButton key={c} icon="folder" label={c} pressed={category === c} onClick={() => setCategory(c)} />
+      ))}
+      <ChoiceButton icon="graduation_cap" label="Für alle veröffentlichen" disabled={busy || !title.trim()} onClick={() => onPublish(title, category)} />
+      <span className="option-hint">{draft.note}</span>
+    </OptionGroup>
+  );
+}
+
 /** Page settings in the bottom bar (former right-hand column). */
 export default function PageBar({
   features,
@@ -54,6 +81,8 @@ export default function PageBar({
   onChangeTemplate,
   onTiles,
   templates = true,
+  school,
+  onPublishSchool,
 }: {
   features: Set<Feature>;
   page: Page;
@@ -71,11 +100,18 @@ export default function PageBar({
   onTiles?: () => void;
   /** Section “Vorlage” (not for children). */
   templates?: boolean;
+  /** Admins only: publishing this page as school template for everybody. */
+  school?: SchoolDraft;
+  onPublishSchool?: (title: string, category: string) => void;
 }) {
   const s = useEditor();
   const [name, setName] = useState('');
   const [error, setError] = useState('');
-  const pagePatch = (values: Partial<Page>) => s.edit((p) => ({ ...p, ...values }));
+  const pagePatch = (values: Partial<Page>) => s.edit((p) => {
+    const paper = values.ruling || (values.orientation && p.paperReferenceId)
+      ? referencePaper(values.ruling || p.ruling, values.orientation || p.orientation) : null;
+    return { ...p, ...values, ...(paper ? {paperReferenceId:paper.paperReferenceId,templateRuling:paper.templateRuling} : {}) };
+  });
   const sections: OptionSection[] = [];
   if (features.has('pageDesign'))
     sections.push(
@@ -89,7 +125,7 @@ export default function PageBar({
               {Object.entries(rulings).map(([ruling, label]) => (
                 <ChoiceButton
                   key={ruling}
-                  icon={<CornerGlyph page={{ ...page, ruling: ruling as Page['ruling'] }} />}
+                  icon={<CornerGlyph page={{ ...page, ...referencePaper(ruling as Page['ruling'],page.orientation) }} />}
                   label={label}
                   pressed={page.ruling === ruling}
                   onClick={() => pagePatch({ ruling: ruling as Page['ruling'] })}
@@ -100,12 +136,16 @@ export default function PageBar({
               {(['landscape', 'portrait'] as const).map((orientation) => (
                 <ChoiceButton
                   key={orientation}
-                  icon={<PageGlyph page={{ ...page, orientation }} />}
+                  icon={<PageGlyph page={{ ...page, orientation,paperMode:undefined }} />}
                   label={orientation === 'portrait' ? 'Hochformat' : 'Querformat'}
-                  pressed={page.orientation === orientation}
-                  onClick={() => pagePatch({ orientation })}
+                  pressed={!page.paperMode && page.orientation === orientation}
+                  disabled={page.paperMode==='endless'&&page.elements.some(e=>e.y+e.height>(orientation==='landscape'?210:297))}
+                  title={page.paperMode==='endless'?'Alle Inhalte müssen auf das gewählte Papierformat passen.':undefined}
+                  onClick={() => pagePatch({ orientation, paperMode:undefined })}
                 />
               ))}
+              <ChoiceButton icon="seiten" label="Endlospapier" pressed={page.paperMode==='endless'} onClick={()=>pagePatch({paperMode:'endless',orientation:'landscape'})}/>
+              {page.paperMode==='endless'&&<span className="option-hint">Die Schreibfläche wächst nach unten mit. Speichere sie als Heftdatei oder HTML; Drucken und PDF entfallen.</span>}
             </OptionGroup>
           </>
         ),
@@ -213,6 +253,7 @@ export default function PageBar({
                 }}
               />
             </OptionGroup>
+            {school && onPublishSchool && <SchoolPublish key={page.template || 'neu'} draft={school} busy={busy} onPublish={onPublishSchool} />}
             <span className="option-hint">Beim Wechsel der Vorlage bleibt alles erhalten, was schon auf der Seite ist.</span>
           </>
         ),

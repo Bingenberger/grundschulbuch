@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         result = await books.getBook(owner, body.id);
         break;
       case 'create':
-        result = await books.createBook(user.id, user.role, body);
+        result = await books.createBook(user.id, user.role, { ...body, templateDraft: user.role === 'admin' && body.templateDraft === true });
         break;
       case 'duplicate': {
         const source = await books.getBook(owner, body.id);

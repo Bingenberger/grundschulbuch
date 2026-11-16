@@ -258,6 +258,64 @@ Editor öffnen, mit Stift, Text oder Stempel kommentieren und an der Tafel zeige
 Kinder legen Hefte nur in den Papierkorb; Lehrkräfte können sie zurückholen oder
 endgültig löschen.
 
+## Bearbeitbare Originalvorlagen für Seiten
+
+Die statischen Seitenvorlagen außerhalb „Papier & Lineatur“ und „Einstellbar“
+werden aus `Lernsachen-Heft-komplett.html` (Version 1.47.3) übernommen: alle 84
+Originalentwürfe statt der früheren vereinfachten Nachbauten (Abgleich in
+[vorlagenabgleich-2026-11-16.md](vorlagenabgleich-2026-11-16.md)). Rahmen, Linien
+und Dekorationen sind 2506 einzeln auswählbare Vektor- und Rahmenbestandteile; Texte und Bildplatzhalter bleiben native
+Elemente. Verschieben, Größe, Farbe, Linienstärke und Löschen funktionieren
+im normalen Editor und damit auch beim Gestalten schulweiter Vorlagen.
+Die Formen sind keine gerasterten Hintergrundbilder. Gespeichert werden nur
+Kennungen mitgelieferter Vektoren; frei eingeschleustes SVG ist nicht erlaubt.
+Leere Vorlagentexte haben mehrzeilige Texthinweise und sind keine Antwortfelder.
+Vorlagen mit Video-Platzhalter bieten im Bereich „Gestalten“ eine Internetadresse.
+Bestehende Vorlagenschlüssel werden bei entsprechenden Originalen beibehalten,
+damit schulweite Ersetzungen weiterhin zugeordnet werden. Bereits angelegte
+Seiten werden nicht automatisch umgestaltet. Querformat übernimmt die originale
+Anordnung und ist beim Einfügen der Standard; im Hochformat wird sie
+proportional eingepasst.
+
+Die Daten lassen sich mit `node scripts/extract-page-templates.mjs` neu erzeugen
+(Chromium erforderlich; optional `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`). Der
+Browsertest `page-designs.spec.ts` vergleicht alle Originalseiten und prüft die
+Bearbeitung mit anschließender Veröffentlichung als Schulvorlage.
+
+## Endlospapier
+
+„Neue Seite → Format → Endlospapier“ oder „Seite → Papier → Endlospapier“ legt
+eine nach unten wachsende Seite an (`paperMode: "endless"`, Breite A4 quer).
+Hefte mit Endlospapier lassen sich nicht drucken oder als PDF ausgeben.
+Einzelheiten: [endlospapier.md](endlospapier.md).
+
+## Verwaltung (Admin-Konten)
+
+Unter `/verwaltung` (Link „Verwaltung“ im Regal, nur für Admins):
+
+- **Lehrkräfte:** Konto anlegen (Lehrkraft oder Admin). Der Einmalcode gilt
+  7 Tage und erscheint einmal auf einem druckbaren Zugangszettel; damit legt die
+  Lehrkraft unter „Mit Einmalcode“ ihre PIN fest. Außerdem: umbenennen, neuer
+  Einmalcode (vergessene PIN), Admin-Rechte geben oder entziehen, sperren,
+  unbenutzte Konten löschen.
+- **Klassen und Kinder:** Klassen für eine oder mehrere Lehrkräfte anlegen und
+  die Zuordnung jederzeit ändern; alle zugeordneten Lehrkräfte sehen die Kinder
+  und teilen Hefte aus. Kinder als Liste (ein Name pro Zeile) hinzufügen,
+  umbenennen, entfernen oder in eine andere Klasse verschieben (Hefte und Karte
+  bleiben). „Karten für alle ohne Karte“ erzeugt QR-Karten für die ganze Klasse
+  auf einem Druckbogen. Lehrkräfte können unter „Meine Klassen“ weiterhin selbst
+  Klassen und Kinder anlegen; eine Klasse mit mehreren Lehrkräften löscht nur
+  die Verwaltung.
+- **Vorlagen für alle:** alle Vorlagen mit Vorschau, nach Kategorie und Suche.
+  „Bearbeiten“ öffnet den eigenen Vorlageneditor unter `/verwaltung/vorlagen/…`
+  (ohne Heft im Regal). Gespeichert ersetzt eine eingebaute Vorlage das Original
+  am gleichen Katalogplatz, eine Schulvorlage wird unter ihrer Kennung
+  aktualisiert. „Neue Schulvorlage gestalten“ beginnt mit einer leeren Seite.
+  Freigabe (Schule und Klassen-Ausnahmen) und Einfügeart (wie in der Vorlage,
+  bearbeitbar, fest positioniert) sind je Vorlage einstellbar; geänderte
+  Vorlagen lassen sich auf das Original zurücksetzen. Einzelheiten:
+  [vorlagenverwaltung.md](vorlagenverwaltung.md).
+
 ## Geteilte iPads
 
 `/kinder` ist der Einstieg für Web-Clips und den Home-Bildschirm. Manifest und
@@ -280,7 +338,7 @@ werden. Kamera und Mikrofon brauchen HTTPS und die entsprechende Gerätefreigabe
 ## Externe Sammlungen
 
 `GALLERY_ORIGIN` bindet die Bildergalerie der Schulplattform an (JSON-API v1,
-`/api/v1/images`); ist sie privat, liegt das Bearer-Token in der Datei aus
+`/api/v1/images`; ohne Angabe https://bilder.gsndk.de, leer = keine Galerie); ist sie privat, liegt das Bearer-Token in der Datei aus
 `GALLERY_TOKEN_FILE` (gleiche Namen wie bei der Grundschultafel).
 `WOERTERBUCH_ORIGIN` stellt den Link zum Wörterbuch bereit.
 Bilder werden dort heruntergeladen und anschließend hochgeladen; Wörter werden

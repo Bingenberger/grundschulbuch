@@ -69,3 +69,13 @@ test('Gedrehte, gesperrte, gerahmte Texte und Überschriften über der Lineatur 
   assert.equal(f.fitTextToRuling(text({ y: 40 }), page('bildzeilen'), measure), null);
   assert.ok(f.fitTextToRuling(text({ y: 170 }), page('bildzeilen'), measure));
 });
+
+test('Originalraster hält den Zeilenabstand beim Schriftwechsel und wächst um ganze Zeilen',()=>{
+  const p={ruling:'blanko',orientation:'landscape',templateRuling:{top:30,left:15,right:280,pitch:8,baseline:6,xHeight:3,count:18}};
+  const el=text({y:31,textLinePitch:8,fontSize:24});
+  const fit=f.fitTextToRuling(el,p,measure,{lines:4});
+  assert.equal(fit.y,el.y);assert.equal(fit.height,32);assert.equal(f.rowHeight(fit),8);
+  close(fit.lineHeight*fit.fontSize*25.4/72,8);
+  const other=f.fitTextToRuling({...fit,fontSize:36,font:'Arial'},p,measure);
+  close(other.lineHeight*other.fontSize*25.4/72,8);assert.equal(other.y,el.y);
+});

@@ -74,8 +74,11 @@ Lehrkräfte starten unter `/`, die Kinder unter `/kinder`. Klassen und Karten
 werden unter „Meine Klassen“ verwaltet. Die vollständige Bedienübersicht steht
 in [docs/umsetzung.md](docs/umsetzung.md).
 
-Konten anlegen/PIN zurücksetzen: wie bisher `node scripts/bootstrap.mjs NAME`.
-Sperren und Entsperren auf dem Server:
+Admins verwalten unter `/verwaltung` (Link „Verwaltung“ im Regal) Konten für
+Lehrkräfte, Klassen mit einer oder mehreren Lehrkräften, Kinder samt
+Anmeldekarten und die Vorlagen für alle. Auf dem Server geht weiterhin:
+`node scripts/bootstrap.mjs NAME` (Konto anlegen oder neuer Einmalcode),
+Sperren und Entsperren:
 
 ```sh
 node scripts/accounts.mjs sperren "Frau Beispiel"

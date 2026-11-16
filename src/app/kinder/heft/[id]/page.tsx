@@ -1,6 +1,6 @@
 import { redirect, notFound } from 'next/navigation';
 import { currentChild } from '@/lib/child-auth';
-import { getBook, BookError } from '@/lib/notebooks.mjs';
+import { getBook, BookError, readSchoolTemplates } from '@/lib/notebooks.mjs';
 import ChildEditor from '@/components/ChildEditor';
 export const dynamic = 'force-dynamic';
 export default async function Kinderheft({
@@ -16,5 +16,6 @@ export default async function Kinderheft({
     throw e;
   });
   if (data.book.trashed) notFound();
-  return <ChildEditor initial={data} images={child.images} allowed={child.features} />;
+  const school = await readSchoolTemplates();
+  return <ChildEditor initial={data} images={child.images} allowed={child.features} templatePolicies={school.policies} hiddenTemplates={school.hidden} templateClassId={child.classId} />;
 }

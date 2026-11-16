@@ -1,6 +1,7 @@
 // Fits text boxes into the ruling of a page: letter size from the ruling,
 // one text line per ruled row and the baseline on the writing line. All in mm.
 import { dimensions, type Page, type PageElement } from './notebook-model';
+import {fontFamilyFor} from './template-font';
 
 export type RulingRows = {
   /** Distance between two writing rows. */
@@ -26,7 +27,8 @@ const lined = ['linie1', 'linie2', 'linie3', 'linie4', 'bildzeilen'];
 const ptToMm = 25.4 / 72;
 
 /** Writing rows of the page, or null for pages without lines. */
-export function rulingRows(page: Pick<Page, 'ruling' | 'orientation'>): RulingRows | null {
+export function rulingRows(page: Pick<Page, 'ruling' | 'orientation' | 'templateRuling'> & Partial<Pick<Page,'paperMode'|'elements'>>): RulingRows | null {
+  if(page.templateRuling){const g=page.templateRuling;return{period:g.pitch,first:g.top+g.baseline,last:page.paperMode==='endless'?dimensions(page).height-g.pitch:g.top+g.baseline+(g.count-1)*g.pitch,xHeight:g.xHeight,ascender:g.baseline||g.pitch*.65};}
   const r = page.ruling;
   if (!lined.includes(r)) return null;
   const { height } = dimensions(page);
@@ -58,7 +60,7 @@ const round = (n: number, digits = 2) => Math.round(n * 10 ** digits) / 10 ** di
  */
 export function fitTextToRuling(
   el: PageElement,
-  page: Pick<Page, 'ruling' | 'orientation'>,
+  page: Pick<Page, 'ruling' | 'orientation' | 'templateRuling'> & Partial<Pick<Page,'paperMode'|'elements'>>,
   measure: TextMeasure,
   { autoSize = false, lines }: { autoSize?: boolean; lines?: number } = {},
 ): PageElement | null {
@@ -66,7 +68,10 @@ export function fitTextToRuling(
   if (!rows || el.type !== 'text' || el.locked || el.rotation % 360 !== 0) return null;
   if (el.textFrame && el.textFrame !== 'none') return null;
   if ((el.borderWidth ?? 0) > 0 || (el.background && el.background !== 'none')) return null;
-  const font = el.font || 'Andika';
+  const font = fontFamilyFor(el);
+  const g=page.templateRuling;
+  if(g&&(el.x+el.width<=g.left||el.x>=g.right||el.y>rows.last||el.y+el.height<g.top-g.pitch))return null;
+  if(el.textLinePitch&&g)return {...el,lineHeight:el.textLinePitch/((el.fontSize||18)*ptToMm),...(lines!==undefined?{height:round(Math.max(1,lines)*el.textLinePitch,3)}:{})};
   let fontMm = (el.fontSize || 18) * ptToMm;
   if (autoSize) {
     const { xHeight, capHeight } = measure.ratios(font);
@@ -87,6 +92,7 @@ export function fitTextToRuling(
     ...el,
     fontSize,
     lineHeight,
+    ...(g?{textLinePitch:lineMm}:{}),
     y: round(row - baseline, 3),
     height: round(count * lineMm, 3),
   };
@@ -94,5 +100,5 @@ export function fitTextToRuling(
 
 /** Line spacing in mm of a text that sits on the ruling. */
 export function rowHeight(el: PageElement) {
-  return (el.fontSize || 18) * ptToMm * (el.lineHeight || 1.6);
+  return el.textLinePitch || (el.fontSize || 18) * ptToMm * (el.lineHeight || 1.6);
 }

@@ -2,7 +2,7 @@
 
 Unveränderte Originaldateien aus dem [Google-Fonts-Repository](https://github.com/google/fonts/tree/main/ofl). Jede Familie enthält die zugehörige `OFL.txt`. Es werden zur Laufzeit keine externen Schriftserver angesprochen.
 
-Gruschudru basic ist nicht enthalten: Die verlässlich lizenzierte Originaldatei ist im Konzept noch als offene Frage vermerkt. Die Leseschrift Andika wird unter ihrem eigenen Namen angeboten.
+Die Seitenvorlagen verwenden zusätzlich die unveränderten eingebetteten Schriften aus `Lernsachen-Heft-komplett.html`, einschließlich Gruschudru basic. Lizenzhinweise, Dateimetadaten und Prüfsummen stehen unter [reference/SOURCES.md](reference/SOURCES.md); die Dateien enthalten OFL-Lizenzmetadaten. Die allgemeine Schriftauswahl bietet Andika unter ihrem eigenen Namen an.
 
 ## Herkunft und Prüfsummen
 

@@ -262,3 +262,36 @@ test('Links zeigen auf Internetseiten oder Heftseiten und wandern beim Kopieren 
   // Links to pages outside the copied notebook stay unchanged.
   assert.equal(copy.pages[1].elements[0].link.pageId, second.elements[0].link.pageId);
 });
+
+test('Schulvorlagen: für alle sichtbar, ersetzen eingebaute, Ausblenden, Bilder für alle', async () => {
+  const admin = crypto.randomUUID();
+  const teacher = crypto.randomUUID();
+  const picture = await books.storeImage(admin, png);
+  const withPicture = { ...page(), elements: [{ ...text(), type: 'image', src: picture.src }] };
+  const created = await books.publishSchoolTemplate(admin, { title: 'Wochenplan', category: 'Organisation', page: withPicture });
+  assert.equal(created.replaces, undefined);
+  const seen = (await books.listTemplates(teacher)).find((t) => t.id === created.id);
+  assert.equal(seen.school, true);
+  assert.equal(seen.category, 'Organisation');
+  // The picture of a school template may be used by every teacher.
+  const copy = await books.createBook(teacher, 'lehrkraft', { title: 'Mit Vorlage', pages: [withPicture] });
+  assert.ok(copy.book.id);
+  assert.ok((await books.readImage(teacher, picture.src.split('/').pop())).length);
+  // Publishing again with the same key updates it.
+  const updated = await books.publishSchoolTemplate(admin, { title: 'Wochenplan neu', page: page(), key: `tpl-${created.id}` });
+  assert.equal(updated.id, created.id);
+  assert.equal(updated.category, 'Schulvorlagen');
+  // A built-in template is replaced once, then updated.
+  const replacing = await books.publishSchoolTemplate(admin, { title: 'Brief', page: page(), key: 'bp-letter-20-0' });
+  assert.equal(replacing.replaces, 'bp-letter-20-0');
+  const again = await books.publishSchoolTemplate(admin, { title: 'Brief 2', page: page(), key: 'bp-letter-20-0' });
+  assert.equal(again.id, replacing.id);
+  // Unknown keys never become replacements.
+  assert.equal((await books.publishSchoolTemplate(admin, { title: 'X', page: page(), key: `tpl-${crypto.randomUUID()}` })).replaces, undefined);
+  assert.deepEqual(await books.setTemplateHidden('paper-kariert', true), ['paper-kariert']);
+  assert.deepEqual(await books.hiddenTemplates(), ['paper-kariert']);
+  await books.setTemplateHidden('paper-kariert', false);
+  await assert.rejects(books.setTemplateHidden('../x', true), status(400));
+  await books.removeSchoolTemplate(created.id);
+  assert.ok(!(await books.listTemplates(teacher)).some((t) => t.id === created.id));
+});

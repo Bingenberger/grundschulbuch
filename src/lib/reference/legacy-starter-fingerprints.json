@@ -1,0 +1,23 @@
+[
+  {
+    "key": "tpl-start-0",
+    "referenceId": "profile",
+    "fingerprint": "5a6c026184e40aac59d1c466fc3aec9c2c4edaa8145ce31b8f090e46a451de74",
+    "titleFingerprint": "77af8e519b6b5256a7c670cb4cf30dcaf5696ff6c77f096a056ecda109bacdff",
+    "heading": "Das bin ich"
+  },
+  {
+    "key": "tpl-start-1",
+    "referenceId": "comic3",
+    "fingerprint": "861639a3fa56360d4dde86884196a85488b18bc03f3cdc2c471b61a7fa54edbc",
+    "titleFingerprint": "3a03e8ec6432b742374298ece1c5535eaf3829a7417017305579b5fe37d047d0",
+    "heading": "Meine Bildergeschichte"
+  },
+  {
+    "key": "tpl-start-2",
+    "referenceId": "timetable",
+    "fingerprint": "c12e5b0628907544a53a372ee4017ae34f06031bffb4a0fb15bebbe70e0deac0",
+    "titleFingerprint": "f34727f60088ea4ca20a1a090d0a01f2f0c6e55ea17c55ce157db8ff44b3c3c3",
+    "heading": "Mein Stundenplan"
+  }
+]

@@ -8,7 +8,7 @@ import { PAPER, categoryIcon, recentTemplates, rememberTemplate, type Orientatio
 const RECENT = 'Zuletzt benutzt';
 
 /** Real preview of a template, drawn only once it scrolls into view. */
-function Preview({ entry, orientation }: { entry: TemplateEntry; orientation: Orientation }) {
+export function Preview({ entry, orientation }: { entry: TemplateEntry; orientation: Orientation }) {
   const box = useRef<HTMLSpanElement>(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -55,6 +55,7 @@ export default function TemplateChooser({
   onImport,
   onRemove,
   onClose,
+  contextControls,
 }: {
   title: string;
   hint?: string;
@@ -68,10 +69,12 @@ export default function TemplateChooser({
   onImport?: () => void;
   onRemove?: (entry: TemplateEntry) => void;
   onClose: () => void;
+  contextControls?: React.ReactNode;
 }) {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('Alle');
   const [orientation, setOrientation] = useState<Orientation>(initial);
+  const [endless,setEndless]=useState(false);
   const [recent] = useState(recentTemplates);
   const main = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -90,7 +93,7 @@ export default function TemplateChooser({
   const shown = category === 'Alle' ? categories.filter((c) => count(c) > 0) : [category];
   const pick = (entry: TemplateEntry) => {
     rememberTemplate(entry.key);
-    onPick(entry, orientation);
+    onPick(endless?{...entry,build:(o)=>entry.build(o).map(p=>({...p,paperMode:'endless' as const}))}:entry, orientation);
   };
   const card = (entry: TemplateEntry) => (
     <div key={entry.key} className={`template-card ${entry.key === current ? 'current' : ''}`}>
@@ -123,6 +126,7 @@ export default function TemplateChooser({
             Schließen
           </button>
         </div>
+        {contextControls}
         <div className="template-layout">
           <nav className="template-categories" aria-label="Kategorien">
             <ChoiceButton icon="grid" label={`Alle · ${found.length}`} pressed={category === 'Alle'} onClick={() => choose('Alle')} />
@@ -155,12 +159,13 @@ export default function TemplateChooser({
               </label>
               <Choices
                 label="Format"
-                value={orientation}
+                value={endless?'endless':orientation}
                 disabled={lockOrientation}
-                onChange={setOrientation}
+                onChange={(value:Orientation|'endless')=>{setEndless(value==='endless');setOrientation(value==='endless'?'landscape':value);}}
                 options={[
                   { value: 'landscape', label: 'Querformat', icon: <span className="format-glyph landscape" /> },
                   { value: 'portrait', label: 'Hochformat', icon: <span className="format-glyph portrait" /> },
+                  { value: 'endless', label: 'Endlospapier', icon: 'seiten' },
                 ]}
               />
               {onImport && <ChoiceButton icon="import" label="Seiten aus einer Datei" onClick={onImport} />}

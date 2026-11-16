@@ -109,7 +109,7 @@ export default function FileDialog({
                     'Für Lernplattformen, mit Rückmeldung der Übungsergebnisse.',
                   ],
                 ] as const
-              ).map(([id, title, description]) => (
+              ).filter(([id])=>id!=='pdf'||!data?.pages.some(p=>p.paperMode==='endless')).map(([id, title, description]) => (
                 <button
                   className="knopf"
                   key={id}

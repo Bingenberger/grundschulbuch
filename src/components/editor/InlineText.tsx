@@ -77,7 +77,7 @@ export default function InlineText({
   return (
     <>
     <TextFrame element={element} />
-    <div className="inline-text" style={{ ...style, height: '100%', boxSizing: 'border-box' }}>
+    <div className="inline-text" style={{ ...style, height: element.referenceCentered?'auto':'100%', boxSizing: 'border-box' }}>
       <div className="inline-text-inner">
         <div className="inline-text-mirror" ref={mirror} aria-hidden="true">
           {text.slice(0, cursor)}
@@ -87,6 +87,7 @@ export default function InlineText({
         <textarea
           ref={area}
           aria-label="Text"
+          placeholder={element.textHint}
           spellCheck={false}
           value={text}
           onPointerDown={(e) => e.stopPropagation()}

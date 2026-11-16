@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { currentUser, fromOwnOrigin, jsonError } from '@/lib/auth';
 import { currentChild } from '@/lib/child-auth';
 import { BookError, getBook, storeAudio } from '@/lib/notebooks.mjs';
-import { grantImages } from '@/lib/classes.mjs';
+import { grantTeachers } from '@/lib/classes.mjs';
 import { boundedBody } from '@/lib/http';
 import { musicInvitesAudio } from '@/lib/learning/music-validation.mjs';
 export const dynamic = 'force-dynamic';
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       (teacher || child)!.id,
       await boundedBody(request, 20 * 1024 * 1024),
     );
-    if (child) await grantImages(child.teacherId, [result.src]);
+    if (child) await grantTeachers(child, [result.src]);
     return NextResponse.json(result);
   } catch (e) {
     return jsonError(

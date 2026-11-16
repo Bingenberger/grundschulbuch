@@ -11,6 +11,13 @@ import { palette } from './DrawingBar';
 import { isPlaceholder } from './image-elements';
 import { FrameGlyph, frameFill, frameKind, frameLine, frameWidth, type TextFrameKind } from '../TextFrame';
 import { fitText, onRuling, pxToMm } from './text-measure';
+import { webAddress } from '@/lib/learning/medien';
+
+function EmbedAddress({element,onChange}:{element:PageElement;onChange:(patch:Partial<PageElement>)=>void}) {
+  const [url,setUrl]=useState(element.url||'');
+  const ready=webAddress(url);
+  return <OptionGroup label="Internetadresse"><input className="option-input" aria-label="Internetadresse" value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://…"/><ChoiceButton icon="checkmark" label="Adresse übernehmen" disabled={!ready} onClick={()=>onChange({url:ready!})}/></OptionGroup>;
+}
 
 export type ElementActions = {
   onResize: (factor: number) => void;
@@ -111,7 +118,7 @@ export default function ElementBar({
   };
   const ruled = first?.type === 'text' && !!page && onRuling(first, page);
   const sections: OptionSection[] = [];
-  const colorful = first && ['text', 'shape', 'stroke', 'sticker'].includes(first.type);
+  const colorful = first && (['text', 'shape', 'stroke', 'sticker'].includes(first.type) || !!first.speechText);
 
   if (first && has('elementStyle') && !locked) {
     sections.push({
@@ -120,6 +127,7 @@ export default function ElementBar({
       icon: 'settings',
       content: (
         <>
+          {first.type==='embed' && first.embedKind!=='app' && <EmbedAddress key={first.id} element={first} onChange={patch}/>}
           {(first.type === 'widget' || first.type === 'activity') && actions.onConfigure && (
             <OptionGroup label={first.type === 'widget' ? 'Lernwerkzeug' : 'Übung'}>
               <ChoiceButton icon="settings" label="Aufgabe gestalten" onClick={() => actions.onConfigure!(first)} />
@@ -134,7 +142,7 @@ export default function ElementBar({
                     icon={<FontGlyph font={font} />}
                     label={label}
                     pressed={first.font === font}
-                    onClick={() => patchText({ font: font as PageElement['font'] }, true)}
+                    onClick={() => patchText({ font: font as PageElement['font'], referenceFont:undefined }, true)}
                   />
                 ))}
               </OptionGroup>
@@ -225,11 +233,17 @@ export default function ElementBar({
             <OptionGroup label={first.type === 'audio' ? 'Name' : 'Beschreibung'} plain>
               <input
                 className="option-input"
-                aria-label="Bildbeschreibung"
+                aria-label={first.type === 'audio' ? 'Name der Tontaste' : 'Bildbeschreibung'}
                 value={first.alt || ''}
                 maxLength={300}
                 onChange={(e) => patch({ alt: e.target.value })}
               />
+            </OptionGroup>
+          )}
+          {first.type === 'audio' && first.speechText !== undefined && (
+            <OptionGroup label="Vorlesetext" plain>
+              <textarea className="option-input" aria-label="Vorlesetext" value={first.speechText} maxLength={2000}
+                onChange={e=>{if(e.target.value.trim())patch({speechText:e.target.value});}} />
             </OptionGroup>
           )}
           {first.type === 'image' && first.src && has('imageEdit') && actions.onEditImage && (
@@ -254,7 +268,8 @@ export default function ElementBar({
           {first.type === 'shape' && (
             <>
               <OptionGroup label="Füllung">
-                <ColorChoice label="Füllfarbe" value={first.fill || '#ffffff'} onChange={(fill) => patch({ fill })} />
+                <ChoiceButton icon="cancel" label="Ohne Füllung" pressed={first.fill==='none'} onClick={()=>patch({fill:'none'})}/>
+                <ColorChoice label="Füllfarbe" value={first.fill==='none'?'#ffffff':first.fill || '#ffffff'} onChange={(fill) => patch({ fill })} />
               </OptionGroup>
               <Stepper
                 label="Linienstärke"
@@ -294,7 +309,7 @@ export default function ElementBar({
                 label="Form"
                 value={frameKind(first)}
                 onChange={(textFrame) => {
-                  patch({ textFrame });
+                  patch({ textFrame,referenceFrameId:undefined,referencePadding:undefined,referenceCentered:undefined });
                   growToFit(first.id);
                 }}
                 options={textFrames.map(([value, label]) => ({ value, label, icon: <FrameGlyph kind={value} /> }))}

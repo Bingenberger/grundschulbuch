@@ -20,9 +20,12 @@ const colors = [
 export default function Shelf({
   initialBooks,
   name,
+  admin = false,
 }: {
   initialBooks: BookSummary[];
   name: string;
+  /** Shows the link to the admin area. */
+  admin?: boolean;
 }) {
   const [books, setBooks] = useState(initialBooks);
   const [showFiles, setShowFiles] = useState(false);
@@ -140,6 +143,11 @@ export default function Shelf({
           <Link href="/klassen" className="icon-link">
             <Icon name="conference_call" size={24} /> Meine Klassen
           </Link>
+          {admin && (
+            <Link href="/verwaltung" className="icon-link">
+              <Icon name="settings" size={24} /> Verwaltung
+            </Link>
+          )}
           <span>{name}</span>
           <LogoutButton />
         </div>

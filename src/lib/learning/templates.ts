@@ -12,11 +12,13 @@ import {
   type ActivityKind,
   type WidgetKind,
 } from './catalog';
+import { pageDesigns, designPage } from './page-designs';
 export type Blueprint = {
   id: string;
   title: string;
   category: string;
   layout: string;
+  referenceId?: string;
   columns?: number;
   rows?: number;
   ruling?: Ruling;
@@ -298,7 +300,20 @@ for (const [mode, title] of [
     widget: 'mathboard',
     mode,
   });
-export const blueprints = layouts;
+// Keep existing catalogue keys for matching designs, including school overrides.
+const legacyNames: Record<string,string> = {
+  'pictures4-lines':'Vier Bilder und Schreibzeilen',words:'Wörter mit Bildern üben',picturebook:'Mein Bilderbuch',
+  comic:'Comic: sechs Bilder',comic4:'Comic: vier Bilder',comic3:'Comic: drei Bilder',
+  'slide-section':'Kapitelanfang','slide-content':'Titel und Text','slide-two':'Zwei Spalten','slide-compare':'Vergleich',
+  'slide-picture':'Bild und Text','slide-picture-big':'Großes Bild','slide-quote':'Zitat',
+};
+export const blueprints: Blueprint[] = [
+  ...pageDesigns.filter(design=>!('hidden' in design && design.hidden)&&design.category!=='Lineaturen').map(design=>({
+    id: layouts.find(old=>old.title===(legacyNames[design.id]||design.title) && !old.widget && !old.activity)?.id || `reference-${design.id}`,
+    title:design.title,category:design.category==='Alltag & Projekte'?'Alltag':design.category,layout:'reference',referenceId:design.id,
+  })),
+  ...layouts.filter(meta=>!!(meta.widget||meta.activity||meta.layout==='communication-book')),
+];
 function text(
   page: Page,
   value: string,
@@ -375,6 +390,7 @@ function title(page: Page, value: string) {
  * all positions follow the page size, so every template fits both formats.
  */
 export function blueprintPages(meta: Blueprint, orientation: Page['orientation'] = 'landscape'): Page[] {
+  if(meta.referenceId) return designPage(meta.referenceId,orientation);
   if (meta.layout === 'communication-book')
     return Object.entries(themeWords).flatMap(([name, words]) =>
       blueprintPages(

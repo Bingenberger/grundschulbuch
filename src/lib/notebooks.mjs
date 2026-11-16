@@ -2,6 +2,9 @@ import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
 import path from 'node:path';
 import sharp from 'sharp';
+import templateVectors from './reference/template-vectors.json' with { type: 'json' };
+import templateFonts from './reference/template-fonts.json' with { type: 'json' };
+import { templatePolicy, applyInsertionMode } from './template-policy.mjs';
 import {
   WIDGET_KINDS,
   ACTIVITY_KINDS,
@@ -32,6 +35,7 @@ const RULINGS = [
   'linie2',
   'linie3',
   'linie4',
+  'linieneng',
   'karo5',
   'karo10',
   'rechnen',
@@ -40,6 +44,7 @@ const RULINGS = [
   'bildzeilen',
 ];
 const FONTS = [
+  'Arial',
   'Andika',
   'Playwrite DE Grund',
   'Playwrite DE VA',
@@ -108,6 +113,8 @@ export function validatePage(input) {
     input.elements.length > 2000
   )
     throw new BookError('Ungültige Seite.');
+  if(input.paperMode!==undefined && input.paperMode!=='endless')throw new BookError('Ungültiger Papiermodus.');
+  const maxY=input.paperMode==='endless'?1000000:594;
   const seen = new Set();
   let count = 0;
   const elements = input.elements.map((el) => {
@@ -133,17 +140,26 @@ export function validatePage(input) {
       id: el.id,
       type: el.type,
       x: num(el.x, -297, 594),
-      y: num(el.y, -297, 594),
+      y: num(el.y, -297, maxY),
       width: num(el.width, 0.1, 594),
-      height: num(el.height, 0.1, 594),
+      height: num(el.height, 0.1, maxY),
       rotation: num(el.rotation, -360, 360),
       locked: el.locked,
-      color: color(el.color),
+      color: el.type === 'shape' && el.color === 'none' ? 'none' : color(el.color),
     };
     if (el.groupId !== undefined) result.groupId = id(el.groupId);
+    if (el.designScale !== undefined) result.designScale = num(el.designScale,.01,1);
     if (el.link !== undefined) result.link = elementLink(el.link);
     if (el.opacity !== undefined) result.opacity = num(el.opacity, 0.01, 1);
     if (el.type === 'text') {
+      if(el.referenceFont!==undefined){
+        if(typeof el.referenceFont!=='string'||!Object.hasOwn(templateFonts,el.referenceFont))throw new BookError('Unbekannte Vorlagenschrift.');
+        result.referenceFont=el.referenceFont;
+      }
+      if(el.textLinePitch!==undefined)result.textLinePitch=num(el.textLinePitch,.5,100);
+      if(el.referencePadding!==undefined){if(typeof el.referencePadding!=='string'||!/^\d+(?:\.\d+)?(?:px|%)(?: \d+(?:\.\d+)?(?:px|%)){0,3}$/.test(el.referencePadding))throw new BookError('Ungültiger Vorlagenabstand.');result.referencePadding=el.referencePadding;}
+      if(el.referenceCentered!==undefined)result.referenceCentered=!!el.referenceCentered;
+      if(el.referenceFrameId!==undefined){if(!Object.hasOwn(templateVectors,el.referenceFrameId)||!templateVectors[el.referenceFrameId].frame)throw new BookError('Unbekannter Vorlagenrahmen.');result.referenceFrameId=el.referenceFrameId;}
       if (
         typeof el.text !== 'string' ||
         el.text.length > 20000 ||
@@ -163,6 +179,10 @@ export function validatePage(input) {
         if (el.text.length > 200) throw new BookError('Die Antwort ist zu lang.');
       }
       if (el.italic !== undefined) result.italic = !!el.italic;
+      if (el.textHint !== undefined) {
+        if(typeof el.textHint !== 'string' || el.textHint.length > 500) throw new BookError('Ungültiger Texthinweis.');
+        result.textHint = el.textHint;
+      }
       if (el.underline !== undefined) result.underline = !!el.underline;
       if (el.align !== undefined) {
         if (!['left', 'center', 'right', 'justify'].includes(el.align))
@@ -210,6 +230,12 @@ export function validatePage(input) {
         result.text = result.runs.map((r) => r.text).join('');
       }
     } else if (el.type === 'image' || el.type === 'audio') {
+      const speechButton = el.type === 'audio' && el.speechText !== undefined;
+      if (speechButton) {
+        if (typeof el.speechText !== 'string' || !el.speechText.trim() || el.speechText.length > 2000)
+          throw new BookError('Ungültiger Vorlesetext.');
+        result.speechText = el.speechText;
+      }
       // A photo placeholder may stay empty until someone takes the picture.
       const emptyPlaceholder = typeof el.placeholder === 'string' && el.src === undefined;
       if (el.placeholder !== undefined) {
@@ -221,14 +247,14 @@ export function validatePage(input) {
         result.credit = el.credit.slice(0, 400);
       }
       if (
-        !emptyPlaceholder && (typeof el.src !== 'string' ||
+        !emptyPlaceholder && !speechButton && (typeof el.src !== 'string' ||
         !/^\/api\/medien\/[a-f0-9]{64}\.(png|jpg|webp|mp3|wav|ogg|webm|m4a|apphtml)$/.test(
           el.src,
         ))
       )
         throw new BookError('Nur Bilder aus dem Medienspeicher sind erlaubt.');
       Object.assign(result, {
-        ...(emptyPlaceholder ? {} : { src: el.src }),
+        ...(emptyPlaceholder || speechButton ? {} : { src: el.src }),
         alt: typeof el.alt === 'string' ? el.alt.slice(0, 300) : '',
       });
       if (el.type === 'image') {
@@ -294,8 +320,12 @@ export function validatePage(input) {
       )
         throw new BookError('Ungültiger Sticker.');
       if (el.shape) result.shape = el.shape;
+      if (el.shape === 'template') {
+        if(typeof el.vectorId !== 'string' || !Object.hasOwn(templateVectors,el.vectorId)) throw new BookError('Unbekannte Vorlagenform.');
+        result.vectorId=el.vectorId;
+      }
       if (el.symbol) result.symbol = el.symbol;
-      result.fill = el.fill ? color(el.fill) : '#ffffff';
+      result.fill = el.fill === 'none' ? 'none' : el.fill ? color(el.fill) : '#ffffff';
       result.strokeWidth = num(el.strokeWidth ?? 0.4, 0, 10);
     } else if (el.type === 'widget' || el.type === 'activity') {
       const kind = el.type === 'widget' ? el.widgetKind : el.activityKind;
@@ -323,7 +353,7 @@ export function validatePage(input) {
         result.src = el.src;
       } else {
         try {
-          result.url = safeWebUrl(el.url);
+          result.url = el.url === '' && el.designScale ? '' : safeWebUrl(el.url);
         } catch (e) {
           throw new BookError(e.message);
         }
@@ -340,7 +370,7 @@ export function validatePage(input) {
         throw new BookError('Zu viele Zeichenpunkte.');
       Object.assign(result, {
         points: el.points.map((p) => {
-          const result = { x: num(p.x, -594, 594), y: num(p.y, -594, 594), pressure: num(p.pressure, 0, 1) };
+          const result = { x: num(p.x, -594, 594), y: num(p.y, -594, maxY), pressure: num(p.pressure, 0, 1) };
           for (const key of ['time', 'tiltX', 'tiltY']) {
             if (p[key] !== undefined) result[key] = num(p[key], key === 'time' ? 0 : -90, key === 'time' ? Number.MAX_SAFE_INTEGER : 90);
           }
@@ -389,11 +419,11 @@ export function validatePage(input) {
             throw new BookError('Ungültige Radierform.');
           return {
             id: key, size: num(erasure.size, 0.1, 40), opacity: num(erasure.opacity, 0.05, 1),
-            soft: erasure.soft, width: num(erasure.width, 0.1, 594), height: num(erasure.height, 0.1, 594),
+            soft: erasure.soft, width: num(erasure.width, 0.1, 594), height: num(erasure.height, 0.1, maxY),
             ...(erasure.tip !== undefined ? { tip: erasure.tip } : {}),
             points: erasure.points.map(p => {
               if (!p || typeof p !== 'object') throw new BookError('Ungültiger Radierpunkt.');
-              return { x: num(p.x, -1500, 1500), y: num(p.y, -1500, 1500) };
+              return { x: num(p.x, -1500, 1500), y: num(p.y, -1500, input.paperMode==='endless'?1000000:1500) };
             }),
           };
         });
@@ -408,6 +438,7 @@ export function validatePage(input) {
     ruling: input.ruling,
     elements,
   };
+  if(input.paperMode==='endless')result.paperMode='endless';
   for (const name of ['paperColor', 'lineColor', 'frameColor'])
     if (input[name] !== undefined) result[name] = color(input[name]);
   if (input.pageFrame !== undefined) {
@@ -426,10 +457,16 @@ export function validatePage(input) {
     result.backgroundImage = input.backgroundImage;
   }
   if (input.template !== undefined) {
-    if (typeof input.template !== 'string' || !/^[\w.-]{1,120}$/.test(input.template))
+    if (typeof input.template !== 'string' || !(/^[\w.-]{1,120}$/.test(input.template) || /^cfg-[^\r\n]{1,80}$/.test(input.template)))
       throw new BookError('Ungültige Vorlage.');
     result.template = input.template;
   }
+  if (input.templateClassId !== undefined) result.templateClassId = id(input.templateClassId);
+  if(input.templateRuling!==undefined){
+    const g=input.templateRuling;if(!g||typeof g!=='object')throw new BookError('Ungültige Vorlagenlineatur.');
+    result.templateRuling={top:num(g.top,0,297),pitch:num(g.pitch,.5,100),baseline:num(g.baseline,0,100),xHeight:num(g.xHeight,.1,100),count:num(g.count,1,100),left:num(g.left,0,297),right:num(g.right,0,297)};
+  }
+  if(input.paperReferenceId!==undefined){if(!['blank','lin1','lin2','lin3','lines','lines-narrow','picture-lines','squares','squares-big','dots','music'].includes(input.paperReferenceId))throw new BookError('Unbekannte Papierlineatur.');result.paperReferenceId=input.paperReferenceId;}
   return result;
 }
 const bookPath = (bookId) => dataPath('hefte', id(bookId), 'heft.json');
@@ -492,6 +529,7 @@ export async function createBook(owner, role, input) {
       })
     : [blankPage(input.orientation === 'landscape' ? 'landscape' : 'portrait')];
   pages = remapPageLinks(pages, renamed);
+  if (!input.templateDraft) pages = await Promise.all(pages.map(page => applyTemplatePolicy(owner, role, page)));
   if (pages.length < 1 || pages.length > 300)
     throw new BookError('Ein Heft braucht 1 bis 300 Seiten.');
   await checkMedia(owner, pages);
@@ -556,10 +594,11 @@ export async function updateBook(owner, bookId, input) {
     : withLock(`ordner-${id(owner)}`, mutate);
 }
 export async function addPage(owner, bookId, input, afterId) {
-  const page = { ...validatePage(input), id: crypto.randomUUID(), revision: 0 };
+  let page = { ...validatePage(input), id: crypto.randomUUID(), revision: 0 };
   await checkMedia(owner, page);
   return withLock(`heft-${id(bookId)}`, async () => {
     const book = await owned(owner, bookId);
+    page = await applyTemplatePolicy(owner, book.ownerRole, page);
     // Pages that link to each other (communication book) keep their ids, if free.
     if (typeof input?.id === 'string' && UUID.test(input.id) && !book.pageIds.includes(input.id)) page.id = input.id;
     if (book.pageIds.length >= 300)
@@ -583,13 +622,17 @@ export async function savePage(
   childMode = false,
   actor = owner,
 ) {
-  const page = validatePage(input);
+  let page = validatePage(input);
   await checkMedia(owner, page);
   return withLock(`heft-${id(bookId)}`, async () => {
     const book = await owned(owner, bookId);
     if (!book.pageIds.includes(page.id))
       throw new BookError('Seite nicht gefunden.', 404);
     const previous = await readJson(pagePath(bookId, page.id));
+    if (!childMode && (page.template !== previous.template || page.templateClassId !== previous.templateClassId)) {
+      const inserted = await applyTemplatePolicy(owner, book.ownerRole, page);
+      page = previous.elements.length ? { ...inserted, elements: page.elements } : inserted;
+    }
     if (childMode) {
       // Functions the teacher allows this child, e.g. { features: ['page', 'audio'] }.
       const allowed = new Set(Array.isArray(childMode.features) ? childMode.features : []);
@@ -634,7 +677,7 @@ export async function savePage(
       if (
         book.trashed ||
         (!allowed.has('page') &&
-          (page.ruling !== previous.ruling || page.orientation !== previous.orientation))
+          (page.ruling !== previous.ruling || page.orientation !== previous.orientation || page.paperMode !== previous.paperMode))
       )
         throw new BookError('Diese Seiteneinstellungen sind vorgegeben.', 403);
       const locked = previous.elements.filter((el) => el.locked);
@@ -709,7 +752,155 @@ export async function listTemplates(owner) {
       });
     }
   }
-  return [...school, ...personal];
+  const stored = (await readSchoolTemplates()).templates.map((t) => ({ ...t, school: true }));
+  return [...school, ...stored, ...personal];
+}
+
+// ---- School templates (admin area) -----------------------------------------
+// Published for everybody; may replace a built-in template (same catalog key)
+// or be hidden. Their pictures are usable by all accounts (rights “schule”).
+const schoolFile = () => dataPath('schulvorlagen.json');
+const SCHOOL_RIGHTS = () => dataPath('medien', 'rechte', 'schule.json');
+/** Keys of built-in templates that may be replaced by a school template. */
+const REPLACEABLE = /^(paper-[a-z0-9-]+|bp-[\w-]+|tpl-start-\d+)$/;
+const HIDEABLE = /^(paper-[a-z0-9-]+|bp-[\w-]+|cfg-.{1,80}|tpl-[\w-]+)$/;
+function category(value) {
+  if (typeof value !== 'string' || !value.trim()) return 'Schulvorlagen';
+  if (value.trim().length > 40)
+    throw new BookError('Die Kategorie darf höchstens 40 Zeichen haben.');
+  return value.trim();
+}
+export async function readSchoolTemplates() {
+  const data = await readJson(schoolFile(), null);
+  return {
+    templates: Array.isArray(data?.templates) ? data.templates : [],
+    hidden: Array.isArray(data?.hidden) ? data.hidden : [],
+    policies: { global: data?.policies?.global || {}, classes: data?.policies?.classes || {} },
+  };
+}
+/** Hidden catalog keys; replaced originals are dropped by the catalog itself. */
+export async function hiddenTemplates() {
+  return (await readSchoolTemplates()).hidden;
+}
+async function changeSchool(change) {
+  return withLock('schulvorlagen', async () => {
+    const data = await readSchoolTemplates();
+    const result = await change(data);
+    await writeJson(schoolFile(), { version: 1, ...data });
+    return result;
+  });
+}
+/**
+ * Publishes a page as school template. `key` is the catalog key of the page's
+ * template: an existing school template is updated, a built-in one replaced.
+ */
+export async function publishSchoolTemplate(admin, input) {
+  const page = validatePage(input.page);
+  await checkMedia(admin, page);
+  const entry = { title: title(input.title), category: category(input.category), page };
+  const sources = mediaReferences(page).map((s) => s.split('/').pop());
+  if (sources.length)
+    await withLock('medien-schule', async () => {
+      const rights = await readJson(SCHOOL_RIGHTS(), []);
+      await writeJson(SCHOOL_RIGHTS(), [...new Set([...rights, ...sources])]);
+    });
+  const key = typeof input.key === 'string' ? input.key : '';
+  return changeSchool((data) => {
+    const own = key.startsWith('tpl-') && data.templates.find((t) => `tpl-${t.id}` === key);
+    const replaced = !own && REPLACEABLE.test(key) && data.templates.find((t) => t.replaces === key);
+    const existing = own || replaced;
+    if (Object.hasOwn(input, 'expectedVersion') && input.expectedVersion !== schoolTemplateVersion(existing))
+      throw new BookError('Diese Vorlage wurde inzwischen geändert. Bitte neu öffnen, bevor du sie erneut speicherst.',409);
+    const now = new Date().toISOString();
+    if (existing) {
+      Object.assign(existing, entry, { updatedAt: now, revision:(existing.revision||0)+1 });
+      return existing;
+    }
+    if (data.templates.length >= 500)
+      throw new BookError('Höchstens 500 Schulvorlagen.');
+    const created = {
+      id: Object.hasOwn(input,'expectedVersion') && /^tpl-[0-9a-f-]{36}$/.test(key) ? id(key.slice(4)) : crypto.randomUUID(),
+      ...entry,
+      ...(REPLACEABLE.test(key) ? { replaces: key } : {}),
+      updatedAt: now,
+      revision: 1,
+    };
+    data.templates.push(created);
+    return created;
+  });
+}
+export function schoolTemplateVersion(template) {
+  return template ? `${template.id}:${template.revision||0}:${template.updatedAt}` : null;
+}
+/** Saves the existing catalogue slot directly, without creating a notebook. */
+export async function saveSchoolTemplateEdit(admin,input) {
+  if (!Object.hasOwn(input,'expectedVersion') || (input.expectedVersion!==null && typeof input.expectedVersion!=='string'))
+    throw new BookError('Die Version der Vorlage fehlt. Bitte neu öffnen.');
+  if (typeof input.key!=='string' || !(REPLACEABLE.test(input.key) || /^tpl-[0-9a-f-]{36}$/.test(input.key))) throw new BookError('Unbekannte Vorlage.');
+  const {templateClassId: ignored,...page}=validatePage(input.page);void ignored;
+  return publishSchoolTemplate(admin,{...input,page:{...page,template:input.key,revision:page.revision+1}});
+}
+/** Deletes a school template; a replaced original comes back. */
+export async function removeSchoolTemplate(templateId) {
+  return changeSchool((data) => {
+    data.templates = data.templates.filter((t) => t.id !== id(templateId));
+  });
+}
+export async function setTemplateHidden(key, hidden) {
+  if (typeof key !== 'string' || !HIDEABLE.test(key))
+    throw new BookError('Unbekannte Vorlage.');
+  return changeSchool((data) => {
+    const policy = data.policies.global[key];
+    if (policy) delete policy.enabled;
+    data.hidden = hidden
+      ? [...new Set([...data.hidden, key])]
+      : data.hidden.filter((k) => k !== key);
+    return data.hidden;
+  });
+}
+
+/** Administrative changes only; null removes an override and restores inheritance. */
+export async function setTemplatePolicy(key, classId, patch) {
+  if (typeof key !== 'string' || !HIDEABLE.test(key)) throw new BookError('Unbekannte Vorlage.');
+  if (!patch || typeof patch !== 'object' || Array.isArray(patch) || Object.keys(patch).some(k => !['enabled','insertion'].includes(k)))
+    throw new BookError('Ungültige Vorlageneinstellung.');
+  if (patch.enabled !== undefined && patch.enabled !== null && typeof patch.enabled !== 'boolean') throw new BookError('Ungültige Freigabe.');
+  if (patch.insertion !== undefined && patch.insertion !== null && !['template','editable','fixed'].includes(patch.insertion)) throw new BookError('Ungültige Einfügeart.');
+  if (classId != null && !(await readJson(dataPath('klassen', `${id(classId)}.json`), null))) throw new BookError('Klasse nicht gefunden.',404);
+  return changeSchool(data => {
+    const target = classId == null ? data.policies.global : (data.policies.classes[classId] ||= {});
+    const rule = { ...target[key] };
+    for (const name of ['enabled','insertion']) if (patch[name] !== undefined) {
+      if (patch[name] === null) delete rule[name]; else rule[name] = patch[name];
+    }
+    if (Object.keys(rule).length) target[key] = rule; else delete target[key];
+    if (classId == null && patch.enabled !== undefined) data.hidden = patch.enabled === false ? [...new Set([...data.hidden,key])] : data.hidden.filter(k=>k!==key);
+    return { policies: data.policies, hidden: data.hidden };
+  });
+}
+
+/** Enforce current rules on insertion, including requests from stale editors. */
+async function applyTemplatePolicy(owner, role, page) {
+  if (!page.template) return page;
+  let classId = page.templateClassId;
+  if (role === 'kind') {
+    const { childById } = await import('./classes.mjs');
+    classId = (await childById(owner))?.classId;
+  } else if (classId) {
+    const klass = await readJson(dataPath('klassen', `${id(classId)}.json`), null);
+    const teachers = klass?.teacherIds || (klass?.teacherId ? [klass.teacherId] : []);
+    if (!klass) throw new BookError('Klasse nicht gefunden.',404);
+    if (!teachers.includes(owner)) {
+      const { readAccounts } = await import('./accounts.mjs');
+      if (!(await readAccounts()).users.some(a=>a.id===owner&&a.role==='admin'&&!a.blocked)) throw new BookError('Diese Klasse ist nicht freigegeben.',403);
+    }
+  }
+  const school = await readSchoolTemplates();
+  const policy = templatePolicy(school.policies, school.hidden, page.template, classId);
+  if (!policy.enabled) throw new BookError('Diese Vorlage ist für die ausgewählte Klasse oder schulweit gesperrt.',403);
+  const {templateClassId: ignored, ...content} = page;
+  void ignored;
+  return applyInsertionMode({ ...content, ...(classId ? { templateClassId: classId } : {}) }, policy.insertion);
 }
 export async function saveTemplate(owner, input) {
   const template = {
@@ -745,7 +936,10 @@ export async function checkMedia(owner, elements) {
     dataPath('medien', 'rechte', `${id(owner)}.json`),
     [],
   );
-  if (sources.some((src) => !allowed.includes(src.split('/').pop())))
+  const missing = sources.filter((src) => !allowed.includes(src.split('/').pop()));
+  if (!missing.length) return;
+  const school = await readJson(SCHOOL_RIGHTS(), []);
+  if (missing.some((src) => !school.includes(src.split('/').pop())))
     throw new BookError('Kein Zugriff auf dieses Medium.', 403);
 }
 
@@ -814,7 +1008,7 @@ export async function accessibleOwner(teacher, bookId) {
   if (book.ownerId === teacher) return teacher;
   const { childById } = await import('./classes.mjs');
   const child = await childById(book.ownerId, true);
-  if (child?.teacherId !== teacher)
+  if (!child?.teacherIds.includes(teacher))
     throw new BookError('Heft nicht gefunden.', 404);
   return child.id;
 }

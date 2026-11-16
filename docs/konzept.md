@@ -44,7 +44,7 @@ Stand und ausdrücklich noch fehlende Detailfunktionen.
 
 | Rolle | Kann |
 | --- | --- |
-| **Admin** | Lehrkräfte anlegen, sperren, PIN zurücksetzen |
+| **Admin** | Unter `/verwaltung`: Lehrkräfte anlegen, sperren, Einmalcode für vergessene PIN; Klassen mit mehreren Lehrkräften, Kinder (auch als Liste) und Anmeldekarten zentral anlegen, Kinder in andere Klassen verschieben; Vorlagen für alle ändern, neu gestalten, ausblenden |
 | **Lehrkraft** | Klassen und Kinder verwalten; Hefte, Vorlagen und Arbeitsblätter erstellen; Hefte an Klassen oder einzelne Kinder austeilen; Kinderhefte ansehen und kommentieren; Tafelmodus, Druck und PDF |
 | **Kind** | Eigene und ausgeteilte Hefte öffnen und darin arbeiten; schreiben, zeichnen, Text tippen, Bilder aus freigegebenen Sammlungen einfügen; Seiten hinzufügen, wenn die Lehrkraft es erlaubt |
 
@@ -239,8 +239,8 @@ Dateibasiert wie bei der Tafel, aber ohne eingebettete Data-URLs:
 - Jeder Zugriff prüft serverseitig Rolle und Eigentum. Ein Kind erreicht nur
   die eigenen Hefte.
 - Sperren und atomares Ersetzen wie in der Tafel.
-- Schulvorlagen liegen unter `GRUNDSCHULBUCH_ASSET_DIR/vorlagen/` und werden
-  vom Betreiber gepflegt.
+- Schulvorlagen pflegen Admins in der Verwaltung; zusätzlich liest die App
+  JSON-Vorlagen aus `GRUNDSCHULBUCH_ASSET_DIR/vorlagen/`.
 - Das Grundgerüst nutzt JSON-Dateien. Sollten sie bei 25 Kindern pro Klasse
   und vielen Seiten zu langsam werden, kommt SQLite (`node:sqlite`) für
   Klassen, Konten und Übersichten in Frage. Medien bleiben in jedem Fall Dateien.
@@ -248,8 +248,8 @@ Dateibasiert wie bei der Tafel, aber ohne eingebettete Data-URLs:
 ### Anmeldung der Lehrkräfte
 
 Die Plattform sieht kein gemeinsames Login (OIDC) vor. Lehrkräfte haben eigene
-Konten mit sechsstelliger PIN. Konten entstehen nur über einen Einmalcode, den
-`scripts/bootstrap.mjs` auf dem Server ausgibt. Sitzungen liegen auf dem Server,
+Konten mit sechsstelliger PIN. Konten entstehen über einen Einmalcode, den die
+Verwaltung in der App oder `scripts/bootstrap.mjs` auf dem Server ausgibt. Sitzungen liegen auf dem Server,
 der Browser hält nur ein zufälliges Token. Fünf Fehlversuche sperren ein Konto
 für 15 Minuten. Umgesetzt im Grundgerüst, Einzelheiten in [PLATFORM.md](../PLATFORM.md).
 

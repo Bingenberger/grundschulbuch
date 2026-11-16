@@ -14,3 +14,14 @@ export function readAccounts(): Promise<{ version: 1; users: unknown[] }>;
 
 export function listPublicAccounts(): Promise<PublicAccount[]>;
 export function setAccountBlocked(name: string, blocked: boolean): Promise<PublicAccount>;
+
+export type AdminAccount = PublicAccount & { blocked: boolean; hasPin: boolean; codeUntil: string | null; createdAt: string };
+export const ADMIN_CODE_DAYS: number;
+export class AccountError extends Error { status: number; constructor(message: string, status?: number); }
+export function listAdminAccounts(): Promise<AdminAccount[]>;
+export function createAccount(name: unknown, role: unknown): Promise<{ account: AdminAccount; code: string; expiresAt: string }>;
+export function resetAccountCode(id: string): Promise<{ account: AdminAccount; code: string; expiresAt: string }>;
+export function renameAccount(id: string, name: unknown): Promise<AdminAccount>;
+export function setAccountRole(id: string, role: unknown): Promise<AdminAccount>;
+export function setAccountBlockedById(id: string, blocked: boolean): Promise<AdminAccount>;
+export function deleteUnusedAccount(id: string): Promise<void>;

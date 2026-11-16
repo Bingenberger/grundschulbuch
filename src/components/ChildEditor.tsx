@@ -31,12 +31,14 @@ import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
 import TemplateChooser from './editor/TemplateChooser';
 import { PAPER, templateCatalog } from './editor/page-templates';
+import type { TemplatePolicies } from '@/lib/template-policy.mjs';
 import ImageDialog from './ImageDialog';
 import ImageEditor, { editFromElement } from './ImageEditor';
 import { cascade, fillPlaceholder, imageElement, isPlaceholder, withEditedPicture, type ChosenImage } from './editor/image-elements';
 import InlineText from './editor/InlineText';
 import { useTextEditing } from './editor/use-text-editing';
 import AnswerField, { isAnswerField } from './editor/AnswerField';
+import TemplateTextField,{isLockedTemplateField} from './editor/TemplateTextField';
 import { clampZoom, fitZoom, usePinchZoom } from './editor/use-pinch-zoom';
 import { fitText } from './editor/text-measure';
 import { tapDistance } from '@/lib/selection';
@@ -58,18 +60,24 @@ export default function ChildEditor({
   initial,
   images,
   allowed,
+  templatePolicies,
+  hiddenTemplates = [],
+  templateClassId,
 }: {
   initial: BookData;
   images: string[];
   /** Functions the teacher allows (class or child setting). */
   allowed?: readonly string[];
+  templatePolicies?: TemplatePolicies;
+  hiddenTemplates?: string[];
+  templateClassId?: string;
 }) {
   const s = useEditor();
   const recognition = useShapeRecognition(s.recognizeShapes && !['water', 'fill'].includes(s.brush), s.activeId);
   const [showImages, setShowImages] = useState(false);
   /** Paper chooser for a new page (children get empty pages only). */
   const [choosePaper, setChoosePaper] = useState(false);
-  const paper = useMemo(() => templateCatalog([]).filter((e) => e.category === PAPER), []);
+  const paper = useMemo(() => templateCatalog([],hiddenTemplates,false,templatePolicies,templateClassId).filter((e) => e.category === PAPER), [hiddenTemplates,templatePolicies,templateClassId]);
   /** Placeholder that gets the photo (instead of a new picture). */
   const [fillId, setFillId] = useState<string | null>(null);
   /** Picture open in the editor. */
@@ -635,7 +643,7 @@ export default function ChildEditor({
                       onHeight={writing.height}
                       onDone={writing.done}
                     />
-                  ) : isAnswerField(el) ? (
+                  ) : isLockedTemplateField(el) ? <TemplateTextField element={el} onText={text=>s.edit(p=>({...p,elements:p.elements.map(e=>e.id===el.id?{...e,text,runs:undefined}:e)}))}/> : isAnswerField(el) ? (
                     <AnswerField element={el} onAnswer={(text) => s.edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === el.id ? { ...e, text } : e)) }))} />
                   ) : undefined}
                 </ElementView>

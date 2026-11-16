@@ -10,7 +10,7 @@ export type Child = {
 };
 export type SchoolClass = {
   id: string;
-  teacherId: string;
+  teacherIds: string[];
   title: string;
   archived: boolean;
   children: Child[];
@@ -24,7 +24,7 @@ export type ChildRecord = {
   name: string;
   cardVersion: number;
   classId: string;
-  teacherId: string;
+  teacherIds: string[];
   images: string[];
   classTitle: string;
   /** Effective functions for this child (own, class or default). */
@@ -62,3 +62,10 @@ export function issueHelpCode(
   childId: string,
 ): Promise<{ code: string; expires: number }>;
 export function redeemHelpCode(code: string): Promise<ChildRecord>;
+export function teachersOf(klass: { teacherIds?: string[]; teacherId?: string }): string[];
+export function listAllClasses(): Promise<SchoolClass[]>;
+export function adminCreateClass(title: string, teacherIds?: string[]): Promise<SchoolClass>;
+export function adminChangeClass(classId: string, input: Record<string, unknown>): Promise<SchoolClass>;
+export function adminDeleteClass(classId: string): Promise<void>;
+export function moveChild(childId: string, targetClassId: string): Promise<SchoolClass>;
+export function grantTeachers(child: Pick<ChildRecord, 'teacherIds'>, sources: string[]): Promise<void>;

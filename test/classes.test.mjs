@@ -211,3 +211,49 @@ test('Lehrkräfte legen fest, welche Funktionen Kinder sehen: Klasse als Vorgabe
   await assert.rejects(klass.changeClass(teacher, c.id, { childId: ada.id, features: ['share'] }), status(400));
   await assert.rejects(klass.changeClass(other, c.id, { childFeatures: ['pen'] }), status(404));
 });
+
+test('Verwaltung: Klasse mit mehreren Lehrkräften, Kinder als Liste, Kind wechselt die Klasse', async () => {
+  const accounts = await import('../src/lib/accounts.mjs');
+  await store.writeJson(store.dataPath('lehrkraefte.json'), { version: 1, users: [] });
+  const a = (await accounts.createAccount(`Lehrkraft A ${crypto.randomInt(1e6)}`, 'lehrkraft')).account;
+  const b = (await accounts.createAccount(`Lehrkraft B ${crypto.randomInt(1e6)}`, 'lehrkraft')).account;
+  await assert.rejects(klass.adminCreateClass('2b', [crypto.randomUUID()]), status(404));
+  let c = await klass.adminCreateClass('2b', [a.id, b.id]);
+  assert.deepEqual(c.teacherIds, [a.id, b.id]);
+  c = await klass.adminChangeClass(c.id, { addChildren: ['Ada', ' ', 'Ben', 'Cem'] });
+  assert.deepEqual(c.children.map((k) => k.name), ['Ada', 'Ben', 'Cem']);
+  // Both teachers see the class and the children's notebooks.
+  assert.ok((await klass.listClasses(a.id)).some((k) => k.id === c.id));
+  assert.ok((await klass.listClasses(b.id)).some((k) => k.id === c.id));
+  const child = await klass.childById(c.children[0].id);
+  assert.deepEqual(child.teacherIds, [a.id, b.id]);
+  const book = await books.createBook(child.id, 'kind', { title: 'Mein Heft' });
+  assert.equal(await books.accessibleOwner(b.id, book.book.id), child.id);
+  // Shared classes are deleted in the admin area only.
+  await assert.rejects(klass.deleteClass(a.id, c.id), status(409));
+  c = await klass.adminChangeClass(c.id, { teacherIds: [b.id] });
+  assert.ok(!(await klass.listClasses(a.id)).some((k) => k.id === c.id));
+  await assert.rejects(books.accessibleOwner(a.id, book.book.id), status(404));
+  // Moving keeps notebooks.
+  const d = await klass.adminCreateClass('3b', [a.id]);
+  await klass.moveChild(child.id, d.id);
+  assert.equal((await klass.childById(child.id)).classId, d.id);
+  assert.equal(await books.accessibleOwner(a.id, book.book.id), child.id);
+  assert.equal((await books.getBook(child.id, book.book.id)).book.title, 'Mein Heft');
+  await klass.adminDeleteClass(c.id);
+  await klass.adminDeleteClass(d.id);
+  await assert.rejects(books.getBook(child.id, book.book.id), status(404));
+});
+
+test('Ältere Klassen mit einer Lehrkraft (teacherId) gelten weiter', async () => {
+  const id = crypto.randomUUID();
+  await store.writeJson(store.dataPath('klassen', `${id}.json`), {
+    id, teacherId: teacher, title: 'Alt', archived: false, children: [], images: [], createdAt: new Date().toISOString(),
+  });
+  const listed = (await klass.listClasses(teacher)).find((k) => k.id === id);
+  assert.deepEqual(listed.teacherIds, [teacher]);
+  const changed = await klass.changeClass(teacher, id, { title: 'Alt 2' });
+  assert.deepEqual(changed.teacherIds, [teacher]);
+  const raw = JSON.parse(await fs.readFile(store.dataPath('klassen', `${id}.json`), 'utf8'));
+  assert.equal('teacherId' in raw, false);
+});

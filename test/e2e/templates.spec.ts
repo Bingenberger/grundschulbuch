@@ -24,12 +24,12 @@ test('Neue Seite über „+“: Vorlagen mit echter Vorschau, standardmäßig im
   const first = chooser.getByRole('button', { name: 'Vorlage Lineatur 1' });
   await expect(first.locator('.scaled-page .paper')).toBeVisible();
   await expect(first.locator('.lineatur')).toHaveCount(1);
-  const comic = chooser.getByRole('button', { name: 'Vorlage Comic: vier Bilder' });
+  const comic = chooser.getByRole('button', { name: 'Vorlage Comic: 4 Bilder' });
   await comic.scrollIntoViewIfNeeded();
   await expect(comic.locator('.page-element').first()).toBeAttached();
-  await chooser.getByRole('searchbox', { name: 'Vorlage suchen' }).fill('Comic vier');
+  await chooser.getByRole('searchbox', { name: 'Vorlage suchen' }).fill('Comic 4');
   await expect(chooser.locator('.template-card')).toHaveCount(1);
-  await chooser.getByRole('button', { name: 'Vorlage Comic: vier Bilder' }).click();
+  await chooser.getByRole('button', { name: 'Vorlage Comic: 4 Bilder' }).click();
   await expect(chooser).toHaveCount(0);
   await expect(panel.getByRole('button', { name: 'Seite 2 öffnen' })).toHaveAttribute('aria-current', 'page');
 
@@ -37,7 +37,7 @@ test('Neue Seite über „+“: Vorlagen mit echter Vorschau, standardmäßig im
   await expect.poll(async () => (data = await open(page, created.book.id)).pages.length).toBe(2);
   expect(data.pages[1].orientation).toBe('landscape');
   expect(data.pages[1].template).toBe('bp-comic-' + data.pages[1].template!.split('-').slice(2).join('-'));
-  expect(data.pages[1].elements.length).toBeGreaterThan(4);
+  expect(data.pages[1].elements.length).toBe(4);
 
   // Recently used templates come first next time.
   await panel.getByRole('button', { name: 'Neue Seite', exact: true }).click();

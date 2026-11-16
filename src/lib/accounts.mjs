@@ -195,3 +195,131 @@ export async function setAccountBlocked(name, blocked) {
     user.blocked = !!blocked; user.updatedAt = new Date().toISOString(); await writeJson(accountsFile(), accounts); await endUserSessions(user.id); return toPublic(user);
   });
 }
+
+// ---- Administration in the app (admin accounts only) ----------------------
+
+/** Codes issued in the admin area are handed over on paper, so they last longer. */
+export const ADMIN_CODE_DAYS = 7;
+
+export class AccountError extends Error {
+  constructor(message, status = 400) {
+    super(message);
+    this.status = status;
+  }
+}
+
+/**
+ * @typedef {PublicAccount & { blocked: boolean, hasPin: boolean,
+ *   codeUntil: string | null, createdAt: string }} AdminAccount
+ */
+
+/** @param {Account & { blocked?: boolean }} account @returns {AdminAccount} */
+const toAdmin = account => ({
+  ...toPublic(account),
+  blocked: !!account.blocked,
+  hasPin: !!account.pinHash,
+  codeUntil: account.einmalcode && Date.parse(account.einmalcode.expiresAt) > Date.now() ? account.einmalcode.expiresAt : null,
+  createdAt: account.createdAt,
+});
+
+/** All accounts with their state, sorted by name. */
+export async function listAdminAccounts() {
+  return (await readAccounts()).users.map(toAdmin).sort((a, b) => a.name.localeCompare(b.name, 'de'));
+}
+
+/** @param {(data: { version: 1, users: Account[] }, account: Account) => Promise<unknown> | unknown} change */
+async function changeAccount(accountId, change) {
+  return withLock('lehrkraefte', async () => {
+    const data = await readAccounts();
+    const account = data.users.find(user => user.id === accountId);
+    if (!account) throw new AccountError('Konto nicht gefunden.', 404);
+    const extra = await change(data, account);
+    account.updatedAt = new Date().toISOString();
+    await writeJson(accountsFile(), data);
+    return { account: toAdmin(account), extra };
+  });
+}
+
+/** @param {{ users: Account[] }} data @param {Account} except */
+const otherActiveAdmins = (data, except) => data.users.filter(u => u.id !== except.id && u.role === 'admin' && !u.blocked).length;
+
+function freshCode(account) {
+  const code = newCode();
+  const expiresAt = new Date(Date.now() + ADMIN_CODE_DAYS * 86_400_000).toISOString();
+  account.einmalcode = { hash: codeHash(code), expiresAt };
+  return { code, expiresAt };
+}
+
+/**
+ * Creates a new account with a one-time code (7 days). Existing names are not
+ * touched: for them there is “Neuer Einmalcode”.
+ * @param {unknown} rawName @param {unknown} role
+ */
+export async function createAccount(rawName, role) {
+  const name = normalizeName(rawName);
+  if (!name) throw new AccountError('Bitte einen Namen mit 1–40 Zeichen eingeben (Buchstaben, Ziffern, Leerzeichen, . \' -).');
+  return withLock('lehrkraefte', async () => {
+    const data = await readAccounts();
+    if (data.users.some(user => nameKey(user.name) === nameKey(name)))
+      throw new AccountError('Es gibt schon ein Konto mit diesem Namen.', 409);
+    const now = new Date().toISOString();
+    /** @type {Account} */
+    const account = { id: crypto.randomUUID(), name, role: role === 'admin' ? 'admin' : 'lehrkraft', pinHash: null, einmalcode: null, createdAt: now, updatedAt: now };
+    const { code, expiresAt } = freshCode(account);
+    data.users.push(account);
+    await writeJson(accountsFile(), data);
+    return { account: toAdmin(account), code, expiresAt };
+  });
+}
+
+/** New one-time code (first access or lost PIN); the old PIN stays valid until it is used. */
+export async function resetAccountCode(accountId) {
+  const { account, extra } = await changeAccount(accountId, (_data, user) => {
+    if (user.blocked) throw new AccountError('Das Konto ist gesperrt. Bitte zuerst entsperren.');
+    return freshCode(user);
+  });
+  return { account, ...extra };
+}
+
+export async function renameAccount(accountId, rawName) {
+  const name = normalizeName(rawName);
+  if (!name) throw new AccountError('Bitte einen Namen mit 1–40 Zeichen eingeben.');
+  return (await changeAccount(accountId, (data, user) => {
+    if (data.users.some(u => u.id !== user.id && nameKey(u.name) === nameKey(name)))
+      throw new AccountError('Es gibt schon ein Konto mit diesem Namen.', 409);
+    user.name = name;
+  })).account;
+}
+
+export async function setAccountRole(accountId, role) {
+  if (role !== 'admin' && role !== 'lehrkraft') throw new AccountError('Unbekannte Rolle.');
+  return (await changeAccount(accountId, (data, user) => {
+    if (role === 'lehrkraft' && user.role === 'admin' && !otherActiveAdmins(data, user))
+      throw new AccountError('Es muss mindestens ein aktives Admin-Konto geben.');
+    user.role = role;
+  })).account;
+}
+
+export async function setAccountBlockedById(accountId, blocked) {
+  const result = await changeAccount(accountId, (data, user) => {
+    if (blocked && user.role === 'admin' && !otherActiveAdmins(data, user))
+      throw new AccountError('Das letzte aktive Admin-Konto kann nicht gesperrt werden.');
+    user.blocked = !!blocked;
+  });
+  await endUserSessions(accountId);
+  return result.account;
+}
+
+/** Only accounts that were never used (no PIN yet) can be removed. */
+export async function deleteUnusedAccount(accountId) {
+  return withLock('lehrkraefte', async () => {
+    const data = await readAccounts();
+    const account = data.users.find(user => user.id === accountId);
+    if (!account) throw new AccountError('Konto nicht gefunden.', 404);
+    if (account.pinHash) throw new AccountError('Dieses Konto wurde schon benutzt. Bitte sperren statt löschen.');
+    if (account.role === 'admin' && !otherActiveAdmins(data, account))
+      throw new AccountError('Das letzte aktive Admin-Konto kann nicht gelöscht werden.');
+    data.users = data.users.filter(user => user.id !== accountId);
+    await writeJson(accountsFile(), data);
+  });
+}

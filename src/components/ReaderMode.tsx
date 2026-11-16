@@ -28,7 +28,7 @@ function savedEffect(): TurnEffect {
 function fitScale(page: Page, room: { width: number; height: number }, gutter: number) {
   const size = dimensions(page);
   return room.width
-    ? Math.max(0.05, Math.min((room.width - 2 * gutter) / (size.width * PX), (room.height - 20) / (size.height * PX)))
+    ? Math.max(0.05, Math.min((room.width - 2 * gutter) / (size.width * PX), page.paperMode==='endless'?1:(room.height - 20) / (size.height * PX)))
     : 0;
 }
 

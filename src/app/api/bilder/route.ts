@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { currentUser, fromOwnOrigin, jsonError } from '@/lib/auth';
 import { currentChild } from '@/lib/child-auth';
-import { grantImages } from '@/lib/classes.mjs';
+import { grantTeachers } from '@/lib/classes.mjs';
 import { BookError, storeImage } from '@/lib/notebooks.mjs';
 import { SourceError, galleryOrigin, loadImage, searchImages, findKaraokeImage } from '@/lib/image-sources.mjs';
 export const dynamic = 'force-dynamic';
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     const { owner, child } = await access(source);
     const image = await loadImage(source, typeof body.bild === 'string' ? body.bild : '');
     const result = await storeImage(owner, image.buffer);
-    if (child) await grantImages(child.teacherId, [result.src]);
+    if (child) await grantTeachers(child, [result.src]);
     return NextResponse.json(result);
   } catch (e) {
     return failure(e, 'Das Bild konnte nicht übernommen werden.');

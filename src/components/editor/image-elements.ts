@@ -71,7 +71,7 @@ export function placeholderElement(label: string, shape: PlaceholderShape): Page
 
 /** Puts a picture into a placeholder; the frame keeps its place and size. */
 export function fillPlaceholder(el: PageElement, image: ChosenImage | null): PageElement {
-  const next: PageElement = { ...el, fit: 'cover' };
+  const next: PageElement = { ...el, fit: el.designScale ? el.fit || 'contain' : 'cover' };
   delete next.crop;
   delete next.src;
   delete next.credit;

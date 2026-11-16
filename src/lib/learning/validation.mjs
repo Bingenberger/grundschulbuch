@@ -77,6 +77,7 @@ export const ACTIVITY_KINDS = [
   'battleship',
 ];
 export const SHAPES = [
+  'template',
   'rect',
   'rounded',
   'ellipse',
@@ -489,7 +490,7 @@ export function lockedDesign(element) {
     return design;
   }
   // Children type their answer into a locked answer box.
-  if (element?.type === 'text' && typeof element.placeholder === 'string') {
+  if (element?.type === 'text' && (typeof element.placeholder === 'string'||typeof element.textHint==='string')) {
     const design = { ...element };
     for (const key of ['text', 'runs']) delete design[key];
     return design;

@@ -18,7 +18,7 @@ export function listBooks(owner: string): Promise<BookSummary[]>;
 export function createBook(
   owner: string,
   role: string,
-  input: { title: string; color?: string; pages?: Page[]; sourceId?: string; orientation?: 'portrait' | 'landscape' },
+  input: { title: string; color?: string; pages?: Page[]; sourceId?: string; orientation?: 'portrait' | 'landscape'; templateDraft?: boolean },
 ): Promise<BookData>;
 export function updateBook(
   owner: string,
@@ -115,3 +115,14 @@ export function editImage(
   src: string,
   input: unknown,
 ): Promise<{ src: string; width: number; height: number }>;
+
+export type SchoolTemplate = Template & { replaces?: string; updatedAt: string; revision?:number };
+export function schoolTemplateVersion(template?: SchoolTemplate | null): string | null;
+export function saveSchoolTemplateEdit(admin:string,input:{key:string;title:string;category:string;page:Page;expectedVersion:string|null}):Promise<SchoolTemplate>;
+import type { TemplatePolicies, TemplatePolicy } from './template-policy.mjs';
+export function readSchoolTemplates(): Promise<{ templates: SchoolTemplate[]; hidden: string[]; policies: TemplatePolicies }>;
+export function setTemplatePolicy(key: string, classId: string | null, patch: { enabled?: boolean | null; insertion?: TemplatePolicy['insertion'] | null }): Promise<{ policies: TemplatePolicies; hidden: string[] }>;
+export function hiddenTemplates(): Promise<string[]>;
+export function publishSchoolTemplate(admin: string, input: { title: unknown; category?: unknown; page: unknown; key?: unknown }): Promise<SchoolTemplate>;
+export function removeSchoolTemplate(templateId: string): Promise<void>;
+export function setTemplateHidden(key: string, hidden: boolean): Promise<string[]>;

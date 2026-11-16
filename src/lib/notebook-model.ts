@@ -10,6 +10,7 @@ export const rulings = {
   linie2: 'Lineatur 2',
   linie3: 'Lineatur 3',
   linie4: 'Lineatur 4',
+  linieneng: 'Linien eng',
   karo5: 'Kariert · 5 mm',
   karo10: 'Kariert · 1 cm',
   rechnen: 'Rechenkästchen',
@@ -19,6 +20,7 @@ export const rulings = {
 } as const;
 export type Ruling = keyof typeof rulings;
 export const fonts = {
+  Arial: 'Arial',
   Andika: 'Leseschrift · Andika',
   'Playwrite DE Grund': 'Grundschrift',
   'Playwrite DE VA': 'Schreibschrift VA',
@@ -69,11 +71,26 @@ export type PageElement = {
   locked: boolean;
   color: string;
   text?: string;
+  /** Hint of an empty editable design text (not an answer field). */
+  textHint?: string;
+  /** A shipped vector primitive of an original page design. */
+  vectorId?: string;
+  /** Millimetres per unit for native placeholders from an original design. */
+  designScale?: number;
   font?: Font;
+  /** Exact shipped reference face; cleared when a different font is chosen. */
+  referenceFont?: string;
+  referencePadding?: string;
+  referenceCentered?: boolean;
+  referenceFrameId?: string;
+  /** Fixed writing-row spacing in millimetres, independent of letter size. */
+  textLinePitch?: number;
   fontSize?: number;
   bold?: boolean;
   src?: string;
   alt?: string;
+  /** Native read-aloud button, using a German voice installed on the device. */
+  speechText?: string;
   /** Photo placeholder: label shown until someone puts a picture in. */
   placeholder?: string;
   /** Image credit (author, licence, source), shown on the page. */
@@ -133,6 +150,8 @@ export type Page = {
   updatedAt?: string;
   lastEditorId?: string;
   orientation: 'portrait' | 'landscape';
+  /** A vertically growing canvas; dimensions follow its contents. */
+  paperMode?: 'endless';
   ruling: Ruling;
   paperColor?: string;
   lineColor?: string;
@@ -141,6 +160,10 @@ export type Page = {
   backgroundImage?: string;
   /** Template the page was made from or last changed to (for marking it). */
   template?: string;
+  /** Class whose template rules were selected when this page was inserted. */
+  templateClassId?: string;
+  templateRuling?: {top:number;pitch:number;baseline:number;xHeight:number;count:number;left:number;right:number};
+  paperReferenceId?: string;
 
   elements: PageElement[];
 };
@@ -171,12 +194,16 @@ export type Template = {
   page: Page;
   school?: boolean;
   category?: string;
+  /** School template that takes the place of this built-in catalog key. */
+  replaces?: string;
 };
 export type BookData = { book: Notebook; pages: Page[] };
-export function dimensions(page: Pick<Page, 'orientation'>) {
-  return page.orientation === 'landscape'
-    ? { width: 297, height: 210 }
-    : { width: 210, height: 297 };
+export function dimensions(page: Pick<Page, 'orientation'> & Partial<Pick<Page,'paperMode'|'elements'>>) {
+  const width=page.orientation==='landscape'?297:210;
+  const base=page.orientation==='landscape'?210:297;
+  if(page.paperMode!=='endless')return {width,height:base};
+  const bottom=(page.elements||[]).reduce((max,el)=>Math.max(max,el.y+el.height),0);
+  return {width,height:Math.max(594,Math.ceil((bottom+150)/100)*100)};
 }
 export function newPage(
   ruling: Ruling = 'blanko',

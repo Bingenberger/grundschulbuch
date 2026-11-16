@@ -29,9 +29,10 @@ type State = {
   error: string;
   conflict: boolean;
   conflictPageId: string;
+  savePage?: (page:Page)=>Promise<Page>;
   past: Page[];
   future: Page[];
-  load: (data: BookData, mode?: 'teacher' | 'child') => void;
+  load: (data: BookData, mode?: 'teacher' | 'child', savePage?: (page:Page)=>Promise<Page>) => void;
   edit: (update: (page: Page) => Page, history?: boolean) => void;
   checkpoint: () => void;
   undo: () => void;
@@ -70,9 +71,10 @@ export const useEditor = create<State>((set, get) => ({
   conflictPageId: '',
   past: [],
   future: [],
-  load: ({ book, pages }, mode = 'teacher') =>
+  load: ({ book, pages }, mode = 'teacher', savePage) =>
     set({
       mode,
+      savePage,
       book,
       pages,
       activeId: pages[0].id,
@@ -138,6 +140,15 @@ export const useEditor = create<State>((set, get) => ({
   },
 }));
 let saving: Promise<boolean> | null = null;
+/** Keep edits made during a save, while accepting server-enforced template locks. */
+export function reconcileSavedPage(current: Page, sent: Page, saved: Page): Page {
+  if (current === sent) return saved;
+  const oldLocks = new Map(sent.elements.map(el=>[el.id,el.locked]));
+  const changedLocks = new Map(saved.elements.filter(el=>oldLocks.has(el.id)&&oldLocks.get(el.id)!==el.locked).map(el=>[el.id,el.locked]));
+  return {...current,revision:saved.revision,
+    templateClassId: current.templateClassId===sent.templateClassId ? saved.templateClassId : current.templateClassId,
+    elements:current.elements.map(el=>changedLocks.has(el.id)?{...el,locked:changedLocks.get(el.id)!}:el)};
+}
 export function flushEditor(): Promise<boolean> {
   if (saving) return saving.then((ok) => (ok ? flushEditor() : false));
   if (useEditor.getState().conflict) return Promise.resolve(false);
@@ -156,7 +167,7 @@ export function flushEditor(): Promise<boolean> {
         savingPageId = pageId;
         const page = s.pages.find((p) => p.id === pageId);
         if (!page || !s.book) break;
-        const result = await (s.mode === 'child' ? childApi : api)<Page>(
+        const result = s.savePage ? await s.savePage(page) : await (s.mode === 'child' ? childApi : api)<Page>(
           'page',
           { id: s.book.id, page },
         );
@@ -165,7 +176,7 @@ export function flushEditor(): Promise<boolean> {
         if (dirty[pageId] === count) delete dirty[pageId];
         useEditor.setState({
           pages: latest.pages.map((p) =>
-            p.id === pageId ? { ...p, revision: result.revision } : p,
+            p.id === pageId ? reconcileSavedPage(p, page, result) : p,
           ),
           dirty,
           error: '',

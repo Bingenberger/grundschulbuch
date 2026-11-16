@@ -8,7 +8,7 @@ export type RailItem =
 
 const items: [RailItem, IconName, string][] = [
   ['select', 'cursor', 'Auswahl'],
-  ['pen', 'signature', 'Stift'],
+  ['pen', 'buntstift', 'Stift'],
   ['eraser', 'radierer', 'Radierer'],
   ['text', 'document', 'Text'],
   ['image', 'picture', 'Bild'],

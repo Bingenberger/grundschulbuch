@@ -1,0 +1,1108 @@
+{
+  "files": [
+    {
+      "file": "Lernsachen-Heft.html",
+      "bytes": 9466019,
+      "hash": "1a467d087bc86ee516e64b09d1fb3f144677280b24ffa5be580904a9009eb540",
+      "version": "1.34.1"
+    },
+    {
+      "file": "Lernsachen-Heft-komplett.html",
+      "bytes": 24759755,
+      "hash": "a1fe5274eadc71f39946cd34db91e1261cb2f18522920b744d3849c770ea52c6",
+      "version": "1.47.3"
+    }
+  ],
+  "counts": {
+    "old": 163,
+    "new": 252,
+    "oldVisible": 148,
+    "newVisible": 236
+  },
+  "added": [
+    {
+      "id": "learning-diary",
+      "label": "Lerntagebuch",
+      "group": "Schule",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "timetable-days",
+      "label": "Stundenplan",
+      "group": "Schule",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "mag-cover",
+      "label": "Schülerzeitung: Titelseite",
+      "group": "Gestalten",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "mag-editorial",
+      "label": "Schülerzeitung: Vorwort und Inhalt",
+      "group": "Gestalten",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "mag-columns",
+      "label": "Schülerzeitung: Artikel in drei Spalten",
+      "group": "Gestalten",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "mag-bigpic",
+      "label": "Schülerzeitung: Großes Bild",
+      "group": "Gestalten",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "mag-interview",
+      "label": "Schülerzeitung: Interview",
+      "group": "Gestalten",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "mag-news",
+      "label": "Schülerzeitung: Kurz notiert",
+      "group": "Gestalten",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "mag-survey",
+      "label": "Schülerzeitung: Umfrage",
+      "group": "Gestalten",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "mag-fun",
+      "label": "Schülerzeitung: Rätsel und Witze",
+      "group": "Gestalten",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "mag-imprint",
+      "label": "Schülerzeitung: Termine und Impressum",
+      "group": "Gestalten",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "labels",
+      "label": "Etiketten",
+      "group": "Schule",
+      "generator": "labels",
+      "hidden": false
+    },
+    {
+      "id": "bookmarks",
+      "label": "Linksammlung",
+      "group": "Video & Web",
+      "generator": "bookmarks",
+      "hidden": false
+    },
+    {
+      "id": "theater",
+      "label": "Puppentheater",
+      "group": "Comic & Film",
+      "generator": "theater",
+      "hidden": false
+    },
+    {
+      "id": "coding",
+      "label": "Programmieren",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-pad",
+      "label": "Wie ein Bodenroboter: Tasten",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-cards",
+      "label": "Zum Ziel: Pfeilkarten legen",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-walls",
+      "label": "Hindernisse umfahren",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-word",
+      "label": "Wörter abfahren",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-math",
+      "label": "Rechnen und fahren",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-numbers",
+      "label": "Zahlen der Reihe nach",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-collect",
+      "label": "Sterne sammeln",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-predict",
+      "label": "Wo kommt die Figur an?",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-fix",
+      "label": "Fehler finden",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-gap",
+      "label": "Was fehlt?",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-loop",
+      "label": "Schleifen: wiederhole",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-pen",
+      "label": "Zeichnen mit dem Stift",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-paint",
+      "label": "Freies Malen",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-music",
+      "label": "Musik-Teppich",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-cond",
+      "label": "Bedingungen: Farbweg",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-maze",
+      "label": "Labyrinth mit „falls“",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-cat",
+      "label": "Achtung, Katze!",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-count",
+      "label": "Punkte zählen",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-events",
+      "label": "Pfeile programmieren",
+      "group": "Programmieren",
+      "generator": "coding",
+      "hidden": false
+    },
+    {
+      "id": "coding-sheet",
+      "label": "Programmieren: Arbeitsblatt",
+      "group": "Programmieren",
+      "generator": "codingSheet",
+      "hidden": false
+    },
+    {
+      "id": "steps",
+      "label": "Ablaufplan",
+      "group": "Alltag",
+      "generator": "steps",
+      "hidden": false
+    },
+    {
+      "id": "tally",
+      "label": "Strichliste und Diagramm",
+      "group": "Mathe",
+      "generator": "tally",
+      "hidden": false
+    },
+    {
+      "id": "spinner",
+      "label": "Glücksrad und Würfel",
+      "group": "Mathe",
+      "generator": "spinner",
+      "hidden": false
+    },
+    {
+      "id": "seek",
+      "label": "Suchbild",
+      "group": "Mathe",
+      "generator": "seek",
+      "hidden": false
+    },
+    {
+      "id": "pattern",
+      "label": "Muster fortsetzen",
+      "group": "Mathe",
+      "generator": "pattern",
+      "hidden": false
+    },
+    {
+      "id": "phone",
+      "label": "Telefonieren üben",
+      "group": "Alltag",
+      "generator": "phone",
+      "hidden": false
+    },
+    {
+      "id": "phone-sos",
+      "label": "Notruf üben",
+      "group": "Alltag",
+      "generator": "phone",
+      "hidden": false
+    },
+    {
+      "id": "traffic",
+      "label": "Fußgängerampel",
+      "group": "Alltag",
+      "generator": "traffic",
+      "hidden": false
+    },
+    {
+      "id": "mood",
+      "label": "Wie geht es dir heute?",
+      "group": "Schule",
+      "generator": "mood",
+      "hidden": false
+    },
+    {
+      "id": "feelings",
+      "label": "Gefühle-Karten",
+      "group": "Schule",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "listen",
+      "label": "Hör-Memory",
+      "group": "Musik",
+      "generator": "listen",
+      "hidden": false
+    },
+    {
+      "id": "listen-quiz",
+      "label": "Was hörst du?",
+      "group": "Musik",
+      "generator": "listen",
+      "hidden": false
+    },
+    {
+      "id": "kipartner",
+      "label": "KI-Partner bauen",
+      "group": "Medien & KI",
+      "generator": "kipartner",
+      "hidden": false
+    },
+    {
+      "id": "phon",
+      "label": "Laute hören",
+      "group": "Schreiben",
+      "generator": "phon",
+      "hidden": false
+    },
+    {
+      "id": "grid-tasks",
+      "label": "Karopapier: Symmetrie, Muster, Messen",
+      "group": "Mathe",
+      "generator": "squares",
+      "hidden": false
+    },
+    {
+      "id": "pm-cover",
+      "label": "Praktikumsmappe: Deckblatt",
+      "group": "Beruf & Praktikum",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "pm-company",
+      "label": "Praktikumsmappe: Mein Betrieb",
+      "group": "Beruf & Praktikum",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "pm-workplace",
+      "label": "Praktikumsmappe: Mein Arbeitsplatz",
+      "group": "Beruf & Praktikum",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "pm-day",
+      "label": "Praktikumsmappe: Tagesbericht",
+      "group": "Beruf & Praktikum",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "pm-week",
+      "label": "Praktikumsmappe: Wochenrückblick",
+      "group": "Beruf & Praktikum",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "pm-thanks",
+      "label": "Praktikumsmappe: Dankschreiben",
+      "group": "Beruf & Praktikum",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "pm-rating",
+      "label": "Praktikumsmappe: Einschätzung",
+      "group": "Beruf & Praktikum",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "rating",
+      "label": "Selbst- und Fremdeinschätzung",
+      "group": "Beruf & Praktikum",
+      "generator": "rating",
+      "hidden": false
+    },
+    {
+      "id": "feedback",
+      "label": "Rückmeldung zu meiner Arbeit",
+      "group": "Schule",
+      "generator": "rating",
+      "hidden": false
+    },
+    {
+      "id": "checklist",
+      "label": "Checkliste",
+      "group": "Alltag",
+      "generator": "check",
+      "hidden": false
+    },
+    {
+      "id": "pieces",
+      "label": "Stückzähler (Serienfertigung)",
+      "group": "Beruf & Praktikum",
+      "generator": "pieces",
+      "hidden": false
+    },
+    {
+      "id": "stress",
+      "label": "Stressbarometer: Was hilft mir?",
+      "group": "Alltag",
+      "generator": "stress",
+      "hidden": false
+    },
+    {
+      "id": "weekplan",
+      "label": "Wochenplan",
+      "group": "Alltag",
+      "generator": "week",
+      "hidden": false
+    },
+    {
+      "id": "dutyplan",
+      "label": "Dienstplan",
+      "group": "Alltag",
+      "generator": "week",
+      "hidden": false
+    },
+    {
+      "id": "sort",
+      "label": "Sortieren",
+      "group": "Alltag",
+      "generator": "sort",
+      "hidden": false
+    },
+    {
+      "id": "sort-quiz",
+      "label": "Bild-Quiz: Was bedeutet das?",
+      "group": "Beruf & Praktikum",
+      "generator": "sort",
+      "hidden": false
+    },
+    {
+      "id": "body",
+      "label": "Wo tut es weh?",
+      "group": "Alltag",
+      "generator": "body",
+      "hidden": false
+    },
+    {
+      "id": "circles",
+      "label": "Nähe und Distanz: Kreise",
+      "group": "Alltag",
+      "generator": "circles",
+      "hidden": false
+    },
+    {
+      "id": "vote",
+      "label": "Abstimmung und Wahl",
+      "group": "Schule",
+      "generator": "vote",
+      "hidden": false
+    },
+    {
+      "id": "artwork",
+      "label": "Ein Kunstwerk betrachten",
+      "group": "Gestalten",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "timeline",
+      "label": "Zeitleiste (Lebenslauf)",
+      "group": "Gestalten",
+      "generator": "timeline",
+      "hidden": false
+    },
+    {
+      "id": "budget",
+      "label": "Geld-Planer: Mein Monat",
+      "group": "Alltag",
+      "generator": "budget",
+      "hidden": false
+    },
+    {
+      "id": "cashbook",
+      "label": "Kassenbuch",
+      "group": "Beruf & Praktikum",
+      "generator": "budget",
+      "hidden": false
+    },
+    {
+      "id": "budget-fill",
+      "label": "Geld-Planer zum Ausfüllen",
+      "group": "Alltag",
+      "generator": "budget",
+      "hidden": false
+    },
+    {
+      "id": "my-way",
+      "label": "Mein Weg (Wegeplan)",
+      "group": "Alltag",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "machine-ticket",
+      "label": "Fahrkartenautomat üben",
+      "group": "Alltag",
+      "generator": "machine",
+      "hidden": false
+    },
+    {
+      "id": "machine-atm",
+      "label": "Geldautomat üben",
+      "group": "Alltag",
+      "generator": "machine",
+      "hidden": false
+    },
+    {
+      "id": "machine-drinks",
+      "label": "Getränkeautomat üben",
+      "group": "Beruf & Praktikum",
+      "generator": "machine",
+      "hidden": false
+    },
+    {
+      "id": "practice",
+      "label": "Gespräche üben",
+      "group": "Beruf & Praktikum",
+      "generator": "practice",
+      "hidden": false
+    },
+    {
+      "id": "life-math",
+      "label": "Rechnen im Alltag: Lohn, Fahrplan, Geld",
+      "group": "Mathe",
+      "generator": "lifemath",
+      "hidden": false
+    },
+    {
+      "id": "pm-all",
+      "label": "Praktikumsmappe (alle Seiten)",
+      "group": "Beruf & Praktikum",
+      "generator": "pmappe",
+      "hidden": false
+    },
+    {
+      "id": "easy-news",
+      "label": "Nachrichten in leichter Sprache",
+      "group": "Medien & KI",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "explainer",
+      "label": "Erklärbär",
+      "group": "Comic & Film",
+      "generator": "texts",
+      "hidden": false
+    },
+    {
+      "id": "talk-arbeit",
+      "label": "Arbeit und Praktikum",
+      "group": "Kommunikationsbuch",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "talk-werkzeug",
+      "label": "Werkzeuge",
+      "group": "Kommunikationsbuch",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "talk-wohnen",
+      "label": "Wohnen und Haushalt",
+      "group": "Kommunikationsbuch",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "talk-arzt",
+      "label": "Beim Arzt",
+      "group": "Kommunikationsbuch",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "talk-kochen",
+      "label": "Kochen",
+      "group": "Kommunikationsbuch",
+      "generator": null,
+      "hidden": false
+    },
+    {
+      "id": "talk-runde",
+      "label": "Gesprächsrunde",
+      "group": "Kommunikationsbuch",
+      "generator": null,
+      "hidden": false
+    }
+  ],
+  "removed": [],
+  "changed": [
+    {
+      "id": "learning",
+      "label": "Lerntagebuch",
+      "fields": [
+        "hidden"
+      ]
+    },
+    {
+      "id": "timetable",
+      "label": "Stundenplan (schlicht)",
+      "fields": [
+        "label"
+      ]
+    },
+    {
+      "id": "picture-timetable",
+      "label": "Bilder-Stundenplan",
+      "fields": [
+        "items"
+      ]
+    },
+    {
+      "id": "talk-book",
+      "label": "Kommunikationsbuch mit allen Tafeln",
+      "fields": [
+        "items"
+      ]
+    }
+  ],
+  "packs": [
+    {
+      "id": "picto",
+      "oldBytes": 554714,
+      "newBytes": 554714,
+      "changed": false,
+      "oldCount": 60,
+      "newCount": 60,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "anlaut-pictos",
+      "oldBytes": 237090,
+      "newBytes": 237090,
+      "changed": false,
+      "oldCount": 54,
+      "newCount": 54,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "talk-pictos",
+      "oldBytes": 661521,
+      "newBytes": 1051299,
+      "changed": true,
+      "oldCount": 121,
+      "newCount": 190,
+      "added": [
+        "2342",
+        "2355",
+        "2442",
+        "2451",
+        "2523",
+        "2549",
+        "2558",
+        "2599",
+        "2644",
+        "2736",
+        "2788",
+        "2799",
+        "2915",
+        "2922",
+        "3237",
+        "3257",
+        "3325",
+        "3351",
+        "3392",
+        "3406",
+        "4717",
+        "5485",
+        "5487",
+        "5498",
+        "5501",
+        "5514",
+        "5556",
+        "5975",
+        "5988",
+        "6572",
+        "7124",
+        "7127",
+        "7158",
+        "7180",
+        "7217",
+        "8163",
+        "8306",
+        "8986",
+        "9086",
+        "9090",
+        "10263",
+        "10752",
+        "11185",
+        "11696",
+        "11697",
+        "16000",
+        "16165",
+        "16705",
+        "16823",
+        "17322",
+        "24053",
+        "25738",
+        "25752",
+        "26529",
+        "26716",
+        "28651",
+        "28762",
+        "28766",
+        "32340",
+        "32388",
+        "32530",
+        "34717",
+        "34826",
+        "35569",
+        "36395",
+        "38796",
+        "38982",
+        "39587",
+        "39738"
+      ],
+      "removed": []
+    },
+    {
+      "id": "shop-pictos",
+      "oldBytes": 348231,
+      "newBytes": 348231,
+      "changed": false,
+      "oldCount": 81,
+      "newCount": 81,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "sort-pictos",
+      "oldBytes": 0,
+      "newBytes": 482102,
+      "changed": true,
+      "oldCount": 0,
+      "newCount": 99,
+      "added": [
+        "2248",
+        "2263",
+        "2277",
+        "2316",
+        "2338",
+        "2354",
+        "2392",
+        "2422",
+        "2423",
+        "2427",
+        "2429",
+        "2439",
+        "2445",
+        "2451",
+        "2458",
+        "2461",
+        "2462",
+        "2494",
+        "2502",
+        "2505",
+        "2510",
+        "2523",
+        "2527",
+        "2529",
+        "2530",
+        "2541",
+        "2586",
+        "2594",
+        "2618",
+        "2619",
+        "2622",
+        "2644",
+        "2681",
+        "2731",
+        "2736",
+        "2746",
+        "2749",
+        "2788",
+        "2799",
+        "2847",
+        "2915",
+        "2922",
+        "2964",
+        "3001",
+        "3087",
+        "3149",
+        "3227",
+        "3392",
+        "4602",
+        "4630",
+        "4631",
+        "5400",
+        "5498",
+        "5501",
+        "6023",
+        "6060",
+        "6242",
+        "6544",
+        "6545",
+        "6594",
+        "6653",
+        "6966",
+        "7021",
+        "7063",
+        "7128",
+        "7143",
+        "7784",
+        "8020",
+        "8263",
+        "8306",
+        "8320",
+        "8488",
+        "8554",
+        "8600",
+        "8652",
+        "8699",
+        "9119",
+        "17284",
+        "17292",
+        "22017",
+        "22182",
+        "23710",
+        "23849",
+        "24479",
+        "25560",
+        "25940",
+        "26529",
+        "27836",
+        "28275",
+        "35209",
+        "36357",
+        "36507",
+        "36591",
+        "36695",
+        "37367",
+        "38086",
+        "38723",
+        "39387",
+        "39587"
+      ],
+      "removed": []
+    },
+    {
+      "id": "timetable-pictos",
+      "oldBytes": 200037,
+      "newBytes": 200037,
+      "changed": false,
+      "oldCount": 38,
+      "newCount": 38,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "calendar-pics",
+      "oldBytes": 274928,
+      "newBytes": 274928,
+      "changed": false,
+      "oldCount": 23,
+      "newCount": 23,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "voice",
+      "oldBytes": 888233,
+      "newBytes": 1266540,
+      "changed": true,
+      "oldCount": 2,
+      "newCount": 2,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "pdfjs",
+      "oldBytes": 733872,
+      "newBytes": 733872,
+      "changed": false
+    },
+    {
+      "id": "viewer",
+      "oldBytes": 928660,
+      "newBytes": 1414228,
+      "changed": true
+    },
+    {
+      "id": "player-quizsachen",
+      "oldBytes": 174540,
+      "newBytes": 176983,
+      "changed": true
+    },
+    {
+      "id": "player-schiebesachen",
+      "oldBytes": 178905,
+      "newBytes": 181611,
+      "changed": true
+    },
+    {
+      "id": "player-textsachen",
+      "oldBytes": 229903,
+      "newBytes": 273557,
+      "changed": true
+    },
+    {
+      "id": "worksheet-quizsachen",
+      "oldBytes": 0,
+      "newBytes": 110662,
+      "changed": true
+    },
+    {
+      "id": "worksheet-schiebesachen",
+      "oldBytes": 0,
+      "newBytes": 121665,
+      "changed": true
+    },
+    {
+      "id": "worksheet-textsachen",
+      "oldBytes": 0,
+      "newBytes": 133791,
+      "changed": true
+    },
+    {
+      "id": "font-andika",
+      "oldBytes": 268773,
+      "newBytes": 268773,
+      "changed": false,
+      "oldCount": 2,
+      "newCount": 2,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "font-lexend",
+      "oldBytes": 74925,
+      "newBytes": 74925,
+      "changed": false,
+      "oldCount": 2,
+      "newCount": 2,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "font-nunito",
+      "oldBytes": 85745,
+      "newBytes": 85745,
+      "changed": false,
+      "oldCount": 2,
+      "newCount": 2,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "font-atkinson",
+      "oldBytes": 71389,
+      "newBytes": 71389,
+      "changed": false,
+      "oldCount": 2,
+      "newCount": 2,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "font-merriweather",
+      "oldBytes": 244957,
+      "newBytes": 244957,
+      "changed": false,
+      "oldCount": 2,
+      "newCount": 2,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "font-caveat",
+      "oldBytes": 184109,
+      "newBytes": 184109,
+      "changed": false,
+      "oldCount": 2,
+      "newCount": 2,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "font-grund",
+      "oldBytes": 27552,
+      "newBytes": 27552,
+      "changed": false,
+      "oldCount": 1,
+      "newCount": 1,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "font-schreib",
+      "oldBytes": 51024,
+      "newBytes": 51024,
+      "changed": false,
+      "oldCount": 1,
+      "newCount": 1,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "font-sas",
+      "oldBytes": 54448,
+      "newBytes": 54448,
+      "changed": false,
+      "oldCount": 1,
+      "newCount": 1,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "font-comic",
+      "oldBytes": 54335,
+      "newBytes": 54335,
+      "changed": false,
+      "oldCount": 1,
+      "newCount": 1,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "font-druck",
+      "oldBytes": 90652,
+      "newBytes": 90652,
+      "changed": false,
+      "oldCount": 1,
+      "newCount": 1,
+      "added": [],
+      "removed": []
+    },
+    {
+      "id": "editor-quizsachen",
+      "oldBytes": 0,
+      "newBytes": 5159292,
+      "changed": true
+    },
+    {
+      "id": "editor-schiebesachen",
+      "oldBytes": 0,
+      "newBytes": 5221668,
+      "changed": true
+    },
+    {
+      "id": "editor-textsachen",
+      "oldBytes": 0,
+      "newBytes": 1892172,
+      "changed": true
+    }
+  ],
+  "method": "Source and embedded pack comparison; evaluated normalized catalogue defaults; no exhaustive runtime verification.",
+  "date": "2026-11-16"
+}

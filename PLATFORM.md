@@ -54,14 +54,22 @@ Weitere optionale Umgebungsvariablen:
 | Variable | Bedeutung |
 | --- | --- |
 | `SCHOOL_END_HOUR` | Schulschluss für Kinder in Europe/Berlin, ganze Stunde 1–24, Standard 16 |
-| `GALLERY_ORIGIN` | Link zur Bildergalerie der Schule; kein direkter Importadapter |
+| `GALLERY_ORIGIN` | Bildergalerie der Schule (JSON-API v1) für den Reiter „Schulgalerie“; Standard `https://bilder.gsndk.de`, leer schaltet sie ab |
 | `WOERTERBUCH_ORIGIN` | Link zum Wörterbuch; kein direkter Suchadapter |
 | `GRUNDSCHULBUCH_ASSET_DIR` | Betreiberinhalte. Im Container `/assets`, in Compose schreibgeschützt gemountet. JSON-Vorlagen unter `vorlagen/`; Beispiel in `docs/schulvorlage.json`. |
 
-Die Kontenverwaltung bleibt ausschließlich auf der Serverkonsole.
-`node scripts/accounts.mjs liste`, `sperren NAME` und `entsperren NAME` ergänzen
-das Bootstrap-Skript. Sperren beendet Sitzungen sofort. Das letzte aktive
-Admin-Konto bleibt erhalten.
+Admin-Konten verwalten Konten in der App unter `/verwaltung`: anlegen (mit
+Einmalcode, 7 Tage gültig, als Zugangszettel druckbar), umbenennen, neuer
+Einmalcode, Admin-Rechte, sperren und unbenutzte Konten löschen. Auf der
+Serverkonsole ergänzen `node scripts/accounts.mjs liste`, `sperren NAME` und
+`entsperren NAME` das Bootstrap-Skript. Sperren beendet Sitzungen sofort. Das
+letzte aktive Admin-Konto bleibt erhalten.
+
+Klassen haben eine Liste von Lehrkräften (`teacherIds`; ältere Dateien mit
+`teacherId` gelten weiter und werden beim nächsten Speichern umgestellt).
+Schulvorlagen aus der Verwaltung liegen in `schulvorlagen.json` (Vorlagen,
+ersetzte eingebaute Vorlagen, ausgeblendete Schlüssel); ihre Bilder sind über
+`medien/rechte/schule.json` für alle Konten freigegeben.
 
 ## Migration
 

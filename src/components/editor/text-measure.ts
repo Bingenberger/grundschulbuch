@@ -2,6 +2,7 @@
 // Measures the real fonts in the browser for fitting text into the ruling.
 import { fonts, type Page, type PageElement } from '@/lib/notebook-model';
 import { fitTextToRuling, type TextMeasure } from '@/lib/text-fit';
+import {templateFontFamilies} from '@/lib/template-font';
 
 const mmToPx = 96 / 25.4;
 const ratioCache = new Map<string, { xHeight: number; capHeight: number }>();
@@ -9,7 +10,7 @@ const ratioCache = new Map<string, { xHeight: number; capHeight: number }>();
 /** Starts loading all text fonts so measurements are right from the start. */
 export function preloadTextFonts() {
   if (typeof document === 'undefined' || !document.fonts) return;
-  for (const font of Object.keys(fonts)) {
+  for (const font of [...Object.keys(fonts),...templateFontFamilies]) {
     void document.fonts.load(`20px "${font}"`).then(() => ratioCache.delete(font)).catch(() => undefined);
   }
 }

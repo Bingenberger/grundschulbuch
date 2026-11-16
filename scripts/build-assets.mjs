@@ -16,7 +16,7 @@ await build({
   legalComments: 'inline',
   define: { 'process.env.NODE_ENV': '"production"' },
 });
-await fs.copyFile('src/app/globals.css', 'public/runtime/viewer.css');
+await fs.writeFile('public/runtime/viewer.css',(await fs.readFile('src/app/globals.css','utf8')).replace("@import '../lib/reference/template-fonts.css';",await fs.readFile('src/lib/reference/template-fonts.css','utf8')));
 await fs.copyFile(
   'node_modules/pdfjs-dist/legacy/build/pdf.worker.min.mjs',
   'public/runtime/pdf.worker.min.mjs',

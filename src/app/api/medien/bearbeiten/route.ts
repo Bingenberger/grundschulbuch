@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { currentUser, fromOwnOrigin, jsonError } from '@/lib/auth';
 import { currentChild } from '@/lib/child-auth';
-import { grantImages } from '@/lib/classes.mjs';
+import { grantTeachers } from '@/lib/classes.mjs';
 import { BookError, editImage } from '@/lib/notebooks.mjs';
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
     const result = await editImage((teacher || child)!.id, body.src, { steps: body.steps, effects: body.effects });
-    if (child) await grantImages(child.teacherId, [result.src]);
+    if (child) await grantTeachers(child, [result.src]);
     return NextResponse.json(result);
   } catch (e) {
     return jsonError(

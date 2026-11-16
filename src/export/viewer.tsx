@@ -113,7 +113,7 @@ function Viewer() {
         <button onClick={() => document.documentElement.requestFullscreen?.()}>
           Vollbild
         </button>
-        <button onClick={() => window.print()}>Drucken</button>
+        {!pages.some(p=>p.paperMode==='endless')&&<button onClick={() => window.print()}>Drucken</button>}
         <button
           onClick={() => {
             const html = document.documentElement.cloneNode(

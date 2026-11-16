@@ -20,6 +20,7 @@ ihre Urheber werden hier genannt.
     - Laut- und Silbenaufnahmen (`public/laute/`, `src/lib/reference/recordings.json`).
   - **Unverändert übernommen (Regal › Zeit):** Uhr, Timer, Datum, Multi-Timer, Lärmampel, Applausometer, Bilder-Stundenplan, Karte, Sprechtaste, Satzleiste und die Kommunikationstafeln, Elevator Pitch, Diaschau, Animation, Das sprechende Kalenderblatt mit seinen Zeichnungen (`public/kalender/`; `src/lib/reference/class-runtime.ts`, erzeugt von `scripts/extract-class-reference.mjs`); das Wetter kommt von Open-Meteo.com (Daten CC BY 4.0) über den Schulserver.
   - **Nachgebaut:** Gliederung und Abläufe weiterer Lernwerkzeuge, u. a. Einkaufen an der Kasse, Rechnen mit dem Taschenrechner und Mathe-Werkzeuge. Auch die Idee des digitalen Heftes stammt von hier.
+  - **Originalgestaltung in bearbeitbare Elemente umgewandelt:** 84 statische Seitenvorlagen einschließlich ihrer Texte, Bildplatzhalter, Vorlesetasten und 2506 Vektor- und Rahmenbestandteile (`src/lib/reference/page-templates.json`, `template-vectors.json`). Enthält 18 neue Entwürfe aus Version 1.47.3 (Schülerzeitung, Praktikumsseiten, Lerntagebuch, Stundenplan, Kunstbetrachtung); das alte Lerntagebuch bleibt intern erhalten. Erzeugung aus `Lernsachen-Heft-komplett.html`: `scripts/extract-page-templates.mjs`; Anpassung an das Elementmodell des Grundschulbuchs: `src/lib/learning/page-designs.ts`.
 
 ### Textsachen – Lernsachen.blog
 
@@ -74,6 +75,7 @@ Dateiköpfen aus den veröffentlichten Apps gewonnen.
 | --- | --- | --- | --- |
 | Deutsche Silbentrennmuster hyph-de-1996 (dehyphn-x-2011-06-01) | Werner Lemberg | LaTeX Project Public License 1.3c | in den übernommenen Teilen von Lernsachen-Heft und Schiebesachen, Lizenztext dort enthalten |
 | Hypher 0.2.5 | Bram Stein | BSD-3-Clause | ebenda |
+| Originalschriften der Vorlagen einschließlich Gruschudru basic | jeweilige Urheber laut eingebetteten Metadaten | SIL Open Font License 1.1 | `public/fonts/reference/` mit `OFL.txt` und [Herkunft](public/fonts/reference/SOURCES.md) |
 | Schriften Andika, Atkinson Hyperlegible, Bangers, Caveat, Lexend, Merriweather, Nunito, Playwrite DE Grund/VA/SAS | jeweilige Urheber (Google Fonts) | SIL Open Font License 1.1 | `public/fonts/` mit `OFL.txt` und [Herkunft](public/fonts/SOURCES.md) |
 | Flat Color Icons | icons8 | MIT | Symbole der Werkzeugleisten (`public/runtime/icons/`) |
 | npm-Abhängigkeiten (Next.js, React, pdf.js …) | jeweilige Urheber | jeweils eigene Lizenz | Lizenztexte in `DEPENDENCY-LICENSES.json` im Quellcode-Archiv und unter „Lizenzen“ im exportierten Heft |

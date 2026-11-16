@@ -8,5 +8,5 @@ export default async function Regal() {
   const user = await currentUser();
   // The installed app starts here: children who are signed in go to their notebooks.
   if (!user) redirect((await currentChild()) ? '/kinder' : '/anmelden');
-  return <Shelf initialBooks={await listBooks(user.id)} name={user.name} />;
+  return <Shelf initialBooks={await listBooks(user.id)} name={user.name} admin={user.role === 'admin'} />;
 }

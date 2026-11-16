@@ -5,7 +5,10 @@ import QRCode from 'qrcode';
 import type { PageElement, Page } from '@/lib/notebook-model';
 import { dimensions } from '@/lib/notebook-model';
 import { useLearning } from './Runtime';
+import templateVectors from '@/lib/reference/template-vectors.json';
 export function Shape({ element: el }: { element: PageElement }) {
+  const vector = el.shape === 'template' && el.vectorId ? (templateVectors as Record<string,{markup:string;viewBox:number[]}>)[el.vectorId] : undefined;
+  if(vector) return <svg viewBox={vector.viewBox.join(' ')} preserveAspectRatio="none" width="100%" height="100%" aria-label="Vorlagenform" style={{display:'block',overflow:'visible','--template-fill':el.fill||'none','--template-stroke':el.color||'none','--template-width':(el.strokeWidth??0)/(el.designScale||297/1400)} as React.CSSProperties} dangerouslySetInnerHTML={{__html:vector.markup}} />;
   const props = {
     fill: el.fill || '#ffffff',
     stroke: el.color,
@@ -112,6 +115,14 @@ export const imageFilters: Record<string, string> = {
 /** Empty photo frame; whoever taps it takes or chooses the picture. */
 function ImagePlaceholder({ element: el }: { element: PageElement }) {
   const round = el.imageFrame === 'round';
+  if(el.designScale && el.imageFrame==='shadow') {
+    const k=el.designScale;
+    return <div style={{width:'100%',height:'100%',borderRadius:`${6*k}mm`,boxShadow:`0 ${6*k}mm ${18*k}mm rgba(15,23,42,.35)`}}><ImagePlaceholder element={{...el,imageFrame:'none'}}/></div>;
+  }
+  if(el.designScale) {
+    const k=el.designScale,frame=el.imageFrame,photo=frame==='photo'||frame==='polaroid',pad=photo?(frame==='photo'?12:16):frame==='border'?7:0;
+    return <div style={{position:'relative',width:'100%',height:'100%',background:photo?'#fff':frame==='border'?'#1f2937':undefined,boxShadow:photo?`0 ${3*k}mm ${12*k}mm rgba(15,23,42,.28)`:undefined}}><div style={{position:'absolute',left:`${pad*k}mm`,top:`${pad*k}mm`,right:`${pad*k}mm`,bottom:`${(frame==='polaroid'?62:pad)*k}mm`,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:`${8*k}mm`,border:`${3*k}mm dashed #94a3b8`,borderRadius:round?'50%':`${12*k}mm`,color:'#64748b',background:'rgba(241,245,249,.75)',font:`600 ${24*k}mm/1.2 Nunito,system-ui,sans-serif`,textAlign:'center',padding:`${10*k}mm`}}><svg style={{width:`${64*k}mm`,height:`${64*k}mm`}} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{el.type==='embed'?<path d="M15 10l6-4v12l-6-4zM3 6h12v12H3z"/>:<><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="15.5" cy="9.5" r="1.5"/></>}</svg><span>{el.placeholder||'Bild einfügen'}</span></div></div>;
+  }
   return (
     <div className={`image-placeholder ${round ? 'round' : ''}`}>
       <svg viewBox="0 0 48 40" aria-hidden="true">
@@ -135,6 +146,8 @@ export function ImageContent({ element: el }: { element: PageElement }) {
 function ImagePicture({ element: el }: { element: PageElement }) {
   const crop = el.crop || { x: 0, y: 0, width: 1, height: 1 },
     frame = el.imageFrame || 'none';
+  const k=el.designScale,photo=frame==='photo'||frame==='polaroid';
+  const pad=frame==='photo'?12:frame==='polaroid'?16:frame==='border'?7:0;
   return (
     <div
       className={`image-content image-frame-${frame}`}
@@ -142,19 +155,19 @@ function ImagePicture({ element: el }: { element: PageElement }) {
         width: '100%',
         height: '100%',
         position: 'relative',
-        overflow: 'hidden',
-        borderRadius: frame === 'round' ? '50%' : frame === 'photo' ? '2mm' : 0,
+        overflow: k&&frame==='shadow'?'visible':'hidden',
+        borderRadius: frame === 'round' ? '50%' : frame === 'photo' && !k ? '2mm' : 0,
         border:
-          frame === 'border'
+          k ? undefined : frame === 'border'
             ? '1mm solid #293c32'
             : frame === 'photo'
               ? '2mm solid white'
               : undefined,
-        boxShadow: ['shadow', 'polaroid'].includes(frame)
+        boxShadow: k ? photo ? `0 ${3*k}mm ${12*k}mm rgba(15,23,42,.28)` : undefined : ['shadow', 'polaroid'].includes(frame)
           ? '1mm 2mm 3mm #0004'
           : undefined,
-        padding: frame === 'polaroid' ? '2mm 2mm 8mm' : undefined,
-        background: frame === 'polaroid' ? '#fff' : undefined,
+        padding: k ? `${pad*k}mm ${pad*k}mm ${(frame==='polaroid'?62:pad)*k}mm` : frame === 'polaroid' ? '2mm 2mm 8mm' : undefined,
+        background: k ? photo ? '#fff' : frame==='border'?'#1f2937':undefined : frame === 'polaroid' ? '#fff' : undefined,
       }}
     >
       <div
@@ -163,6 +176,8 @@ function ImagePicture({ element: el }: { element: PageElement }) {
           width: '100%',
           height: '100%',
           overflow: 'hidden',
+          borderRadius: k&&frame==='shadow'?`${6*k}mm`:undefined,
+          boxShadow: k&&frame==='shadow'?`0 ${6*k}mm ${18*k}mm rgba(15,23,42,.35)`:undefined,
           transform: el.flip ? 'scaleX(-1)' : undefined,
         }}
       >
@@ -370,6 +385,7 @@ export function EmbedContent({ element: el }: { element: PageElement }) {
       active = false;
     };
   }, [url, el.embedKind]);
+  if (!url && el.designScale) return <ImagePlaceholder element={{...el,placeholder:el.alt||'Video oder Webseite einfügen'}}/>;
   if (el.embedKind === 'app')
     return (
       <div className="embed-content" onPointerDown={(e) => e.stopPropagation()}>

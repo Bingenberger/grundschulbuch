@@ -3,6 +3,7 @@ import { relink } from '@/lib/learning/uk';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useEditor, flushEditor } from '@/lib/editor-store';
 import { api } from '@/lib/client-api';
+import { applyInsertionMode, templatePolicy, type TemplatePolicies } from '@/lib/template-policy.mjs';
 import {
   uuid,
   clone,
@@ -45,13 +46,14 @@ import ElementActions from './editor/ElementActions';
 import InlineText from './editor/InlineText';
 import { settleText, useTextEditing } from './editor/use-text-editing';
 import AnswerField, { isAnswerField } from './editor/AnswerField';
+import TemplateTextField,{isLockedTemplateField} from './editor/TemplateTextField';
 import { fitText } from './editor/text-measure';
 import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
 import { elementCenter, resizeAtCorner, rotateTo, type Corner } from '@/lib/transform';
-import PageBar from './editor/PageBar';
+import PageBar, { type SchoolDraft } from './editor/PageBar';
 import TemplateChooser from './editor/TemplateChooser';
 import PageTiles from './editor/PageTiles';
-import { applyTemplate, templateCatalog } from './editor/page-templates';
+import { applyTemplate, templateCatalog, type TemplateEntry } from './editor/page-templates';
 import { SelectBar, ShapesBar, findStamp } from './editor/ContextBars';
 import { featuresFor } from '@/lib/features';
 import { LinkContext, LinkLayer } from './LinkContext';
@@ -101,24 +103,54 @@ const cloneElements = (elements: PageElement[], offset = 5) => {
       id: uuid(),
       groupId: el.groupId ? groups.get(el.groupId) : undefined,
       x: Math.min(297, el.x + offset),
-      y: Math.min(297, el.y + offset),
+      y: el.y + offset,
     };
   });
 };
+const STORED = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+/** What “Für alle veröffentlichen” does with this page (admins). */
+function schoolDraftFor(page: Page, all: TemplateEntry[]): SchoolDraft {
+  const entry = page.template ? all.find((e) => e.key === page.template) : undefined;
+  const categories = [...new Set(all.filter((e) => e.schoolId && STORED.test(e.schoolId)).map((e) => e.category))];
+  const base = { title: entry?.title || '', category: entry?.category || 'Schulvorlagen', categories };
+  if (entry?.replaced) return { ...base, note: `Aktualisiert die geänderte Vorlage „${entry.title}“ für alle.` };
+  if (entry?.schoolId && STORED.test(entry.schoolId)) return { ...base, note: `Aktualisiert die Schulvorlage „${entry.title}“ für alle.` };
+  if (entry && !entry.configure && !entry.savedId && /^(paper-|bp-|tpl-start-)/.test(entry.key))
+    return { ...base, note: `Ersetzt die eingebaute Vorlage „${entry.title}“ für alle. In der Verwaltung lässt sich das Original wiederherstellen.` };
+  return { ...base, title: '', category: 'Schulvorlagen', note: 'Wird als neue Schulvorlage für alle Lehrkräfte veröffentlicht.' };
+}
 export default function Editor({
   initial,
   initialTemplates,
+  hiddenTemplates = [],
+  templatePolicies,
+  templateClasses = [],
+  fixedTemplateClassId,
+  admin = false,
   dictionaryOrigin,
+  templateEditing,
 }: {
   initial: BookData;
   initialTemplates: Template[];
+  /** Catalog keys hidden in the admin area. */
+  hiddenTemplates?: string[];
+  templatePolicies?: TemplatePolicies;
+  templateClasses?: {id:string;title:string}[];
+  fixedTemplateClassId?: string;
+  /** Admins may publish pages as school templates. */
+  admin?: boolean;
   dictionaryOrigin: string;
+  templateEditing?: {savePage:(page:Page)=>Promise<Page>;tools:React.ReactNode};
 }) {
   const s = useEditor();
   const recognition = useShapeRecognition(s.recognizeShapes && !['water', 'fill'].includes(s.brush), s.activeId);
   const cancelRecognition = recognition.cancel;
   const ready = s.book?.id === initial.book.id;
   const [templates, setTemplates] = useState(initialTemplates);
+  const [chosenTemplateClass, setChosenTemplateClass] = useState(()=>templateClasses.some(c=>c.id===initial.pages[0]?.templateClassId) ? initial.pages[0].templateClassId! : '');
+  const templateClassId = fixedTemplateClassId || chosenTemplateClass;
+  const [configuredEndless,setConfiguredEndless]=useState(false);
+  const [configuredTemplate, setConfiguredTemplate] = useState<string | null>(null);
   /** Template chooser: for a new page or to change the current page. */
   const [templateMode, setTemplateMode] = useState<'new' | 'change' | null>(null);
   const [showImages, setShowImages] = useState(false);
@@ -159,12 +191,19 @@ export default function Editor({
   const [frame, setFrame] = useState<Rect | null>(null);
   const [panel, setPanel] = useState<'insert' | 'page' | null>(null);
   const features = featuresFor('teacher');
+  if(templateEditing)for(const feature of ['pages','addPage','pageManage','files','share','print','templates','worksheet','rename'] as const)features.delete(feature);
   const surface = useRef<HTMLDivElement>(null);
   const gesture = useRef<Gesture | null>(null);
   const scroller = useRef<HTMLDivElement>(null);
   const [clipboard, setClipboard] = useState<PageElement[]>([]);
   const page = s.pages.find((p) => p.id === s.activeId);
-  const catalog = useMemo(() => templateCatalog(templates), [templates]);
+  const catalog = useMemo(() => templateCatalog(templates, hiddenTemplates, false, templatePolicies, templateClassId), [templates, hiddenTemplates,templatePolicies,templateClassId]);
+  function configuredPages(pages: Page[]) {
+    if(configuredEndless)pages=pages.map(p=>({...p,paperMode:'endless'}));
+    if(!configuredTemplate)return pages;
+    return pages.map(p=>applyInsertionMode({...p,template:configuredTemplate,...(templateClassId?{templateClassId}: {})},templatePolicy(templatePolicies,hiddenTemplates,configuredTemplate,templateClassId).insertion));
+  }
+  const schoolDraft = useMemo(() => (admin && page ? schoolDraftFor(page, templateCatalog(templates, [], true)) : undefined), [admin, page, templates]);
   const writing = useTextEditing(page?.id, board);
   const selected =
     page?.elements.filter((el) => s.selected.includes(el.id)) || [];
@@ -192,11 +231,11 @@ export default function Editor({
     return () => window.removeEventListener('keydown', escape);
   }, [stampActive]);
   useEffect(() => {
-    useEditor.getState().load(initial);
+    useEditor.getState().load(initial,'teacher',templateEditing?.savePage);
     return () => {
       useEditor.setState({ selected: [] });
     };
-  }, [initial]);
+  }, [initial,templateEditing?.savePage]);
   useEffect(() => {
     if (!ready || !Object.keys(s.dirty).length || s.conflict || s.saving)
       return;
@@ -268,6 +307,7 @@ export default function Editor({
   }
   function performCommand(command: EditorCommand) {
     if (!page || !s.book) return;
+    if(templateEditing&&['files','newPage'].includes(command))return;
     const editSelected = (fn: (el: PageElement) => PageElement) =>
       s.edit((p) => ({
         ...p,
@@ -290,7 +330,7 @@ export default function Editor({
       editSelected((el) => ({
         ...el,
         x: Math.max(-297, Math.min(594, el.x + dx)),
-        y: Math.max(-297, Math.min(594, el.y + dy)),
+        y: Math.max(-297, Math.min(page.paperMode ? size.height : 594, el.y + dy)),
       }));
       return;
     }
@@ -494,6 +534,7 @@ export default function Editor({
     setDraft(null);
   }
   async function add(input: Page = newPage(page!.ruling, page!.orientation)) {
+    if(templateEditing)throw new Error('Eine Vorlage besteht aus einer Seite.');
     const result = await api<{ book: Notebook; page: Page }>('addPage', {
       id: s.book!.id,
       page: input,
@@ -980,7 +1021,7 @@ export default function Editor({
   if (!ready || !page || !s.book)
     return (
       <main className="seite">
-        <p>Heft wird geöffnet …</p>
+        <p>{templateEditing?'Vorlage wird geöffnet …':'Heft wird geöffnet …'}</p>
       </main>
     );
   return (
@@ -989,9 +1030,9 @@ export default function Editor({
     >
       <EditorHeader
         features={features}
-        backLabel="Mein Regal"
+        backLabel={templateEditing?'Vorlagenverwaltung':'Mein Regal'}
         busy={busy}
-        onBack={() => run(async () => { window.location.assign('/'); })}
+        onBack={() => run(async () => { window.location.assign(templateEditing?'/verwaltung?bereich=vorlagen':'/'); })}
         title={s.book.title}
         onRename={(title) =>
           void run(async () => {
@@ -1020,7 +1061,7 @@ export default function Editor({
           setReader(true);
         }}
         onShare={() => run(async () => { setShowShare(true); })}
-        onPrint={() => run(async () => { window.location.assign(`/drucken/${s.book!.id}`); })}
+        onPrint={s.pages.some(p=>p.paperMode==='endless')?undefined:() => run(async () => { window.location.assign(`/drucken/${s.book!.id}`); })}
         onHelp={() => setShowShortcuts(true)}
         actions={
           <ElementActions
@@ -1043,13 +1084,15 @@ export default function Editor({
           />
         }
       />
+      {templateEditing?.tools}
       {s.error && (
         <div className="error-banner" role="alert">
           {s.error}
-          <button className="knopf compact" onClick={() => void flushEditor()}>
+          {(!s.conflict||!templateEditing)&&<button className="knopf compact" onClick={() => void flushEditor()}>
             Erneut speichern
-          </button>
-          {s.conflict && (
+          </button>}
+          {s.conflict&&templateEditing&&<button className="knopf compact" onClick={()=>window.location.reload()}>Neueste Vorlage öffnen</button>}
+          {s.conflict && !templateEditing && (
             <button
               className="knopf compact"
               onClick={() =>
@@ -1082,7 +1125,7 @@ export default function Editor({
       )}
       <div className="editor-body">
         <ToolRail features={features} active={railActive} onChoose={chooseRail} />
-        <PagePanel
+        {!templateEditing&&<PagePanel
           pages={s.pages}
           pageIds={s.book.pageIds}
           activeId={page.id}
@@ -1091,7 +1134,7 @@ export default function Editor({
           onAdd={() => setTemplateMode('new')}
           onDelete={s.book.pageIds.length > 1 ? (id) => deletePage(id) : undefined}
           onTiles={() => setShowTiles(true)}
-        />
+        />}
         <div className="editor-main">
         <section className="canvas-area">
           <LinkContext.Provider value={links}>
@@ -1166,7 +1209,7 @@ export default function Editor({
                             onHeight={writing.height}
                             onDone={writing.done}
                           />
-                        ) : isAnswerField(el) ? (
+                        ) : isLockedTemplateField(el) ? <TemplateTextField element={el} onText={text=>s.edit(p=>({...p,elements:p.elements.map(e=>e.id===el.id?{...e,text,runs:undefined}:e)}))}/> : isAnswerField(el) ? (
                           <AnswerField element={el} onAnswer={(text) => s.edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === el.id ? { ...e, text } : e)) }))} />
                         ) : undefined}
                       </ElementView>
@@ -1290,10 +1333,28 @@ export default function Editor({
             onTemplates={() => setTemplateMode('new')}
             onChangeTemplate={() => setTemplateMode('change')}
             onTiles={() => setShowTiles(true)}
+            templates={!templateEditing}
             onSaveTemplate={(name) =>
               run(async () => {
                 const template = await api<Template>('template', { title: name, page });
                 setTemplates([...templates, template]);
+              })
+            }
+            school={schoolDraft}
+            onPublishSchool={(title, category) =>
+              run(async () => {
+                const response = await fetch('/api/verwaltung', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ action: 'publishTemplate', title, category, page, key: page.template }),
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error);
+                const template = { ...(result as Template), school: true };
+                setTemplates((list) => [...list.filter((t) => t.id !== template.id), template]);
+                // Later changes update this school template.
+                const key = template.replaces || `tpl-${template.id}`;
+                if (page.template !== key) s.edit((p) => ({ ...p, template: key }));
               })
             }
           />
@@ -1433,8 +1494,9 @@ export default function Editor({
       {sheetDialog && (
         <SheetDialogFor
           kind={sheetDialog}
-          onClose={() => setSheetDialog(null)}
+          onClose={() => { setSheetDialog(null); setConfiguredTemplate(null); setConfiguredEndless(false); }}
           onInsert={async (pages) => {
+            pages = configuredPages(pages);
             if (!(await flushEditor())) throw new Error('Bitte erst die aktuelle Seite speichern.');
             // A notebook with just one empty page gets the first page right there.
             if (s.pages.length === 1 && !page.elements.length) {
@@ -1448,8 +1510,9 @@ export default function Editor({
         <GeneratorDialog
           dictionaryOrigin={dictionaryOrigin}
           initial={typeof showGenerator === 'object' ? showGenerator : undefined}
-          onClose={() => setShowGenerator(false)}
+          onClose={() => { setShowGenerator(false); setConfiguredTemplate(null); setConfiguredEndless(false); }}
           onInsert={async (pages) => {
+            pages = configuredPages(pages);
             if (!(await flushEditor()))
               throw new Error('Bitte erst die aktuelle Seite speichern.');
             for (const p of pages) await add(p);
@@ -1468,6 +1531,10 @@ export default function Editor({
           element={learning === 'new' ? undefined : learning}
           onPages={(pages) =>
             void run(async () => {
+              if(templateEditing){
+                if(pages.length!==1)throw new Error('Eine Vorlage besteht aus einer Seite.');
+                s.edit(p=>({...pages[0],id:p.id,revision:p.revision,template:p.template}));return;
+              }
               // A notebook with just one empty page gets the first page right there.
               if (s.pages.length === 1 && !page.elements.length) {
                 // Links to the first page (e.g. back keys of the communication book) go to this page.
@@ -1482,6 +1549,7 @@ export default function Editor({
             ENABLED.worksheetGenerator
               ? () => {
                   setLearning(null);
+                  setConfiguredTemplate(null); setConfiguredEndless(false);
                   setShowGenerator(true);
                 }
               : undefined
@@ -1575,6 +1643,12 @@ export default function Editor({
               : 'Leere Seiten bekommen auch den Inhalt der Vorlage. Was schon auf der Seite ist, bleibt erhalten.'
           }
           entries={templateMode === 'change' ? catalog.filter((e) => !e.configure) : catalog}
+          contextControls={!fixedTemplateClassId && templateClasses.length ? <label className="template-scope">Vorlagen für
+            <select aria-label="Vorlagen für Klasse" value={chosenTemplateClass} onChange={e=>setChosenTemplateClass(e.target.value)}>
+              <option value="">Schulweite Vorgaben</option>
+              {templateClasses.map(c=><option key={c.id} value={c.id}>{c.title}</option>)}
+            </select>
+          </label> : undefined}
           current={templateMode === 'change' ? page.template : undefined}
           orientation={templateMode === 'change' ? page.orientation : 'landscape'}
           lockOrientation={templateMode === 'change' && page.elements.length > 0}
@@ -1596,6 +1670,8 @@ export default function Editor({
           }
           onPick={(entry, orientation) => {
             if (entry.configure) {
+              setConfiguredTemplate(entry.key);
+              setConfiguredEndless(entry.build(orientation)[0]?.paperMode==='endless');
               setTemplateMode(null);
               if (entry.configure.kind === 'rechnen') setSheetDialog('math');
               else if (entry.configure.kind === 'uhr') setSheetDialog('clock');

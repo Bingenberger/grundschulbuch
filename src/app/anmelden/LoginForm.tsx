@@ -89,7 +89,7 @@ export default function LoginForm() {
 
       {mode === 'code' && (
         <p className="hinweis" style={{ marginBottom: 0 }}>
-          Den Einmalcode für den ersten Zugang oder eine vergessene PIN erzeugt die Administration auf dem Server.
+          Den Einmalcode für den ersten Zugang oder eine vergessene PIN gibt dir die Verwaltung der Schule.
         </p>
       )}
     </form>

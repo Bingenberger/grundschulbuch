@@ -9,6 +9,8 @@ import { loginChild, redeemHelpCode } from '@/lib/classes.mjs';
 import * as books from '@/lib/notebooks.mjs';
 import { boundedBody } from '@/lib/http';
 import { dataPath, readJson, withLock, writeJson } from '@/lib/store.mjs';
+import {templateCatalog,PAPER} from '@/components/editor/page-templates';
+import type {PageElement} from '@/lib/notebook-model';
 export const dynamic = 'force-dynamic';
 // Failed scans share a bounded persistent bucket. Real QR cards contain ample entropy.
 async function loginLimit() {
@@ -80,9 +82,16 @@ export async function POST(request: Request) {
         if (!data.book.allowChildPages || data.book.trashed)
           return jsonError('Bitte deine Lehrkraft um eine neue Seite.', 403);
         const page = books.validatePage(body.page);
-        if (page.elements.length)
-          return jsonError('Nur leere Seiten dürfen hinzugefügt werden.', 403);
-        result = await books.addPage(child.id, body.id, page);
+        // Children choose paper only; derive its key instead of trusting a
+        // missing or different template key supplied by an old client.
+        page.template = `paper-${page.ruling}`;
+        const school=await books.readSchoolTemplates();
+        const entry=templateCatalog([],school.hidden,false,school.policies,child.classId).find(e=>e.category===PAPER&&e.key===page.template);
+        if(!entry)return jsonError('Diese Papiervorlage ist für deine Klasse gesperrt.',403);
+        const trusted={...entry.build(page.orientation)[0],...(page.paperMode?{paperMode:page.paperMode}:{})};
+        const content=(elements:PageElement[])=>JSON.stringify(elements.map(({id,...rest})=>{void id;return rest;}));
+        if(page.elements.length&&content(page.elements)!==content(books.validatePage(trusted).elements))return jsonError('Nur Papiervorlagen dürfen hinzugefügt werden.',403);
+        result = await books.addPage(child.id, body.id, trusted);
         break;
       }
       case 'trash':

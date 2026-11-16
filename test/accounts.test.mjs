@@ -115,3 +115,30 @@ test('Gesperrte Konten verlieren Sitzungen und können sich weder mit PIN noch m
   await accounts.setAccountBlocked(user.name, false); assert.equal((await accounts.login(user.name, '483920')).ok, true);
   await assert.rejects(accounts.setAccountBlocked('Frau Beispiel', true), /letzte aktive Admin/);
 });
+
+test('Verwaltung: Konten anlegen, Einmalcode, Rolle, Sperre, Löschen nur unbenutzt', async () => {
+  const { account, code } = await accounts.createAccount('Frau Verwaltung', 'lehrkraft');
+  assert.equal(account.role, 'lehrkraft');
+  assert.equal(account.hasPin, false);
+  assert.ok(account.codeUntil && Date.parse(account.codeUntil) > Date.now() + 6 * 86_400_000);
+  await assert.rejects(accounts.createAccount('frau verwaltung', 'admin'), { status: 409 });
+  assert.equal((await accounts.redeemOneTimeCode('Frau Verwaltung', code, '483920')).ok, true);
+  await assert.rejects(accounts.deleteUnusedAccount(account.id), /schon benutzt/);
+  const renamed = await accounts.renameAccount(account.id, 'Frau Neu');
+  assert.equal(renamed.name, 'Frau Neu');
+  const reset = await accounts.resetAccountCode(account.id);
+  assert.equal((await accounts.redeemOneTimeCode('Frau Neu', reset.code, '573829')).ok, true);
+  assert.equal((await accounts.setAccountRole(account.id, 'admin')).role, 'admin');
+  const blocked = await accounts.setAccountBlockedById(account.id, true);
+  assert.equal(blocked.blocked, true);
+  assert.equal((await accounts.login('Frau Neu', '573829')).ok, false);
+  await accounts.setAccountBlockedById(account.id, false);
+  const unused = await accounts.createAccount('Herr Unbenutzt', 'lehrkraft');
+  await accounts.deleteUnusedAccount(unused.account.id);
+  assert.ok(!(await accounts.listAdminAccounts()).some((a) => a.id === unused.account.id));
+  // The last active admin keeps the rights.
+  for (const a of await accounts.listAdminAccounts())
+    if (a.role === 'admin' && a.id !== account.id) await accounts.setAccountRole(a.id, 'lehrkraft').catch(() => {});
+  await assert.rejects(accounts.setAccountRole(account.id, 'lehrkraft'), /mindestens ein aktives Admin/);
+  await assert.rejects(accounts.setAccountBlockedById(account.id, true), /letzte aktive Admin/);
+});

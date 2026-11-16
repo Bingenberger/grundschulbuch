@@ -2,6 +2,7 @@
 // tails, bubbles and spikes keep their shape and look the same in the editor,
 // in print and in the HTML export.
 import type { PageElement } from '@/lib/notebook-model';
+import vectors from '@/lib/reference/template-vectors.json';
 
 export type TextFrameKind = 'none' | 'box' | 'note' | 'speech' | 'thought' | 'shout' | 'banner';
 
@@ -117,6 +118,8 @@ export function framePaths(kind: TextFrameKind, w: number, h: number): string[] 
 
 /** The frame behind the text; nothing when there is neither line nor fill. */
 export default function TextFrame({ element: el }: { element: PageElement }) {
+  const reference=el.referenceFrameId?(vectors as Record<string,{markup:string;viewBox:number[]}>)[el.referenceFrameId]:undefined;
+  if(reference){const [x,y,w,h]=reference.viewBox,k=el.designScale||297/1400;return <svg className="text-frame" viewBox={reference.viewBox.join(' ')} preserveAspectRatio="none" aria-hidden="true" style={{position:'absolute',left:`${x*el.width/100}mm`,top:`${y*el.height/100}mm`,width:`${w*el.width/100}mm`,height:`${h*el.height/100}mm`,'--reference-fill':el.background||'none','--reference-stroke':el.borderColor||'none'} as React.CSSProperties} dangerouslySetInnerHTML={{__html:reference.markup.replace(/stroke-width="([\d.]+)"/g,(_,n)=>`stroke-width="${Number(n)*k}mm"`)}}/>;}
   const kind = frameKind(el);
   const fill = frameFill(el);
   const line = frameWidth(el);

@@ -5,7 +5,9 @@ import InkBrush from './InkBrush';
 import { LinkLayer } from './LinkContext';
 import TextFrame, { framePadding } from './TextFrame';
 import { MicGlyph } from './learning/Cassette';
-import AudioButton from './learning/AudioButton';
+import AudioButton, { TemplateAudioPlaceholder } from './learning/AudioButton';
+import {fontFamilyFor} from '@/lib/template-font';
+import pageDesigns from '@/lib/reference/page-templates.json';
 import { eraserShapePath } from '@/lib/eraser-shapes';
 import Activity from './learning/Activity';
 import Widget from './learning/Widget';
@@ -18,6 +20,14 @@ import {
 import { dimensions, type Page, type PageElement } from '@/lib/notebook-model';
 export function RulingView({ page }: { page: Page }) {
   const uid = useId().replace(/:/g, '');
+  const original=page.paperReferenceId?pageDesigns.find(d=>d.id===page.paperReferenceId):undefined;
+  if(original&&page.paperMode==='endless'){
+    const size=dimensions(page),height=size.height/size.width*1400;
+    const top=original.grid?.top||(original.id==='music'?110:0);
+    const period=original.grid?.pitch||({'squares':30,'squares-big':50,'dots':36,'music':128}[original.id]||990);
+    return <svg className="lineatur" width="100%" height="100%" viewBox={`0 0 1400 ${height}`} aria-hidden="true"><defs><pattern id={uid} width="1400" height={period} y={top} patternUnits="userSpaceOnUse"><g transform={`translate(0,${-top})`} dangerouslySetInnerHTML={{__html:page.lineColor?original.svg.replaceAll(original.line,page.lineColor):original.svg}}/></pattern></defs><rect y={top} width="1400" height={height-top} fill={`url(#${uid})`}/></svg>;
+  }
+  if(original)return <svg className="lineatur" width="100%" height="100%" viewBox="0 0 1400 990" preserveAspectRatio="xMidYMid meet" aria-hidden="true" dangerouslySetInnerHTML={{__html:page.lineColor?original.svg.replaceAll(original.line,page.lineColor):original.svg}}/>;
   const { width, height } = dimensions(page);
   const r = page.ruling;
   const blue = page.lineColor || '#a0bcd3';
@@ -140,18 +150,19 @@ export function RulingView({ page }: { page: Page }) {
 /** Look of a text element; shared by the page and the inline text editor. */
 export function textStyle(el: PageElement): React.CSSProperties {
   return {
-    fontFamily: `"${el.font}", sans-serif`,
+    fontFamily: `"${fontFamilyFor(el)}", sans-serif`,
     fontSize: `${((el.fontSize || 18) * 25.4) / 72}mm`,
     fontWeight: el.bold ? 700 : 400,
     fontStyle: el.italic ? 'italic' : undefined,
     textDecoration: el.underline ? 'underline' : undefined,
     textAlign: el.align || 'left',
-    padding: framePadding(el),
+    padding: el.referencePadding ? el.referencePadding.replace(/([\d.]+)px/g,(_,n)=>`${Number(n)*(el.designScale||297/1400)}mm`) : framePadding(el),
     position: 'relative',
     color: el.color,
     whiteSpace: 'pre-wrap',
     overflowWrap: 'break-word',
-    lineHeight: el.lineHeight || 1.6,
+    lineHeight: el.textLinePitch ? `${el.textLinePitch}mm` : el.lineHeight || 1.6,
+    ...(el.referenceCentered?{top:'50%',transform:'translateY(-50%)'}:{}),
   };
 }
 export function Stroke({ element: el }: { element: PageElement }) {
@@ -252,7 +263,9 @@ export function ElementContent({ element: el }: { element: PageElement }) {
     );
   if (el.type === 'embed') return <EmbedContent element={el} />;
   if (el.type === 'image') return <ImageContent element={el} />;
-  if (el.type === 'audio' && !el.src)
+  if (el.type === 'audio' && !el.src && !el.speechText && el.designScale)
+    return <TemplateAudioPlaceholder element={el}/>;
+  if (el.type === 'audio' && !el.src && !el.speechText)
     return (
       <div className="audio-placeholder">
         <MicGlyph />
@@ -281,7 +294,7 @@ export function ElementContent({ element: el }: { element: PageElement }) {
               {run.text}
             </span>
           ))
-        : el.text}
+        : el.text || (el.textHint ? <span style={{color:'#94a3b8'}}>{el.textHint}</span> : '')}
     </div>
     </>
   );
