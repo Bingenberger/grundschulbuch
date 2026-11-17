@@ -2096,6 +2096,42 @@ input[type='checkbox'] {
   align-items: flex-start;
   gap: 6px 18px;
 }
+.option-fold {
+  flex-shrink: 0;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 4px 10px;
+  border: 1px solid #dce2d6;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 12px;
+  color: #33463c;
+  white-space: nowrap;
+}
+.option-fold:hover {
+  background: #edf1e7;
+}
+.option-fold small {
+  font-size: 11px;
+  color: #7e8b79;
+}
+.option-bar:not(.folded) > .option-fold {
+  position: sticky;
+  top: 0;
+}
+.option-bar.folded {
+  padding: 4px 12px;
+}
+.option-bar.folded > .option-fold {
+  border-color: transparent;
+  background: none;
+}
+.option-bar.folded > .option-fold:hover {
+  background: #edf1e7;
+}
 .option-group {
   display: flex;
   flex-direction: column;
@@ -2336,6 +2372,10 @@ input[type='checkbox'] {
   }
   .option-bar {
     flex-direction: column;
+  }
+  .option-bar:not(.folded) > .option-fold {
+    order: -1;
+    align-self: flex-end;
   }
 }
 .board-choice {

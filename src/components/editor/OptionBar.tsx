@@ -1,5 +1,5 @@
 'use client';
-import { useState, type ReactNode } from 'react';
+import { useState, useSyncExternalStore, type ReactNode } from 'react';
 import Icon, { type IconName } from '../Icon';
 
 export type OptionSection = {
@@ -9,9 +9,37 @@ export type OptionSection = {
   content: ReactNode;
 };
 
+// Folded or not holds for every bar (tool, element, page) and is remembered on
+// the device: on a tablet the bar takes much of the screen.
+const storageKey = 'grundschulbuch-option-bar-folded';
+const listeners = new Set<() => void>();
+let folded: boolean | null = null;
+function readFolded() {
+  if (folded === null) {
+    try {
+      folded = localStorage.getItem(storageKey) === '1';
+    } catch {
+      folded = false;
+    }
+  }
+  return folded;
+}
+function setFolded(value: boolean) {
+  folded = value;
+  try {
+    localStorage.setItem(storageKey, value ? '1' : '0');
+  } catch {}
+  listeners.forEach((l) => l());
+}
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
 /**
  * The bottom bar shows the settings of whatever is chosen: a tool, an element
- * or the page. Long lists are split into sections chosen on the left.
+ * or the page. Long lists are split into sections chosen on the left. It can be
+ * folded to a slim strip.
  */
 export default function OptionBar({
   label,
@@ -24,7 +52,18 @@ export default function OptionBar({
 }) {
   const visible = sections?.filter(Boolean) ?? [];
   const [chosen, setChosen] = useState<string>('');
+  const isFolded = useSyncExternalStore(subscribe, readFolded, () => false);
   const current = visible.find((s) => s.id === chosen) || visible[0];
+  if (isFolded)
+    return (
+      <section className="option-bar folded" aria-label={label}>
+        <button type="button" className="option-fold" aria-expanded={false} onClick={() => setFolded(false)}>
+          <Icon name="up" size={20} />
+          <span>{label}</span>
+          <small>ausklappen</small>
+        </button>
+      </section>
+    );
   return (
     <section className="option-bar" aria-label={label}>
       {visible.length > 1 && (
@@ -46,6 +85,10 @@ export default function OptionBar({
         {children}
         {current?.content}
       </div>
+      <button type="button" className="option-fold" aria-expanded onClick={() => setFolded(true)}>
+        <Icon name="down" size={20} />
+        <span>Einklappen</span>
+      </button>
     </section>
   );
 }
