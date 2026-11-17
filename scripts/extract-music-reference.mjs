@@ -18,26 +18,30 @@ function objects(node) {
 objects(parsed);
 code += '\nvar musicExtraTemplates = [' + extras.join(',') + '];\n';
 code += `
-async function musicCaptureStream(includeMicrophone = false) {
+async function musicCaptureNode(includeMicrophone = false) {
   const engine = Ko();
   if (!engine) throw Error('Audio wird von diesem Browser nicht unterstützt.');
+  // Resume while the tap is still a user gesture (iPad), and again after the
+  // microphone was opened: iOS interrupts running audio when capture starts.
+  const resumed = engine.ctx.state === 'running' ? null : engine.ctx.resume().catch(() => undefined);
   const microphone = includeMicrophone ? await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }) : null;
-  let destination, source, connected = false;
+  let tap, source, connected = false;
   try {
-    if (engine.ctx.state === 'suspended') await engine.ctx.resume();
-    destination = engine.ctx.createMediaStreamDestination();
-    engine.comp.connect(destination); connected = true;
-    if (microphone) { source = engine.ctx.createMediaStreamSource(microphone); source.connect(destination); }
+    await resumed;
+    if (engine.ctx.state !== 'running') await engine.ctx.resume();
+    tap = engine.ctx.createGain();
+    engine.comp.connect(tap); connected = true;
+    if (microphone) { source = engine.ctx.createMediaStreamSource(microphone); source.connect(tap); }
     let released = false;
-    return { stream: destination.stream, release: () => {
+    return { ctx: engine.ctx, node: tap, release: () => {
       if (released) return;
       released = true;
-      engine.comp.disconnect(destination); source?.disconnect();
+      engine.comp.disconnect(tap); source?.disconnect();
       microphone?.getTracks().forEach(track => track.stop());
     } };
   } catch (error) {
-    if (connected) engine.comp.disconnect(destination);
-    source?.disconnect(); destination?.stream.getTracks().forEach(track => track.stop());
+    if (connected) engine.comp.disconnect(tap);
+    source?.disconnect();
     microphone?.getTracks().forEach(track => track.stop());
     throw error;
   }
@@ -82,7 +86,7 @@ function extract(roots) {
   for (const name of roots) { if (!names.has(name)) throw Error('Missing reference symbol: ' + name); visit(names.get(name)); }
   return [...seen].map(s => definitions.get(s)).sort((a, b) => a.pos - b.pos).map(n => ts.isVariableDeclaration(n) ? 'var ' + n.getText(source) + ';' : n.getText(source)).join('\n');
 }
-const aliases = { tG: 'cleanKaraokeSettings', pxe: 'karaokePictureCandidates', QW: 'karaokeSongSettings', b_: 'parseLyrics', T_: 'lyricWords', C_: 'wordKey', Kie: 'parseMusicLrc', qie: 'exportMusicLrc', vc: 'parseMusicMidi', yc: 'pickMidiTrack', xc: 'midiMelody', _l: 'sequenceBeat', wl: 'sequenceMelody', Dl: 'sequenceKey', _o: 'instrumentDefaults', YA: 'fallingInstrument', Fue: 'echoInstrument', jo: 'instrumentNotes', yo: 'musicNoteName', gs: 'musicAudioTime', _s: 'playMetronomeClick', ls: 'playMusicDrum', ms: 'playMusicTone', ps: 'playMusicSample', hs: 'stopMusicSound', Bie: 'renderKaraoke', Vs: 'renderInstrument', zce: 'renderDrums', kle: 'renderMetronome', Yc: 'renderEcho', yle: 'renderSequencer', pee: 'renderNoteQuiz', Eu: 'renderFalling', Ud: 'renderStudio', lp: 'renderTuner', musicCaptureStream: 'musicCaptureStream', musicStop: 'musicStop', musicRegister: 'musicRegister', MUSIC_CSS: 'MUSIC_CSS', Pu: 'studioEffects', Fu: 'studioMoods' };
+const aliases = { tG: 'cleanKaraokeSettings', pxe: 'karaokePictureCandidates', QW: 'karaokeSongSettings', b_: 'parseLyrics', T_: 'lyricWords', C_: 'wordKey', Kie: 'parseMusicLrc', qie: 'exportMusicLrc', vc: 'parseMusicMidi', yc: 'pickMidiTrack', xc: 'midiMelody', _l: 'sequenceBeat', wl: 'sequenceMelody', Dl: 'sequenceKey', _o: 'instrumentDefaults', YA: 'fallingInstrument', Fue: 'echoInstrument', jo: 'instrumentNotes', yo: 'musicNoteName', gs: 'musicAudioTime', _s: 'playMetronomeClick', ls: 'playMusicDrum', ms: 'playMusicTone', ps: 'playMusicSample', hs: 'stopMusicSound', Bie: 'renderKaraoke', Vs: 'renderInstrument', zce: 'renderDrums', kle: 'renderMetronome', Yc: 'renderEcho', yle: 'renderSequencer', pee: 'renderNoteQuiz', Eu: 'renderFalling', Ud: 'renderStudio', lp: 'renderTuner', musicCaptureNode: 'musicCaptureNode', musicStop: 'musicStop', musicRegister: 'musicRegister', MUSIC_CSS: 'MUSIC_CSS', Pu: 'studioEffects', Fu: 'studioMoods' };
 let runtime = extract(Object.keys(aliases));
 for (const [from, to] of Object.entries({ 'LH Andika': 'Andika', 'LH Nunito': 'Nunito', 'LH Grundschrift': 'Playwrite DE Grund', 'LH Schreibschrift SAS': 'Playwrite DE SAS', 'LH Schreibschrift': 'Playwrite DE VA', 'LH Druckschrift': 'Andika', 'LH Lexend': 'Lexend', 'LH Atkinson Hyperlegible': 'Atkinson Hyperlegible', 'LH Merriweather': 'Merriweather', 'LH Caveat': 'Caveat', 'LH Comic': 'Bangers' })) runtime = runtime.replaceAll(from, to);
 await fs.writeFile('src/lib/reference/music-runtime.ts', '/* eslint-disable */\n// @ts-nocheck\n// Generated from Lernsachen-Heft.html by scripts/extract-music-reference.mjs.\n' + runtime + '\nexport { ' + Object.entries(aliases).map(([a, b]) => a === b ? a : a + ' as ' + b).join(', ') + ' };\n');

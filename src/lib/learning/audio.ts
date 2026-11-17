@@ -336,3 +336,55 @@ export async function mixAudio(
   }
   return wavBlob(await offline.startRendering());
 }
+/**
+ * Records what flows through an audio node as WAV (mono, at most 24 kHz).
+ * MediaRecorder cannot be relied on for sound made in the browser itself: on
+ * the iPad it records nothing from a MediaStreamAudioDestinationNode.
+ */
+export function recordNode(ctx: BaseAudioContext, node: AudioNode) {
+  const step = Math.max(1, Math.round(ctx.sampleRate / 24000)),
+    rate = ctx.sampleRate / step,
+    parts: Float32Array[] = [],
+    processor = ctx.createScriptProcessor(4096, 2, 1),
+    mute = ctx.createGain();
+  let carry = 0;
+  mute.gain.value = 0;
+  processor.onaudioprocess = (e) => {
+    const input = e.inputBuffer,
+      channels = Array.from({ length: input.numberOfChannels }, (_, c) => input.getChannelData(c)),
+      out = new Float32Array(Math.ceil((input.length - carry) / step));
+    let n = 0, i = carry;
+    for (; i < input.length; i += step) {
+      let sum = 0;
+      for (const data of channels) sum += data[i];
+      out[n++] = sum / channels.length;
+    }
+    carry = i - input.length;
+    parts.push(n === out.length ? out : out.subarray(0, n));
+  };
+  node.connect(processor);
+  processor.connect(mute);
+  mute.connect(ctx.destination);
+  let done = false;
+  const disconnect = () => {
+    if (done) return;
+    done = true;
+    processor.onaudioprocess = null;
+    try { node.disconnect(processor); } catch {}
+    processor.disconnect();
+    mute.disconnect();
+  };
+  return {
+    stop(): Blob | null {
+      disconnect();
+      const length = parts.reduce((sum, p) => sum + p.length, 0);
+      if (!length) return null;
+      const buffer = ctx.createBuffer(1, length, rate),
+        data = buffer.getChannelData(0);
+      let at = 0;
+      for (const p of parts) { data.set(p, at); at += p.length; }
+      return wavBlob(buffer);
+    },
+    cancel: disconnect,
+  };
+}

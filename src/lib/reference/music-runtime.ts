@@ -4100,26 +4100,30 @@ function tG(e17) {
   let r10 = (e17.nopic ?? []).filter((e18) => t10.has(e18)), i10 = b_(e17.text, 1).verses, a10 = (e17.skip ?? []).filter((e18) => e18 <= i10), o10 = b_(e17.text, 1).slots.find((e18) => e18.kind === `line`)?.text.replace(/[,.;:!?]+$/, ``) ?? ``, s10 = e17.title.trim() || o10.replace(/\[([^\]]*)\]/g, `$1`).slice(0, 120) || `Mein Lied`;
   return { ...e17, title: s10, pics: n10, nopic: r10.length ? r10 : void 0, skip: a10.length && a10.length < i10 ? a10 : void 0 };
 }
-async function musicCaptureStream(includeMicrophone = false) {
+async function musicCaptureNode(includeMicrophone = false) {
   const engine = Ko();
   if (!engine) throw Error('Audio wird von diesem Browser nicht unterstützt.');
+  // Resume while the tap is still a user gesture (iPad), and again after the
+  // microphone was opened: iOS interrupts running audio when capture starts.
+  const resumed = engine.ctx.state === 'running' ? null : engine.ctx.resume().catch(() => undefined);
   const microphone = includeMicrophone ? await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }) : null;
-  let destination, source, connected = false;
+  let tap, source, connected = false;
   try {
-    if (engine.ctx.state === 'suspended') await engine.ctx.resume();
-    destination = engine.ctx.createMediaStreamDestination();
-    engine.comp.connect(destination); connected = true;
-    if (microphone) { source = engine.ctx.createMediaStreamSource(microphone); source.connect(destination); }
+    await resumed;
+    if (engine.ctx.state !== 'running') await engine.ctx.resume();
+    tap = engine.ctx.createGain();
+    engine.comp.connect(tap); connected = true;
+    if (microphone) { source = engine.ctx.createMediaStreamSource(microphone); source.connect(tap); }
     let released = false;
-    return { stream: destination.stream, release: () => {
+    return { ctx: engine.ctx, node: tap, release: () => {
       if (released) return;
       released = true;
-      engine.comp.disconnect(destination); source?.disconnect();
+      engine.comp.disconnect(tap); source?.disconnect();
       microphone?.getTracks().forEach(track => track.stop());
     } };
   } catch (error) {
-    if (connected) engine.comp.disconnect(destination);
-    source?.disconnect(); destination?.stream.getTracks().forEach(track => track.stop());
+    if (connected) engine.comp.disconnect(tap);
+    source?.disconnect();
     microphone?.getTracks().forEach(track => track.stop());
     throw error;
   }
@@ -4133,4 +4137,4 @@ function musicRegister(saveSequence, studioChange, studioAdd, studioEdit, sequen
   hle(saveSequence); gle(sequenceRecord); Uee(studioChange, studioAdd, studioEdit); Lce(padRecord); Aie(karaokeAudio, karaokeTiming);
 }
 var MUSIC_CSS = [Ri, Zc, mee, kee, Jee, Ote, xle, Ale, Jie].join('\n');
-export { tG as cleanKaraokeSettings, pxe as karaokePictureCandidates, QW as karaokeSongSettings, b_ as parseLyrics, T_ as lyricWords, C_ as wordKey, Kie as parseMusicLrc, qie as exportMusicLrc, vc as parseMusicMidi, yc as pickMidiTrack, xc as midiMelody, _l as sequenceBeat, wl as sequenceMelody, Dl as sequenceKey, _o as instrumentDefaults, YA as fallingInstrument, Fue as echoInstrument, jo as instrumentNotes, yo as musicNoteName, gs as musicAudioTime, _s as playMetronomeClick, ls as playMusicDrum, ms as playMusicTone, ps as playMusicSample, hs as stopMusicSound, Bie as renderKaraoke, Vs as renderInstrument, zce as renderDrums, kle as renderMetronome, Yc as renderEcho, yle as renderSequencer, pee as renderNoteQuiz, Eu as renderFalling, Ud as renderStudio, lp as renderTuner, musicCaptureStream, musicStop, musicRegister, MUSIC_CSS, Pu as studioEffects, Fu as studioMoods };
+export { tG as cleanKaraokeSettings, pxe as karaokePictureCandidates, QW as karaokeSongSettings, b_ as parseLyrics, T_ as lyricWords, C_ as wordKey, Kie as parseMusicLrc, qie as exportMusicLrc, vc as parseMusicMidi, yc as pickMidiTrack, xc as midiMelody, _l as sequenceBeat, wl as sequenceMelody, Dl as sequenceKey, _o as instrumentDefaults, YA as fallingInstrument, Fue as echoInstrument, jo as instrumentNotes, yo as musicNoteName, gs as musicAudioTime, _s as playMetronomeClick, ls as playMusicDrum, ms as playMusicTone, ps as playMusicSample, hs as stopMusicSound, Bie as renderKaraoke, Vs as renderInstrument, zce as renderDrums, kle as renderMetronome, Yc as renderEcho, yle as renderSequencer, pee as renderNoteQuiz, Eu as renderFalling, Ud as renderStudio, lp as renderTuner, musicCaptureNode, musicStop, musicRegister, MUSIC_CSS, Pu as studioEffects, Fu as studioMoods };

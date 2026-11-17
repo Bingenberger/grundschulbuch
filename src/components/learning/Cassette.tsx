@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useDecorative } from '../Decorative';
+import { recordNode } from '@/lib/learning/audio';
 
 /** Microphone drawn inline (works in the HTML export without icon files). */
 export function MicGlyph() {
@@ -98,6 +99,48 @@ const Twin = ({ back = false }: { back?: boolean }) => (
   </svg>
 );
 
+type CaptureNode = { ctx: BaseAudioContext; node: AudioNode; release: () => void };
+
+/** Records the sound of the instruments (and microphone) as WAV. */
+async function tapTake(source: CaptureNode) {
+  try {
+    const rec = recordNode(source.ctx, source.node);
+    return {
+      stop: async () => { const blob = rec.stop(); source.release(); return blob; },
+      cancel: () => { rec.cancel(); source.release(); },
+    };
+  } catch (e) {
+    source.release();
+    throw e;
+  }
+}
+
+/** Records the microphone with MediaRecorder. */
+async function microphoneTake() {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+  const close = () => stream.getTracks().forEach((t) => t.stop());
+  let media: MediaRecorder;
+  try {
+    media = new MediaRecorder(stream);
+    media.start(250);
+  } catch {
+    close();
+    throw new Error('recorder');
+  }
+  const chunks: Blob[] = [];
+  media.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+  const stopped = new Promise<void>((resolve) => { media.onstop = () => resolve(); });
+  return {
+    stop: async () => {
+      if (media.state !== 'inactive') media.stop();
+      await stopped;
+      close();
+      return new Blob(chunks, { type: media.mimeType || 'audio/webm' });
+    },
+    cancel: () => { if (media.state !== 'inactive') media.stop(); close(); },
+  };
+}
+
 /**
  * Cassette recorder on the page, built like a toy: the record key records
  * right away with the microphone (press again to stop), then listen, wind
@@ -115,7 +158,7 @@ export function CassetteRecorder({
 }: {
   title: string;
   /** Record instrument audio, optionally mixed with the microphone. */
-  capture?: (microphone: boolean) => { stream: MediaStream; release: () => void } | Promise<{ stream: MediaStream; release: () => void }>;
+  capture?: (microphone: boolean) => Promise<CaptureNode>;
   src?: string;
   interactive: boolean;
   /** Saves a recording made with the record key. */
@@ -148,57 +191,42 @@ export function CassetteRecorder({
     audio.current?.pause();
     setMessage('');
     setMode('starting');
-    let stream: MediaStream;
-    let release: (() => void) | undefined;
+    // A take: instruments are tapped from the audio graph as WAV, the
+    // microphone alone goes through MediaRecorder.
+    let take: { stop: () => Promise<Blob | null>; cancel: () => void };
     try {
-      if (capture) { const source = await capture(microphone); stream = source.stream; release = source.release; }
-      else stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
-    } catch {
+      take = capture ? await tapTake(await capture(microphone)) : await microphoneTake();
+    } catch (e) {
       setMode('idle');
-      setMessage(!capture || microphone ? 'Die Aufnahme konnte nicht gestartet werden. Bitte den Mikrofonzugriff erlauben und erneut versuchen.' : 'Die Instrumentaufnahme konnte nicht gestartet werden.');
+      setMessage((e as Error)?.message === 'recorder' ? 'Dieser Browser unterstützt keine Audioaufnahme.' : !capture || microphone ? 'Die Aufnahme konnte nicht gestartet werden. Bitte den Mikrofonzugriff erlauben und erneut versuchen.' : 'Die Instrumentaufnahme konnte nicht gestartet werden.');
       return;
     }
-    if (!mounted.current) { release?.(); stream.getTracks().forEach(t => t.stop()); return; }
-    let media: MediaRecorder;
-    try { media = new MediaRecorder(stream); } catch { release?.(); stream.getTracks().forEach(t => t.stop()); setMode('idle'); setMessage('Dieser Browser unterstützt keine Audioaufnahme.'); return; }
-    const chunks: Blob[] = [];
+    if (!mounted.current) return take.cancel();
     const began = Date.now();
-    const timer = setInterval(() => {
-      const elapsed = (Date.now() - began) / 1000;
-      setSeconds(elapsed);
-      if (elapsed >= MAX_SECONDS) media.stop();
-    }, 200);
-    let cancelled = false;
-    const finish = () => {
+    let ended = false;
+    const end = async (save: boolean) => {
+      if (ended) return;
+      ended = true;
       clearInterval(timer);
-      release?.();
-      stream.getTracks().forEach((t) => t.stop());
-    };
-    media.ondataavailable = (e) => {
-      if (e.data.size) chunks.push(e.data);
-    };
-    media.onstop = async () => {
-      finish();
       recorder.current = null;
-      if (cancelled) return;
+      if (!save) return take.cancel();
       setMode('saving');
       try {
-        await onSave(new Blob(chunks, { type: media.mimeType || 'audio/webm' }));
+        const blob = await take.stop();
+        if (blob?.size) await onSave(blob);
+        else setMessage('Es wurde nichts aufgenommen.');
         setMode('idle');
       } catch (e) {
         setMode('idle');
         setMessage((e as Error).message || 'Die Aufnahme konnte nicht gespeichert werden.');
       }
     };
-    recorder.current = {
-      stop: () => media.state === 'recording' && media.stop(),
-      cancel: () => {
-        cancelled = true;
-        if (media.state === 'recording') media.stop();
-        else finish();
-      },
-    };
-    try { media.start(250); } catch { finish(); recorder.current = null; setMode('idle'); setMessage('Die Aufnahme konnte nicht gestartet werden.'); return; }
+    const timer = setInterval(() => {
+      const elapsed = (Date.now() - began) / 1000;
+      setSeconds(elapsed);
+      if (elapsed >= MAX_SECONDS) void end(true);
+    }, 200);
+    recorder.current = { stop: () => void end(true), cancel: () => void end(false) };
     setSeconds(0);
     setMode('recording');
   }

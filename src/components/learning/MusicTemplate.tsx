@@ -5,7 +5,7 @@ import type { PageElement } from '@/lib/notebook-model';
 import { musicPreset, type MusicItem } from '@/lib/learning/music';
 import { decodeMusicConfig, encodeMusicConfig } from '@/lib/learning/music-settings';
 import { registerMusic } from '@/lib/learning/music-runtime';
-import { MUSIC_CSS, renderInstrument, renderDrums, renderMetronome, renderEcho, renderSequencer, renderNoteQuiz, renderFalling, renderStudio, renderTuner, renderKaraoke, musicCaptureStream, musicStop, studioEffects, studioMoods } from '@/lib/reference/music-runtime';
+import { MUSIC_CSS, renderInstrument, renderDrums, renderMetronome, renderEcho, renderSequencer, renderNoteQuiz, renderFalling, renderStudio, renderTuner, renderKaraoke, musicCaptureNode, musicStop, studioEffects, studioMoods } from '@/lib/reference/music-runtime';
 import { useLearning } from './Runtime';
 import { CassetteRecorder } from './Cassette';
 
@@ -106,7 +106,7 @@ export default function MusicTemplate({ element }: { element: PageElement }) {
         if (original.type === 'text') return <div key={index} className="music-reference-title" style={{ ...pos, fontSize: original.size, fontWeight: original.bold ? 800 : 400, color: original.color, fontFamily: 'Nunito, Andika, sans-serif' }}>{preset.id === 'playlist' ? (index === 1 ? title : String(config.description || original.placeholder)) : index === 0 && title !== preset.title ? title : preset.generator === 'instrument' && index === 0 ? ({ piano: 'Klavier', xylophone: 'Xylophon', glockenspiel: 'Glockenspiel', tubes: 'Klangrohre', synth: 'Synthesizer' }[String((config.inst as Config)?.skin)] || original.html) : original.html || original.placeholder}</div>;
         if (item.kind === 'recorder') return <div key={index} className="music-cassette-slot" style={pos}>
           <div style={{ width: 680, height: 340, transform: `scale(${original.w / 680})`, transformOrigin: 'top left' }}>
-            <CassetteRecorder key={recording} title={title} src={recording} interactive={interactive} capture={original.mic ? undefined : musicCaptureStream}
+            <CassetteRecorder key={recording} title={title} src={recording} interactive={interactive} capture={original.mic ? undefined : musicCaptureNode}
               onSave={uploadAudio ? saveAudio : undefined} onOpen={onRecord ? () => onRecord(element.id) : undefined} />
           </div>
         </div>;

@@ -9,6 +9,7 @@ import { useContext, useEffect } from 'react';
 import type { PageElement } from '@/lib/notebook-model';
 import { useEditor } from '@/lib/editor-store';
 import { fingerprint } from '@/lib/learning/werkzeuge';
+import { wavBlob } from '@/lib/learning/audio';
 import { registerTheaterHost, registerTheaterPositions, registerTheaterSave, renderTheater, THEATER_CSS, theaterConfig } from '@/lib/reference/tools-runtime';
 import { LinkContext } from '../LinkContext';
 import ReferenceWidget from './ReferenceWidget';
@@ -25,6 +26,25 @@ export function theaterCurrent(element: Pick<PageElement, 'settings' | 'response
   if (!saved || saved.base !== fingerprint(element.settings?.th)) return th;
   const cast = (th.cast as { x: number; y: number }[]).map((c, i) => (saved.positions?.[i] ? { ...c, ...saved.positions[i] } : c));
   return theaterSettings({ ...th, cast, ...(saved.take ? { take: saved.take } : {}) });
+}
+
+/**
+ * The iPad records MP4 in fragments that it then plays only for a moment from
+ * the server and cannot measure for the mouths; WAV it plays everywhere.
+ */
+async function asWav(blob: Blob) {
+  if (blob.type === 'audio/wav') return blob;
+  try {
+    const Offline = window.OfflineAudioContext ?? (window as unknown as { webkitOfflineAudioContext?: typeof OfflineAudioContext }).webkitOfflineAudioContext;
+    const data = await blob.arrayBuffer();
+    const buffer = await new Promise<AudioBuffer>((resolve, reject) => {
+      const done = new Offline(1, 1, 24000).decodeAudioData(data, resolve, reject);
+      done?.then?.(resolve, reject);
+    });
+    return buffer.length ? wavBlob(buffer) : blob;
+  } catch {
+    return blob;
+  }
 }
 
 // One host for all stages: the reference keeps it globally.
@@ -68,7 +88,7 @@ export default function TheaterWidget({ element }: { element: PageElement }) {
     savers.set(element.id, {
       take: async (take, blob) => {
         if (!uploadAudio) return;
-        const sound = await uploadAudio(element.id, blob);
+        const sound = await uploadAudio(element.id, await asWav(blob));
         update({ theater: { ...saved(), base, take: { ...(take as Record<string, unknown>), sound } } } as never);
       },
       move: (positions) => update({ theater: { ...saved(), base, positions: positions.map((p) => ({ x: Math.round(p.x), y: Math.round(p.y) })) } } as never),
