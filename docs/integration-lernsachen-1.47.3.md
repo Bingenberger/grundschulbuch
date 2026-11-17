@@ -181,12 +181,39 @@ dazu kommen aus unserer Bildsuche und liegen auf dem Schulserver.
   Bild, bis zu sechs Figuren mit dem Figuren-Editor, automatischer
   Seitenwechsel.
 
-## Noch offene Übernahmen
+## Achte Ausbaustufe: Erklärbär
 
-Offen ist nur noch **Erklärbär**: ein Modus des vollständigen
-Textsachen-Editors von 1.47.3 (Erklärfilme mit Wortbildern, Händen und
-Szenen). Dafür braucht es den neueren Textsachen-Spieler und einen eigenen
-Editor; KI-Partner bauen ist zurückgestellt.
+88 der 89 Einträge sind integriert; nur „KI-Partner bauen“ ist zurückgestellt.
+
+- **Textsachen-Spieler 1.47.3**: TSPlayer kommt jetzt aus dem Paket
+  `player-textsachen` von Lernsachen-Heft-komplett.html
+  (`node scripts/extract-players.mjs Lernsachen-Heft-komplett.html - -`; „-“
+  überspringt Schiebesachen und Quizsachen). Gegenüber der bisherigen Fassung
+  ändert sich nur der Erklärbär: Eine leere Zeile beginnt eine neue Szene, auf
+  ein Blatt kommen höchstens sechs Bilder, und die Option `autoScenes` schaltet
+  das automatische Umblättern ab. Die übrigen Übungen bleiben gleich.
+- **Erklärbär** (Medien & Präsentation, außerdem als Übungsart unter
+  Lesen & Schreiben › Übungen mit dem Text): ein eigener Editor nach unseren
+  UI-Regeln statt des eingebetteten Textsachen-Editors. Text mit Leerzeilen,
+  Bildwörter antippen, Bilder suchen oder wählen; dann
+  - **Szenen**: Übersicht wie in der Vorlage, „Szenen auch automatisch
+    wechseln“;
+  - **Aussehen**: 18 Hintergründe als Kacheln (Vorschaubilder vom Spieler
+    selbst gezeichnet, `scripts/build-explain-backgrounds.mjs` →
+    `public/previews/erklaerbaer`), Untertitel und Wörter unter den Bildern,
+    jeweils mit Silben rot und blau, Hand hell/mittel/dunkel, Pause nach
+    jedem Satz;
+  - **Stimme**: Computerstimme oder eigene Aufnahmen, eine pro Satz
+    (Aufnehmen, Anhören, Löschen; Ton auf dem Schulserver);
+  - **Musik**: Ruhig, Fröhlich, Neugierig (vom Spieler erzeugt) oder eine
+    eigene Datei bis 12 MB, Lautstärke;
+  - **Vorschau und Video**: der Film im Dialog mit „Als Video speichern“. Wie
+    in der Vorlage gibt es den Knopf im Heft nicht.
+
+  Sätze und Szenen berechnet `src/lib/learning/erklaerbaer.ts` genau wie der
+  Spieler (ein Test vergleicht mit dessen Tokenizer). Aufnahmen stehen als
+  Liste `{ sentence, audio }` in den Einstellungen, weil der Server nur
+  Bezeichner als Schlüssel zulässt und Medien unter `audio` prüft.
 
 ## Prüfung
 

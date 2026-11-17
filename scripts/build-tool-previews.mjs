@@ -64,7 +64,7 @@ try {
   const pages = [], captures = [];
   for (const block of blocks) {
     const s = structuredClone(block.preset || {});
-    if (s.ts) { s.ts.words = words.map((text, i) => ({ text, image: images[i] })); s.ts.settings.speakTask = false; s.ts.settings.shuffle = false; }
+    if (s.ts) { s.ts.words = words.map((text, i) => ({ text, image: images[i] })); s.ts.settings.speakTask = false; s.ts.settings.shuffle = false; if (s.ts.mode === 'explain') s.ts.settings.explain.design = 'meadow'; }
     if (s.dnd) {
       Object.assign(s.dnd, { text: words.slice(0,3).join('\n'), autoPictures: false, pictures: words.slice(0,3).map((term,i)=>({term,image:images[i]})) });
       if(['silben','buchstabieren'].includes(s.dnd.format)) {

@@ -29,7 +29,7 @@ ihre Urheber werden hier genannt.
 - Urheber: Lernsachen.blog (<https://lernsachen.blog>)
 - Lizenz: CC BY-NC-SA 4.0
 - Verwendet: der Spieler der Übungen (TSPlayer), unverändert
-  (`src/lib/reference/textsachen-player.ts`). Er spielt Lesen & Schreiben, Memory mit Wörtern, Maus & Käse, Kreuzworträtsel, Suchsel und Wordle ab. Die Einstellungsseite folgt dem Editor von Textsachen.
+  (`src/lib/reference/textsachen-player.ts`, seit Nov. 2026 in der Fassung aus Lernsachen-Heft 1.47.3). Er spielt Lesen & Schreiben, Erklärbär, Memory mit Wörtern, Maus & Käse, Kreuzworträtsel, Suchsel und Wordle ab. Die Einstellungsseite folgt dem Editor von Textsachen. Satz- und Szenenbildung des Erklärbärs sind aus dem Spieler nachgebaut (`src/lib/learning/erklaerbaer.ts`); die Vorschaubilder der Hintergründe (`public/previews/erklaerbaer`) hat der Spieler selbst gezeichnet.
 
 ### Schiebesachen – Lernsachen.blog
 

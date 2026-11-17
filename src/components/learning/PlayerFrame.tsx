@@ -3,9 +3,10 @@
 // like the one of Lernsachen-Heft: player script, task, last state, fitting the
 // exercise into the frame; changes and results come back as messages.
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import Icon from '../Icon';
 
 export type PlayerKind = 'TSPlayer' | 'DnDPlayer' | 'QuizPlayer';
-const STATE = 'grundschulbuch-player-state', RESULT = 'grundschulbuch-player-result';
+const STATE = 'grundschulbuch-player-state', RESULT = 'grundschulbuch-player-result', VIDEO = 'grundschulbuch-player-video';
 
 const scripts: Partial<Record<PlayerKind, Promise<string>>> = {};
 export const loadPlayer = (kind: PlayerKind) =>
@@ -74,7 +75,9 @@ body{font-family:"${font}",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit
 ${script(js)}
 </script>
 <script>
-(function(){var r=document.getElementById('lh-root'),j=function(id){return JSON.parse(document.getElementById(id).textContent)};try{window[${JSON.stringify(kind)}].mount(r,j('lh-data'),{noFullscreen:true,autofocus:false,state:j('lh-state'),onChange:function(s){try{window.parent.postMessage({type:${JSON.stringify(STATE)},state:s},'*')}catch(x){}},onResult:function(res,s){try{window.parent.postMessage({type:${JSON.stringify(RESULT)},state:s,percent:res&&res.percent},'*')}catch(x){}}})}catch(e){r.className='lh-error';r.textContent='Die Übung konnte nicht gestartet werden: '+(e&&e.message||e)}
+(function(){var r=document.getElementById('lh-root'),j=function(id){return JSON.parse(document.getElementById(id).textContent)},inst=null;
+window.addEventListener('message',function(e){if(e.source!==window.parent||!e.data||e.data.type!==${JSON.stringify(VIDEO)})return;var ok=false;try{ok=!!(inst&&inst.saveVideo&&inst.saveVideo())}catch(x){}try{window.parent.postMessage({type:${JSON.stringify(VIDEO)},ok:ok},'*')}catch(x){}});
+try{inst=window[${JSON.stringify(kind)}].mount(r,j('lh-data'),{noFullscreen:true,autofocus:false,state:j('lh-state'),onChange:function(s){try{window.parent.postMessage({type:${JSON.stringify(STATE)},state:s},'*')}catch(x){}},onResult:function(res,s){try{window.parent.postMessage({type:${JSON.stringify(RESULT)},state:s,percent:res&&res.percent},'*')}catch(x){}}})}catch(e){r.className='lh-error';r.textContent='Die Übung konnte nicht gestartet werden: '+(e&&e.message||e)}
 var grow=${kind === 'TSPlayer'},cur=1,W=0,H=0,cap=null,sh=function(k){r.style.width=k>1?(W/k).toFixed(2)+'px':'';return r.offsetHeight*Math.max(1,k)};
 var fit=function(){W=window.innerWidth;H=window.innerHeight;var k=1,d=document.documentElement,p=grow?r.querySelector('.tsp-read .tsp-text,.tsp-gaps .tsp-text,.tsp-typedbox'):null,pics=!!p&&p.classList.contains('show-pics'),top=cap?cap.scrollTop:0;
 if(cap){cap.style.maxHeight=cap.style.overflowX=cap.style.overflowY='';cap=null}if(pics)p.classList.remove('show-pics');
@@ -91,7 +94,10 @@ document.addEventListener('scroll',function(e){var t=e.target;if(t===document){i
 }
 
 /** Shows a frame page; `onState` gets the player's state (and the result in %, if any). */
-export default function PlayerFrame({ page, title, interactive, onState, stage }: { page: string; title: string; interactive: boolean; onState?: (state: unknown, percent?: number) => void; stage?: { w: number; h: number } }) {
+export default function PlayerFrame({ page, title, interactive, onState, stage, video }: { page: string; title: string; interactive: boolean; onState?: (state: unknown, percent?: number) => void; stage?: { w: number; h: number }; video?: boolean }) {
+  // Erklärbär: the film runs through once and is saved as a video file (only in the dialog).
+  const [videoNote, setVideoNote] = useState('');
+  const canVideo = typeof MediaRecorder !== 'undefined' && typeof HTMLCanvasElement !== 'undefined' && typeof HTMLCanvasElement.prototype.captureStream === 'function';
   const frame = useRef<HTMLIFrameElement>(null);
   // A preview runs at a fixed size and is shown smaller (like Schiebesachen does).
   const box = useRef<HTMLDivElement>(null);
@@ -110,15 +116,31 @@ export default function PlayerFrame({ page, title, interactive, onState, stage }
   useEffect(() => {
     const listen = (e: MessageEvent) => {
       const d = e.data;
+      if (d && typeof d === 'object' && e.source === frame.current?.contentWindow && d.type === VIDEO) {
+        setVideoNote(d.ok ? 'Der Film läuft einmal durch und wird aufgenommen. Danach wird die Videodatei gespeichert.' : 'Das geht gerade nicht – warte, bis die Vorschau den Film zeigt, und versuche es noch einmal.');
+        return;
+      }
       if (!d || typeof d !== 'object' || e.source !== frame.current?.contentWindow || (d.type !== STATE && d.type !== RESULT)) return;
       report.current?.(d.state ?? null, d.type === RESULT && typeof d.percent === 'number' && Number.isFinite(d.percent) ? d.percent : undefined);
     };
     window.addEventListener('message', listen);
     return () => window.removeEventListener('message', listen);
   }, []);
-  return (
+  const body = (
     <div ref={box} className={`textsachen-frame${interactive ? ' is-live' : ''}`} style={stage ? { height: Math.round(stage.h * scale) } : undefined} onPointerDown={(e) => interactive && e.stopPropagation()}>
       <iframe ref={frame} title={title} srcDoc={page} allow="autoplay; microphone" style={stage ? { width: stage.w, height: stage.h, transform: `scale(${scale})`, transformOrigin: '0 0' } : undefined} />
+    </div>
+  );
+  if (!video) return body;
+  return (
+    <div className="player-video">
+      {body}
+      <div className="player-video-bar">
+        <button type="button" className="knopf compact" disabled={!canVideo} onClick={() => { setVideoNote(''); frame.current?.contentWindow?.postMessage({ type: VIDEO }, '*'); }}>
+          <Icon name="camcorder_pro" size={18} /> Als Video speichern
+        </button>
+        <span className="option-hint" role="status">{canVideo ? videoNote || 'Der Film läuft einmal ganz durch und wird dabei als Videodatei aufgenommen – zum Zeigen oder Weitergeben.' : 'Dieser Browser kann keine Videos aufnehmen.'}</span>
+      </div>
     </div>
   );
 }

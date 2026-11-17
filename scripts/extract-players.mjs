@@ -7,6 +7,12 @@
 //   curl -o /tmp/Quizsachen.html https://majort0m0.github.io/Quizsachen/Quizsachen.html
 //   node scripts/extract-players.mjs /tmp/Textsachen.html /tmp/Schiebesachen.html /tmp/Quizsachen.html
 //
+// Instead of an app, Lernsachen-Heft-komplett.html may be given for a player:
+// it carries the same players as packs (lh-pack-player-…); TSPlayer of 1.47.3
+// comes from there (the Erklärbär splits scenes at blank lines). A “-” skips
+// that player (and its builder), e.g.
+//   node scripts/extract-players.mjs Lernsachen-Heft-komplett.html - -
+//
 // The apps carry each player as one string literal; it is found with the
 // tokenizer only – nothing of the downloaded code is executed here.
 // From Schiebesachen also the exercise builder of its “Neue Übung” dialog is
@@ -33,10 +39,21 @@ const appSource = (file) => {
   return html.slice(start, html.indexOf('</script>', start));
 };
 
+/** The player as a pack of Lernsachen-Heft (plain text, not compressed), or null. */
+const heftPack = (file, app) => {
+  const html = fs.readFileSync(file, 'utf8');
+  const open = `<script type="text/plain" id="lh-pack-player-${app.toLowerCase()}">`;
+  const start = html.indexOf(open);
+  if (start < 0) return null;
+  return html.slice(start + open.length, html.indexOf('</script>', start)).trim();
+};
+
 targets.forEach(({ name, app, out }, i) => {
-  const source = appSource(files[i]);
-  let player = null;
-  for (const token of acorn.tokenizer(source, { ecmaVersion: 'latest', sourceType: 'module' })) {
+  if (files[i] === '-') return;
+  const fromHeft = heftPack(files[i], app);
+  const source = fromHeft ?? appSource(files[i]);
+  let player = fromHeft && fromHeft.includes(`var ${name}=`) ? fromHeft : null;
+  if (!player) for (const token of acorn.tokenizer(source, { ecmaVersion: 'latest', sourceType: 'module' })) {
     const value = token.type.label === 'string' || token.type.label === 'template' ? token.value : null;
     if (typeof value === 'string' && value.length > 100000 && value.includes(`var ${name}=`)) { player = value; break; }
   }
@@ -44,7 +61,7 @@ targets.forEach(({ name, app, out }, i) => {
   fs.writeFileSync(out, `/* eslint-disable */
 // ${name} – the player of ${app} by Lernsachen.blog (https://lernsachen.blog),
 // licence CC BY-NC-SA 4.0, taken unchanged from
-// https://majort0m0.github.io/${app}/${app}.html by scripts/extract-players.mjs.
+// ${fromHeft ? `the pack player-${app.toLowerCase()} of Lernsachen-Heft-komplett.html` : `https://majort0m0.github.io/${app}/${app}.html`} by scripts/extract-players.mjs.
 // It runs inside the exercise frame (PlayerFrame.tsx), never in the page.
 export const ${name.toUpperCase()} = ${JSON.stringify(player)};
 `);
@@ -77,7 +94,7 @@ function declarations(source, names) {
 
 // The builder of Schiebesachen: names in the minified app → our names.
 const BUILDER = { kR: 'buildExercise', PL: 'parseText', IL: 'problemOf', FL: 'countOf', LL: 'pictureTerms', RL: 'pictureFallbacks', CL: 'FORMATS', CR: 'DESIGNS', wR: 'designOf', EL: 'syllablesOf', DL: 'plainWord', uc: 'FONTS' };
-{
+if (files[1] !== '-') {
   // The names change with each build of the app: if they no longer lead to the
   // builder, the file stays as it is (look the new names up by hand).
   const { code, count, exports } = declarations(appSource(files[1]), BUILDER);
@@ -104,7 +121,7 @@ ${exports}
 // reader of “Fragen per Text eingeben” (Quizsachen format, GIFT, Aiken) and the
 // step that turns a read question into a question of the quiz.
 const QUIZ = { Nf: 'newQuiz', kf: 'TEMPLATES', yg: 'readQuestions', zg: 'questionFrom', Fg: 'EXAMPLE', Ug: 'TYPES' };
-{
+if (files[2] !== '-') {
   const { code, count, exports } = declarations(appSource(files[2]), QUIZ);
   const out = 'src/lib/reference/quizsachen-builder.ts';
   if (!code.includes('function Nf(e){let t=Af(e)??kf[0]') || !/function zg\(e,t,n,r,i\)/.test(code) || !code.includes('var Fg=`Titel: Tiere im Wald') || !code.includes('var kf=[{id:`leer`'))

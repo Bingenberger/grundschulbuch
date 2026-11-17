@@ -850,7 +850,7 @@ export default function LearningDialog({
             {kind === 'hoeren' && <ListenOptions value={settings.listen} onChange={(listen) => patch({ listen })} upload={media} busy={busy} />}
             {kind === 'phasen' && <MultiTimerOptions value={settings.multi} onChange={(multi) => patch({ multi })} />}
             {kind === 'quizsachen' && <QuizOptions value={settings.qz} title={settings.title || ''} onChange={(qz) => patch({ qz })} upload={media} busy={busy} />}
-            {kind === 'textsachen' && <TextsachenOptions value={settings.ts} onChange={(ts) => patch({ ts })} upload={media} busy={busy} />}
+            {kind === 'textsachen' && <TextsachenOptions value={settings.ts} title={settings.title || ''} onChange={(ts) => patch({ ts })} upload={media} busy={busy} />}
             {kind === 'clapsyllables' && <ClapOptions value={settings.clap} onChange={(clap) => patch({ clap: clap as unknown as JsonValue })} />}
             {kind === 'anlaut' && <AnlautOptions value={settings.anlaut} onChange={(anlaut) => patch({ anlaut: anlaut as unknown as JsonValue })} />}
             {kind === 'syllablejoin' && <SynthOptions value={settings.synth} onChange={(synth) => patch({ synth: synth as unknown as JsonValue })} />}

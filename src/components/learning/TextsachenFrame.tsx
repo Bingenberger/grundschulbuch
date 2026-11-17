@@ -4,7 +4,7 @@
 // state and reports changes and results back; we keep the state per child.
 import { useEffect, useMemo, useState } from 'react';
 import type { PageElement } from '@/lib/notebook-model';
-import { TS_FAMILIES, TS_MODES, pictureWords, pictureOf, playerTask, tsConfig } from '@/lib/learning/textsachen';
+import { TS_FAMILIES, TS_MODES, pictureWords, pictureOf, playerTask, soundSources, tsConfig } from '@/lib/learning/textsachen';
 import { useDecorative } from '../Decorative';
 import Icon, { type IconName } from '../Icon';
 import { useLearning } from './Runtime';
@@ -20,7 +20,8 @@ export function StillFrame({ icon, title, text }: { icon: string; title: string;
   );
 }
 
-export default function TextsachenFrame({ element }: { element: PageElement }) {
+/** `video` (only in the settings dialog): the button „Als Video speichern“ of the Erklärbär. */
+export default function TextsachenFrame({ element, video }: { element: PageElement; video?: boolean }) {
   const { interactive, state, update } = useLearning(element);
   const decorative = useDecorative();
   const c = useMemo(() => tsConfig(element.settings?.ts), [element.settings?.ts]);
@@ -31,7 +32,7 @@ export default function TextsachenFrame({ element }: { element: PageElement }) {
   useEffect(() => {
     if (decorative) return;
     let live = true;
-    const srcs = pictureWords(c).map((w) => pictureOf(c, w)).filter((s): s is string => !!s);
+    const srcs = [...pictureWords(c).map((w) => pictureOf(c, w)), ...soundSources(c)].filter((s): s is string => !!s);
     void Promise.all([loadPlayer('TSPlayer'), ...srcs.map(async (s) => [s, await dataUrl(s)] as const)]).then(([js, ...found]) => {
       if (live) setReady({ key, js: js as string, urls: new Map((found as (readonly [string, string | null])[]).filter((f): f is [string, string] => !!f[1])) });
     });
@@ -47,5 +48,5 @@ export default function TextsachenFrame({ element }: { element: PageElement }) {
   }, [ready, key]);
 
   if (decorative || !page) return <StillFrame icon={TS_MODES[c.mode].icon} title={title} text={decorative ? TS_MODES[c.mode].desc : 'Wird geladen …'} />;
-  return <PlayerFrame page={page} title={`${TS_MODES[c.mode].label}: ${title}`} interactive={interactive} onState={(s, percent) => update(statePatch(key, s, percent))} />;
+  return <PlayerFrame page={page} title={`${TS_MODES[c.mode].label}: ${title}`} interactive={interactive} video={video && c.mode === 'explain'} onState={(s, percent) => update(statePatch(key, s, percent))} />;
 }

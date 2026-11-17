@@ -2,7 +2,8 @@
 'use client';
 // Settings of a Textsachen exercise, laid out like the editor of Textsachen:
 // kind of exercise, words or text, pictures, the part for the exercise, font,
-// helps for the children, voice – and the checklist.
+// helps for the children, voice – and the checklist. The Erklärbär has its
+// own parts (ExplainOptions).
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { JsonValue } from '@/lib/learning/catalog';
 import {
@@ -12,8 +13,9 @@ import {
 import { findPicture } from '@/lib/learning/picture-search';
 import Icon, { type IconName } from '../Icon';
 import { Chips, Slider, Toggle } from '../sheets/SheetParts';
+import ExplainOptions from './ExplainOptions';
 
-type Props = { value: unknown; onChange: (v: JsonValue) => void; upload: (file: File, done: (src: string) => void) => Promise<void>; busy: boolean };
+type Props = { value: unknown; title?: string; onChange: (v: JsonValue) => void; upload: (file: File, done: (src: string) => void) => Promise<void>; busy: boolean };
 
 function Part({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -24,7 +26,7 @@ function Part({ title, children }: { title: string; children: React.ReactNode })
   );
 }
 
-export default function TextsachenOptions({ value, onChange, upload, busy }: Props) {
+export default function TextsachenOptions({ value, title = '', onChange, upload, busy }: Props) {
   const c = tsConfig(value);
   const latest = useRef(c);
   useLayoutEffect(() => { latest.current = c; });
@@ -72,6 +74,7 @@ export default function TextsachenOptions({ value, onChange, upload, busy }: Pro
 
   const words = textWords(c.text);
   const problems = tsProblems(c);
+  const explain = c.kind === 'text' && c.mode === 'explain';
   const setKind = (kind: TsKind) => set({ kind, mode: c.mode === 'flash' ? 'flash' : modesOf(kind)[0] });
   const modeCards = (modes: TsMode[]) => (
     <div className="ts-modes" role="radiogroup" aria-label="Übungsart">
@@ -109,7 +112,7 @@ export default function TextsachenOptions({ value, onChange, upload, busy }: Pro
               }} />
             </label>
             <div className="ts-learn" role="group" aria-label="Lernwörter wählen">
-              <strong>Lernwörter – antippen zum Wählen</strong>
+              <strong>{explain ? 'Bildwörter – antippen zum Wählen' : 'Lernwörter – antippen zum Wählen'}</strong>
               <p>
                 {words.map((w, i) => (
                   <button key={i} type="button" aria-pressed={c.learn.includes(i)} className={`ts-word${c.learn.includes(i) ? ' is-learn' : ''}`} onClick={() => set({ learn: c.learn.includes(i) ? c.learn.filter((n) => n !== i) : [...c.learn, i].sort((a, b) => a - b) })}>
@@ -117,7 +120,7 @@ export default function TextsachenOptions({ value, onChange, upload, busy }: Pro
                   </button>
                 ))}
               </p>
-              <small>Lernwörter werden im Lückentext zu Lücken (höchstens eine pro Satz) und kommen im Bilder-Quiz und beim Blitzlesen vor.</small>
+              <small>{explain ? 'Zu den Bildwörtern legt die Hand im Film ein Bild aufs Blatt. Eine leere Zeile im Text beginnt eine neue Szene.' : 'Lernwörter werden im Lückentext zu Lücken (höchstens eine pro Satz) und kommen im Bilder-Quiz und beim Blitzlesen vor.'}</small>
             </div>
           </>
         )}
@@ -132,7 +135,7 @@ export default function TextsachenOptions({ value, onChange, upload, busy }: Pro
         ))}
       </Part>
 
-      <Part title={c.kind === 'words' ? 'Bilder zu den Wörtern' : 'Bilder zu den Lernwörtern'}>
+      <Part title={c.kind === 'words' ? 'Bilder zu den Wörtern' : explain ? 'Bilder zu den Bildwörtern' : 'Bilder zu den Lernwörtern'}>
         <Toggle checked={auto} label="Bilder automatisch suchen" hint="Fehlende Bilder werden in den ARASAAC-Piktogrammen gesucht (Sergio Palao, CC BY-NC-SA 4.0)." onChange={setAuto} />
         {c.mode === 'picture' && toPictures('Für das Bilddiktat braucht jedes Wort ein Bild. Wörter ohne Bild werden übersprungen.')}
         {searching > 0 && <p className="option-hint" role="status">Bilder werden gesucht …</p>}
@@ -218,6 +221,7 @@ export default function TextsachenOptions({ value, onChange, upload, busy }: Pro
           <Toggle checked={s.syllables} label="Silben rot und blau" hint="Die Wörter erscheinen in Sprechsilben, abwechselnd blau und rot (Silbenmethode). Die Kinder können die Farben mit „Silben“ aus- und einschalten." onChange={(v) => setting('syllables', v)} />
         </Part>
       )}
+      {explain && <ExplainOptions c={c} title={title} set={set} upload={upload} busy={busy} Part={Part} />}
       {c.mode === 'gaps' && <Part title="Lückentext">{toPictures('Die Lernwörter werden zu Lücken – höchstens eine pro Satz.')}</Part>}
       {c.mode === 'type' && (
         <Part title="Abtippen">
@@ -230,12 +234,12 @@ export default function TextsachenOptions({ value, onChange, upload, busy }: Pro
         <Chips label="Schrift der Übung" value={s.font} onChange={(v) => setting('font', v)} options={TS_FONTS.map((f) => ({ value: f.id, label: <span style={{ fontFamily: f.family }}>{f.label}</span>, title: f.hint }))} />
         <Chips label="Größe" value={s.scale} onChange={(v) => setting('scale', v)} options={[{ value: 1, label: 'Normal' }, { value: 1.25, label: 'Groß' }, { value: 1.5, label: 'Sehr groß' }]} />
       </Part>
-      <Part title="Hilfen für die Kinder">
+      {!explain && <Part title="Hilfen für die Kinder">
         <Toggle checked={s.helpSpeak} label="Vorlesen" hint="Der Lautsprecher liest das gesuchte Wort (beim Abtippen den Satz) vor." onChange={(v) => setting('helpSpeak', v)} />
         <Toggle checked={s.helpFlash} label="Zeigen (Auge)" hint="Zeigt das gesuchte Wort (beim Abtippen den Satz) für einen Moment." onChange={(v) => setting('helpFlash', v)} />
         <Toggle checked={s.speakTask} label="Aufgabenstellung vorlesen" hint="Ein Lautsprecher an der Aufgabe (z. B. „Welches Wort passt zum Bild?“) liest sie vor." onChange={(v) => setting('speakTask', v)} />
         {c.kind === 'words' && <Toggle checked={s.shuffle} label="Reihenfolge mischen" hint="Die Wörter kommen bei jedem Durchgang in anderer Reihenfolge." onChange={(v) => setting('shuffle', v)} />}
-      </Part>
+      </Part>}
       <Part title="Vorlese-Stimme">
         <Slider label="Tempo" value={s.rate} min={0.6} max={1.2} step={0.05} format={(v) => `${v < 0.8 ? 'langsam' : v > 1.05 ? 'schnell' : 'normal'} (${Math.round(v * 100)} %)`} onChange={(v) => setting('rate', v)} />
         <button type="button" className="knopf compact" onClick={() => {
