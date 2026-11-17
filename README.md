@@ -24,6 +24,8 @@ ihren Heften. Die App läuft als Serveranwendung auf dem Schulserver.
 
 Hinzu kommen 48 Arbeitsblatt-Formate, Kommunikationstafeln, Timer, Musikwerkzeuge,
 Animation/Diaschau, Ordner und Regalsicherungen sowie PDF-Import und HTML-/ePub-/SCORM-Export.
+Alte Microsoft-Publisher-Hefte wandelt ein eigenständiges Skript in Heftdateien um:
+[Publisher-Dateien übernehmen](docs/publisher-import.md).
 Der optionale KI-Adapter ist standardmäßig inaktiv; Betreiberkonfiguration:
 [KI-Dienst](docs/ki.md).
 
