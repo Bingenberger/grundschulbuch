@@ -279,3 +279,10 @@ export function uuid(): string {
 export function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }
+
+/**
+ * Tools that stay where they are when a finger drags on them: dragging inside
+ * belongs to the tool (figures of the puppet theatre). They move only by the
+ * „Verschieben“ handle of the selection.
+ */
+export const anchoredOnPage = (el: Pick<PageElement, 'type' | 'widgetKind'>) => el.type === 'widget' && el.widgetKind === 'puppentheater';

@@ -350,5 +350,24 @@ test('Puppentheater: Bühne, Figuren und Titel einstellen', async ({ page }) => 
   expect(th.th.back).toBe('forest');
   expect(th.th.cast).toHaveLength(before + 1);
   expect(th.th.cast[before].av.child).toBe(false);
+
+  // Anchored: a drag on the stage (next to the figures) leaves the tool in place …
+  const where = async () => { const el = (await elements(page, id)).find((e) => e.widgetKind === 'puppentheater') as unknown as { x: number; y: number }; return { x: el.x, y: el.y }; };
+  const placed = await where();
+  const box = (await stage.boundingBox())!;
+  await page.mouse.move(box.x + box.width * 0.5, box.y + 12);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.5 + 120, box.y + 90, { steps: 8 });
+  await page.mouse.up();
+  await page.waitForTimeout(1500);
+  expect(await where()).toEqual(placed);
+  // … and moves only by its handle.
+  const handle = page.getByRole('button', { name: 'Element verschieben' });
+  const grip = (await handle.boundingBox())!;
+  await page.mouse.move(grip.x + grip.width / 2, grip.y + grip.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(grip.x + grip.width / 2 + 60, grip.y + grip.height / 2 + 40, { steps: 8 });
+  await page.mouse.up();
+  await expect.poll(async () => (await where()).x, { timeout: 5000 }).toBeGreaterThan(placed.x + 5);
   expect(errors).toEqual([]);
 });

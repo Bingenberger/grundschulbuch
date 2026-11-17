@@ -19,6 +19,7 @@ import {
   type Template,
   ENDLESS_LIMIT,
   sheetSize,
+  anchoredOnPage,
 } from '@/lib/notebook-model';
 import { ElementView, World } from './PageView';
 import { groupIntoView, intoView, visibleCenter } from './editor/view-place';
@@ -767,6 +768,7 @@ export default function Editor({
     event: React.PointerEvent,
     element?: PageElement,
     handle: HandleKind = 'move',
+    body = false,
   ) {
     if (gesture.current || (board && !boardDraw) || event.button !== 0) return;
     if (stampActive && s.tool === 'select') {
@@ -837,7 +839,9 @@ export default function Editor({
           ? target.id
           : undefined;
       s.select(ids);
-      if (target.locked) return;
+      // An anchored tool (puppet theatre) only moves by its handle: a finger
+      // missing a figure must not carry the whole stage away.
+      if (target.locked || (body && handle === 'move' && anchoredOnPage(target))) return;
       const originals = page!.elements.filter(
         (el) => ids.includes(el.id) && !el.locked,
       );
@@ -1194,7 +1198,7 @@ export default function Editor({
                         key={el.id}
                         element={preview?.find((p) => p.id === el.id) || el}
                         className={`${s.selected.includes(el.id) && !board ? 'selected' : ''} ${el.locked ? 'locked' : ''} ${writing.editingId === el.id ? 'text-editing' : ''}`}
-                        onPointerDown={(e) => start(e, el)}
+                        onPointerDown={(e) => start(e, el, 'move', true)}
                         onDoubleClick={() => {
                           if (el.type === 'text' && !el.locked) writing.begin(el.id);
                           else if (isPlaceholder(el) && !el.src) openFill(el);
