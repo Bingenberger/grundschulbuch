@@ -373,6 +373,17 @@ export async function importPdf(
   file: File,
   onProgress: (message: string) => void,
 ): Promise<BookData> {
+  const pages = await pdfToPages(file, onProgress);
+  return api<BookData>('create', {
+    title: file.name.replace(/\.pdf$/i, ''),
+    pages,
+  });
+}
+/** Jede PDF-Seite wird eine Heftseite mit der festgemachten Seite als Bild. */
+export async function pdfToPages(
+  file: File,
+  onProgress: (message: string) => void,
+): Promise<Page[]> {
   if (file.size > 50 * 1024 * 1024)
     throw new Error('PDF-Dateien dürfen höchstens 50 MB groß sein.');
   const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
@@ -437,10 +448,7 @@ export async function importPdf(
   } finally {
     await pdf.destroy();
   }
-  return api<BookData>('create', {
-    title: file.name.replace(/\.pdf$/i, ''),
-    pages,
-  });
+  return pages;
 }
 export function saveDownload(blob: Blob, title: string, extension: string) {
   downloadBlob(blob, title.replace(/[\\/:*?"<>|]/g, '-') + '.' + extension);

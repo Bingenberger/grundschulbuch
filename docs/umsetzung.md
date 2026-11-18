@@ -309,6 +309,20 @@ Internetseiten und eingebettete Internetinhalte als Internetlink, Links auf eine
 Heftseite als Sprung zu dieser Seite, sofern sie im PDF ist
 (`src/lib/pdf-links.ts`; gedrehte Elemente mit ihrem umschließenden Rechteck).
 
+**Hineinziehen und Einfügen.** Dateien lassen sich auf die Seite ziehen
+(„Loslassen zum Einfügen“): Bilder und Töne kommen auf die Seite, eine PDF wird
+zu Seiten hinter der aktuellen Seite, eine Heftdatei, ein ePub oder ein
+gespeichertes HTML-Heft wird geöffnet. ⌘V/Strg+V fügt auch aus anderen Apps ein:
+Bilder als Bild, eine einzelne Webadresse als Internet-Element (YouTube, Vimeo,
+ZDF und Videodateien als Video), anderer Text als Textfeld. Kopiert man Elemente
+im Heft, trägt die Zwischenablage des Geräts eine Markierung; dann fügt ⌘V die
+Elemente aus dem Heft ein. Elemente und Seiten („Seite kopieren“ unter Seite →
+Seiten oder in der Kachelansicht) bleiben in diesem Tab kopiert und lassen sich
+so auch in einem anderen Heft einfügen (`src/lib/drop-paste.ts`).
+
+**Tafel beenden.** „Tafelmodus beenden“ löst erst nach 2 Sekunden Halten aus,
+ein Balken zeigt den Fortschritt; mit der Tastatur (Esc, Eingabe) sofort.
+
 ## Verwaltung (Admin-Konten)
 
 Unter `/verwaltung` (Link „Verwaltung“ im Regal, nur für Admins):

@@ -74,6 +74,9 @@ export default function PageBar({
   pageCount,
   busy,
   onDuplicate,
+  onCopy,
+  onPaste,
+  pasteCount = 0,
   onMove,
   onDelete,
   onSaveTemplate,
@@ -90,6 +93,10 @@ export default function PageBar({
   pageCount: number;
   busy?: boolean;
   onDuplicate: () => void;
+  /** Seite in die Zwischenablage – „Einfügen“ geht auch in einem anderen Heft. */
+  onCopy?: () => void;
+  onPaste?: () => void;
+  pasteCount?: number;
   onMove: (delta: number) => void;
   onDelete: () => void;
   onSaveTemplate: (name: string) => void;
@@ -274,6 +281,15 @@ export default function PageBar({
           <OptionGroup label={`Seite ${pageIndex + 1} von ${pageCount}`}>
             <ChoiceButton icon="plus" label="Neue Seite" disabled={busy} onClick={onTemplates} />
             <ChoiceButton icon="file" label="Duplizieren" disabled={busy} onClick={onDuplicate} />
+            {onCopy && <ChoiceButton icon="collect" label="Seite kopieren" disabled={busy} onClick={onCopy} />}
+            {onPaste && pasteCount > 0 && (
+              <ChoiceButton
+                icon="import"
+                label={pasteCount === 1 ? 'Seite einfügen' : `${pasteCount} Seiten einfügen`}
+                disabled={busy}
+                onClick={onPaste}
+              />
+            )}
             <ChoiceButton icon="up" label="Nach vorn" disabled={busy || pageIndex === 0} onClick={() => onMove(-1)} />
             <ChoiceButton icon="down" label="Nach hinten" disabled={busy || pageIndex === pageCount - 1} onClick={() => onMove(1)} />
             <ChoiceButton icon="empty_trash" label="Seite löschen" danger disabled={busy || pageCount < 2} onClick={onDelete} />

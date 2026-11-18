@@ -370,7 +370,7 @@ test('Laser und Taschenlampe verändern weder Seiteninhalt noch Undo-Verlauf', a
   await light.focus(); await page.keyboard.press('Escape');
   await expect(page.locator('.board-pointer')).toHaveCount(0);
   await expect(page.locator('.editor')).toHaveClass(/board-mode/);
-  await page.getByRole('button', { name: 'Tafelmodus beenden', exact: true }).click();
+  await page.getByRole('button', { name: 'Tafelmodus beenden', exact: true }).press('Enter');
   await expect(page.locator('.editor')).not.toHaveClass(/board-mode/);
   await expect(page.getByRole('button', { name: 'Zurück', exact: true })).toBeDisabled();
   const response = await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'open', id: created.book.id } });
@@ -403,7 +403,7 @@ test('Seitenwechsel verwirft Laserspuren; Schreiben wird nach Beenden der Zeigeh
   await expect(surface.locator('.page-element')).toHaveCount(1);
   await page.getByRole('button', { name: 'Laserpointer', exact: true }).click();
   await page.getByRole('button', { name: 'Zeigehilfe beenden', exact: true }).click();
-  await page.getByRole('button', { name: 'Tafelmodus beenden', exact: true }).click();
+  await page.getByRole('button', { name: 'Tafelmodus beenden', exact: true }).press('Enter');
   await page.getByRole('button', { name: 'Zurück', exact: true }).click();
   await expect(surface.locator('.page-element')).toHaveCount(0);
 });

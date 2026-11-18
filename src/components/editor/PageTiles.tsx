@@ -20,6 +20,9 @@ export default function PageTiles({
   onDuplicate,
   onDelete,
   onSave,
+  onCopy,
+  onPaste,
+  pasteCount = 0,
   onClose,
 }: {
   pages: Page[];
@@ -32,6 +35,10 @@ export default function PageTiles({
   onDelete: (ids: string[]) => void;
   /** „Speichern und teilen“ nur mit den gewählten Seiten */
   onSave?: (ids: string[]) => void;
+  /** Seiten kopieren / einfügen, auch zwischen Heften */
+  onCopy?: (ids: string[]) => void;
+  onPaste?: () => void;
+  pasteCount?: number;
   onClose: () => void;
 }) {
   const [selected, setSelected] = useState<string[]>([activeId]);
@@ -108,6 +115,23 @@ export default function PageTiles({
             onClick={() => move(1)}
           />
           <ChoiceButton icon="file" label="Duplizieren" disabled={busy || !chosen.length} onClick={() => onDuplicate(chosen)} />
+          {onCopy && (
+            <ChoiceButton
+              icon="collect"
+              label="Kopieren"
+              title="Die gewählten Seiten kopieren – einfügen geht auch in einem anderen Heft"
+              disabled={busy || !chosen.length}
+              onClick={() => onCopy(pageIds.filter((id) => chosen.includes(id)))}
+            />
+          )}
+          {onPaste && pasteCount > 0 && (
+            <ChoiceButton
+              icon="import"
+              label={pasteCount === 1 ? 'Seite einfügen' : `${pasteCount} Seiten einfügen`}
+              disabled={busy}
+              onClick={onPaste}
+            />
+          )}
           {onSave && (
             <ChoiceButton
               icon="import"

@@ -47,7 +47,7 @@ test('Heft erstellen, schreiben, zeichnen, Seiten wechseln, wiederöffnen und dr
   );
   await page.getByRole('button', { name: 'Tafelmodus', exact: true }).click();
   await page.getByRole('button', { name: 'Weiter', exact: true }).click();
-  await page.getByRole('button', { name: 'Tafelmodus beenden' }).click();
+  await page.getByRole('button', { name: 'Tafelmodus beenden' }).press('Enter');
   // Speichern und teilen: erst die Seitenauswahl, dann alle Formate.
   await page
     .getByRole('button', { name: 'Speichern', exact: true })

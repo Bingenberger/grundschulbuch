@@ -38,6 +38,7 @@ import { ENABLED } from '@/lib/paused';
 import type { WorksheetKind } from '@/lib/learning/worksheets';
 import ShareDialog from './ShareDialog';
 import SaveDialog from './SaveDialog';
+import HoldButton from './ui/HoldButton';
 import { LearningRuntime, pageDrawing } from './learning/Runtime';
 import LearningDialog from './learning/LearningDialog';
 import EmbedDialog from './learning/EmbedDialog';
@@ -80,6 +81,7 @@ import ImageDialog from './ImageDialog';
 import ImageEditor, { editFromElement } from './ImageEditor';
 import { cascade, fillPlaceholder, imageElement, isPlaceholder, withEditedPicture, placeholderElement, type ChosenImage } from './editor/image-elements';
 import { uploadAudio, uploadImage } from '@/lib/client-api';
+import { CLIPBOARD_MARKER, embedKindFor, fileKind, loadElementClipboard, loadPageClipboard, pastedUrl, saveElementClipboard, savePageClipboard } from '@/lib/drop-paste';
 import { clampZoom, fitZoom, usePinchZoom } from './editor/use-pinch-zoom';
 
 type Gesture = {
@@ -202,7 +204,18 @@ export default function Editor({
   const surface = useRef<HTMLDivElement>(null);
   const gesture = useRef<Gesture | null>(null);
   const scroller = useRef<HTMLDivElement>(null);
-  const [clipboard, setClipboard] = useState<PageElement[]>([]);
+  // Zwischenablage für Elemente und Seiten: gilt in diesem Tab auch in einem anderen Heft.
+  const [clipboard, setClipboardState] = useState<PageElement[]>(() => (typeof window === 'undefined' ? [] : loadElementClipboard()));
+  const setClipboard = (elements: PageElement[]) => {
+    setClipboardState(elements);
+    saveElementClipboard(elements);
+  };
+  const [pageClip, setPageClip] = useState(() => (typeof window === 'undefined' ? 0 : loadPageClipboard().length));
+  /** Kurzer Hinweis unten (Fortschritt beim Hineinziehen, Ergebnis). */
+  const [notice, setNotice] = useState('');
+  const [dropping, setDropping] = useState(false);
+  const dragDepth = useRef(0);
+  const pendingPaste = useRef<ReturnType<typeof setTimeout> | null>(null);
   const page = s.pages.find((p) => p.id === s.activeId);
   const catalog = useMemo(() => templateCatalog(templates, hiddenTemplates, false, templatePolicies, templateClassId), [templates, hiddenTemplates,templatePolicies,templateClassId]);
   function configuredPages(pages: Page[]) {
@@ -718,6 +731,96 @@ export default function Editor({
     insert(element);
     writing.begin(element.id, true);
   }
+  /** Hineingezogene oder eingefügte Dateien: Bilder und Töne auf die Seite,
+   *  eine PDF als Seiten hinter dieser, eine Heftdatei oder ein ePub wird geöffnet. */
+  function insertFiles(files: File[]) {
+    const known = files.filter((f) => fileKind(f));
+    if (!known.length) {
+      useEditor.setState({ error: 'Diese Datei lässt sich nicht einfügen. Möglich sind Bilder, Töne, PDFs und Heftdateien.' });
+      return;
+    }
+    void run(async () => {
+      const placed: PageElement[] = [];
+      const others = () => [...(useEditor.getState().pages.find((p) => p.id === page!.id)?.elements ?? []), ...placed];
+      try {
+        for (const file of known) {
+          const kind = fileKind(file);
+          if (kind === 'image') {
+            setNotice(`Bild „${file.name}“ wird eingefügt …`);
+            const src = await uploadImage(file);
+            const el = cascade(await imageElement({ src, alt: file.name.replace(/\.[a-z0-9]{2,5}$/i, '') }, size), others(), size);
+            insert(el);
+            placed.push(el);
+          } else if (kind === 'audio') {
+            if (file.size > 20 * 1024 * 1024) throw new Error('Tondateien dürfen höchstens 20 MB groß sein.');
+            setNotice(`Ton „${file.name}“ wird eingefügt …`);
+            const title = file.name.replace(/\.[a-z0-9]{2,5}$/i, '').slice(0, 120) || 'Ton';
+            const el = cascade(audioElement(await uploadAudio(file, s.book!.id), title), others(), size);
+            insert(el);
+            placed.push(el);
+          } else if (kind === 'pdf') {
+            if (templateEditing) throw new Error('Eine Vorlage besteht aus einer Seite.');
+            const { pdfToPages } = await import('@/lib/portable');
+            const pages = await pdfToPages(file, setNotice);
+            for (let i = 0; i < pages.length; i++) {
+              setNotice(`PDF-Seite ${i + 1} von ${pages.length} wird eingefügt …`);
+              await add(pages[i]);
+            }
+            setNotice(pages.length === 1 ? 'Die PDF-Seite ist eingefügt.' : `${pages.length} PDF-Seiten sind eingefügt.`);
+            return;
+          } else if (kind === 'book') {
+            setNotice(`„${file.name}“ wird geöffnet …`);
+            const { importPortable } = await import('@/lib/portable');
+            const imported = await importPortable(file);
+            window.location.assign(`/heft/${imported.book.id}`);
+            return;
+          }
+        }
+        setNotice('');
+      } catch (e) {
+        setNotice('');
+        throw e;
+      }
+    });
+  }
+  /** Einfügen aus der Zwischenablage des Geräts (andere Apps), sonst die Elemente aus dem Heft. */
+  function pasteFrom(data: DataTransfer | null) {
+    const files = data ? Array.from(data.files) : [];
+    const text = data?.getData('text/plain') ?? '';
+    if (files.length && text !== CLIPBOARD_MARKER) return insertFiles(files);
+    if (text && text !== CLIPBOARD_MARKER) {
+      const url = pastedUrl(text);
+      if (url) {
+        const kind = embedKindFor(url);
+        insert(cascade({
+          id: uuid(), type: 'embed', x: 20, y: 40, width: 170, height: 100, rotation: 0, locked: false,
+          color: '#253c42', url, embedKind: kind, alt: '',
+        }, page!.elements, size));
+        return;
+      }
+      const element = fitText({
+        id: uuid(), type: 'text', x: 20, y: 20, width: Math.min(170, size.width - 30), height: 28, rotation: 0,
+        locked: false, color: s.color, text: text.replace(/\r\n?/g, '\n').slice(0, 20000), font: 'Andika', fontSize: 18, bold: false,
+      }, page!, { autoSize: true });
+      insert(cascade(element, page!.elements, size));
+      return;
+    }
+    if (clipboard.length) performCommand('paste');
+  }
+  function copyPages(ids: string[]) {
+    const pages = ids.map((id) => s.pages.find((p) => p.id === id)).filter((p): p is Page => !!p);
+    savePageClipboard(clone(pages));
+    setPageClip(pages.length);
+    setNotice(pages.length === 1 ? 'Seite kopiert – einfügen geht auch in einem anderen Heft.' : `${pages.length} Seiten kopiert – einfügen geht auch in einem anderen Heft.`);
+  }
+  function pastePages() {
+    const pages = loadPageClipboard();
+    if (!pages.length) return;
+    void run(async () => {
+      for (const p of pages) await add({ ...p, elements: cloneElements(p.elements, 0) });
+      setNotice(pages.length === 1 ? 'Seite eingefügt.' : `${pages.length} Seiten eingefügt.`);
+    });
+  }
   function closeImages() {
     setShowImages(false);
     setFillId(null);
@@ -1019,6 +1122,21 @@ export default function Editor({
       const command = (Object.keys(shortcuts) as EditorCommand[]).find(
         (id) => shortcuts[id] === chord,
       );
+      // ⌘C/⌘V gehen über die Ereignisse „copy“ und „paste“: so kommen auch Bilder,
+      // Texte und Adressen aus anderen Apps ins Heft. Ohne paste-Ereignis
+      // (manche Browser) fügt der Zeitgeber die Elemente aus dem Heft ein.
+      if (command === 'copy' && chord === 'Mod+c') {
+        performCommand('copy');
+        return;
+      }
+      if (command === 'paste' && chord === 'Mod+v') {
+        if (pendingPaste.current) clearTimeout(pendingPaste.current);
+        pendingPaste.current = setTimeout(() => {
+          pendingPaste.current = null;
+          performCommand('paste');
+        }, 250);
+        return;
+      }
       if (command) {
         event.preventDefault();
         performCommand(command);
@@ -1027,6 +1145,38 @@ export default function Editor({
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
   });
+  const dialogOpen = !!(showImages || templateMode || showTiles || showAudio || showCollection || showGenerator ||
+    showShare || showSave || learning || showEmbed || showFiles || showShortcuts);
+  useEffect(() => {
+    const editable = (t: EventTarget | null) =>
+      t instanceof HTMLElement && (['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName) || t.isContentEditable);
+    const blocked = (e: ClipboardEvent) => editable(e.target) || dialogOpen || board || reader || !page;
+    const onCopy = (e: ClipboardEvent) => {
+      if (blocked(e) || !s.selected.length || window.getSelection()?.toString()) return;
+      e.clipboardData?.setData('text/plain', CLIPBOARD_MARKER);
+      e.preventDefault();
+    };
+    const onPaste = (e: ClipboardEvent) => {
+      if (blocked(e)) return;
+      if (pendingPaste.current) {
+        clearTimeout(pendingPaste.current);
+        pendingPaste.current = null;
+      }
+      e.preventDefault();
+      pasteFrom(e.clipboardData);
+    };
+    window.addEventListener('copy', onCopy);
+    window.addEventListener('paste', onPaste);
+    return () => {
+      window.removeEventListener('copy', onCopy);
+      window.removeEventListener('paste', onPaste);
+    };
+  });
+  useEffect(() => {
+    if (!notice || busy) return;
+    const t = setTimeout(() => setNotice(''), 5000);
+    return () => clearTimeout(t);
+  }, [notice, busy]);
   usePinchZoom(scroller, zoom, setZoom, {
     enabled: ready && !!page && !!s.book && !board && !reader,
     onStart: cancelDrawingGesture,
@@ -1149,7 +1299,40 @@ export default function Editor({
           onTiles={() => setShowTiles(true)}
         />}
         <div className="editor-main">
-        <section className="canvas-area">
+        <section
+          className="canvas-area"
+          onDragEnter={(e) => {
+            if (board || reader || !e.dataTransfer.types.includes('Files')) return;
+            e.preventDefault();
+            dragDepth.current++;
+            setDropping(true);
+          }}
+          onDragOver={(e) => {
+            if (board || reader || !e.dataTransfer.types.includes('Files')) return;
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+          }}
+          onDragLeave={(e) => {
+            if (!e.dataTransfer.types.includes('Files')) return;
+            dragDepth.current = Math.max(0, dragDepth.current - 1);
+            if (!dragDepth.current) setDropping(false);
+          }}
+          onDrop={(e) => {
+            if (!e.dataTransfer.types.includes('Files')) return;
+            e.preventDefault();
+            dragDepth.current = 0;
+            setDropping(false);
+            if (board || reader) return;
+            insertFiles(Array.from(e.dataTransfer.files));
+          }}
+        >
+          {dropping && (
+            <div className="drop-overlay" aria-hidden="true">
+              <Icon name="import" size={48} />
+              <strong>Loslassen zum Einfügen</strong>
+              <small>Bilder und Töne kommen auf die Seite, PDF-Seiten hinter diese Seite, Heftdateien werden geöffnet.</small>
+            </div>
+          )}
           <LinkContext.Provider value={links}>
           <div className="canvas-scroll" ref={scroller}>
             <div className={`canvas-sheet${page.paperMode === 'endless' ? ' endless' : ''}`}>
@@ -1266,6 +1449,15 @@ export default function Editor({
             </div>
           </div>
           </LinkContext.Provider>
+          {notice && !deleted && (
+            <div className="undo-notice" role="status">
+              <Icon name="about" size={22} />
+              <span>{notice}</span>
+              <button type="button" className="undo-notice-close" aria-label="Hinweis schließen" onClick={() => setNotice('')}>
+                <Icon name="cancel" size={18} />
+              </button>
+            </div>
+          )}
           {deleted && (
             <div className="undo-notice" role="status">
               <Icon name="empty_trash" size={22} />
@@ -1344,6 +1536,9 @@ export default function Editor({
             pageCount={s.pages.length}
             busy={busy}
             onDuplicate={() => run(() => add({ ...page, elements: cloneElements(page.elements, 0) }))}
+            onCopy={templateEditing ? undefined : () => copyPages([page.id])}
+            onPaste={templateEditing ? undefined : pastePages}
+            pasteCount={pageClip}
             onMove={(delta) => run(() => reorder(delta))}
             onDelete={() => deletePage()}
             onTemplates={() => setTemplateMode('new')}
@@ -1430,9 +1625,13 @@ export default function Editor({
           >
             Weiter <Icon name="next" size={22} />
           </button>
-          <button className="knopf knopf-haupt" onClick={() => { cancelDrawingGesture(); setBoardPointer('none'); setBoardDraw(false); setBoard(false); }}>
+          <HoldButton
+            className="knopf knopf-haupt"
+            label="Tafelmodus beenden"
+            onDone={() => { cancelDrawingGesture(); setBoardPointer('none'); setBoardDraw(false); setBoard(false); }}
+          >
             <Icon name="cancel" size={22} /> Tafelmodus beenden
-          </button>
+          </HoldButton>
         </div>
       )}
       {reader && (
@@ -1667,6 +1866,9 @@ export default function Editor({
             setShowTiles(false);
             setShowSave(ids);
           }}
+          onCopy={copyPages}
+          onPaste={pastePages}
+          pasteCount={pageClip}
         />
       )}
       {templateMode && (
