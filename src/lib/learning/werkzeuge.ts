@@ -12,7 +12,7 @@ import { referenceElement } from './page-designs';
 import type { JsonValue, LearningSettings } from './catalog';
 
 /** Tools available as “werkzeug” (Hör-Memory has its own kind “hoeren”). */
-export const TOOL_IDS = ['tally', 'spin', 'seek', 'pattern', 'mood', 'vote', 'rating', 'check', 'stress', 'steps', 'traffic', 'pieces', 'body', 'timeline', 'phone', 'practice', 'circles', 'week', 'sort', 'budget', 'machine'] as const;
+export const TOOL_IDS = ['tally', 'spin', 'seek', 'pattern', 'mood', 'vote', 'rating', 'check', 'stress', 'steps', 'traffic', 'pieces', 'body', 'timeline', 'phone', 'practice', 'circles', 'week', 'sort', 'budget', 'machine', 'kipartner'] as const;
 export type ToolId = (typeof TOOL_IDS)[number];
 type ToolSpec = {
   kind: string;
@@ -48,6 +48,7 @@ export const TOOL_TITLES: Record<ToolId, string> = {
   stress: 'Stressbarometer', steps: 'Ablaufplan', traffic: 'Fußgängerampel', pieces: 'Stückzähler', body: 'Wo tut es weh?',
   timeline: 'Zeitleiste', phone: 'Telefonieren üben', practice: 'Gespräche üben',
   circles: 'Nähe und Distanz', week: 'Wochenplan', sort: 'Sortieren', budget: 'Geld-Planer', machine: 'Automat',
+  kipartner: 'KI-Partner bauen',
 };
 export const isTool = (v: unknown): v is ToolId => typeof v === 'string' && (TOOL_IDS as readonly string[]).includes(v);
 

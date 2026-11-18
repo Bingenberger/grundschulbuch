@@ -256,3 +256,57 @@ export function playerTask(c: TsConfig, title: string, dataUrls: Map<string, str
     ...(Object.keys(voice).length ? { voice } : {}), assets,
   };
 }
+
+/** „Weitere Übung“ (wie in Lernsachen-Heft): andere Übungsarten mit demselben
+ *  Text oder denselben Wörtern; `reason` sagt, warum eine noch nicht geht. */
+export type MoreOption = { mode: TsMode; kind: TsKind; reason?: string };
+
+/** Die Wörter eines Texts für Wort-Übungen: seine Bildwörter, sonst seine Lernwörter. */
+export function derivedWords(c: TsConfig): TsWord[] {
+  if (c.kind === 'words') return c.words;
+  const words = textWords(c.text), seen = new Set<string>();
+  const learned = c.learn.map((i) => words[i]).filter((w): w is string => !!w && !seen.has(lower(w)) && !!seen.add(lower(w)));
+  const pictured = learned.filter((w) => pictureOf(c, w));
+  return (pictured.length ? pictured : learned).map((w) => ({ text: w, ...(pictureOf(c, w) ? { image: pictureOf(c, w) } : {}) }));
+}
+
+export function moreExercises(c: TsConfig): { text: MoreOption[]; words: MoreOption[]; derived: TsWord[] } {
+  const wordOptions = (list: TsWord[], fromList: boolean): MoreOption[] => {
+    const pictured = list.filter((w) => w.image).length;
+    const need = (ok: boolean, why: string) => (ok ? undefined : why);
+    return modesOf('words')
+      // Blitzlesen mit Wörtern gibt es nur für Wortlisten; mit einem Text ist es eine Text-Übung.
+      .filter((m) => (fromList || m !== 'flash') && !(c.kind === 'words' && m === c.mode))
+      .map((mode) => ({
+        mode, kind: 'words' as const,
+        reason: mode === 'wordle' ? undefined
+          : mode === 'picture' ? need(pictured >= 1, 'Braucht Wörter mit Bildern.')
+          : mode === 'flash' ? need(pictured >= 3, 'Braucht mindestens 3 Wörter mit Bildern.')
+          : mode === 'memory' || mode === 'crossword' ? need(pictured >= 2, 'Braucht mindestens 2 Wörter mit Bildern.')
+          : need(list.length >= 1, 'Braucht Wörter.'),
+      }));
+  };
+  if (c.kind === 'words') return { text: [], words: wordOptions(c.words, true), derived: [] };
+  const derived = derivedWords(c);
+  const learnPictures = c.learn.filter((i) => pictureOf(c, textWords(c.text)[i] ?? '')).length;
+  const text = modesOf('text').filter((m) => m !== c.mode).map((mode) => ({
+    mode, kind: 'text' as const,
+    reason: mode === 'gaps' && !c.learn.length ? 'Braucht Lernwörter.'
+      : mode === 'flash' && (!learnPictures || c.pictures.length < 3) ? 'Braucht Lernwörter mit Bildern (zusammen mindestens 3 Bilder).'
+      : undefined,
+  }));
+  return { text, words: wordOptions(derived, false), derived };
+}
+
+/** Der Text eines Erklärbärs ohne die Leerzeilen zwischen den Szenen. */
+export function withoutScenes(text: string) {
+  return text.replace(/\n\s*\n+/g, (gap, offset: number) => (/[.!?…:"“”»]\s*$/.test(text.slice(0, offset)) ? ' ' : '\n'));
+}
+
+/** Die neue Übung: Einstellungen und Material bleiben, Art und Modus wechseln. */
+export function moreExercise(c: TsConfig, option: Pick<MoreOption, 'mode' | 'kind'>): TsConfig {
+  if (option.kind === 'words')
+    return { ...c, mode: option.mode, kind: 'words', words: c.kind === 'words' ? c.words : derivedWords(c), voice: [] };
+  const text = c.mode === 'explain' && option.mode !== 'explain' ? withoutScenes(c.text) : c.text;
+  return { ...c, mode: option.mode, kind: 'text', text, voice: option.mode === 'explain' ? c.voice : [] };
+}

@@ -347,6 +347,41 @@ die Themen eines Kapitels untereinander. Im Heft führt „Tastenkürzel ansehen
 ein Test prüft, dass jedes Thema ein Kapitel und jede Frage ein Thema hat. Wer
 die Oberfläche ändert, passt dort den Text an.
 
+**Wortlisten.** „Wörter aus einer Liste wählen“ bietet neben den eigenen
+Themen die Listen von Lernsachen-Heft: Erste Wörter, Grundwortschatz Bayern 1/2
+(nach Rechtschreibschwerpunkten), Deutsch als Zweitsprache und Beruf und
+Haushalt, jeweils ganz oder abschnittsweise (`reference-word-lists.json`, aus
+`scripts/extract-word-lists.mjs`). Die Anlaut-Tastatur hat die Auswahl unter
+„Üben“; schaltet man das Üben ein, stehen zuerst die „Ganz kurz“-Wörter da (ohne
+Wörter verwirft die Tastatur das Üben).
+
+**Weitere Übung.** Bei einer Übung aus Textsachen (Lesen & Schreiben,
+Erklärbär, Memory, Kreuzworträtsel …) steht in der Leiste „Weitere Übung“: andere
+Übungsarten mit demselben Text oder denselben Wörtern, mehrere auf einmal, jede
+auf einer eigenen Seite dahinter. Aus einem Text werden für Wort-Übungen seine
+Bildwörter, sonst seine Lernwörter; was noch fehlt, ist mit Grund ausgegraut;
+die Szenen eines Erklärbärs werden zu einem durchgehenden Text
+(`moreExercises` in `src/lib/learning/textsachen.ts`). „In einer anderen App“ der
+Vorlage (Umrechnen mit einem KI-Assistenten) gibt es nicht.
+
+**Sprechendes Foto.** Lernwerkzeug „Sprechendes Foto“ (Für alle Fächer): Foto
+hochladen oder suchen, eine Linie von einem Mundwinkel zum anderen ziehen, Stil
+(Normal, Tierisch, Monster, Comic), Text und Stimme; „Anhören“ zeigt es gleich.
+Zeichnen und Sprechen übernimmt die Vorlage (`renderPhotoTalk`,
+`speakPhotoTalk` in `tools-runtime.ts`). Eine eigene Aufnahme statt der
+Computerstimme gibt es noch nicht.
+
+**KI-Partner bauen.** Werkzeug der Vorlage (Medien & Präsentation): Die Kinder
+bauen ihren KI-Partner in fünf Schritten (Person, Aufgabe, Ziel, Kontext, Form);
+ihre Wahl bleibt im Heft. Einstellbar sind Thema, Lernpartner oder freier
+Helfer, „Selbst schreiben“, Vorlesen, die KI (Duck.ai, AIS-Chat, ChatGPT,
+Claude, Le Chat, Gemini, eigene Adresse) und die Vorgabe vor dem Text der
+Kinder. „Ausprobieren“ kopiert den Text und öffnet die gewählte KI – erst nach
+diesem Tipp; bei AIS-Chat auf Wunsch im Heft. Die Prüfung in
+`scripts/extract-tools-reference.mjs` lässt dafür genau diese Adressen zu. Das
+Skript würfelt die Programmier-Aufgaben in `werkzeug-presets.json` bei jedem
+Lauf neu – nach einem Lauf nur neue Vorlagen übernehmen.
+
 ## Verwaltung (Admin-Konten)
 
 Unter `/verwaltung` (Link „Verwaltung“ im Regal, nur für Admins):

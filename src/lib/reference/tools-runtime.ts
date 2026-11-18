@@ -1434,6 +1434,14 @@ async function dl(e17, t10) {
   let r10 = URL.createObjectURL(n10), i10 = document.createElement(`a`);
   i10.href = r10, i10.download = t10, i10.rel = `noopener`, i10.style.display = `none`, document.body.appendChild(i10), i10.click(), i10.remove(), setTimeout(() => URL.revokeObjectURL(r10), 6e4);
 }
+var Tl = null;
+var El = /* @__PURE__ */ new Set();
+function Dl() {
+  return Tl && (!Tl.frame.isConnected || document.activeElement !== Tl.frame) && (Tl = null), Tl;
+}
+function $ee(e17) {
+  (e17 || Tl) && (Tl = e17, El.forEach((e18) => e18()));
+}
 var _te = `
 .lh-kp-back{position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.45);display:flex;align-items:flex-start;justify-content:center;padding:max(16px,env(safe-area-inset-top)) 16px 16px;overflow:auto;font-family:'Andika',Andika,system-ui,sans-serif;-webkit-user-select:text;user-select:text}
 .lh-kp-sheet{background:#fff;color:#1f2937;border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,.3);width:min(640px,100%);padding:20px 22px 18px;border-top:10px solid var(--kp,#7048e8)}
@@ -1470,7 +1478,392 @@ var Il = (e17, t10 = ``, n10 = ``) => {
   let r10 = document.createElement(e17);
   return t10 && (r10.className = t10), n10 && (r10.textContent = n10), r10;
 };
+var Ll = [`p`, `a`, `z`, `k`, `o`];
+var Rl = { p: { letter: `P`, color: `#1c7ed6`, name: `Person`, ask: `Wer soll die KI sein?` }, a: { letter: `A`, color: `#2f9e44`, name: `Aufgabe`, ask: `Was soll die KI mit dir machen?` }, z: { letter: `Z`, color: `#e8590c`, name: `Ziel`, ask: `Was willst du am Ende k\xF6nnen?` }, k: { letter: `K`, color: `#7048e8`, name: `Kontext`, ask: `Was soll die KI \xFCber dich wissen?` }, o: { letter: `O`, color: `#d6336c`, name: `Form`, ask: `Wie soll die KI antworten?` } };
+var zl = [{ id: `math`, label: `Mathe`, icon: `\u{1F522}`, color: `#e8590c` }, { id: `lang`, label: `Lesen und Schreiben`, icon: `\u270F\uFE0F`, color: `#1c7ed6` }, { id: `sach`, label: `Sachunterricht`, icon: `\u{1F30D}`, color: `#2f9e44` }, { id: `en`, label: `Englisch`, icon: `\u{1F4AC}`, color: `#c2255c` }, { id: `life`, label: `Alltag`, icon: `\u{1F3E0}`, color: `#66a80f` }, { id: `feel`, label: `Gef\xFChle und Miteinander`, icon: `\u{1F91D}`, color: `#f08c00` }, { id: `job`, label: `Beruf und Praktikum`, icon: `\u{1F527}`, color: `#5c7cfa` }, { id: `hobby`, label: `Freizeit und Hobby`, icon: `\u26BD`, color: `#0c8599` }];
+var yte = { math: { p: [`Du bist ein geduldiger Mathe-Lehrer, der alles langsam erkl\xE4rt.`, `Du bist eine Mathe-Trainerin, die mich beim \xDCben anfeuert.`, `Du bist ein Verk\xE4ufer im Supermarkt und rechnest mit mir mit Geld.`], a: [`Stell mir Plus- und Minus-Aufgaben bis 20. Immer nur eine Aufgabe.`, `\xDCbe mit mir das Einmaleins. Fang mit der Zweierreihe an.`, `Hilf mir bei einer Textaufgabe. Ich sage dir die Aufgabe, du hilfst mir mit Fragen.`, `Spiel mit mir Einkaufen: Ich bezahle, und du fragst nach dem R\xFCckgeld.`, `\xDCbe mit mir die Uhrzeit. Frag mich: Wie sp\xE4t ist es?`], free: [`Erkl\xE4re mir, wie man schriftlich plus rechnet. Mit einem Beispiel.`, `Erkl\xE4re mir, was die H\xE4lfte und das Doppelte ist.`], z: [`Ich m\xF6chte die Aufgaben am Ende ganz allein rechnen k\xF6nnen.`, `Ich m\xF6chte schneller rechnen k\xF6nnen.`, `Ich m\xF6chte im Laden richtig bezahlen k\xF6nnen.`], k: [`Ich rechne gern mit Dingen, die ich mir vorstellen kann, zum Beispiel mit \xC4pfeln oder Geld.`, `Ich rechne im Zahlenraum bis 100.`] }, lang: { p: [`Du bist eine freundliche Lese-Trainerin.`, `Du bist ein Schreib-Coach, der mir beim Schreiben hilft.`, `Du bist ein lustiger Geschichten-Erz\xE4hler.`], a: [`Gib mir ein Wort. Ich sage dir, wie viele Silben es hat.`, `Schreib mir einen ganz kurzen Text. Dann stell mir eine Frage dazu.`, `Hilf mir, meinen Text zu verbessern. Zeig mir einen Fehler nach dem anderen, ich verbessere ihn selbst.`, `\xDCbe mit mir W\xF6rter mit ie. Ich schreibe, du sagst, ob es stimmt.`, `Erfinde mit mir eine Geschichte. Du schreibst einen Satz, dann schreibe ich einen Satz.`], free: [`Schreib mir eine kurze, lustige Geschichte \xFCber ein Tier.`, `Erkl\xE4re mir, was ein Nomen ist. Mit drei Beispielen.`], z: [`Ich m\xF6chte besser und schneller lesen k\xF6nnen.`, `Ich m\xF6chte W\xF6rter richtig schreiben k\xF6nnen.`, `Ich m\xF6chte am Ende eine eigene Geschichte geschrieben haben.`], k: [`Lange Texte sind f\xFCr mich schwer. Bitte nur kurze S\xE4tze.`, `Ich lerne gerade, W\xF6rter in Silben zu lesen.`] }, sach: { p: [`Du bist eine Forscherin, die alles \xFCber Tiere wei\xDF.`, `Du bist ein Wetter-Experte.`, `Du bist eine \xC4rztin, die erkl\xE4rt, wie unser K\xF6rper funktioniert.`], a: [`Beschreibe mir ein Tier, ohne den Namen zu sagen. Ich rate, welches Tier es ist.`, `Erkl\xE4re mir, warum es regnet. Frag zwischendurch, ob ich es verstanden habe.`, `Mach mit mir ein Quiz \xFCber die Jahreszeiten.`, `Hilf mir, ein Plakat \xFCber ein Tier zu planen. Frag mich, was ich schon wei\xDF.`, `Erkl\xE4re mir, wie Pflanzen wachsen. Danach erkl\xE4re ich es mit eigenen Worten.`], free: [`Erz\xE4hle mir drei spannende Dinge \xFCber Igel.`, `Erkl\xE4re mir, was man bei Gewitter tun soll.`], z: [`Ich m\xF6chte im Unterricht bei unserem Thema mitreden k\xF6nnen.`, `Ich m\xF6chte ein Plakat oder ein Referat machen.`, `Ich m\xF6chte verstehen, warum etwas so ist.`], k: [`Wir lernen gerade \xFCber die Tiere im Wald.`, `Ich mag Versuche, die man selbst ausprobieren kann.`] }, en: { p: [`Du bist eine nette Englisch-Lehrerin.`, `Du bist ein Kind aus England und willst mich kennenlernen.`, `Du bist ein Kellner in einem Caf\xE9 in London.`], a: [`\xDCbe mit mir die Zahlen von 1 bis 10 auf Englisch.`, `\xDCbe mit mir, wie ich mich auf Englisch vorstelle. Ich darf mir einen Namen ausdenken.`, `\xDCbe mit mir Farben auf Englisch. Du nennst ein Ding, ich sage die Farbe.`, `Spiel mit mir: Ich bestelle etwas im Caf\xE9 auf Englisch.`, `Sag mir ein deutsches Wort. Ich sage es auf Englisch.`], free: [`\xDCbersetze mir drei einfache S\xE4tze ins Englische.`, `Bring mir f\xFCnf englische W\xF6rter zum Thema Essen bei.`], z: [`Ich m\xF6chte mich auf Englisch vorstellen k\xF6nnen.`, `Ich m\xF6chte neue englische W\xF6rter lernen.`, `Ich m\xF6chte keine Angst mehr haben, Englisch zu sprechen.`], k: [`Ich kann erst ein paar W\xF6rter Englisch.`, `Schreib zu jedem englischen Satz den deutschen Satz darunter.`] }, life: { p: [`Du bist ein guter Freund, der mir im Alltag hilft.`, `Du bist eine K\xF6chin, die ganz einfache Rezepte kennt.`, `Du bist ein Busfahrer, der sich mit Fahrpl\xE4nen auskennt.`], a: [`Hilf mir, einen Einkaufszettel zu schreiben. Frag mich, was ich brauche.`, `\xDCbe mit mir, wie man im Laden nach etwas fragt.`, `Hilf mir, meinen Tag zu planen. Frag mich Schritt f\xFCr Schritt.`, `\xDCbe mit mir, wie ich mit dem Bus zur Schule fahre.`, `Frag mich, wie man sich richtig die Z\xE4hne putzt. Hilf mir, wenn ich etwas vergesse.`], free: [`Schreib mir ein einfaches Rezept f\xFCr einen Obstsalat.`, `Gib mir Tipps, wie ich mein Zimmer aufr\xE4ume.`], z: [`Ich m\xF6chte das allein schaffen.`, `Ich m\xF6chte nichts vergessen.`, `Ich m\xF6chte sicher unterwegs sein.`], k: [`Ich brauche alles in kleinen Schritten.`, `Ich mache das zum ersten Mal.`] }, feel: { p: [`Du bist ein freundlicher Zuh\xF6rer, der mir Mut macht.`, `Du bist eine Streitschlichterin in der Schule.`, `Du bist ein guter Freund, der mir hilft, wenn es mir nicht gut geht.`], a: [`Hilf mir, ein Gef\xFChl zu benennen. Frag mich, wie sich mein Bauch und mein Kopf anf\xFChlen.`, `\xDCbe mit mir, wie man nach einem Streit wieder Frieden schlie\xDFt.`, `Spiel mit mir: Jemand \xE4rgert mich. Was kann ich sagen?`, `\xDCbe mit mir, wie ich jemanden freundlich um Hilfe bitte.`, `Frag mich, was mir heute gut gelungen ist.`], free: [`Gib mir drei Ideen, wie ich mich beruhige, wenn ich w\xFCtend bin.`, `Erkl\xE4re mir, wie man neue Freunde findet.`], z: [`Ich m\xF6chte meine Gef\xFChle besser verstehen.`, `Ich m\xF6chte mich wieder vertragen.`, `Ich m\xF6chte mutiger werden.`], k: [`Ich spreche nicht gern vor vielen Menschen.`, `Ich werde manchmal schnell w\xFCtend.`] }, job: { p: [`Du bist ein Berufsberater, der mir viele Berufe zeigt.`, `Du bist eine Chefin, die Praktikanten sucht.`, `Du bist ein Handwerker mit viel Erfahrung.`], a: [`\xDCbe mit mir ein Vorstellungsgespr\xE4ch. Stell mir eine Frage nach der anderen.`, `Hilf mir herauszufinden, welcher Beruf zu mir passt. Frag mich, was ich gern mache.`, `\xDCbe mit mir, wie ich im Praktikum anrufe, wenn ich krank bin.`, `Hilf mir, eine kurze Bewerbung zu schreiben. Ich schreibe, du gibst mir Tipps.`, `Frag mich, was man im Praktikum anziehen soll und warum.`], free: [`Erkl\xE4re mir drei Berufe, in denen man mit Tieren arbeitet.`, `Schreib mir eine Liste: Was nehme ich am ersten Tag im Praktikum mit?`], z: [`Ich m\xF6chte einen Praktikumsplatz finden.`, `Ich m\xF6chte im Gespr\xE4ch ruhig und freundlich sein.`, `Ich m\xF6chte wissen, was ich gut kann.`], k: [`Ich arbeite gern mit den H\xE4nden.`, `Ich bin p\xFCnktlich und hilfsbereit.`] }, hobby: { p: [`Du bist ein Sporttrainer, der mich anfeuert.`, `Du bist eine K\xFCnstlerin, die tolle Bastelideen hat.`, `Du bist ein Musiker in einer Band.`], a: [`Hilf mir, ein neues Hobby zu finden. Frag mich, was ich gern mache.`, `Mach mit mir ein Quiz \xFCber Fu\xDFball.`, `Erkl\xE4re mir ein Spiel Schritt f\xFCr Schritt. Frag nach jedem Schritt, ob ich bereit bin.`, `Plane mit mir einen Spielenachmittag mit Freunden.`, `Hilf mir, ein Lied auswendig zu lernen. Immer eine Zeile nach der anderen.`], free: [`Gib mir drei Bastelideen mit Papier.`, `Schreib mir einen Plan f\xFCr 10 Minuten Bewegung am Tag.`], z: [`Ich m\xF6chte etwas Neues ausprobieren.`, `Ich m\xF6chte mehr Spa\xDF in meiner Freizeit haben.`, `Ich m\xF6chte besser werden.`], k: [`Es soll nichts kosten.`, `Ich bin gern drau\xDFen.`] } };
+var bte = [`Du bist ein geduldiger Lernbegleiter, der mir hilft, selbst auf die L\xF6sung zu kommen.`, `Du bist ein freundlicher Roboter, der gern Fragen stellt.`];
+var xte = [`Ich m\xF6chte es am Ende selbst erkl\xE4ren k\xF6nnen.`, `Ich m\xF6chte Spa\xDF beim Lernen haben.`, `Ich m\xF6chte bei der n\xE4chsten Probe gut sein.`];
+var Ste = [`Ich gehe in die F\xF6rderschule. Bitte erkl\xE4re alles ganz einfach.`, `Ich lerne noch Deutsch. Bitte benutze keine schweren W\xF6rter.`, `Lesen ist f\xFCr mich schwer. Bitte schreib nur ganz kurze S\xE4tze.`, `Ich verliere schnell die Lust. Mach es kurz und spannend.`, `Ich brauche Erkl\xE4rungen ohne Witze und ohne versteckte Bedeutung.`, `Ich lerne am besten mit Beispielen und Bildern im Kopf.`, `Ich habe heute nur 10 Minuten Zeit.`, `Ich bin aufgeregt. Bitte mach mir Mut.`];
+var Cte = [`Stell mir immer nur eine Frage und warte auf meine Antwort.`, `Gib mir zuerst nur einen kleinen Tipp, nicht die L\xF6sung.`, `Lob mich, wenn ich etwas richtig mache.`, `Mach am Ende ein kleines Quiz mit 3 Fragen.`, `Schreib h\xF6chstens drei kurze S\xE4tze auf einmal.`, `Benutze passende Emojis, damit ich es gut verstehe.`, `Erkl\xE4re es mir an einem Beispiel aus dem Alltag.`];
+var wte = [`Schreib eine Liste mit Punkten.`, `Schreib eine Anleitung in 3 Schritten.`, `Mach eine Tabelle mit zwei Spalten.`, `Erz\xE4hle es als kleine Geschichte.`, `Schreib es als Gedicht mit Reimen.`, `Schreib die wichtigsten W\xF6rter fett.`];
+function Tte(e17, t10, n10) {
+  let r10 = yte[t10];
+  switch (e17) {
+    case `p`:
+      return [...r10.p, ...bte];
+    case `a`:
+      return n10 ? [...r10.a, ...r10.free] : r10.a;
+    case `z`:
+      return [...r10.z, ...xte];
+    case `k`:
+      return [...r10.k, ...Ste];
+    case `o`:
+      return n10 ? [...Cte, ...wte] : Cte;
+  }
+}
+var Bl = [{ id: `duck`, label: `Duck.ai`, url: `https://duck.ai/`, note: `ohne Konto, ohne Anmeldung` }, { id: `ais`, label: `AIS-Chat`, url: ``, note: `Dialogpartner der Schule: Link und Zugangscode` }, { id: `chatgpt`, label: `ChatGPT`, url: `https://chatgpt.com/`, prefill: (e17) => `https://chatgpt.com/?q=` + encodeURIComponent(e17), note: `Text kommt gleich mit` }, { id: `claude`, label: `Claude`, url: `https://claude.ai/`, prefill: (e17) => `https://claude.ai/new?q=` + encodeURIComponent(e17), note: `Text kommt gleich mit` }, { id: `mistral`, label: `Le Chat (Mistral)`, url: `https://chat.mistral.ai/`, prefill: (e17) => `https://chat.mistral.ai/chat?q=` + encodeURIComponent(e17), note: `Text kommt gleich mit` }, { id: `gemini`, label: `Gemini`, url: `https://gemini.google.com/`, note: `Text einf\xFCgen` }, { id: `custom`, label: `Eigene Adresse`, url: ``, note: `z. B. die KI eures Landes` }];
+var Ote = 300;
+var kte = () => ({ title: `Mein KI-Partner`, task: ``, topic: `choose`, mode: `learn`, own: true, talk: true, site: `duck`, url: ``, code: ``, inline: true, system: ``, parts: {} });
+var Vl = (e17, t10) => typeof e17 == `string` ? e17.slice(0, t10) : ``;
+var Ate = (e17) => zl.some((t10) => t10.id === e17);
+function Hl(e17) {
+  let t10 = e17 && typeof e17 == `object` ? e17 : {}, n10 = t10.parts && typeof t10.parts == `object` ? t10.parts : {}, r10 = {};
+  Ate(n10.topic) && (r10.topic = n10.topic);
+  for (let e18 of Ll) {
+    let t11 = Vl(n10[e18], Ote).trim();
+    t11 && (r10[e18] = t11);
+  }
+  let i10 = Vl(t10.url, 600).trim();
+  return { title: typeof t10.title == `string` ? t10.title.slice(0, 60) : kte().title, task: Vl(t10.task, 240), topic: Ate(t10.topic) ? t10.topic : `choose`, mode: t10.mode === `free` ? `free` : `learn`, own: t10.own !== false, talk: t10.talk !== false, site: Bl.some((e18) => e18.id === t10.site) ? t10.site : `duck`, url: /^https?:\/\//i.test(i10) ? i10 : ``, code: Vl(t10.code, 40).trim(), inline: t10.inline !== false, system: Vl(t10.system, 4e3), parts: r10 };
+}
+var jte = (e17) => e17.system.trim() || (e17.mode === `free` ? `Du bist ein freundlicher Helfer f\xFCr ein Kind oder einen Jugendlichen, dem Lernen manchmal schwerf\xE4llt.
+Regeln f\xFCr jede Antwort:
+- Sprich einfaches Deutsch: kurze S\xE4tze, keine Fremdw\xF6rter.
+- Schreib h\xF6chstens 150 W\xF6rter, wenn ich nichts anderes sage.
+- Frag nicht nach meiner Adresse, Telefonnummer, Schule oder anderen pers\xF6nlichen Daten.
+- Wenn ich von Sorgen, Streit zu Hause, Gewalt oder gro\xDFer Traurigkeit erz\xE4hle: Sag mir freundlich, dass ich mit einer Lehrkraft oder einem Erwachsenen reden soll, dem ich vertraue.
+So m\xF6chte ich dich haben:` : `Du bist ein Lernpartner f\xFCr ein Kind oder einen Jugendlichen, dem Lernen manchmal schwerf\xE4llt.
+Regeln f\xFCr jede Antwort:
+- Verrate nicht gleich die L\xF6sung. Hilf mit Fragen und kleinen Tipps, damit ich selbst darauf komme.
+- Stell immer nur eine Frage und warte auf meine Antwort.
+- Ist meine Antwort falsch, sag es freundlich und gib mir einen Tipp. Ist sie richtig, lob mich.
+- Sprich einfaches Deutsch: kurze S\xE4tze, keine Fremdw\xF6rter.
+- Schreib h\xF6chstens 80 W\xF6rter auf einmal.
+- Frag nicht nach meiner Adresse, Telefonnummer, Schule oder anderen pers\xF6nlichen Daten.
+- Wenn ich von Sorgen, Streit zu Hause, Gewalt oder gro\xDFer Traurigkeit erz\xE4hle: Sag mir freundlich, dass ich mit einer Lehrkraft oder einem Erwachsenen reden soll, dem ich vertraue.
+- Fang mit einer kurzen Begr\xFC\xDFung an und stell mir dann die erste Frage.
+So m\xF6chte ich dich haben:`);
+var Ul = (e17) => Ll.flatMap((t10) => e17[t10] ? [e17[t10]] : []).join(`
+`);
+var Mte = (e17, t10) => `${jte(e17)}
+
+${Ul(t10)}`;
+function Wl(e17, t10) {
+  if (/[?&]inviteCode=/i.test(e17)) return e17;
+  let n10 = e17.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i)?.[0], r10 = t10.replace(/\s+/g, ``);
+  if (!n10 || !r10) return ``;
+  let i10 = `https://app.ais-chat.schule`;
+  try {
+    i10 = new URL(e17).origin;
+  } catch {
+  }
+  return `${i10}/ua/characters/${n10}/dialog?inviteCode=${encodeURIComponent(r10)}`;
+}
+var Gl = (e17) => Bl.find((t10) => t10.id === e17.site);
+var Nte = (e17) => e17.site === `custom` ? `die KI` : Gl(e17).label;
+var Kl = (e17) => [...e17.topic === `choose` ? [`t`] : [], ...Ll, `done`];
+var ql = /* @__PURE__ */ new Map();
+var Pte = null;
+function Fte(e17) {
+  Pte = e17;
+}
+var Ite = (e17) => JSON.stringify({ ...e17, parts: void 0 });
+var Lte = (e17, t10) => e17.topic === `choose` ? t10.topic ?? `math` : e17.topic;
+function Jl(e17, t10) {
+  let n10 = Kl(e17), r10 = n10.findIndex((e18) => e18 === `t` ? !t10.topic : e18 !== `done` && !t10[e18]);
+  return r10 < 0 ? n10.length - 1 : r10;
+}
+function Rte(e17) {
+  let t10 = Hl(e17.kp), n10 = Ite(t10), r10 = JSON.stringify(t10.parts), i10 = ql.get(e17.id);
+  return i10 && i10.key !== n10 && (ql.delete(e17.id), i10 = void 0), i10 ? i10.saved !== r10 && (i10.saved = r10, i10.parts = { ...t10.parts }, i10.step = Math.min(i10.step, Jl(t10, i10.parts))) : ql.set(e17.id, i10 = { key: n10, saved: r10, step: Jl(t10, t10.parts), parts: { ...t10.parts }, page: {}, ask: 0 }), i10;
+}
+function Yl(e17, t10, n10) {
+  let r10 = Tte(n10, Lte(e17, t10.parts), e17.mode === `free`), i10 = r10.length, a10 = ((t10.page[n10] ?? 0) * 3 % i10 + i10) % i10, o10 = [0, 1, 2].map((e18) => r10[(a10 + e18) % i10]).filter((e18, t11, n11) => n11.indexOf(e18) === t11), s10 = t10.parts[n10];
+  return s10 && !o10.includes(s10) ? [s10, ...o10.slice(0, 2)] : o10;
+}
+var Xl = 1300;
+var zte = 870;
+var Zl = `#1f2937`;
+function Bte(e17) {
+  let { letter: t10, color: n10, name: r10 } = Rl[e17], i10 = r10.toLowerCase().indexOf(t10.toLowerCase());
+  return i10 < 0 ? Bo(r10) : `${Bo(r10.slice(0, i10))}<tspan fill="${n10}" font-weight="700">${Bo(r10[i10])}</tspan>${Bo(r10.slice(i10 + 1))}`;
+}
+function Ql(e17, t10, n10, r10, i10, a10 = true) {
+  return `<circle cx="${A(n10)}" cy="${A(r10)}" r="${A(i10)}" fill="${a10 ? t10 : `#ffffff`}" stroke="${t10}" stroke-width="4"/><text x="${A(n10)}" y="${A(r10 + i10 * 0.36)}" text-anchor="middle" font-family="${j}" font-size="${A(i10 * 1.05)}" font-weight="700" fill="${a10 ? `#ffffff` : t10}">${Bo(e17)}</text>`;
+}
+function $l(e17, t10, n10, r10, i10, a10, o10, s10, c10 = `#ffffff`, l10) {
+  let u10 = Ko(o10, i10 - 30, a10 - 10, 32, 18, 1);
+  return `<g${Vo(e17, t10)}>${l10 ? `<title>${Bo(l10)}</title>` : ``}<rect x="${A(n10)}" y="${A(r10)}" width="${A(i10)}" height="${A(a10)}" rx="${A(a10 / 2)}" fill="${s10}"${s10 === `#ffffff` ? ` stroke="#ced4da" stroke-width="3"` : ``}/>${qo(u10.lines, n10 + i10 / 2, r10 + a10 / 2, u10.size, `font-weight="700" fill="${c10}"`)}</g>`;
+}
+function Vte(e17, t10, n10) {
+  let r10 = `<rect x="0" y="0" width="${Xl}" height="${zte}" rx="24" fill="#ffffff" stroke="#d0bfff" stroke-width="4"/>`;
+  r10 += `<path d="M0 24a24 24 0 0 1 24-24h1252a24 24 0 0 1 24 24v72H0z" fill="#f3f0ff"/>`;
+  let i10 = Kl(e17).filter((e18) => e18 !== `done`), a10 = i10.length * 66, o10 = Ko(`\u{1F916} ${e17.title || `Mein KI-Partner`}`, Xl - a10 - 90, 70, 40, 22, 1);
+  if (r10 += qo(o10.lines, 34, 48, o10.size, `font-weight="700" fill="${Zl}"`, `start`), t10) {
+    let o11 = Jl(e17, t10.parts);
+    i10.forEach((e18, i11) => {
+      let s11 = Xl - a10 + i11 * 66 + 10, c10 = t10.step === i11, l10 = e18 === `t` ? !!t10.parts.topic : !!t10.parts[e18], u10 = e18 === `t` ? `#495057` : Rl[e18].color, d10 = e18 === `t` ? t10.parts.topic ? zl.find((e19) => e19.id === t10.parts.topic).icon : `?` : Rl[e18].letter, f10 = n10 && i11 <= o11 && !c10;
+      r10 += `<g${f10 ? Vo(n10, `go:${i11}`) : ``}>${f10 ? `<title>${e18 === `t` ? `Thema` : Rl[e18].name}</title><circle cx="${s11}" cy="48" r="32" fill="transparent"/>` : ``}${c10 ? `<circle cx="${s11}" cy="48" r="31" fill="none" stroke="${u10}" stroke-width="3" opacity="0.5"/>` : ``}${Ql(d10, u10, s11, 48, c10 ? 25 : 21, l10 || c10)}</g>`;
+    });
+  }
+  let s10 = 112;
+  if (e17.task.trim()) {
+    let t11 = Ko(`\u{1F4CC} ${e17.task.trim()}`, 1220, 52, 28, 18, 2);
+    r10 += `<rect x="20" y="104" width="1260" height="58" rx="14" fill="#fff9db" stroke="#ffe066" stroke-width="2"/>`, r10 += qo(t11.lines, 40, 133, t11.size, `fill="${Zl}"`, `start`), s10 = 172;
+  }
+  return { s: r10, top: s10 };
+}
+function Hte(e17, t10, n10) {
+  let r10 = e17 === `t` ? `#495057` : Rl[e17].color, i10 = e17 === `t` ? `Worum soll es gehen?` : Rl[e17].ask, a10 = Ql(e17 === `t` ? `?` : Rl[e17].letter, r10, 70, t10 + 40, 34);
+  return a10 += `<text x="122" y="${t10 + 38}" font-family="${j}" font-size="40" font-weight="700" fill="${Zl}">${Bo(i10)}</text>`, a10 += `<text x="124" y="${t10 + 72}" font-family="${j}" font-size="26" fill="#868e96">${e17 === `t` ? `Thema` : Bte(e17)}</text>`, n10 && (a10 += `<g${Vo(n10, `say`)}><title>Vorlesen</title><circle cx="1230" cy="${t10 + 40}" r="34" fill="#e7f5ff" stroke="#74c0fc" stroke-width="3"/><path d="M1212 ${t10 + 30}h10l13-11v42l-13-11h-10z" fill="#1c7ed6"/><path d="M1242 ${t10 + 28}a16 16 0 0 1 0 24" fill="none" stroke="#1c7ed6" stroke-width="4" stroke-linecap="round"/></g>`), a10;
+}
+function Ute(e17, t10, n10, r10) {
+  let i10 = ``;
+  t10.step > 0 && (i10 += $l(n10, `back`, 26, 778, 190, 72, `\u2190 Zur\xFCck`, `#ffffff`, Zl)), r10 !== `t` && (i10 += $l(n10, `more`, 240, 778, 290, 72, `\u{1F3B2} Andere Ideen`, `#ffffff`, Zl), e17.own && (i10 += $l(n10, `write`, 554, 778, 330, 72, t10.parts[r10] ? `\u270F\uFE0F \xC4ndern` : `\u270F\uFE0F Selbst schreiben`, `#ffffff`, Zl)));
+  let a10 = r10 === `t` ? !!t10.parts.topic : !!t10.parts[r10];
+  return i10 += $l(n10, `next`, 1054, 778, 220, 72, `Weiter \u2192`, a10 ? `#2f9e44` : `#ced4da`, a10 ? `#ffffff` : `#868e96`), i10;
+}
+function Wte(e17, t10, n10, r10) {
+  let i10 = Hte(`t`, r10, n10), a10 = r10 + 100, o10 = Math.min(250, (760 - a10 - 20) / 2);
+  return zl.forEach((e18, r11) => {
+    let s10 = 30 + r11 % 4 * 315, c10 = a10 + Math.floor(r11 / 4) * (o10 + 20), l10 = t10.parts.topic === e18.id, u10 = Ko(e18.label, 265, o10 * 0.36, 30, 18, 2);
+    i10 += `<g${Vo(n10, `t:${e18.id}`)}><rect x="${A(s10)}" y="${A(c10)}" width="${A(295)}" height="${A(o10)}" rx="22" fill="${l10 ? `${e18.color}22` : `#ffffff`}" stroke="${l10 ? e18.color : `#dee2e6`}" stroke-width="${l10 ? 7 : 3}"/>`, i10 += `<text x="${A(s10 + 295 / 2)}" y="${A(c10 + o10 * 0.48)}" text-anchor="middle" font-family="${j}" font-size="${A(Math.min(84, o10 * 0.4))}">${e18.icon}</text>`, i10 += qo(u10.lines, s10 + 295 / 2, c10 + o10 * 0.77, u10.size, `font-weight="700" fill="${Zl}"`) + `</g>`;
+  }), i10 + Ute(e17, t10, n10, `t`);
+}
+function Gte(e17, t10, n10, r10, i10) {
+  let a10 = Hte(i10, r10, n10), o10 = Rl[i10].color, s10 = Yl(e17, t10, i10), c10 = r10 + 100, l10 = Math.min(170, (758 - c10 - 32) / 3);
+  return s10.forEach((e18, r11) => {
+    let s11 = c10 + r11 * (l10 + 16), u10 = t10.parts[i10] === e18, d10 = Ko(e18, 1090, l10 - 24, 34, 20, 3);
+    a10 += `<g${Vo(n10, `c:${r11}`)}><rect x="30" y="${A(s11)}" width="1240" height="${A(l10)}" rx="20" fill="${u10 ? `${o10}1a` : `#ffffff`}" stroke="${u10 ? o10 : `#dee2e6`}" stroke-width="${u10 ? 6 : 3}"/>`, a10 += `<circle cx="80" cy="${A(s11 + l10 / 2)}" r="22" fill="${u10 ? o10 : `#ffffff`}" stroke="${u10 ? o10 : `#adb5bd`}" stroke-width="4"/>`, u10 && (a10 += `<path d="M69 ${A(s11 + l10 / 2)}l8 8 15-16" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`), a10 += qo(d10.lines, 126, s11 + l10 / 2, d10.size, `fill="${Zl}"${u10 ? ` font-weight="700"` : ``}`, `start`) + `</g>`;
+  }), a10 + Ute(e17, t10, n10, i10);
+}
+function Kte(e17, t10, n10, r10, i10) {
+  let a10 = ``, o10 = i10 ? `Dein KI-Partner ist fertig! \u{1F389}` : t10.topic ? `Thema: ${zl.find((e18) => e18.id === t10.topic).label}` : ``;
+  o10 && (a10 += `<text x="34" y="${r10 + 34}" font-family="${j}" font-size="34" font-weight="700" fill="${i10 ? `#2f9e44` : `#495057`}">${Bo(o10)}</text>`);
+  let s10 = r10 + (o10 ? 54 : 6), c10 = ((i10 && n10 ? 758 : 840) - s10 - 40) / 5, l10 = Kl(e17);
+  return Ll.forEach((e18, r11) => {
+    let o11 = Rl[e18], u10 = s10 + r11 * (c10 + 10), d10 = t10[e18], f10 = n10 && i10 ? Vo(n10, `go:${l10.indexOf(e18)}`) : ``;
+    if (a10 += `<g${f10}>${f10 ? `<title>${o11.name} \xE4ndern</title>` : ``}<rect x="24" y="${A(u10)}" width="1252" height="${A(c10)}" rx="16" fill="${o11.color}12" stroke="${o11.color}" stroke-width="3"/>`, a10 += Ql(o11.letter, o11.color, 72, u10 + c10 / 2 - 8, Math.min(28, c10 * 0.3)), a10 += `<text x="72" y="${A(u10 + c10 / 2 + Math.min(28, c10 * 0.3) + 16)}" text-anchor="middle" font-family="${j}" font-size="17" font-weight="700" fill="${o11.color}">${Bo(o11.name)}</text>`, d10) {
+      let e19 = Ko(d10, 1102, c10 - 16, 30, 16, 3);
+      a10 += qo(e19.lines, 136, u10 + c10 / 2, e19.size, `fill="${Zl}"`, `start`);
+    } else {
+      a10 += `<text x="136" y="${A(u10 + 30)}" font-family="${j}" font-size="20" fill="#868e96">${Bo(o11.ask)}</text>`;
+      for (let e19 = 1; e19 <= 2; e19++) {
+        let t11 = u10 + 30 + (c10 - 40) * e19 / 2.2;
+        t11 < u10 + c10 - 8 && (a10 += `<line x1="136" y1="${A(t11)}" x2="1240" y2="${A(t11)}" stroke="#adb5bd" stroke-width="2" stroke-dasharray="4 6"/>`);
+      }
+    }
+    a10 += `</g>`;
+  }), a10;
+}
+function qte(e17, t10, n10, r10) {
+  let i10 = Kte(e17, t10.parts, n10, r10, true);
+  return n10 && (i10 += $l(n10, `back`, 26, 778, 190, 72, `\u2190 Zur\xFCck`, `#ffffff`, Zl), i10 += $l(n10, `read`, 236, 778, 220, 72, `\u{1F50A} Vorlesen`, `#ffffff`, Zl), i10 += $l(n10, `try`, 476, 778, 500, 72, `\u25B6 Ausprobieren: ${e17.site === `custom` ? `KI` : Gl(e17).label}`, `#7048e8`), i10 += $l(n10, `new`, 996, 778, 278, 72, t10.ask > Date.now() ? `Wirklich? Tippen!` : `\u21BA Neu anfangen`, t10.ask > Date.now() ? `#e03131` : `#ffffff`, t10.ask > Date.now() ? `#ffffff` : Zl)), i10;
+}
+function Jte(e17, t10) {
+  let n10 = Hl(e17.kp), r10 = t10 ? Rte(e17) : null, { s: i10, top: a10 } = Vte(n10, r10, t10), o10 = i10;
+  if (!r10) o10 += Kte(n10, n10.parts, false, a10, false);
+  else {
+    let e18 = Kl(n10)[r10.step] ?? `done`;
+    o10 += e18 === `t` ? Wte(n10, r10, t10, a10) : e18 === `done` ? qte(n10, r10, t10, a10) : Gte(n10, r10, t10, a10, e18);
+  }
+  return { body: o10, vw: Xl, vh: zte };
+}
+function Yte(e17) {
+  let t10 = Hl(e17.kp), n10 = ql.get(e17.id), r10 = n10?.parts ?? t10.parts, i10 = `${t10.title || `Mein KI-Partner`}. ${t10.task.trim() ? `${t10.task.trim()} ` : ``}`, a10 = n10 ? Kl(t10)[n10.step] ?? `done` : `done`;
+  return a10 === `done` && Ll.every((e18) => r10[e18]) ? `${i10}${Ul(r10).replace(/\n/g, ` `)}` : a10 === `t` ? `${i10}Worum soll es gehen? Tippe auf ein Thema.` : a10 === `done` ? `${i10}Bau deinen KI-Partner Schritt f\xFCr Schritt.` : `${i10}${Rl[a10].ask}`;
+}
+var Xte = `
+.lh-kp-steps{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:12px}
+.lh-kp-steps li{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;background:#f8f9fa;border-radius:14px;padding:12px}
+.lh-kp-steps li>b{width:44px;height:44px;border-radius:50%;background:var(--kp,#7048e8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px}
+.lh-kp-steps li p{margin:0 0 8px}
+.lh-kp-steps li button{margin:0 8px 0 0}
+.lh-kp-code{font-size:34px;font-weight:700;letter-spacing:.12em;background:#fff;border:3px dashed #adb5bd;border-radius:12px;padding:6px 14px;display:inline-block;margin:0 10px 8px 0;-webkit-user-select:all;user-select:all}
+.lh-kp-ok{color:#2f9e44;font-weight:700}
+.lh-kp-text{width:100%;min-height:160px;font-size:15px!important;margin-top:8px}
+.lh-kp-warn{background:#fff4e6;border-radius:12px;padding:10px 12px;font-size:16px!important}`;
+function Zte() {
+  if (document.getElementById(`lh-kp-css`)) return;
+  let e17 = document.createElement(`style`);
+  e17.id = `lh-kp-css`, e17.textContent = Xte, document.head.appendChild(e17);
+}
+function eu(e17) {
+  let t10 = () => {
+    let t11 = document.createElement(`textarea`);
+    t11.value = e17, t11.setAttribute(`readonly`, ``), t11.style.cssText = `position:fixed;top:-1000px;opacity:0`, document.body.appendChild(t11), t11.select();
+    let n10 = false;
+    try {
+      n10 = document.execCommand(`copy`);
+    } catch {
+      n10 = false;
+    }
+    return t11.remove(), n10;
+  };
+  try {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(e17).then(() => true, () => t10());
+  } catch {
+  }
+  return Promise.resolve(t10());
+}
+function Qte(e17, t10) {
+  return Zte(), Fl(e17, t10);
+}
+function $te(e17, t10, n10) {
+  let r10 = Rl[e17], { box: i10, close: a10 } = Qte(r10.color, r10.ask);
+  i10.append(Il(`h2`, ``, r10.ask)), i10.append(Il(`small`, ``, `${r10.letter}: ${r10.name}. Schreib einen ganzen Satz. Tipp: Mit dem Mikrofon der Tastatur kannst du auch sprechen.`));
+  let o10 = Il(`textarea`);
+  o10.maxLength = Ote, o10.rows = 4, o10.value = t10, o10.setAttribute(`aria-label`, r10.ask), o10.style.marginTop = `12px`, i10.append(o10);
+  let s10 = Il(`div`, `lh-kp-row`), c10 = Il(`button`, ``, `Abbrechen`), l10 = Il(`button`, `is-main`, `Fertig`);
+  c10.type = l10.type = `button`, s10.append(c10, l10), i10.append(s10);
+  let u10 = () => {
+    let e18 = o10.value.replace(/\s+/g, ` `).trim();
+    a10(), e18 && n10(e18);
+  };
+  c10.onclick = a10, l10.onclick = u10, o10.addEventListener(`keydown`, (e18) => {
+    e18.key === `Enter` && !e18.shiftKey && (e18.preventDefault(), u10());
+  }), o10.focus(), o10.setSelectionRange(o10.value.length, o10.value.length);
+}
+var tu = /* @__PURE__ */ new Map();
+function tne(e17, t10) {
+  let n10 = Il(`div`, `lh-kp-live`), r10 = Il(`div`, `lh-kp-livebar`), i10 = Il(`div`, `lh-kp-livesay`);
+  i10.append(Il(`b`, `lh-kp-livestate`, ``), Il(`span`, ``, `Tippe lange ins Eingabefeld \u2192 Einsetzen \u2192 Senden. Verrate keine echten Namen, Adressen oder Fotos.`));
+  let a10 = (e18, t11, n11 = false) => {
+    let r11 = Il(`button`, `lh-key${n11 ? ` is-main` : ``}`, t11);
+    return r11.type = `button`, r11.dataset.a = e18, r11;
+  };
+  r10.append(i10, a10(`chat:copy`, `Text kopieren`), a10(`chat:out`, `Neues Fenster`), a10(`chat:close`, `\u2190 Zur\xFCck`, true));
+  let o10 = Il(`div`, `lh-kp-liveframe`), s10 = Il(`iframe`);
+  return s10.title = `AIS-Chat`, s10.src = t10.address, s10.setAttribute(`allow`, `microphone; autoplay; clipboard-read; clipboard-write`), s10.setAttribute(`referrerpolicy`, `no-referrer`), s10.addEventListener(`focus`, () => setTimeout(ru, 0)), o10.append(s10), n10.append(r10, o10), n10.dataset.chat = e17, nu(n10, t10.copied), n10;
+}
+function nu(e17, t10) {
+  let n10 = e17.querySelector(`.lh-kp-livestate`);
+  n10 && (n10.textContent = t10 === null ? `Dein KI-Partner wird kopiert \u2026` : t10 ? `\u2713 Dein KI-Partner ist kopiert.` : `Tippe zuerst auf \u201EText kopieren\u201C.`);
+}
+function nne(e17) {
+  let t10 = e17.querySelector(`.lh-kp-liveframe`), n10 = t10?.querySelector(`iframe`);
+  if (!t10 || !n10) return;
+  let r10 = t10.offsetWidth, i10 = t10.offsetHeight, a10 = t10.getBoundingClientRect().width;
+  if (!r10 || !i10 || !a10 || document.activeElement === n10) return;
+  let o10 = Math.max(1, Math.min(2.5, 1.15 / (a10 / r10))), s10 = Number(n10.dataset.k || 0);
+  Math.abs(s10 - o10) / o10 < 0.06 || (n10.dataset.k = String(o10), n10.style.width = `${r10 / o10}px`, n10.style.height = `${i10 / o10}px`, n10.style.transform = `scale(${o10})`);
+}
+function ru() {
+  let e17 = document.activeElement, t10 = e17 instanceof HTMLIFrameElement && e17.closest(`.lh-kp-live`) ? e17 : null, n10 = Dl();
+  if (t10) {
+    if (n10?.frame === t10) return;
+    let e18 = t10.offsetHeight, r10 = t10.offsetWidth;
+    $ee({ frame: t10, top: Math.max(0, e18 - 110), bottom: e18 - 6, left: 0, right: r10, area: { top: Math.round(e18 * 0.55), bottom: e18, left: 0, right: r10 } });
+  } else n10?.frame.closest(`.lh-kp-live`) && $ee(null);
+}
+var iu = 0;
+var rne = false;
+function ine() {
+  rne || (rne = true, window.addEventListener(`blur`, () => setTimeout(ru, 0)), window.addEventListener(`focus`, () => setTimeout(ru, 0))), iu ||= window.setInterval(() => {
+    let e17 = document.querySelectorAll(`.lh-kp-live`);
+    e17.length || (clearInterval(iu), iu = 0), ru(), e17.forEach(nne);
+  }, 600);
+}
+function ane(e17, t10) {
+  let n10 = tu.get(t10.id), r10 = e17.querySelector(`:scope > .lh-kp-live`);
+  if (!n10) {
+    r10?.remove();
+    return;
+  }
+  if (r10) return;
+  let i10 = tne(t10.id, n10);
+  e17.append(i10), requestAnimationFrame(() => nne(i10)), ine();
+}
+function one(e17, t10, n10, r10) {
+  let i10 = { address: t10, text: n10, copied: null };
+  tu.set(e17, i10), cu.redraw(e17), r10.then((t11) => {
+    i10.copied = t11, document.querySelectorAll(`.lh-kp-live[data-chat="${CSS.escape(e17)}"]`).forEach((e18) => nu(e18, t11));
+  });
+}
+function sne(e17) {
+  tu.delete(e17), document.querySelectorAll(`.lh-kp-live[data-chat="${CSS.escape(e17)}"]`).forEach((e18) => e18.remove());
+}
+function lne(e17, t10, n10) {
+  let r10 = Mte(t10, n10), i10 = Gl(t10), a10 = Nte(t10), o10 = t10.site === `custom` ? t10.url : ``, s10 = i10.prefill ? i10.prefill(r10) : o10.includes(`{text}`) ? o10.replace(`{text}`, encodeURIComponent(r10)) : ``, c10 = !!s10 && s10.length <= 7e3, l10 = t10.site === `ais` ? Wl(t10.url, t10.code) : ``, u10 = c10 ? s10 : t10.site === `ais` ? l10 || t10.url : t10.site === `custom` ? o10.replace(`{text}`, ``) : i10.url, d10 = t10.site === `ais` && !l10 && !!t10.code, f10 = eu(d10 ? t10.code : r10);
+  if (t10.site === `ais` && l10 && t10.inline) return one(e17, l10, r10, f10);
+  let { box: p10, close: m10 } = Qte(`#7048e8`, `Ausprobieren`);
+  p10.append(Il(`h2`, ``, `Ausprobieren mit ${a10}`));
+  let h10 = Il(`ol`, `lh-kp-steps`), g10 = (e18, ...t11) => {
+    let n11 = Il(`li`), r11 = Il(`b`, ``, String(e18)), i11 = Il(`div`);
+    for (let e19 of t11) i11.append(typeof e19 == `string` ? Il(`p`, ``, e19) : e19);
+    return n11.append(r11, i11), h10.append(n11), i11;
+  }, _10 = (e18, t11) => {
+    let n11 = Il(`button`, ``, e18);
+    return n11.type = `button`, n11.onclick = () => void eu(t11).then((e19) => n11.textContent = e19 ? `\u2713 Kopiert` : `Hat nicht geklappt`), n11;
+  }, v10 = () => {
+    let e18 = Il(`button`, `is-main`, `${a10} \xF6ffnen`);
+    return e18.type = `button`, e18.disabled = !u10, e18.onclick = () => u10 && window.open(u10, `_blank`, `noopener`), e18;
+  }, y10 = Il(`p`, `lh-kp-ok`, ``);
+  if (d10) g10(1, `Den Zugangscode brauchst du gleich:`, Il(`span`, `lh-kp-code`, t10.code), _10(`Code kopieren`, t10.code)).append(y10), f10.then((e18) => y10.textContent = e18 ? `\u2713 Der Code ist kopiert.` : ``), g10(2, t10.url ? `\xD6ffne AIS-Chat und gib den Code ein (lange tippen \u2192 Einsetzen).` : `\xD6ffne AIS-Chat (den Link bekommst du von deiner Lehrkraft).`, v10()), g10(3, `Kopiere deinen KI-Partner und f\xFCge ihn als erste Nachricht ein. Dann: Senden.`, _10(`Text kopieren`, r10));
+  else if (c10) g10(1, `Tippe auf \u201E${a10} \xF6ffnen\u201C. Dein KI-Partner steht dann schon im Eingabefeld.`, v10()), g10(2, `Tippe dort auf Senden. Die KI begr\xFC\xDFt dich und fragt dich etwas.`);
+  else {
+    let e18 = g10(1, `Dein KI-Partner wird kopiert \u2026`, _10(`Nochmal kopieren`, r10));
+    f10.then((t11) => e18.firstChild.textContent = t11 ? `\u2713 Dein KI-Partner ist kopiert.` : `Tippe auf \u201ENochmal kopieren\u201C.`), g10(2, l10 ? `Tippe auf \u201E${a10} \xF6ffnen\u201C. Du kommst direkt in den Chat.` : `Tippe auf \u201E${a10} \xF6ffnen\u201C.`, v10()), g10(3, `Tippe dort lange in das Eingabefeld \u2192 Einsetzen \u2192 Senden.`);
+  }
+  p10.append(h10), p10.append(Il(`p`, `lh-kp-warn`, `Verrate der KI keine echten Namen, Adressen, Telefonnummern oder Fotos. Die KI kann sich irren \u2013 frag im Zweifel einen Erwachsenen.`));
+  let b10 = Il(`button`, ``, `Text zeigen`);
+  b10.type = `button`;
+  let x10 = Il(`div`, `lh-kp-row`), S10 = Il(`button`, `is-main`, `Fertig`);
+  S10.type = `button`, S10.onclick = m10, x10.append(b10, S10), p10.append(x10), b10.onclick = () => {
+    b10.remove();
+    let e18 = Il(`textarea`, `lh-kp-text`);
+    e18.readOnly = true, e18.value = r10, p10.insertBefore(e18, x10), e18.select();
+  }, S10.focus();
+}
+var au = (e17) => ({ release: () => e17() });
+function ou(e17, t10) {
+  if (!e17.talk) return;
+  let n10 = Kl(e17)[t10.step];
+  n10 === `t` ? M(`Worum soll es gehen? Tippe auf ein Thema.`) : n10 === `done` ? M(`Dein KI-Partner ist fertig!`) : n10 && M(Rl[n10].ask);
+}
+function su(e17, t10) {
+  Pte?.(e17, { ...t10.parts });
+}
+var cu = Uo({ cls: `lh-ct-kipartner`, view: Jte, label: Yte, after: ane, hit(e17, t10, n10) {
+  if (t10.startsWith(`chat:`)) {
+    let n11 = tu.get(e17);
+    if (t10 === `chat:close`) sne(e17);
+    else if (n11 && t10 === `chat:copy`) return au(() => void eu(n11.text).then((t11) => {
+      n11.copied = t11, document.querySelectorAll(`.lh-kp-live[data-chat="${CSS.escape(e17)}"]`).forEach((e18) => nu(e18, t11));
+    }));
+    else if (n11 && t10 === `chat:out`) return au(() => window.open(n11.address, `_blank`, `noopener`));
+    return;
+  }
+  let r10 = cu.item(e17);
+  if (!r10) return;
+  let i10 = Hl(r10.kp), a10 = Rte(r10), o10 = Kl(i10), s10 = o10[a10.step] ?? `done`;
+  if (t10.startsWith(`go:`)) {
+    let e18 = Number(t10.slice(3));
+    if (e18 > Jl(i10, a10.parts) || e18 === a10.step) return;
+    _i(), a10.step = e18, ou(i10, a10);
+  } else if (t10 === `back`) _i(), a10.step = Math.max(0, a10.step - 1), ou(i10, a10);
+  else if (t10 === `next`) {
+    if (!(s10 === `t` ? a10.parts.topic : s10 !== `done` && a10.parts[s10])) {
+      Wo(n10), M(s10 === `t` ? `Tippe zuerst auf ein Thema.` : `Tippe zuerst auf eine Idee.`);
+      return;
+    }
+    _i(), a10.step = Math.min(o10.length - 1, a10.step + 1), o10[a10.step] === `done` && vi(), ou(i10, a10);
+  } else if (t10.startsWith(`t:`)) {
+    let n11 = t10.slice(2);
+    a10.parts.topic !== n11 && (a10.parts = { topic: n11 }), a10.page = {}, su(e17, a10), M(zl.find((e18) => e18.id === n11)?.label ?? ``);
+  } else if (t10.startsWith(`c:`) && s10 !== `t` && s10 !== `done`) {
+    let n11 = Yl(i10, a10, s10)[Number(t10.slice(2))];
+    if (!n11) return;
+    a10.parts[s10] = n11, su(e17, a10), M(n11);
+  } else if (t10 === `more` && s10 !== `t` && s10 !== `done`) _i(), a10.page[s10] = (a10.page[s10] ?? 0) + 1;
+  else if (t10 === `write` && s10 !== `t` && s10 !== `done`) return au(() => $te(s10, a10.parts[s10] ?? ``, (t11) => {
+    let n11 = ql.get(e17);
+    n11 && (n11.parts[s10] = t11, su(e17, n11), cu.redraw(e17));
+  }));
+  else if (t10 === `say`) {
+    ms(), s10 === `t` ? M(`Worum soll es gehen? ${zl.map((e18) => e18.label).join(`, `)}.`) : s10 !== `done` && M(`${Rl[s10].ask} ${Yl(i10, a10, s10).map((e18, t11) => `${t11 + 1}: ${e18}`).join(` `)}`);
+    return;
+  } else if (t10 === `read`) {
+    ms(), M(Ul(a10.parts).replace(/\n/g, ` `));
+    return;
+  } else if (t10 === `try`) return au(() => lne(e17, i10, a10.parts));
+  else t10 === `new` && (sne(e17), a10.ask <= Date.now() ? (a10.ask = Date.now() + 3e3, setTimeout(() => cu.redraw(e17), 3100)) : (a10.ask = 0, a10.parts = {}, a10.page = {}, a10.step = 0, su(e17, a10), ou(i10, a10)));
+  cu.redraw(e17);
+} });
+var une = cu.draw;
 var lu = [{ id: `low`, label: `Tief`, k: 0.62 }, { id: `normal`, label: `Normal`, k: 1 }, { id: `high`, label: `Hoch`, k: 1.45 }];
+var uu = [{ id: `normal`, label: `Normal`, hint: `das Kinn bewegt sich` }, { id: `animal`, label: `Tierisch`, hint: `weit offen, mit Zunge` }, { id: `monster`, label: `Monster`, hint: `mit spitzen Z\xE4hnen` }, { id: `comic`, label: `Comic`, hint: `ein gezeichneter Mund` }];
 var pu = 30;
 var mu = /* @__PURE__ */ new Map();
 function hu(e17) {
@@ -1556,7 +1949,23 @@ function bu(e17, t10, n10, r10, i10 = -1) {
 function xu(e17, t10, n10, r10, i10) {
   e17.innerHTML = yu(t10, _u(t10, n10), `lh-pti-${r10}`, i10, `lh-pt-${r10}`);
 }
+var Su = (e17) => e17.replace(/&/g, `&amp;`).replace(/"/g, `&quot;`).replace(/</g, `&lt;`);
 var Cu = /* @__PURE__ */ new Map();
+function pne(e17, t10, n10, r10) {
+  n10 && r10.assets && Cu.set(t10.id, { assets: r10.assets, assetUrl: r10.assetUrl });
+  let i10 = r10.assets ? { assets: r10.assets, assetUrl: r10.assetUrl } : Cu.get(t10.id), a10 = t10.pt, o10 = a10 ? i10?.assets[a10.img] : void 0, s10 = o10 ? i10?.assetUrl ? i10.assetUrl(o10) : o10.dataUrl : ``, c10 = `${n10}|${JSON.stringify(a10 ?? null)}|${s10.length}`;
+  if (e17.dataset.k === c10) return;
+  if (e17.dataset.k = c10, e17.setAttribute(`aria-label`, t10.say?.text || `Sprechendes Foto`), !a10 || !s10) {
+    e17.innerHTML = `<svg class="lh-pt-svg" viewBox="0 0 200 200" width="100%" height="100%"><rect x="6" y="6" width="188" height="188" rx="16" fill="#e0f2fe" stroke="#0284c7" stroke-width="6" stroke-dasharray="14 10"/><circle cx="100" cy="92" r="52" fill="#fcd9b6" stroke="#c98f6c" stroke-width="4"/><circle cx="82" cy="82" r="6" fill="#3b2a20"/><circle cx="118" cy="82" r="6" fill="#3b2a20"/><path d="M78 108q22 30 44 0z" fill="#7f1d1d" stroke="#7a2e2e" stroke-width="3" stroke-linejoin="round"/><path d="M150 50q16 10 0 26M162 40q26 22 0 46" fill="none" stroke="#0284c7" stroke-width="5" stroke-linecap="round"/></svg>`;
+    return;
+  }
+  if (n10) {
+    e17.innerHTML = `<div class="lh-pt">${bu(a10, o10, Su(s10), t10.id)}</div>`;
+    return;
+  }
+  let l10 = _u(a10, o10), u10 = a10.style === `comic` ? `<svg class="lh-pt-over" viewBox="0 0 ${l10.W} ${l10.H}" preserveAspectRatio="xMidYMid meet"><g transform="translate(${vu(l10.cx)} ${vu(l10.cy)}) rotate(${vu(l10.angle)})">${yu(a10, l10, ``, -1, `x`)}</g></svg>` : ``;
+  e17.innerHTML = `<div class="lh-pt"><img class="lh-pt-img" src="${Su(s10)}" alt="" draggable="false">${u10}</div>`;
+}
 var wu = /* @__PURE__ */ new WeakMap();
 var Tu = /* @__PURE__ */ new Set();
 var Eu = /* @__PURE__ */ new Set();
@@ -1586,6 +1995,11 @@ function Ou(e17, t10, n10, r10) {
   };
   l10 = requestAnimationFrame(f10), wu.set(i10, { done: new Promise((e18) => setTimeout(e18, n10)), stop: () => (cancelAnimationFrame(l10), d10(-1)) });
 }
+var mne = `
+.lh-pt{position:absolute;inset:0}
+.lh-pt svg,.lh-pt-img{position:absolute;inset:0;display:block;width:100%;height:100%}
+.lh-pt-img{object-fit:contain}
+.lh-pt-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border:3px dashed #94a3b8;border-radius:12px;color:#64748b;font:600 22px/1.2 "Nunito",system-ui,sans-serif}`;
 var ku = [{ id: `happy`, label: `fr\xF6hlich`, say: `Ich bin fr\xF6hlich.` }, { id: `sad`, label: `traurig`, say: `Ich bin traurig.` }, { id: `angry`, label: `w\xFCtend`, say: `Ich bin w\xFCtend.` }, { id: `scared`, label: `\xE4ngstlich`, say: `Ich habe Angst.` }, { id: `surprised`, label: `\xFCberrascht`, say: `Ich bin \xFCberrascht.` }, { id: `tired`, label: `m\xFCde`, say: `Ich bin m\xFCde.` }];
 var Au = [{ id: `talk`, label: `Mit den H\xE4nden reden` }, { id: `wave`, label: `Winken` }, { id: `cross`, label: `Arme verschr\xE4nken` }, { id: `dance`, label: `Tanzen` }, { id: `jump`, label: `H\xFCpfen` }, { id: `bow`, label: `Verbeugen` }, { id: `clap`, label: `Klatschen` }, { id: `cheer`, label: `Jubeln` }, { id: `random`, label: `Zuf\xE4llig` }];
 var ju = { armL: 7, armR: -7, legL: 0, legR: 0, bob: 0, up: 0, dip: 0, squash: 0 };
@@ -6817,5 +7231,6 @@ var TOOL_REGISTRY = { "listen": { kind: "listen", field: "listen", draw: toe, la
   "timeline": { kind: "timeline", field: "tl", draw: wre, label: Sre, config: (raw, media) => pf(raw, media, media), redraw: Cre.redraw },
   "traffic": { kind: "traffic", field: "traffic", draw: $ie, label: Cm, config: (raw, media) => $p(raw, media, media), redraw: wm.redraw },
   "vote": { kind: "vote", field: "vote", draw: Pre, label: Nre, config: (raw, media) => _f(raw, media, media), redraw: Cf.redraw, register: kre, state: ["counts"] },
-  "week": { kind: "week", field: "week", draw: mie, label: pie, config: (raw, media) => sp(raw, media, media), redraw: pp.redraw } };
-export { toe as renderListen, eoe as listenLabel, pg as listenConfig, yg as resetListen, noe as stopListen, lh as LISTEN_SOUNDS, dg as LISTEN_INSTRUMENTS, yae as playListenSound, Hh as listenSoundPicture, ic as SEEK_SHAPES, ac as SEEK_COLORS, aQe as seekPicture, Sc as PATTERN_RULES, tQe as SPIN_PRESETS, Os as TALLY_COLORS, Ks as SPIN_COLORS, Tm as MOOD_FEELS, yQe as moodPicture, jp as CHECK_PRESETS, WZe as STEPS_PRESETS, gs as STEPS_COLORS, Nne as PRACTICE_PRESETS, s2e as PRACTICE_PARTNERS, hp as STRESS_IDEAS, Up as RATING_PRESETS, Ef as CIRCLE_RINGS, wf as CIRCLE_COLORS, rp as WEEK_DAYS, op as weekStart, Ud as budgetStart, ore as registerBudget, qne as MACHINE_KINDS, Od as machineStart, Mue as renderBookmarks, Qb as bookmarksLabel, Hb as bookmarksConfig, Nue as tapBookmarks, Pue as BOOKMARKS_CSS, f1e as BOOKMARK_LAYOUTS, zb as BOOKMARK_COLORS, dve as renderCode, fve as codeLabel, QD as codeConfig, CODE_CHOICES, uge as CODE_SIZES, dge as CODE_RANGES, kD as CODE_COSTUMES, Tve as costumePicture, PD as CODE_CARPETS, Eve as carpetPicture, FZe as codeLevelHint, KD as codeWithoutPad, wve as CODE_CSS, One as renderFigure, $u as figureConfig, ld as figureSvg, fd as figureView, lu as FIGURE_PITCHES, FIGURE_CHOICES, FIGURE_COLORS, Mne as FIGURE_CSS, Zx as renderTheater, pde as theaterLabel, sx as theaterConfig, Vue as registerTheaterHost, zue as registerTheaterSave, Bue as registerTheaterPositions, nx as THEATER_BACKS, dx as theaterBackPicture, mde as THEATER_CSS, TOOLS_CSS, TOOL_REGISTRY };
+  "week": { kind: "week", field: "week", draw: mie, label: pie, config: (raw, media) => sp(raw, media, media), redraw: pp.redraw },
+  "kipartner": { kind: "kipartner", field: "kp", draw: une, label: Yte, config: (raw, media) => Hl(raw, media, media), redraw: cu.redraw, register: Fte, state: ["parts"] } };
+export { toe as renderListen, eoe as listenLabel, pg as listenConfig, yg as resetListen, noe as stopListen, lh as LISTEN_SOUNDS, dg as LISTEN_INSTRUMENTS, yae as playListenSound, Hh as listenSoundPicture, ic as SEEK_SHAPES, ac as SEEK_COLORS, aQe as seekPicture, Sc as PATTERN_RULES, tQe as SPIN_PRESETS, Os as TALLY_COLORS, Ks as SPIN_COLORS, Tm as MOOD_FEELS, yQe as moodPicture, jp as CHECK_PRESETS, WZe as STEPS_PRESETS, gs as STEPS_COLORS, Nne as PRACTICE_PRESETS, s2e as PRACTICE_PARTNERS, hp as STRESS_IDEAS, Up as RATING_PRESETS, Ef as CIRCLE_RINGS, wf as CIRCLE_COLORS, rp as WEEK_DAYS, op as weekStart, Ud as budgetStart, ore as registerBudget, qne as MACHINE_KINDS, Od as machineStart, Mue as renderBookmarks, Qb as bookmarksLabel, Hb as bookmarksConfig, Nue as tapBookmarks, Pue as BOOKMARKS_CSS, f1e as BOOKMARK_LAYOUTS, zb as BOOKMARK_COLORS, dve as renderCode, fve as codeLabel, QD as codeConfig, CODE_CHOICES, uge as CODE_SIZES, dge as CODE_RANGES, kD as CODE_COSTUMES, Tve as costumePicture, PD as CODE_CARPETS, Eve as carpetPicture, FZe as codeLevelHint, KD as codeWithoutPad, wve as CODE_CSS, One as renderFigure, $u as figureConfig, ld as figureSvg, fd as figureView, lu as FIGURE_PITCHES, FIGURE_CHOICES, FIGURE_COLORS, Mne as FIGURE_CSS, pne as renderPhotoTalk, Du as speakPhotoTalk, uu as PHOTO_STYLES, mne as PHOTO_CSS, zl as KP_TOPICS, Bl as KP_SITES, jte as kipartnerInstruction, Zx as renderTheater, pde as theaterLabel, sx as theaterConfig, Vue as registerTheaterHost, zue as registerTheaterSave, Bue as registerTheaterPositions, nx as THEATER_BACKS, dx as theaterBackPicture, mde as THEATER_CSS, TOOLS_CSS, TOOL_REGISTRY };

@@ -39,6 +39,7 @@ import type { WorksheetKind } from '@/lib/learning/worksheets';
 import ShareDialog from './ShareDialog';
 import SaveDialog from './SaveDialog';
 import HelpDialog from './HelpDialog';
+import MoreExercisesDialog from './learning/MoreExercisesDialog';
 import HoldButton from './ui/HoldButton';
 import { usePageReader } from './usePageReader';
 import { LearningRuntime, pageDrawing } from './learning/Runtime';
@@ -185,6 +186,7 @@ export default function Editor({
   const [shortcuts, setShortcuts] = useState<Shortcuts>(defaultShortcuts),
     [showShortcuts, setShowShortcuts] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [moreFor, setMoreFor] = useState<PageElement | null>(null);
   const [guide, setGuide] = useState<DrawingGuide | null>(null);
   const [boardDraw, setBoardDraw] = useState(false);
   const [boardPointer, setBoardPointer] = useState<BoardPointerMode>('none');
@@ -1118,7 +1120,8 @@ export default function Editor({
         showEmbed ||
         showFiles ||
         showShortcuts ||
-        showHelp
+        showHelp ||
+        moreFor
       )
         return;
       const chord = keyChord(event);
@@ -1149,7 +1152,7 @@ export default function Editor({
     return () => window.removeEventListener('keydown', key);
   });
   const dialogOpen = !!(showImages || templateMode || showTiles || showAudio || showCollection || showGenerator ||
-    showShare || showSave || learning || showEmbed || showFiles || showShortcuts || showHelp);
+    showShare || showSave || learning || showEmbed || showFiles || showShortcuts || showHelp || moreFor);
   useEffect(() => {
     const editable = (t: EventTarget | null) =>
       t instanceof HTMLElement && (['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName) || t.isContentEditable);
@@ -1534,6 +1537,7 @@ export default function Editor({
               },
               onGroup: (group) => performCommand(group ? 'group' : 'ungroup'),
               onConfigure: setLearning,
+              onMoreExercises: templateEditing ? undefined : setMoreFor,
             }}
           />
         ) : panel === 'insert' ? (
@@ -1820,6 +1824,19 @@ export default function Editor({
       )}
       {showEmbed && (
         <EmbedDialog onClose={() => setShowEmbed(false)} onInsert={insert} />
+      )}
+      {moreFor && (
+        <MoreExercisesDialog
+          element={moreFor}
+          onClose={() => setMoreFor(null)}
+          onInsert={(pages) => {
+            setMoreFor(null);
+            void run(async () => {
+              for (const p of pages) await add(p);
+              setNotice(pages.length === 1 ? 'Die Übung ist auf einer neuen Seite.' : `${pages.length} Übungen sind auf neuen Seiten.`);
+            });
+          }}
+        />
       )}
       {showHelp && (
         <HelpDialog

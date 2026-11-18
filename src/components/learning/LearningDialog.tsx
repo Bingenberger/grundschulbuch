@@ -9,6 +9,8 @@ import ListenOptions from './ListenOptions';
 import ToolOptions from './ToolOptions';
 import LinksOptions from './LinksOptions';
 import CodeOptions from './CodeOptions';
+import PhotoTalkOptions from './PhotoTalkOptions';
+import { photoOf } from './PhotoTalkWidget';
 import FigureOptions from './FigureOptions';
 import TheaterOptions from './TheaterOptions';
 import { isTool, toolCurrent, toolSize } from '@/lib/learning/werkzeuge';
@@ -95,7 +97,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', hoeren: 'headset', werkzeug: 'puzzle', linksammlung: 'link', programmieren: 'tree_structure', figur: 'businesswoman', puppentheater: 'clapperboard', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', elevator: 'podium_with_speaker', medienseite: 'camcorder_pro', diaschau: 'stack_of_photos', trickfilm: 'film_reel', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', hoeren: 'headset', werkzeug: 'puzzle', linksammlung: 'link', programmieren: 'tree_structure', figur: 'businesswoman', sprechfoto: 'camera', puppentheater: 'clapperboard', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', elevator: 'podium_with_speaker', medienseite: 'camcorder_pro', diaschau: 'stack_of_photos', trickfilm: 'film_reel', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -126,6 +128,8 @@ function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) 
   if (kind === 'programmieren') return { width: 276, height: 185 };
   // A Figur of the reference: 180 × 300 of 1400 page width.
   if (kind === 'figur') return { width: 38, height: 64 };
+  // Sprechendes Foto: so breit wie in der Vorlage (300 von 1400), so hoch wie das Foto es braucht.
+  if (kind === 'sprechfoto') { const p = photoOf(settings.photo); return { width: 64, height: p ? Math.round((64 * p.height) / p.width) : 64 }; }
   // The Puppentheater of the reference fills the page.
   if (kind === 'puppentheater') return { width: 277, height: 196 };
   if (kind === 'placevalue' || kind === 'dienes') return { width: 220, height: 160 };
@@ -844,6 +848,7 @@ export default function LearningDialog({
             {kind === 'ampel' && <ApplauseOptions value={settings.applause} onChange={(applause) => patch({ applause })} />}
             {kind === 'puppentheater' && <TheaterOptions value={settings.th} onChange={(th) => patch({ th })} upload={media} busy={busy} />}
             {kind === 'figur' && <FigureOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
+            {kind === 'sprechfoto' && <PhotoTalkOptions settings={settings} onChange={patch} upload={media} busy={busy} />}
             {kind === 'programmieren' && <CodeOptions value={settings.pg} onChange={(pg) => patch({ pg })} upload={media} busy={busy} />}
             {kind === 'linksammlung' && <LinksOptions value={settings.bm} onChange={(bm) => patch({ bm })} upload={media} busy={busy} />}
             {kind === 'werkzeug' && isTool(settings.tool) && <ToolOptions tool={settings.tool} value={settings.werkzeug} onChange={(werkzeug) => patch({ werkzeug })} upload={media} busy={busy} />}

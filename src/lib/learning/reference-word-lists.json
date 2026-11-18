@@ -1,0 +1,2125 @@
+[
+ {
+  "id": "erste",
+  "name": "Erste Wörter",
+  "hint": "Kurze Wörter, die man so schreibt, wie man sie spricht",
+  "sections": [
+   {
+    "name": "Ganz kurz",
+    "words": [
+     {
+      "w": "Mama",
+      "arasaac": 2458
+     },
+     {
+      "w": "Papa",
+      "arasaac": 31146
+     },
+     {
+      "w": "Oma",
+      "arasaac": 2243
+     },
+     {
+      "w": "Opa",
+      "arasaac": 2244
+     },
+     {
+      "w": "Ei",
+      "arasaac": 2427
+     },
+     {
+      "w": "Eis",
+      "arasaac": 35209
+     },
+     {
+      "w": "Uhu",
+      "arasaac": 24905
+     },
+     {
+      "w": "Hut",
+      "arasaac": 2572
+     },
+     {
+      "w": "Wal",
+      "arasaac": 2268
+     },
+     {
+      "w": "Tor",
+      "arasaac": 2535
+     },
+     {
+      "w": "Lama",
+      "arasaac": 9067
+     },
+     {
+      "w": "Limo",
+      "arasaac": 4732
+     }
+    ]
+   },
+   {
+    "name": "Zwei Silben",
+    "words": [
+     {
+      "w": "Igel",
+      "arasaac": 26829
+     },
+     {
+      "w": "Esel",
+      "arasaac": 2291
+     },
+     {
+      "w": "Auto",
+      "arasaac": 2339
+     },
+     {
+      "w": "Sofa",
+      "arasaac": 2571
+     },
+     {
+      "w": "Nase",
+      "arasaac": 2887
+     },
+     {
+      "w": "Hose",
+      "arasaac": 2565
+     },
+     {
+      "w": "Rose",
+      "arasaac": 3151
+     },
+     {
+      "w": "Dose",
+      "arasaac": 28938
+     },
+     {
+      "w": "Kino",
+      "arasaac": 4602
+     },
+     {
+      "w": "Lupe",
+      "arasaac": 9927
+     },
+     {
+      "w": "Salat",
+      "arasaac": 2377
+     },
+     {
+      "w": "Nudel",
+      "arasaac": 8652
+     },
+     {
+      "w": "Ofen",
+      "arasaac": 30985
+     },
+     {
+      "w": "Tafel",
+      "arasaac": 2526
+     },
+     {
+      "w": "Gabel",
+      "arasaac": 2588
+     },
+     {
+      "w": "Rabe",
+      "arasaac": 4619
+     },
+     {
+      "w": "Kamel",
+      "arasaac": 8522
+     },
+     {
+      "w": "Pirat",
+      "arasaac": 6180
+     },
+     {
+      "w": "Ente",
+      "arasaac": 2563
+     },
+     {
+      "w": "Lampe",
+      "arasaac": 4936
+     },
+     {
+      "w": "Wolke",
+      "arasaac": 2883
+     }
+    ]
+   },
+   {
+    "name": "Drei Silben",
+    "words": [
+     {
+      "w": "Banane",
+      "arasaac": 2530
+     },
+     {
+      "w": "Tomate",
+      "arasaac": 2594
+     },
+     {
+      "w": "Melone",
+      "arasaac": 2557
+     },
+     {
+      "w": "Rakete",
+      "arasaac": 2344
+     }
+    ]
+   },
+   {
+    "name": "Mit au, ei, sch",
+    "words": [
+     {
+      "w": "Maus",
+      "arasaac": 2546
+     },
+     {
+      "w": "Haus",
+      "arasaac": 2317
+     },
+     {
+      "w": "Baum",
+      "arasaac": 2256
+     },
+     {
+      "w": "Zaun",
+      "arasaac": 6651
+     },
+     {
+      "w": "Turm",
+      "arasaac": 6232
+     },
+     {
+      "w": "Tisch",
+      "arasaac": 3129
+     },
+     {
+      "w": "Fisch",
+      "arasaac": 2520
+     },
+     {
+      "w": "Pinsel",
+      "arasaac": 2523
+     },
+     {
+      "w": "Sonne",
+      "arasaac": 7252
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "gws",
+  "name": "Grundwortschatz Bayern 1/2",
+  "hint": "LehrplanPLUS Grundschule, Jahrgangsstufen 1 und 2 (ISB)",
+  "sections": [
+   {
+    "name": "In Silben mitsprechen",
+    "words": [
+     {
+      "w": "Aufgabe",
+      "arasaac": 5556
+     },
+     {
+      "w": "Auge",
+      "arasaac": 6573
+     },
+     {
+      "w": "Auto",
+      "arasaac": 2339
+     },
+     {
+      "w": "blau",
+      "arasaac": 3355
+     },
+     {
+      "w": "Blume",
+      "arasaac": 3102
+     },
+     {
+      "w": "Blüte",
+      "arasaac": 38624
+     },
+     {
+      "w": "böse",
+      "arasaac": 4690
+     },
+     {
+      "w": "braun",
+      "arasaac": 2923
+     },
+     {
+      "w": "Brot",
+      "arasaac": 2494
+     },
+     {
+      "w": "Buch",
+      "arasaac": 2450
+     },
+     {
+      "w": "bunt",
+      "arasaac": 8155
+     },
+     {
+      "w": "Dose",
+      "arasaac": 28938
+     },
+     {
+      "w": "Ende",
+      "arasaac": 3071
+     },
+     {
+      "w": "Ente",
+      "arasaac": 2563
+     },
+     {
+      "w": "Frau",
+      "arasaac": 4703
+     },
+     {
+      "w": "Gemüse",
+      "arasaac": 6244
+     },
+     {
+      "w": "grün",
+      "arasaac": 4886
+     },
+     {
+      "w": "gut",
+      "arasaac": 4581
+     },
+     {
+      "w": "Hase",
+      "arasaac": 2351
+     },
+     {
+      "w": "Hose",
+      "arasaac": 2565
+     },
+     {
+      "w": "Kiste",
+      "arasaac": 37058
+     },
+     {
+      "w": "laut",
+      "arasaac": 7157
+     },
+     {
+      "w": "Löwe",
+      "arasaac": 2449
+     },
+     {
+      "w": "Name",
+      "arasaac": 7061
+     },
+     {
+      "w": "Oma",
+      "arasaac": 2243
+     },
+     {
+      "w": "Opa",
+      "arasaac": 2244
+     },
+     {
+      "w": "Rabe",
+      "arasaac": 4619
+     },
+     {
+      "w": "Raupe",
+      "arasaac": 16727
+     },
+     {
+      "w": "rot",
+      "arasaac": 2808
+     },
+     {
+      "w": "Salz",
+      "arasaac": 25576
+     },
+     {
+      "w": "Schaf",
+      "arasaac": 2489
+     },
+     {
+      "w": "Schere",
+      "arasaac": 2591
+     },
+     {
+      "w": "schön",
+      "arasaac": 4660
+     },
+     {
+      "w": "Schule",
+      "arasaac": 3082
+     },
+     {
+      "w": "Tante",
+      "arasaac": 30271
+     },
+     {
+      "w": "Telefon",
+      "arasaac": 2585
+     },
+     {
+      "w": "Tomate",
+      "arasaac": 2594
+     },
+     {
+      "w": "tun"
+     },
+     {
+      "w": "weit",
+      "arasaac": 30385
+     },
+     {
+      "w": "Wolf",
+      "arasaac": 5892
+     },
+     {
+      "w": "Wolke",
+      "arasaac": 2883
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit er",
+    "words": [
+     {
+      "w": "Bruder",
+      "arasaac": 2423
+     },
+     {
+      "w": "Feder",
+      "arasaac": 5545
+     },
+     {
+      "w": "Fenster",
+      "arasaac": 2611
+     },
+     {
+      "w": "Schwester",
+      "arasaac": 2422
+     },
+     {
+      "w": "Winter",
+      "arasaac": 5493
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit el",
+    "words": [
+     {
+      "w": "dunkel",
+      "arasaac": 4710
+     },
+     {
+      "w": "Esel",
+      "arasaac": 2291
+     },
+     {
+      "w": "Gabel",
+      "arasaac": 2588
+     },
+     {
+      "w": "Nadel",
+      "arasaac": 2639
+     },
+     {
+      "w": "Nebel",
+      "arasaac": 35049
+     },
+     {
+      "w": "Onkel",
+      "arasaac": 30255
+     },
+     {
+      "w": "Pinsel",
+      "arasaac": 2523
+     },
+     {
+      "w": "Wurzel",
+      "arasaac": 3148
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit en",
+    "words": [
+     {
+      "w": "baden",
+      "arasaac": 2271
+     },
+     {
+      "w": "finden",
+      "arasaac": 5990
+     },
+     {
+      "w": "haben",
+      "arasaac": 7271
+     },
+     {
+      "w": "holen"
+     },
+     {
+      "w": "hören",
+      "arasaac": 2381
+     },
+     {
+      "w": "malen",
+      "arasaac": 5574
+     },
+     {
+      "w": "rechnen",
+      "arasaac": 8518
+     },
+     {
+      "w": "reden",
+      "arasaac": 36544
+     },
+     {
+      "w": "Regen",
+      "arasaac": 3123
+     },
+     {
+      "w": "rufen",
+      "arasaac": 4686
+     },
+     {
+      "w": "suchen",
+      "arasaac": 6946
+     },
+     {
+      "w": "wünschen",
+      "arasaac": 5441
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit Ei/ei",
+    "words": [
+     {
+      "w": "Ameise",
+      "arasaac": 2425
+     },
+     {
+      "w": "Ei",
+      "arasaac": 2427
+     },
+     {
+      "w": "Eis",
+      "arasaac": 35209
+     },
+     {
+      "w": "fein"
+     },
+     {
+      "w": "klein",
+      "arasaac": 4571
+     },
+     {
+      "w": "leise"
+     },
+     {
+      "w": "reisen",
+      "arasaac": 4671
+     },
+     {
+      "w": "Seife",
+      "arasaac": 2964
+     },
+     {
+      "w": "Zeit",
+      "arasaac": 22631
+     },
+     {
+      "w": "zwei",
+      "arasaac": 2628
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit Eu/eu",
+    "words": [
+     {
+      "w": "Euro",
+      "arasaac": 5092
+     },
+     {
+      "w": "Leute",
+      "arasaac": 7116
+     },
+     {
+      "w": "neu",
+      "arasaac": 4705
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit ng",
+    "words": [
+     {
+      "w": "bringen",
+      "arasaac": 6139
+     },
+     {
+      "w": "eng",
+      "arasaac": 4643
+     },
+     {
+      "w": "Junge",
+      "arasaac": 2485
+     },
+     {
+      "w": "Ring",
+      "arasaac": 6900
+     },
+     {
+      "w": "singen",
+      "arasaac": 2315
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit nk",
+    "words": [
+     {
+      "w": "Bank",
+      "arasaac": 3062
+     },
+     {
+      "w": "danken",
+      "arasaac": 38783
+     },
+     {
+      "w": "denken",
+      "arasaac": 8662
+     },
+     {
+      "w": "krank",
+      "arasaac": 3308
+     },
+     {
+      "w": "trinken",
+      "arasaac": 2276
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit Sp/sp",
+    "words": [
+     {
+      "w": "sparen",
+      "arasaac": 4556
+     },
+     {
+      "w": "spielen",
+      "arasaac": 2439
+     },
+     {
+      "w": "spielt"
+     },
+     {
+      "w": "Sport",
+      "arasaac": 7010
+     },
+     {
+      "w": "sprechen",
+      "arasaac": 3345
+     },
+     {
+      "w": "spricht"
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit St/st",
+    "words": [
+     {
+      "w": "Stein",
+      "arasaac": 6594
+     },
+     {
+      "w": "Stern",
+      "arasaac": 4644
+     },
+     {
+      "w": "Stunde",
+      "arasaac": 7129
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit ch",
+    "words": [
+     {
+      "w": "brauchen",
+      "arasaac": 37160
+     },
+     {
+      "w": "hoch",
+      "arasaac": 5521
+     },
+     {
+      "w": "leicht",
+      "arasaac": 4645
+     },
+     {
+      "w": "machen",
+      "arasaac": 11749
+     },
+     {
+      "w": "suchen",
+      "arasaac": 6946
+     },
+     {
+      "w": "Woche",
+      "arasaac": 7244
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit Sch/sch",
+    "words": [
+     {
+      "w": "frisch"
+     },
+     {
+      "w": "scheinen"
+     },
+     {
+      "w": "schneiden",
+      "arasaac": 2547
+     },
+     {
+      "w": "Tasche",
+      "arasaac": 39829
+     },
+     {
+      "w": "Tisch",
+      "arasaac": 3129
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit Pf/pf",
+    "words": [
+     {
+      "w": "Kopf",
+      "arasaac": 10386
+     },
+     {
+      "w": "Pflanze",
+      "arasaac": 3143
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit Qu",
+    "words": [
+     {
+      "w": "Quelle",
+      "arasaac": 24154
+     },
+     {
+      "w": "Quadrat",
+      "arasaac": 4616
+     },
+     {
+      "w": "Quatsch"
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit r nach Vokal",
+    "words": [
+     {
+      "w": "arbeiten",
+      "arasaac": 2599
+     },
+     {
+      "w": "antworten",
+      "arasaac": 9030
+     },
+     {
+      "w": "Birne",
+      "arasaac": 2561
+     },
+     {
+      "w": "dürfen"
+     },
+     {
+      "w": "darf"
+     },
+     {
+      "w": "Garten",
+      "arasaac": 2434
+     },
+     {
+      "w": "lernen",
+      "arasaac": 2387
+     },
+     {
+      "w": "Partner",
+      "arasaac": 38939
+     },
+     {
+      "w": "schwarz",
+      "arasaac": 2886
+     },
+     {
+      "w": "turnen",
+      "arasaac": 10156
+     },
+     {
+      "w": "warten",
+      "arasaac": 8109
+     },
+     {
+      "w": "Wort",
+      "arasaac": 9837
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit ie",
+    "words": [
+     {
+      "w": "Biene",
+      "arasaac": 2239
+     },
+     {
+      "w": "lieben",
+      "arasaac": 6600
+     },
+     {
+      "w": "liegen",
+      "arasaac": 8241
+     },
+     {
+      "w": "sieben",
+      "arasaac": 2633
+     },
+     {
+      "w": "spielen",
+      "arasaac": 2439
+     },
+     {
+      "w": "Wiese",
+      "arasaac": 11214
+     },
+     {
+      "w": "Ziege",
+      "arasaac": 2295
+     }
+    ]
+   },
+   {
+    "name": "Mitlautverdopplung",
+    "words": [
+     {
+      "w": "alle",
+      "arasaac": 36081
+     },
+     {
+      "w": "Füller",
+      "arasaac": 10313
+     },
+     {
+      "w": "Himmel",
+      "arasaac": 6978
+     },
+     {
+      "w": "Klasse",
+      "arasaac": 36489
+     },
+     {
+      "w": "können",
+      "arasaac": 11750
+     },
+     {
+      "w": "müssen",
+      "arasaac": 28613
+     },
+     {
+      "w": "Mutter",
+      "arasaac": 2458
+     },
+     {
+      "w": "rollen",
+      "arasaac": 6603
+     },
+     {
+      "w": "sollen"
+     },
+     {
+      "w": "Sommer",
+      "arasaac": 5604
+     },
+     {
+      "w": "Sonne",
+      "arasaac": 7252
+     },
+     {
+      "w": "Wasser",
+      "arasaac": 2248
+     },
+     {
+      "w": "wollen",
+      "arasaac": 5441
+     }
+    ]
+   },
+   {
+    "name": "Umlautung",
+    "words": [
+     {
+      "w": "Apfel",
+      "arasaac": 2462
+     },
+     {
+      "w": "Äpfel",
+      "arasaac": 2462,
+      "count": 2
+     },
+     {
+      "w": "Baum",
+      "arasaac": 37131
+     },
+     {
+      "w": "Bäume",
+      "arasaac": 37131,
+      "count": 2
+     },
+     {
+      "w": "Gras",
+      "arasaac": 3113
+     },
+     {
+      "w": "Gräser",
+      "arasaac": 3113,
+      "count": 2
+     },
+     {
+      "w": "Haus",
+      "arasaac": 2317
+     },
+     {
+      "w": "Häuser",
+      "arasaac": 2317,
+      "count": 2
+     },
+     {
+      "w": "laufen",
+      "arasaac": 2719
+     },
+     {
+      "w": "läuft"
+     },
+     {
+      "w": "Maus",
+      "arasaac": 2546
+     },
+     {
+      "w": "Mäuse",
+      "arasaac": 2546,
+      "count": 2
+     },
+     {
+      "w": "schlafen",
+      "arasaac": 2369
+     },
+     {
+      "w": "schläft"
+     }
+    ]
+   },
+   {
+    "name": "Verhärtungen",
+    "words": [
+     {
+      "w": "Bild",
+      "arasaac": 2360
+     },
+     {
+      "w": "Bilder",
+      "arasaac": 28341
+     },
+     {
+      "w": "bleiben",
+      "arasaac": 7195
+     },
+     {
+      "w": "bleibt"
+     },
+     {
+      "w": "Bub",
+      "arasaac": 37871
+     },
+     {
+      "w": "Buben",
+      "arasaac": 37871,
+      "count": 2
+     },
+     {
+      "w": "fragen",
+      "arasaac": 9840
+     },
+     {
+      "w": "fragt"
+     },
+     {
+      "w": "Freund",
+      "arasaac": 38939
+     },
+     {
+      "w": "Freunde"
+     },
+     {
+      "w": "geben",
+      "arasaac": 17038
+     },
+     {
+      "w": "gibt"
+     },
+     {
+      "w": "gelb",
+      "arasaac": 2648
+     },
+     {
+      "w": "gelbe"
+     },
+     {
+      "w": "gesund",
+      "arasaac": 12293
+     },
+     {
+      "w": "gesunde"
+     },
+     {
+      "w": "Hund",
+      "arasaac": 2517
+     },
+     {
+      "w": "Hunde",
+      "arasaac": 2517,
+      "count": 2
+     },
+     {
+      "w": "Kind",
+      "arasaac": 2484
+     },
+     {
+      "w": "Kinder",
+      "arasaac": 2484,
+      "count": 2
+     },
+     {
+      "w": "Kleid",
+      "arasaac": 2613
+     },
+     {
+      "w": "Kleider",
+      "arasaac": 2613,
+      "count": 2
+     },
+     {
+      "w": "leben",
+      "arasaac": 8717
+     },
+     {
+      "w": "lebt"
+     },
+     {
+      "w": "legen",
+      "arasaac": 32757
+     },
+     {
+      "w": "legt"
+     },
+     {
+      "w": "Pferd",
+      "arasaac": 2294
+     },
+     {
+      "w": "Pferde",
+      "arasaac": 2294,
+      "count": 2
+     },
+     {
+      "w": "sagen"
+     },
+     {
+      "w": "sagt"
+     },
+     {
+      "w": "schreiben",
+      "arasaac": 2380
+     },
+     {
+      "w": "schreibt"
+     },
+     {
+      "w": "Tag",
+      "arasaac": 7022
+     },
+     {
+      "w": "Tage"
+     },
+     {
+      "w": "üben",
+      "arasaac": 32858
+     },
+     {
+      "w": "übt"
+     },
+     {
+      "w": "Weg",
+      "arasaac": 6955
+     },
+     {
+      "w": "Wege"
+     },
+     {
+      "w": "Wind",
+      "arasaac": 7259
+     },
+     {
+      "w": "Winde"
+     },
+     {
+      "w": "zeigen"
+     },
+     {
+      "w": "zeigt"
+     }
+    ]
+   },
+   {
+    "name": "Häufige Wörter",
+    "words": [
+     {
+      "w": "aber"
+     },
+     {
+      "w": "als"
+     },
+     {
+      "w": "also"
+     },
+     {
+      "w": "auf"
+     },
+     {
+      "w": "aus"
+     },
+     {
+      "w": "bei"
+     },
+     {
+      "w": "da"
+     },
+     {
+      "w": "das"
+     },
+     {
+      "w": "der"
+     },
+     {
+      "w": "des"
+     },
+     {
+      "w": "dir"
+     },
+     {
+      "w": "dich"
+     },
+     {
+      "w": "die"
+     },
+     {
+      "w": "doch"
+     },
+     {
+      "w": "du"
+     },
+     {
+      "w": "durch"
+     },
+     {
+      "w": "er"
+     },
+     {
+      "w": "es"
+     },
+     {
+      "w": "für"
+     },
+     {
+      "w": "her"
+     },
+     {
+      "w": "hinter"
+     },
+     {
+      "w": "ich"
+     },
+     {
+      "w": "im"
+     },
+     {
+      "w": "in"
+     },
+     {
+      "w": "ist"
+     },
+     {
+      "w": "ja"
+     },
+     {
+      "w": "mit"
+     },
+     {
+      "w": "nach"
+     },
+     {
+      "w": "nein"
+     },
+     {
+      "w": "nicht"
+     },
+     {
+      "w": "nun"
+     },
+     {
+      "w": "oder"
+     },
+     {
+      "w": "schon"
+     },
+     {
+      "w": "sie"
+     },
+     {
+      "w": "sind"
+     },
+     {
+      "w": "so"
+     },
+     {
+      "w": "über"
+     },
+     {
+      "w": "um"
+     },
+     {
+      "w": "und"
+     },
+     {
+      "w": "was"
+     },
+     {
+      "w": "weil"
+     },
+     {
+      "w": "weiter"
+     },
+     {
+      "w": "wer"
+     },
+     {
+      "w": "wir"
+     },
+     {
+      "w": "wo"
+     }
+    ]
+   },
+   {
+    "name": "Wörter mit ß, tz, ck",
+    "words": [
+     {
+      "w": "Fuß",
+      "arasaac": 2841
+     },
+     {
+      "w": "groß",
+      "arasaac": 4557
+     },
+     {
+      "w": "sitzen",
+      "arasaac": 25081
+     },
+     {
+      "w": "sitzt"
+     },
+     {
+      "w": "Katze",
+      "arasaac": 7114
+     },
+     {
+      "w": "Satz",
+      "arasaac": 27768
+     },
+     {
+      "w": "Sätze"
+     },
+     {
+      "w": "dick",
+      "arasaac": 4656
+     },
+     {
+      "w": "backen",
+      "arasaac": 5487
+     }
+    ]
+   },
+   {
+    "name": "Besondere Schreibungen",
+    "words": [
+     {
+      "w": "Cent",
+      "arasaac": 4775
+     },
+     {
+      "w": "Clown",
+      "arasaac": 2854
+     },
+     {
+      "w": "Computer",
+      "arasaac": 2487
+     },
+     {
+      "w": "viel",
+      "arasaac": 5521
+     },
+     {
+      "w": "Vase",
+      "arasaac": 28541
+     },
+     {
+      "w": "Vater",
+      "arasaac": 2497
+     },
+     {
+      "w": "Vogel",
+      "arasaac": 2490
+     },
+     {
+      "w": "vor"
+     },
+     {
+      "w": "Baby",
+      "arasaac": 2275
+     },
+     {
+      "w": "Hexe",
+      "arasaac": 5404
+     }
+    ]
+   },
+   {
+    "name": "Nicht hörbares h, ä, ai",
+    "words": [
+     {
+      "w": "Frühling",
+      "arasaac": 5553
+     },
+     {
+      "w": "gehen",
+      "arasaac": 2432
+     },
+     {
+      "w": "geht"
+     },
+     {
+      "w": "Jahr",
+      "arasaac": 6903
+     },
+     {
+      "w": "Uhr",
+      "arasaac": 7229
+     },
+     {
+      "w": "Zahl",
+      "arasaac": 2879
+     },
+     {
+      "w": "zahlen"
+     },
+     {
+      "w": "zählen",
+      "arasaac": 2714
+     },
+     {
+      "w": "Zahn",
+      "arasaac": 10267
+     },
+     {
+      "w": "Zähne",
+      "arasaac": 2737
+     },
+     {
+      "w": "Mädchen",
+      "arasaac": 2484
+     },
+     {
+      "w": "Hai",
+      "arasaac": 2589
+     },
+     {
+      "w": "Kaiser",
+      "arasaac": 5563
+     },
+     {
+      "w": "Mai",
+      "arasaac": 6559
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "daz",
+  "name": "Deutsch als Zweitsprache",
+  "hint": "Erster Wortschatz nach Themen",
+  "sections": [
+   {
+    "name": "Schule",
+    "words": [
+     {
+      "w": "Heft",
+      "arasaac": 2359
+     },
+     {
+      "w": "Buch",
+      "arasaac": 2450
+     },
+     {
+      "w": "Stift",
+      "arasaac": 10312
+     },
+     {
+      "w": "Tisch",
+      "arasaac": 3129
+     },
+     {
+      "w": "Stuhl",
+      "arasaac": 3155
+     },
+     {
+      "w": "Tafel",
+      "arasaac": 2526
+     },
+     {
+      "w": "Schere",
+      "arasaac": 2591
+     },
+     {
+      "w": "Kleber",
+      "arasaac": 2510
+     },
+     {
+      "w": "Lineal",
+      "arasaac": 2815
+     },
+     {
+      "w": "Rucksack",
+      "arasaac": 2475
+     },
+     {
+      "w": "Lehrerin",
+      "arasaac": 2456
+     },
+     {
+      "w": "Pause",
+      "arasaac": 24503
+     }
+    ]
+   },
+   {
+    "name": "Körper",
+    "words": [
+     {
+      "w": "Kopf",
+      "arasaac": 10386
+     },
+     {
+      "w": "Auge",
+      "arasaac": 6573
+     },
+     {
+      "w": "Ohr",
+      "arasaac": 2871
+     },
+     {
+      "w": "Nase",
+      "arasaac": 2887
+     },
+     {
+      "w": "Mund",
+      "arasaac": 2663
+     },
+     {
+      "w": "Zahn",
+      "arasaac": 10267
+     },
+     {
+      "w": "Hand",
+      "arasaac": 2928
+     },
+     {
+      "w": "Arm",
+      "arasaac": 2669
+     },
+     {
+      "w": "Bein",
+      "arasaac": 8666
+     },
+     {
+      "w": "Fuß",
+      "arasaac": 2841
+     },
+     {
+      "w": "Bauch",
+      "arasaac": 2786
+     },
+     {
+      "w": "Haare",
+      "arasaac": 2851
+     }
+    ]
+   },
+   {
+    "name": "Familie",
+    "words": [
+     {
+      "w": "Mama",
+      "arasaac": 2458
+     },
+     {
+      "w": "Papa",
+      "arasaac": 31146
+     },
+     {
+      "w": "Oma",
+      "arasaac": 2243
+     },
+     {
+      "w": "Opa",
+      "arasaac": 2244
+     },
+     {
+      "w": "Baby",
+      "arasaac": 2275
+     },
+     {
+      "w": "Bruder",
+      "arasaac": 2423
+     },
+     {
+      "w": "Schwester",
+      "arasaac": 2422
+     },
+     {
+      "w": "Kind",
+      "arasaac": 2484
+     },
+     {
+      "w": "Junge",
+      "arasaac": 2485
+     },
+     {
+      "w": "Mädchen",
+      "arasaac": 2484
+     },
+     {
+      "w": "Freund",
+      "arasaac": 38939
+     }
+    ]
+   },
+   {
+    "name": "Essen und Trinken",
+    "words": [
+     {
+      "w": "Brot",
+      "arasaac": 2494
+     },
+     {
+      "w": "Apfel",
+      "arasaac": 2462
+     },
+     {
+      "w": "Banane",
+      "arasaac": 2530
+     },
+     {
+      "w": "Milch",
+      "arasaac": 2445
+     },
+     {
+      "w": "Wasser",
+      "arasaac": 2248
+     },
+     {
+      "w": "Saft",
+      "arasaac": 2962
+     },
+     {
+      "w": "Käse",
+      "arasaac": 2541
+     },
+     {
+      "w": "Ei",
+      "arasaac": 2427
+     },
+     {
+      "w": "Nudeln",
+      "arasaac": 8652
+     },
+     {
+      "w": "Reis",
+      "arasaac": 39387
+     },
+     {
+      "w": "Suppe",
+      "arasaac": 2573
+     },
+     {
+      "w": "Kuchen",
+      "arasaac": 2502
+     }
+    ]
+   },
+   {
+    "name": "Kleidung",
+    "words": [
+     {
+      "w": "Hose",
+      "arasaac": 2565
+     },
+     {
+      "w": "Jacke",
+      "arasaac": 2319
+     },
+     {
+      "w": "Mütze",
+      "arasaac": 2412
+     },
+     {
+      "w": "Schuh",
+      "arasaac": 32923
+     },
+     {
+      "w": "Socke",
+      "arasaac": 8339
+     },
+     {
+      "w": "Kleid",
+      "arasaac": 2613
+     },
+     {
+      "w": "Pulli",
+      "arasaac": 2436
+     },
+     {
+      "w": "Schal",
+      "arasaac": 2290
+     },
+     {
+      "w": "Rock",
+      "arasaac": 2391
+     }
+    ]
+   },
+   {
+    "name": "Tiere",
+    "words": [
+     {
+      "w": "Hund",
+      "arasaac": 2517
+     },
+     {
+      "w": "Katze",
+      "arasaac": 7114
+     },
+     {
+      "w": "Maus",
+      "arasaac": 2546
+     },
+     {
+      "w": "Vogel",
+      "arasaac": 2490
+     },
+     {
+      "w": "Fisch",
+      "arasaac": 2520
+     },
+     {
+      "w": "Pferd",
+      "arasaac": 2294
+     },
+     {
+      "w": "Kuh",
+      "arasaac": 2609
+     },
+     {
+      "w": "Schwein",
+      "arasaac": 2327
+     },
+     {
+      "w": "Hase",
+      "arasaac": 2351
+     },
+     {
+      "w": "Ente",
+      "arasaac": 2563
+     }
+    ]
+   },
+   {
+    "name": "Zuhause",
+    "words": [
+     {
+      "w": "Haus",
+      "arasaac": 2317
+     },
+     {
+      "w": "Tür",
+      "arasaac": 3244
+     },
+     {
+      "w": "Fenster",
+      "arasaac": 2611
+     },
+     {
+      "w": "Bett",
+      "arasaac": 2304
+     },
+     {
+      "w": "Lampe",
+      "arasaac": 4936
+     },
+     {
+      "w": "Sofa",
+      "arasaac": 2571
+     },
+     {
+      "w": "Küche",
+      "arasaac": 5965
+     },
+     {
+      "w": "Bad",
+      "arasaac": 32142
+     },
+     {
+      "w": "Uhr",
+      "arasaac": 2549
+     }
+    ]
+   },
+   {
+    "name": "Farben",
+    "words": [
+     {
+      "w": "rot",
+      "arasaac": 2808
+     },
+     {
+      "w": "blau",
+      "arasaac": 3355
+     },
+     {
+      "w": "gelb",
+      "arasaac": 2648
+     },
+     {
+      "w": "grün",
+      "arasaac": 4886
+     },
+     {
+      "w": "schwarz",
+      "arasaac": 2886
+     },
+     {
+      "w": "weiß",
+      "arasaac": 2662
+     },
+     {
+      "w": "braun",
+      "arasaac": 2923
+     },
+     {
+      "w": "rosa",
+      "arasaac": 2807
+     },
+     {
+      "w": "orange",
+      "arasaac": 2888
+     },
+     {
+      "w": "lila",
+      "arasaac": 2907
+     }
+    ]
+   },
+   {
+    "name": "Zahlen",
+    "words": [
+     {
+      "w": "eins",
+      "arasaac": 2627
+     },
+     {
+      "w": "zwei",
+      "arasaac": 2628
+     },
+     {
+      "w": "drei",
+      "arasaac": 2629
+     },
+     {
+      "w": "vier",
+      "arasaac": 2630
+     },
+     {
+      "w": "fünf",
+      "arasaac": 2631
+     },
+     {
+      "w": "sechs",
+      "arasaac": 2632
+     },
+     {
+      "w": "sieben",
+      "arasaac": 2633
+     },
+     {
+      "w": "acht",
+      "arasaac": 2634
+     },
+     {
+      "w": "neun",
+      "arasaac": 2635
+     },
+     {
+      "w": "zehn",
+      "arasaac": 7025
+     }
+    ]
+   },
+   {
+    "name": "Was ich tue",
+    "words": [
+     {
+      "w": "essen",
+      "arasaac": 2349
+     },
+     {
+      "w": "trinken",
+      "arasaac": 2276
+     },
+     {
+      "w": "schlafen",
+      "arasaac": 2369
+     },
+     {
+      "w": "spielen",
+      "arasaac": 2439
+     },
+     {
+      "w": "lesen",
+      "arasaac": 2447
+     },
+     {
+      "w": "schreiben",
+      "arasaac": 2380
+     },
+     {
+      "w": "malen",
+      "arasaac": 5574
+     },
+     {
+      "w": "laufen",
+      "arasaac": 2719
+     },
+     {
+      "w": "gehen",
+      "arasaac": 2432
+     },
+     {
+      "w": "sitzen",
+      "arasaac": 25081
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "beruf",
+  "name": "Beruf und Haushalt",
+  "hint": "Fachbegriffe für Werkstatt, Küche, Hauswirtschaft, Büro und Lager (Berufsschulstufe)",
+  "sections": [
+   {
+    "name": "Werkzeuge",
+    "words": [
+     {
+      "w": "Hammer",
+      "arasaac": 2922
+     },
+     {
+      "w": "Säge",
+      "arasaac": 2799
+     },
+     {
+      "w": "Schraubenzieher",
+      "arasaac": 2736
+     },
+     {
+      "w": "Bohrmaschine",
+      "arasaac": 3392
+     },
+     {
+      "w": "Zange",
+      "arasaac": 2644
+     },
+     {
+      "w": "Schraube",
+      "arasaac": 2788
+     },
+     {
+      "w": "Nagel",
+      "arasaac": 8306
+     },
+     {
+      "w": "Feile",
+      "arasaac": 5501
+     },
+     {
+      "w": "Pinsel",
+      "arasaac": 2523
+     },
+     {
+      "w": "Meterstab",
+      "arasaac": 2915
+     },
+     {
+      "w": "Schleifpapier",
+      "arasaac": 5498
+     },
+     {
+      "w": "Akkuschrauber",
+      "arasaac": 39587
+     },
+     {
+      "w": "Wasserwaage",
+      "arasaac": 9119
+     }
+    ]
+   },
+   {
+    "name": "Arbeitsschutz",
+    "words": [
+     {
+      "w": "Handschuhe",
+      "arasaac": 2415
+     },
+     {
+      "w": "Schutzbrille",
+      "arasaac": 28275
+     },
+     {
+      "w": "Gehörschutz",
+      "arasaac": 36357
+     },
+     {
+      "w": "Helm",
+      "arasaac": 2691
+     },
+     {
+      "w": "Schürze",
+      "arasaac": 2366
+     }
+    ]
+   },
+   {
+    "name": "Küche",
+    "words": [
+     {
+      "w": "Topf",
+      "arasaac": 9086
+     },
+     {
+      "w": "Pfanne",
+      "arasaac": 2558
+     },
+     {
+      "w": "Messer",
+      "arasaac": 4931
+     },
+     {
+      "w": "Schneidebrett",
+      "arasaac": 9090
+     },
+     {
+      "w": "Schüssel",
+      "arasaac": 3257
+     },
+     {
+      "w": "Herd",
+      "arasaac": 2341
+     },
+     {
+      "w": "Backofen",
+      "arasaac": 2426
+     },
+     {
+      "w": "Kühlschrank",
+      "arasaac": 3272
+     },
+     {
+      "w": "Sieb",
+      "arasaac": 2345
+     },
+     {
+      "w": "Kochlöffel",
+      "arasaac": 32468
+     },
+     {
+      "w": "Teller",
+      "arasaac": 16857
+     },
+     {
+      "w": "Spülmaschine",
+      "arasaac": 2444
+     },
+     {
+      "w": "Küchenwaage",
+      "arasaac": 36618
+     }
+    ]
+   },
+   {
+    "name": "Putzen und Wäsche",
+    "words": [
+     {
+      "w": "Besen",
+      "arasaac": 2693
+     },
+     {
+      "w": "Staubsauger",
+      "arasaac": 3227
+     },
+     {
+      "w": "Eimer",
+      "arasaac": 2724
+     },
+     {
+      "w": "Lappen",
+      "arasaac": 15343
+     },
+     {
+      "w": "Schwamm",
+      "arasaac": 2749
+     },
+     {
+      "w": "Putzmittel",
+      "arasaac": 4871
+     },
+     {
+      "w": "Kehrschaufel",
+      "arasaac": 2818
+     },
+     {
+      "w": "Waschmaschine",
+      "arasaac": 2442
+     },
+     {
+      "w": "Wäschekorb",
+      "arasaac": 22175
+     },
+     {
+      "w": "Bügeleisen",
+      "arasaac": 2528
+     },
+     {
+      "w": "Wäscheklammer",
+      "arasaac": 8466
+     },
+     {
+      "w": "Wäscheständer",
+      "arasaac": 6228
+     },
+     {
+      "w": "Mülltonne",
+      "arasaac": 2355
+     }
+    ]
+   },
+   {
+    "name": "Büro und Lager",
+    "words": [
+     {
+      "w": "Ordner",
+      "arasaac": 10255
+     },
+     {
+      "w": "Locher",
+      "arasaac": 24420
+     },
+     {
+      "w": "Tacker",
+      "arasaac": 2413
+     },
+     {
+      "w": "Briefumschlag",
+      "arasaac": 10325
+     },
+     {
+      "w": "Computer",
+      "arasaac": 7190
+     },
+     {
+      "w": "Drucker",
+      "arasaac": 26138
+     },
+     {
+      "w": "Kopierer",
+      "arasaac": 8586
+     },
+     {
+      "w": "Telefon",
+      "arasaac": 26479
+     },
+     {
+      "w": "Kalender",
+      "arasaac": 32488
+     },
+     {
+      "w": "Karton",
+      "arasaac": 7054
+     },
+     {
+      "w": "Paket",
+      "arasaac": 38946
+     },
+     {
+      "w": "Regal",
+      "arasaac": 2386
+     },
+     {
+      "w": "Sackkarre",
+      "arasaac": 21502
+     },
+     {
+      "w": "Liste",
+      "arasaac": 30207
+     }
+    ]
+   }
+  ]
+ }
+]

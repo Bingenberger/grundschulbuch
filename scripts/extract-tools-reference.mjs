@@ -43,6 +43,7 @@ const TOOLS = {
   traffic: 'traffic',
   vote: 'vote',
   week: 'week',
+  kipartner: 'kipartner',
 };
 
 const html = await fs.readFile('Lernsachen-Heft-komplett.html', 'utf8');
@@ -75,6 +76,14 @@ for (const m of code.matchAll(/(?:^|\), )([\w$]+)\(\(e17, t10(?:, n10)?\) => \{\
 // Nähe und Distanz keeps the ring of each person: people[i].ring = t10[i].
 for (const m of code.matchAll(/(?:^|\), )([\w$]+)\(\(e17, t10\) => \{\n\s+\w+\(\((\w+)\) => \{\n\s+let (\w+) = \w+\(\2, e17\);\n\s+\3\?\.type === `widget` && \3\.(\w+) && \(\3\.\4 = \{ \.\.\.\3\.\4, people: \3\.\4\.people\.map\(/gm))
   savers.set(m[4], { setter: m[1], keys: ['rings'] });
+
+// KI-Partner keeps the parts the child chose: hook?.(id, { ...state.parts }),
+// set by a register function of its own.
+{
+  const hook = /([\w$]+)\?\.\(e17, \{ \.\.\.t10\.parts \}\)/.exec(code)?.[1];
+  if (!hook) throw Error('KI-Partner: save hook not found.');
+  savers.set('kp', { setter: find('kipartner register', t => new RegExp(`^function [\\w$]+\\(e17\\) \\{\\s*${escape(hook)} = e17;\\s*\\}$`).test(t)), keys: ['parts'] });
+}
 
 const registry = [];
 const aliases = {};
@@ -220,6 +229,23 @@ Object.assign(aliases, {
   [find('figure styles', t => t.startsWith('`\n.lh-av{position:absolute;inset:0}'))]: 'FIGURE_CSS',
 });
 
+// Sprechendes Foto: a photo whose chin (or a drawn mouth) moves while it
+// speaks; drawn and spoken by the reference, the host gives the photo.
+Object.assign(aliases, {
+  [pick('photo render', code, /case `phototalk`:\s*([\w$]+)\(e17, t10, n10, r10\);/)]: 'renderPhotoTalk',
+  [pick('photo tap', code, /e17\.kind === `phototalk`\) \{\s*([\w$]+)\(e17, t10\);/)]: 'speakPhotoTalk',
+  [find('photo styles', t => t.startsWith('[{ id: `normal`, label: `Normal`, hint: `das Kinn'))]: 'PHOTO_STYLES',
+  [find('photo styles css', t => t.startsWith('`\n.lh-pt{position:absolute;inset:0}'))]: 'PHOTO_CSS',
+});
+
+// KI-Partner: the topics and AI chats of its dialog, and the instruction put
+// before the child's text (learning partner or free helper).
+Object.assign(aliases, {
+  [find('kipartner topics', t => t.startsWith('[{ id: `math`, label: `Mathe`, icon:'))]: 'KP_TOPICS',
+  [find('kipartner sites', t => t.startsWith('[{ id: `duck`, label: `Duck.ai`'))]: 'KP_SITES',
+  [find('kipartner instruction', t => /^\(e17\) => e17\.system\.trim\(\) \|\| \(e17\.mode === `free`/.test(t))]: 'kipartnerInstruction',
+});
+
 // Puppentheater: the stage with figures, recording (sound and movements),
 // playing and the video export; the host provides the pages, saves the
 // recording (uploaded to the school server) and the positions.
@@ -285,7 +311,9 @@ function extract(roots) {
 }
 
 let runtime = extract(Object.keys(aliases));
-{ const outside = runtime.replace(/http:\/\/www\.w3\.org\/[\w/]+/g, '').replaceAll('`https://${t10}`', '') /* completing a typed address, no request */.match(/.{0,60}https?:\/\/.{0,60}/g); if (outside) { console.error(outside.join('\n')); throw Error('The tools would reach an outside address.'); } }
+{ const outside = runtime.replace(/http:\/\/www\.w3\.org\/[\w/]+/g, '').replaceAll('`https://${t10}`', '') /* completing a typed address, no request */
+  // KI-Partner: the AI chats a child opens with „Ausprobieren“ (new tab or, for AIS-Chat, a frame) – only after that tap, never by itself.
+  .replace(/https:\/\/(duck\.ai|chatgpt\.com|claude\.ai|chat\.mistral\.ai|gemini\.google\.com|app\.ais-chat\.schule)\/?[\w/?=]*/g, '').match(/.{0,60}https?:\/\/.{0,60}/g); if (outside) { console.error(outside.join('\n')); throw Error('The tools would reach an outside address.'); } }
 const pages = runtime.match(/\.closest\(`\.lh-page`\)/g)?.length ?? 0;
 runtime = runtime.replaceAll('.closest(`.lh-page`)', '.closest(`.lh-page, .interaction-surface, .paper`)');
 for (const [from, to] of Object.entries({ 'LH Andika': 'Andika', 'LH Nunito': 'Nunito', 'LH Grundschrift': 'Playwrite DE Grund', 'LH Schreibschrift SAS': 'Playwrite DE SAS', 'LH Schreibschrift': 'Playwrite DE VA', 'LH Druckschrift': 'Andika', 'LH Lexend': 'Lexend', 'LH Atkinson Hyperlegible': 'Atkinson Hyperlegible', 'LH Merriweather': 'Merriweather', 'LH Caveat': 'Caveat', 'LH Comic': 'Bangers' })) runtime = runtime.replaceAll(from, to);

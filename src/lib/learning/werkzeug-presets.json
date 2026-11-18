@@ -2859,6 +2859,37 @@
   ]
  },
  {
+  "id": "kipartner",
+  "title": "KI-Partner bauen",
+  "group": "Medien & KI",
+  "items": [
+   {
+    "type": "widget",
+    "x": 50,
+    "y": 60,
+    "w": 1300,
+    "h": 870,
+    "kind": "kipartner",
+    "kp": {
+     "title": "Mein KI-Partner",
+     "task": "",
+     "topic": "choose",
+     "mode": "learn",
+     "own": true,
+     "talk": true,
+     "site": "duck",
+     "url": "",
+     "code": "",
+     "inline": true,
+     "system": "",
+     "parts": {}
+    },
+    "locked": true,
+    "rot": 0
+   }
+  ]
+ },
+ {
   "id": "pm-rating",
   "title": "Praktikumsmappe: Einschätzung",
   "group": "Beruf & Praktikum",

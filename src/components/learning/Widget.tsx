@@ -32,6 +32,7 @@ import ListenWidget from './ListenWidget';
 import ToolWidget from './ToolWidget';
 import BookmarksWidget from './BookmarksWidget';
 import CodeWidget from './CodeWidget';
+import PhotoTalkWidget from './PhotoTalkWidget';
 import FigureWidget from './FigureWidget';
 import TheaterWidget from './TheaterWidget';
 import TimetableWidget from './TimetableWidget';
@@ -70,6 +71,7 @@ export default function Widget({ element }: { element: PageElement }) {
   if (kind === 'linksammlung') return <BookmarksWidget element={element} />;
   if (kind === 'programmieren') return <CodeWidget element={element} />;
   if (kind === 'figur') return <FigureWidget element={element} />;
+  if (kind === 'sprechfoto') return <PhotoTalkWidget element={element} />;
   if (kind === 'puppentheater') return <TheaterWidget element={element} />;
   if (kind === 'stundenplan') return <TimetableWidget element={element} />;
   if (kind === 'kalenderblatt') return <CalendarSheet element={element} />;

@@ -4,6 +4,7 @@
 import { SORT_COLORS, SORT_SETS, type ToolId } from '@/lib/learning/werkzeuge';
 import {
   budgetStart, CHECK_PRESETS, CIRCLE_COLORS, MACHINE_KINDS, machineStart, CIRCLE_RINGS, MOOD_FEELS, WEEK_DAYS, weekStart, moodPicture, PRACTICE_PARTNERS, PRACTICE_PRESETS, RATING_PRESETS, STEPS_PRESETS, STEPS_COLORS, STRESS_IDEAS,
+  KP_SITES, KP_TOPICS, kipartnerInstruction,
 } from '@/lib/reference/tools-runtime';
 import type { Draft, Field } from './ToolForm';
 
@@ -33,6 +34,31 @@ const titleOf = (start: unknown) => (start as { title: string }).title;
 const euro = { key: 'euro', label: 'Betrag in Euro', placeholder: '0,00', max: 10, numeric: true };
 
 export const TOOL_FORMS: Partial<Record<ToolId, ToolForm>> = {
+  kipartner: {
+    hint: 'Die Kinder bauen ihren KI-Partner Schritt für Schritt (Person, Aufgabe, Ziel, Kontext, Form). „Ausprobieren“ kopiert den Text und öffnet die gewählte KI – erst nach diesem Tipp.',
+    fields: [
+      { t: 'text', key: 'title', label: 'Überschrift', placeholder: 'Mein KI-Partner', max: 60 },
+      { t: 'text', key: 'task', label: 'Auftrag für die Kinder (freiwillig)', placeholder: 'z. B. Bau dir einen Partner zum Üben fürs Diktat.', max: 240 },
+      { t: 'choice', key: 'topic', label: 'Thema', options: [{ value: 'choose', label: 'Die Kinder wählen' }, ...(KP_TOPICS as unknown as { id: string; label: string }[]).map((t) => ({ value: t.id, label: t.label }))] },
+      { t: 'choice', key: 'mode', label: 'Art', options: [{ value: 'learn', label: 'Lernpartner' }, { value: 'free', label: 'Freier Helfer' }],
+        hint: (d) => (d.mode === 'free' ? 'Die KI erklärt auch und schreibt Texte – dazu gibt es mehr Ideen.' : 'Die KI verrät keine Lösungen: Sie fragt, gibt kleine Tipps und lobt.') },
+      { t: 'toggle', key: 'own', label: '„Selbst schreiben“ erlauben', hint: 'Die Kinder können eine Idee ändern oder eine eigene schreiben.' },
+      { t: 'toggle', key: 'talk', label: 'Fragen und Ideen vorlesen' },
+      { t: 'choice', key: 'site', label: 'Welche KI', options: (KP_SITES as unknown as { id: string; label: string; note: string }[]).map((s) => ({ value: s.id, label: s.label })),
+        hint: (d) => (KP_SITES as unknown as { id: string; note: string }[]).find((s) => s.id === d.site)?.note ?? '' },
+      { t: 'text', key: 'url', label: 'Adresse (Link des geteilten Dialogpartners bzw. der KI)', placeholder: 'https://…', max: 600, when: (d) => d.site === 'ais' || d.site === 'custom' },
+      { t: 'text', key: 'code', label: 'Zugangscode', max: 40, when: (d) => d.site === 'ais' },
+      { t: 'toggle', key: 'inline', label: 'Im Heft öffnen', hint: 'Der Chat erscheint an der Stelle des KI-Partners; die Kinder verlassen das Heft nicht.', when: (d) => d.site === 'ais' },
+      { t: 'lines', key: 'system', label: 'Vorgabe vor dem Text der Kinder (sehen sie nicht)', max: 60, rows: 8,
+        hint: 'Leer lassen für die Vorgabe der gewählten Art. Sie sagt der KI, dass sie einfaches Deutsch spricht, nicht nach persönlichen Daten fragt und bei Sorgen zu einer Lehrkraft schickt.',
+        placeholder: String(kipartnerInstruction({ system: '', mode: 'learn' })) },
+      { t: 'note', text: 'Bitte prüfe die Regeln der KI-Seite (Mindestalter, Konto) und eurer Schule.' },
+      { t: 'button', label: 'Gebaute Teile löschen (neu anfangen)', apply: () => ({ parts: {} }) },
+    ],
+    // Die Vorgabe ist ein Text; das Formular bearbeitet ihn zeilenweise.
+    toDraft: (c) => ({ ...c, system: String(c.system ?? '') ? String(c.system).split('\n') : [] }),
+    fromDraft: (d) => ({ ...d, system: ((d.system as string[]) ?? []).join('\n').trim() ? ((d.system as string[]) ?? []).join('\n') : '' }),
+  },
   mood: {
     hint: 'Antippen sagt das Gefühl, z. B. „Ich bin müde.“',
     fields: [

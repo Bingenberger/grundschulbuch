@@ -109,6 +109,11 @@ test('Alle Lernwerkzeuge und Übungen lassen sich im Heft öffnen', async ({
       await expect(page.locator('.interaction-surface .lh-wg-avatar svg').first()).toBeVisible();
       continue;
     }
+    if (catalogue[i].kind === 'sprechfoto') {
+      // Ohne Foto der Platzhalter der Vorlage (ein Gesicht).
+      await expect(page.locator('.interaction-surface .lh-wg-phototalk svg.lh-pt-svg')).toBeVisible();
+      continue;
+    }
     if (catalogue[i].kind === 'werkzeug') {
       await expect(page.locator('.interaction-surface [class*="lh-wg-"] .lh-ls svg').first()).toBeVisible();
       continue;

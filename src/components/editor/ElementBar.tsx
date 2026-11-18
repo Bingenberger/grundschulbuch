@@ -28,6 +28,8 @@ export type ElementActions = {
   onCollection?: () => void;
   onGroup?: (group: boolean) => void;
   onConfigure?: (element: PageElement) => void;
+  /** „Weitere Übung“: mehr Übungen mit demselben Text oder denselben Wörtern (Textsachen). */
+  onMoreExercises?: (element: PageElement) => void;
   /** Opens the picture editor (crop, turn, pixelate, effects). */
   onEditImage?: (element: PageElement) => void;
   /** Opens trimming and “Klang verbessern” for a sound. */
@@ -131,6 +133,9 @@ export default function ElementBar({
           {(first.type === 'widget' || first.type === 'activity') && actions.onConfigure && (
             <OptionGroup label={first.type === 'widget' ? 'Lernwerkzeug' : 'Übung'}>
               <ChoiceButton icon="settings" label="Aufgabe gestalten" onClick={() => actions.onConfigure!(first)} />
+              {first.type === 'widget' && first.widgetKind === 'textsachen' && actions.onMoreExercises && (
+                <ChoiceButton icon="plus" label="Weitere Übung" title="Mehr Übungen mit demselben Text oder denselben Wörtern, jede auf einer eigenen Seite" onClick={() => actions.onMoreExercises!(first)} />
+              )}
             </OptionGroup>
           )}
           {first.type === 'text' && (
@@ -439,6 +444,12 @@ export default function ElementBar({
             {has('collection') && actions.onCollection && (
               <ChoiceButton icon="filing_cabinet" label="In Sammlung sichern" onClick={actions.onCollection} />
             )}
+          </OptionGroup>
+        )}
+        {/* Eine Übung von Textsachen füllt die Seite gesperrt aus – „Weitere Übung“ ändert sie nicht. */}
+        {allLocked && first?.type === 'widget' && first.widgetKind === 'textsachen' && actions.onMoreExercises && (
+          <OptionGroup label="Übung">
+            <ChoiceButton icon="plus" label="Weitere Übung" title="Mehr Übungen mit demselben Text oder denselben Wörtern, jede auf einer eigenen Seite" onClick={() => actions.onMoreExercises!(first)} />
           </OptionGroup>
         )}
         {allLocked && <span className="option-hint">Gesperrte Elemente lassen sich nicht verändern.</span>}

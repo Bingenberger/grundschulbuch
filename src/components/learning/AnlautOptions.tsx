@@ -10,6 +10,7 @@ import { cleanAnlaut } from '@/lib/reference/anlaut';
 import { safeAnlautAsset } from '@/lib/reference/anlaut-defaults';
 import defaults from '@/lib/reference/anlaut-keys.json';
 import { decodeMaps, encodeMaps } from '@/lib/reference/keys';
+import WordBank, { REFERENCE_WORD_LISTS } from './WordBank';
 
 type Key = { word: string; img?: string; alt?: { word: string; img?: string } };
 type Anlaut = {
@@ -56,8 +57,13 @@ export default function AnlautOptions({ value, onChange: save }: { value: unknow
   const practising = !!a.practice;
   const setPractice = (v: Partial<NonNullable<Anlaut['practice']>> | null, text = words) => {
     if (v === null) return set({ practice: undefined });
+    // Ohne Wörter verwirft die Tastatur das Üben – zum Einschalten die ersten kurzen Wörter.
+    if (!text.trim()) {
+      text = REFERENCE_WORD_LISTS[0].sections[0].words.map((w) => w.w).join('\n');
+      setWords(text);
+    }
     const list = text.split('\n').map((w) => w.trim()).filter(Boolean).slice(0, 60).map((w) => ({ w: w.slice(0, 40) }));
-    set({ practice: { words: list, show: 'word', random: false, strictCase: false, ...a.practice, ...v } });
+    set({ practice: { show: 'word', random: false, strictCase: false, ...a.practice, ...v, words: list } });
   };
 
   return (
@@ -159,6 +165,13 @@ export default function AnlautOptions({ value, onChange: save }: { value: unknow
               <Choices label="Gemischte Reihenfolge" value={a.practice!.random} onChange={(random) => setPractice({ random })} options={yesNo} />
               <Choices label="Groß- und Kleinschreibung zählt" value={a.practice!.strictCase && a.letters === 'both'} onChange={(strictCase) => setPractice({ strictCase })} options={yesNo} />
               <p className="option-hint">{a.letters === 'both' ? 'Nein: „mama“ ist für „Mama“ auch richtig.' : `Die Tastatur schreibt nur ${a.letters === 'upper' ? 'GROSSBUCHSTABEN' : 'kleine Buchstaben'} – so stehen auch die Wörter da.`}</p>
+              <WordBank
+                onSelect={(list) => {
+                  const text = list.map((w) => w.replace(/-/g, '')).slice(0, 60).join('\n');
+                  setWords(text);
+                  setPractice({}, text);
+                }}
+              />
               <label className="property-label">
                 Eigene Wörter
                 <textarea rows={6} value={words} placeholder={'Ein Wort pro Zeile, z. B.\nRoller\nMelone'} onChange={(e) => { setWords(e.target.value); setPractice({}, e.target.value); }} />
