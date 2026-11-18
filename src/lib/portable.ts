@@ -497,22 +497,27 @@ export async function exportPdf(
   onStep?: (done: number, total: number) => void,
 ): Promise<Blob> {
   if(data.pages.some(p=>p.paperMode==='endless'))throw new Error('Endlospapier wird als Heftdatei oder HTML gespeichert und nicht als PDF gedruckt.');
-  const { PDFDocument } = await import('pdf-lib');
+  const { PDFDocument, PDFName, PDFString } = await import('pdf-lib'),
+    { addPdfLinks } = await import('./pdf-links');
   const pdf = await PDFDocument.create();
   pdf.setTitle(data.book.title);
   pdf.setCreator('Grundschulbuch');
+  const k = 72 / 25.4,
+    added: import('pdf-lib').PDFPage[] = [];
   for (let i = 0; i < data.pages.length; i++) {
     onProgress(`PDF-Seite ${i + 1} von ${data.pages.length}`);
     onStep?.(i, data.pages.length);
     const page = data.pages[i],
       snapshot = await pageSnapshot(page),
       image = await pdf.embedPng(snapshot.png),
-      width = ((page.orientation === 'landscape' ? 297 : 210) * 72) / 25.4,
-      height = ((page.orientation === 'landscape' ? 210 : 297) * 72) / 25.4;
-    pdf
-      .addPage([width, height])
-      .drawImage(image, { x: 0, y: 0, width, height });
+      width = (page.orientation === 'landscape' ? 297 : 210) * k,
+      height = (page.orientation === 'landscape' ? 210 : 297) * k;
+    const target = pdf.addPage([width, height]);
+    target.drawImage(image, { x: 0, y: 0, width, height });
+    added.push(target);
   }
+  // Links erst jetzt, damit Verweise auf spätere Seiten ihr Ziel finden.
+  addPdfLinks(pdf, data.pages, added, { PDFName, PDFString });
   onStep?.(data.pages.length, data.pages.length);
   return new Blob([new Uint8Array(await pdf.save())], {
     type: 'application/pdf',

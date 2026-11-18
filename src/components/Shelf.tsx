@@ -8,6 +8,7 @@ import type { Folder } from '@/lib/notebooks.mjs';
 import type { BookData, BookSummary, Notebook } from '@/lib/notebook-model';
 import ScaledPage from './ScaledPage';
 import FileDialog from './FileDialog';
+import SaveDialog from './SaveDialog';
 import LogoutButton from '@/app/LogoutButton';
 const colors = [
   '#52796f',
@@ -29,6 +30,8 @@ export default function Shelf({
 }) {
   const [books, setBooks] = useState(initialBooks);
   const [showFiles, setShowFiles] = useState(false);
+  // „Speichern und teilen“ für ein Heft, ohne es zu öffnen
+  const [saving, setSaving] = useState<BookData | null>(null);
   const [folders, setFolders] = useState<Folder[]>([]),
     [folder, setFolder] = useState('all');
   const [query, setQuery] = useState('');
@@ -46,6 +49,17 @@ export default function Shelf({
   } | null>(null);
   const [title, setTitle] = useState('');
   const [color, setColor] = useState(colors[0]);
+  async function openSave(book: BookSummary) {
+    setBusy(true);
+    setError('');
+    try {
+      setSaving(await api<BookData>('open', { id: book.id }));
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
   async function duplicate(book: BookSummary) {
     setBusy(true);
     setError('');
@@ -342,6 +356,13 @@ export default function Shelf({
                     Duplizieren
                   </button>
                   <button
+                    aria-label={`${book.title} speichern`}
+                    onClick={() => void openSave(book)}
+                    disabled={busy}
+                  >
+                    Speichern …
+                  </button>
+                  <button
                     aria-label={`${book.title} löschen`}
                     onClick={() => setDialog({ type: 'delete', book })}
                     disabled={busy}
@@ -449,6 +470,18 @@ export default function Shelf({
         </div>
       )}
       {showFiles && <FileDialog onClose={() => setShowFiles(false)} />}
+      {saving && (
+        <SaveDialog
+          book={saving.book}
+          pages={saving.pages}
+          onRename={async (title) => {
+            const saved = await api<Notebook>('update', { id: saving.book.id, revision: saving.book.revision, title });
+            setSaving({ ...saving, book: saved });
+            setBooks((list) => list.map((b) => (b.id === saved.id ? { ...b, ...saved } : b)));
+          }}
+          onClose={() => setSaving(null)}
+        />
+      )}
     </main>
   );
 }

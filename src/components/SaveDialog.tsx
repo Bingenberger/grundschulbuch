@@ -58,6 +58,7 @@ const pagesLabel = (n: number) => (n === 1 ? '1 Seite' : `${n} Seiten`);
 export default function SaveDialog({
   book,
   pages,
+  initial,
   allowFiles = true,
   allowPrint = true,
   onRename,
@@ -65,6 +66,8 @@ export default function SaveDialog({
 }: {
   book: Notebook;
   pages: Page[];
+  /** Schon gewählte Seiten (Kachelansicht): keine Seitenfrage vorweg. */
+  initial?: string[];
   /** Heftdatei, HTML, SCORM, ePub */
   allowFiles?: boolean;
   /** PDF und Drucker */
@@ -73,8 +76,10 @@ export default function SaveDialog({
   onClose: () => void;
 }) {
   // null: alle Seiten
-  const [chosen, setChosen] = useState<string[] | null>(null);
-  const [picking, setPicking] = useState(pages.length > 1);
+  const [chosen, setChosen] = useState<string[] | null>(() =>
+    initial?.length && initial.length < pages.length ? initial : null,
+  );
+  const [picking, setPicking] = useState(!initial?.length && pages.length > 1);
   const [progress, setProgress] = useState<{ kind: Kind; done: number; total: number } | null>(null);
   const [ready, setReady] = useState<Ready | null>(null);
   const [message, setMessage] = useState('');

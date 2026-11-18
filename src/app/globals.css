@@ -502,7 +502,7 @@ button:disabled {
 .book-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 0 10px;
 }
 .book-actions button {
   border: 0;
@@ -1158,7 +1158,7 @@ input[type='checkbox'] {
     width: 70px;
   }
   .book-actions {
-    gap: 7px;
+    gap: 0 7px;
   }
   .book-actions button {
     font-size: 9px;

@@ -1,6 +1,7 @@
 'use client';
 import { createContext, useContext } from 'react';
 import type { ElementLink, PageElement } from '@/lib/notebook-model';
+import { useDecorative } from './Decorative';
 
 /**
  * Lets a link badge open another page of the notebook. Each surface that shows
@@ -80,6 +81,10 @@ export function LinkBadge({ element }: { element: PageElement }) {
  * overlapping elements never cover them.
  */
 export function LinkLayer({ elements }: { elements: PageElement[] }) {
+  // Vorschaubilder (z. B. im Umschlag-Link des Regals) bekommen keine
+  // Abzeichen: ein Link im Link wäre ungültiges HTML und bricht die Hydration.
+  const decorative = useDecorative();
+  if (decorative) return null;
   return (
     <>
       {elements

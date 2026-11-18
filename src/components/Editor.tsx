@@ -171,7 +171,8 @@ export default function Editor({
   const [sheetDialog, setSheetDialog] = useState<SheetKind | null>(null);
   const [showGenerator, setShowGenerator] = useState<boolean | { kind: WorksheetKind; title: string; words?: string }>(false);
   const [showShare, setShowShare] = useState(false);
-  const [showSave, setShowSave] = useState(false);
+  // true: Seitenauswahl im Dialog; Liste: schon in der Kachelansicht gewählt
+  const [showSave, setShowSave] = useState<boolean | string[]>(false);
   const [learning, setLearning] = useState<PageElement | 'new' | null>(null);
   /** Stamp chosen under “Einfügen”: every tap on the page places it. */
   const [stamp, setStamp] = useState<string | null>(null);
@@ -1539,6 +1540,7 @@ export default function Editor({
         <SaveDialog
           book={s.book}
           pages={s.pages}
+          initial={Array.isArray(showSave) ? showSave : undefined}
           allowFiles={features.has('files')}
           allowPrint={features.has('print')}
           onRename={async (title) => {
@@ -1661,6 +1663,10 @@ export default function Editor({
           onArrange={arrange}
           onDuplicate={duplicatePages}
           onDelete={deletePages}
+          onSave={(ids) => {
+            setShowTiles(false);
+            setShowSave(ids);
+          }}
         />
       )}
       {templateMode && (

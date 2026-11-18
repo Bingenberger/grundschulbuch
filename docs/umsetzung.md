@@ -302,6 +302,12 @@ und ePub. Alle Formate gelten für die gewählten Seiten. Auf Tablets öffnet si
 nach dem Erstellen das Teilen-Menü des Geräts bzw. „Teilen oder sichern“, am
 Computer wird die Datei gleich gespeichert. Geöffnet und importiert werden
 Dateien im Regal („Heft, ePub oder PDF öffnen“).
+In der Kachelansicht speichert „Speichern“ nur die gewählten Seiten (ohne
+Seitenfrage), im Regal öffnet „Speichern …“ an einem Heft denselben Dialog, ohne
+das Heft zu öffnen. Im PDF sind Links anklickbar: Element-Links auf
+Internetseiten und eingebettete Internetinhalte als Internetlink, Links auf eine
+Heftseite als Sprung zu dieser Seite, sofern sie im PDF ist
+(`src/lib/pdf-links.ts`; gedrehte Elemente mit ihrem umschließenden Rechteck).
 
 ## Verwaltung (Admin-Konten)
 

@@ -19,6 +19,7 @@ export default function PageTiles({
   onArrange,
   onDuplicate,
   onDelete,
+  onSave,
   onClose,
 }: {
   pages: Page[];
@@ -29,6 +30,8 @@ export default function PageTiles({
   onArrange: (ids: string[]) => void;
   onDuplicate: (ids: string[]) => void;
   onDelete: (ids: string[]) => void;
+  /** „Speichern und teilen“ nur mit den gewählten Seiten */
+  onSave?: (ids: string[]) => void;
   onClose: () => void;
 }) {
   const [selected, setSelected] = useState<string[]>([activeId]);
@@ -105,6 +108,15 @@ export default function PageTiles({
             onClick={() => move(1)}
           />
           <ChoiceButton icon="file" label="Duplizieren" disabled={busy || !chosen.length} onClick={() => onDuplicate(chosen)} />
+          {onSave && (
+            <ChoiceButton
+              icon="import"
+              label="Speichern"
+              title="Nur die gewählten Seiten speichern, drucken oder als PDF ausgeben"
+              disabled={busy || !chosen.length}
+              onClick={() => onSave(pageIds.filter((id) => chosen.includes(id)))}
+            />
+          )}
           <ChoiceButton
             icon="empty_trash"
             label="Löschen"
