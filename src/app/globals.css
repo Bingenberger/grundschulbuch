@@ -5416,3 +5416,12 @@ input[type='checkbox'] {
 .save-picker-tile{cursor:pointer;touch-action:manipulation;font:inherit;}
 .save-picker-tile.is-off .page-tile-page{opacity:.4;}
 @media (prefers-reduced-motion:reduce){.save-spinner,.save-ready{animation:none;}}
+.save-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;}
+.save-tile{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:14px;border:2px solid var(--rand);border-radius:16px;background:var(--flaeche);font:inherit;color:inherit;text-align:left;cursor:pointer;}
+.save-tile:hover:not(:disabled){border-color:var(--akzent);}
+.save-tile.is-primary{border-color:var(--akzent);background:#eff6ff;}
+.save-tile:disabled{opacity:.6;cursor:default;}
+.save-tile strong{font-size:16px;line-height:1.25;}
+.save-tile small{flex:1;font-size:13px;line-height:1.35;color:var(--text-leise);}
+.save-tile .save-ic{width:46px;height:46px;}
+.save-picker-badge{position:absolute;left:40px;bottom:8px;padding:2px 8px;border-radius:12px;background:#fef3c7;color:#92400e;font-size:12px;font-weight:700;}

@@ -17,11 +17,10 @@ export default function EditorHeader({
   onUndo,
   onRedo,
   busy,
-  onFiles,
   onBoard,
   onReader,
   onShare,
-  onPrint,
+  onSave,
   onHelp,
   readAloud,
   onReadAloud,
@@ -40,11 +39,11 @@ export default function EditorHeader({
   onUndo: () => void;
   onRedo: () => void;
   busy?: boolean;
-  onFiles?: () => void;
   onBoard?: () => void;
   onReader?: () => void;
   onShare?: () => void;
-  onPrint?: () => void;
+  /** „Speichern und teilen“: Heftdatei, HTML, PDF, Drucker, SCORM, ePub */
+  onSave?: () => void;
   onHelp?: () => void;
   readAloud?: boolean;
   onReadAloud?: (on: boolean) => void;
@@ -100,12 +99,6 @@ export default function EditorHeader({
             <span>Vorlesen</span>
           </button>
         )}
-        {has('files') && onFiles && (
-          <button type="button" className="header-button" onClick={onFiles}>
-            <Icon name="opened_folder" size={24} />
-            <span>Dateien</span>
-          </button>
-        )}
         {has('reader') && onReader && (
           <button type="button" className="header-button" onClick={onReader}>
             <Icon name="reading_ebook" size={24} />
@@ -124,10 +117,10 @@ export default function EditorHeader({
             <span>Weitergeben</span>
           </button>
         )}
-        {has('print') && onPrint && (
-          <button type="button" className="header-button" disabled={busy} onClick={onPrint}>
-            <Icon name="print" size={24} />
-            <span>Drucken / PDF</span>
+        {(has('files') || has('print')) && onSave && (
+          <button type="button" className="header-button" disabled={busy} onClick={onSave}>
+            <Icon name="import" size={24} />
+            <span>Speichern</span>
           </button>
         )}
         {has('help') && onHelp && (

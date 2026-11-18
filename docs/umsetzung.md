@@ -288,9 +288,20 @@ Bearbeitung mit anschließender Veröffentlichung als Schulvorlage.
 eine in alle Richtungen offene Fläche an (`paperMode: "endless"`). Sie wächst
 mit den Inhalten nach links, rechts, oben und unten; die Lineatur läuft überall
 weiter. Verschieben mit zwei Fingern, Mausrad, mittlerer Maustaste oder
-Leertaste + Ziehen. Hefte mit Endlospapier lassen sich nicht drucken oder als
+Leertaste + Ziehen. Seiten mit Endlospapier lassen sich nicht drucken oder als
 PDF ausgeben.
 Einzelheiten: [endlospapier.md](endlospapier.md).
+
+**Speichern und teilen.** Der Knopf „Speichern“ oben im Editor (oder
+Strg/⌘+Umschalt+S) öffnet einen Dialog nach dem Vorbild von Lernsachen-Heft: Bei
+mehreren Seiten zuerst „Welche Seiten speichern?“ (alle ausgewählt, Antippen
+nimmt eine heraus), dann Name des Hefts, Seitenzeile mit „Andere Seiten …“ und
+alle Ausgaben als Kacheln – bearbeitbare Heftdatei, HTML zum Ansehen, PDF,
+Drucker (bei gemischten Formaten getrennt nach Hoch- und Querformat), SCORM-Paket
+und ePub. Alle Formate gelten für die gewählten Seiten. Auf Tablets öffnet sich
+nach dem Erstellen das Teilen-Menü des Geräts bzw. „Teilen oder sichern“, am
+Computer wird die Datei gleich gespeichert. Geöffnet und importiert werden
+Dateien im Regal („Heft, ePub oder PDF öffnen“).
 
 ## Verwaltung (Admin-Konten)
 

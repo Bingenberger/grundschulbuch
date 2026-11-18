@@ -48,19 +48,19 @@ test('Heft erstellen, schreiben, zeichnen, Seiten wechseln, wiederöffnen und dr
   await page.getByRole('button', { name: 'Tafelmodus', exact: true }).click();
   await page.getByRole('button', { name: 'Weiter', exact: true }).click();
   await page.getByRole('button', { name: 'Tafelmodus beenden' }).click();
-  // Drucken und PDF: erst die Seitenauswahl, dann der Dialog wie „Speichern und teilen“.
+  // Speichern und teilen: erst die Seitenauswahl, dann alle Formate.
   await page
-    .getByRole('button', { name: 'Drucken / PDF', exact: true })
+    .getByRole('button', { name: 'Speichern', exact: true })
     .click();
-  const picker = page.getByRole('dialog', { name: 'Welche Seiten drucken?' });
+  const picker = page.getByRole('dialog', { name: 'Welche Seiten speichern?' });
   await expect(picker.getByRole('button', { name: /^Seite \d$/ })).toHaveCount(2);
   await picker.getByRole('button', { name: 'Seite 2', exact: true }).click();
   await picker.getByRole('button', { name: '1 Seite – weiter', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'Drucken und PDF' });
+  const dialog = page.getByRole('dialog', { name: 'Speichern und teilen' });
   await expect(dialog.getByText('1 von 2 Seiten', { exact: true })).toBeVisible();
   await expect(dialog.getByLabel('Name des Hefts')).toHaveValue('Unsere Buchstaben');
   const download = page.waitForEvent('download');
-  await dialog.getByRole('button', { name: /PDF-Datei/ }).click();
+  await dialog.getByRole('button', { name: /^PDF/ }).click();
   const pdf = await download;
   expect(pdf.suggestedFilename()).toBe('Unsere Buchstaben (1 Seite).pdf');
   await expect(dialog.getByText(/PDF gespeichert \(\d+/)).toBeVisible();

@@ -19,7 +19,7 @@ test('Endlospapier: in alle Richtungen zeichnen, Ansicht bleibt ruhig, wieder ö
  // Leere Fläche: erstes Blatt mit 200 mm Rand ringsum.
  expect(await paper.evaluate(el=>parseFloat(getComputedStyle(el).width))).toBeCloseTo(700*96/25.4,0);
  expect(await paper.evaluate(el=>parseFloat(getComputedStyle(el).height))).toBeCloseTo(700*96/25.4,0);
- await expect(page.getByRole('button',{name:'Drucken / PDF',exact:true})).toHaveCount(0);
+ await expect(page.getByRole('button',{name:'Speichern',exact:true})).toBeVisible();
 
  // Beim Öffnen ist das erste Blatt zu sehen: der Ursprung liegt oben links im sichtbaren Bereich.
  let box=(await paper.boundingBox())!;const view=(await scroller.boundingBox())!;
@@ -72,7 +72,7 @@ test('Endlospapier: in alle Richtungen zeichnen, Ansicht bleibt ruhig, wieder ö
  expect(viewBox[0]).toBeLessThan(-100);expect(viewBox[1]).toBeLessThan(-100);
  const rect=paper.locator('svg.lineatur > rect');expect(Number(await rect.getAttribute('x'))).toBe(viewBox[0]);expect(Number(await rect.getAttribute('width'))).toBe(viewBox[2]);
 
- await page.getByRole('button',{name:'Dateien',exact:true}).click();const files=page.getByRole('dialog',{name:'Heftdateien'});await expect(files.getByRole('button',{name:/PDF herunterladen/})).toHaveCount(0);await expect(files.getByRole('button',{name:/Bearbeitbare Heftdatei/})).toBeVisible();
+ await page.getByRole('button',{name:'Speichern',exact:true}).click();const files=page.getByRole('dialog',{name:'Speichern und teilen'});await expect(files.getByRole('button',{name:/^PDF/})).toBeDisabled();await expect(files.getByRole('button',{name:/Am Drucker drucken/})).toBeDisabled();await expect(files.getByRole('button',{name:/Bearbeitbare Heftdatei/})).toBeVisible();
  const download=page.waitForEvent('download');await files.getByRole('button',{name:/Bearbeitbare Heftdatei/}).click();
  const file=await download,zip=unzipSync(await fs.readFile((await file.path())!)),portable=JSON.parse(strFromU8(zip['heft.json']));
  expect(portable.pages[0].paperMode).toBe('endless');expect(portable.pages[0].elements.some((e:{x:number;y:number})=>e.x<0&&e.y<0)).toBe(true);

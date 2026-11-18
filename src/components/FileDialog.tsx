@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import type { BookData } from '@/lib/notebook-model';
-import { flushEditor, useEditor } from '@/lib/editor-store';
+import { flushEditor } from '@/lib/editor-store';
 export default function FileDialog({
   data,
   onClose,
@@ -26,43 +26,6 @@ export default function FileDialog({
       setMessage('');
     }
   }
-  async function exportFile(
-    kind: 'archive' | 'html' | 'epub' | 'scorm' | 'pdf',
-  ) {
-    await run(async () => {
-      setMessage('Datei wird vorbereitet …');
-      const helpers = await import('@/lib/portable');
-      const current = data
-        ? {
-            book: useEditor.getState().book || data.book,
-            pages: useEditor.getState().pages.length
-              ? useEditor.getState().pages
-              : data.pages,
-          }
-        : null;
-      if (!current) return;
-      let blob: Blob, ext: string;
-      if (kind === 'archive') {
-        blob = await helpers.exportArchive(current);
-        ext = 'grundschulbuch';
-      } else if (kind === 'html') {
-        blob = new Blob([await helpers.exportHtml(current)], {
-          type: 'text/html',
-        });
-        ext = 'html';
-      } else if (kind === 'epub') {
-        blob = await helpers.exportEpub(current);
-        ext = 'epub';
-      } else if (kind === 'scorm') {
-        blob = await helpers.exportScorm(current);
-        ext = 'scorm.zip';
-      } else {
-        blob = await helpers.exportPdf(current, setMessage);
-        ext = 'pdf';
-      }
-      helpers.saveDownload(blob, current.book.title, ext);
-    });
-  }
   return (
     <div className="modal-backdrop">
       <section
@@ -78,50 +41,10 @@ export default function FileDialog({
           </button>
         </div>
         {data && (
-          <>
-            <h3>Dieses Heft speichern</h3>
-            <div className="file-options">
-              {(
-                [
-                  [
-                    'archive',
-                    'Bearbeitbare Heftdatei',
-                    'Auf einem anderen Grundschulbuch-Server wieder öffnen.',
-                  ],
-                  [
-                    'html',
-                    'HTML mit Lernwerkzeugen',
-                    'Eigenständig im Browser öffnen und weitergeben.',
-                  ],
-                  [
-                    'pdf',
-                    'PDF herunterladen',
-                    'Alle Seiten in ihrer A4-Ausrichtung.',
-                  ],
-                  [
-                    'epub',
-                    'ePub',
-                    'Festes Seitenlayout für unterstützende Lesegeräte.',
-                  ],
-                  [
-                    'scorm',
-                    'SCORM 1.2',
-                    'Für Lernplattformen, mit Rückmeldung der Übungsergebnisse.',
-                  ],
-                ] as const
-              ).filter(([id])=>id!=='pdf'||!data?.pages.some(p=>p.paperMode==='endless')).map(([id, title, description]) => (
-                <button
-                  className="knopf"
-                  key={id}
-                  disabled={busy}
-                  onClick={() => exportFile(id)}
-                >
-                  <strong>{title}</strong>
-                  <small>{description}</small>
-                </button>
-              ))}
-            </div>
-          </>
+          <p>
+            Dieses Heft speicherst du als Heftdatei, HTML, PDF, SCORM oder ePub
+            im Heft oben mit „Speichern“.
+          </p>
         )}
         {!data && (
           <>

@@ -2,7 +2,7 @@ export const editorCommands = {
   undo: ['Rückgängig', 'Mod+z'],
   redo: ['Wiederholen', 'Mod+Shift+z'],
   save: ['Speichern', 'Mod+s'],
-  files: ['Heftdateien', 'Mod+Shift+s'],
+  files: ['Speichern und teilen', 'Mod+Shift+s'],
   help: ['Hilfe / Tastatur', 'F1'],
   nextPage: ['Nächste Seite', 'Alt+ArrowRight'],
   prevPage: ['Vorherige Seite', 'Alt+ArrowLeft'],

@@ -53,7 +53,7 @@ test('Flächenradieren, Undo/Redo, Neuladen und Heftdatei erhalten dieselbe Zeic
   await expect(page.locator('.save-status')).toHaveText('✓ Gespeichert');
   await page.reload();
   await expect(page.locator('.interaction-surface mask')).toHaveCount(1);
-  await page.getByRole('button', { name: 'Dateien', exact: true }).click();
+  await page.getByRole('button', { name: 'Speichern', exact: true }).click();
   const pending = page.waitForEvent('download');
   await page.getByRole('button', { name: /Bearbeitbare Heftdatei/ }).click();
   const download = await pending;

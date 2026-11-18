@@ -45,9 +45,11 @@ des ersten Blatts schreiben, zeichnen und Elemente ablegen.
 Schulvorlagen, Kopien und Verteilungen übernommen. Seiten eines Hefts dürfen
 verschiedene Papiermodi verwenden.
 
-Für Hefte mit Endlospapier werden Drucken und PDF nicht angeboten. Auch der
-direkte Druckaufruf und PDF-Export verhindern eine versehentliche Ausgabe als
-A4. Heftdatei und eigenständiges HTML bleiben verfügbar; der Lesemodus und das
+Seiten mit Endlospapier kommen nicht ins PDF und nicht auf den Drucker: Im
+Dialog „Speichern und teilen“ werden sie dort übersprungen (der Dialog sagt das
+dazu); besteht die Auswahl nur aus solchen Seiten, sind PDF und Drucker
+gesperrt. Auch der direkte Druckaufruf und der PDF-Export verhindern eine
+versehentliche Ausgabe als A4. Heftdatei und eigenständiges HTML bleiben verfügbar; der Lesemodus und das
 HTML zeigen die ganze Fläche in voller Breite zum Scrollen. ePub übernimmt die
 tatsächlichen Maße, soweit das Lesegerät sie unterstützt.
 

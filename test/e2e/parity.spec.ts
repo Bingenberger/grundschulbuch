@@ -99,8 +99,8 @@ test('Heftdatei, HTML, PDF, ePub und SCORM lassen sich exportieren und die Heftd
   await page
     .getByLabel('Text', { exact: true })
     .fill('Ein eigenständiges Heft mit Äpfeln & Birnen.');
-  await page.getByRole('button', { name: 'Dateien', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'Heftdateien' });
+  await page.getByRole('button', { name: 'Speichern', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Speichern und teilen' });
   const download = async (name: RegExp) => {
     const pending = page.waitForEvent('download');
     await dialog.getByRole('button', { name }).click();
@@ -118,7 +118,7 @@ test('Heftdatei, HTML, PDF, ePub und SCORM lassen sich exportieren und die Heftd
   expect(
     JSON.parse(strFromU8(files['heft.json'])).pages[0].elements[0].text,
   ).toContain('Äpfeln & Birnen');
-  const html = await download(/HTML mit Lernwerkzeugen/);
+  const html = await download(/HTML zum Ansehen/);
   const viewer = await browser.newPage();
   await viewer.goto('file://' + html.path);
   await expect(
@@ -129,21 +129,24 @@ test('Heftdatei, HTML, PDF, ePub und SCORM lassen sich exportieren und die Heftd
       }),
   ).toBeVisible();
   await viewer.close();
-  const pdf = await download(/PDF herunterladen/);
+  const pdf = await download(/^PDF/);
   const document = await PDFDocument.load(pdf.bytes);
   expect(document.getPageCount()).toBe(1);
   // New notebooks start in landscape A4.
   expect(document.getPage(0).getWidth()).toBeCloseTo(841.89, 2);
   expect(document.getPage(0).getHeight()).toBeCloseTo(595.276, 2);
-  const epub = await download(/^ePub/);
+  const epub = await download(/^ePub-Buch/);
   const efiles = unzipSync(epub.bytes);
   expect(strFromU8(efiles.mimetype)).toBe('application/epub+zip');
   expect(strFromU8(efiles['OEBPS/page-1.xhtml'])).toContain(
     'Äpfeln &amp; Birnen',
   );
-  const scorm = await download(/SCORM/);
+  const scorm = await download(/^SCORM/);
   expect(unzipSync(scorm.bytes)['imsmanifest.xml']).toBeTruthy();
-  await dialog.locator('input[type=file]').setInputFiles({
+  await dialog.getByRole('button', { name: 'Schließen', exact: true }).click();
+  await page.getByRole('button', { name: 'Mein Regal', exact: true }).click();
+  await page.getByRole('button', { name: 'Heft, ePub oder PDF öffnen' }).click();
+  await page.getByRole('dialog', { name: 'Heftdateien' }).getByLabel('Datei auswählen').setInputFiles({
     name: 'kopie.grundschulbuch',
     mimeType: 'application/zip',
     buffer: Buffer.from(archive.bytes),

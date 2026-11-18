@@ -37,7 +37,7 @@ import SheetDialogFor, { type SheetKind } from './sheets/SheetDialogFor';
 import { ENABLED } from '@/lib/paused';
 import type { WorksheetKind } from '@/lib/learning/worksheets';
 import ShareDialog from './ShareDialog';
-import PrintDialog from './PrintDialog';
+import SaveDialog from './SaveDialog';
 import { LearningRuntime, pageDrawing } from './learning/Runtime';
 import LearningDialog from './learning/LearningDialog';
 import EmbedDialog from './learning/EmbedDialog';
@@ -171,7 +171,7 @@ export default function Editor({
   const [sheetDialog, setSheetDialog] = useState<SheetKind | null>(null);
   const [showGenerator, setShowGenerator] = useState<boolean | { kind: WorksheetKind; title: string; words?: string }>(false);
   const [showShare, setShowShare] = useState(false);
-  const [showPrint, setShowPrint] = useState(false);
+  const [showSave, setShowSave] = useState(false);
   const [learning, setLearning] = useState<PageElement | 'new' | null>(null);
   /** Stamp chosen under “Einfügen”: every tap on the page places it. */
   const [stamp, setStamp] = useState<string | null>(null);
@@ -352,7 +352,7 @@ export default function Editor({
         void flushEditor();
         break;
       case 'files':
-        setShowFiles(true);
+        if (features.has('files') || features.has('print')) setShowSave(true);
         break;
       case 'help':
         setShowShortcuts(true);
@@ -1007,7 +1007,7 @@ export default function Editor({
         showCollection ||
         showGenerator ||
         showShare ||
-        showPrint ||
+        showSave ||
         learning ||
         showEmbed ||
         showFiles ||
@@ -1059,7 +1059,6 @@ export default function Editor({
         canRedo={s.future.length > 0}
         onUndo={s.undo}
         onRedo={s.redo}
-        onFiles={() => setShowFiles(true)}
         onBoard={() => {
           cancelDrawingGesture(); setBoardPointer('none'); setBoard(true);
           setBoardDraw(false);
@@ -1074,7 +1073,7 @@ export default function Editor({
           setReader(true);
         }}
         onShare={() => run(async () => { setShowShare(true); })}
-        onPrint={s.pages.every(p=>p.paperMode==='endless')?undefined:() => run(async () => { setShowPrint(true); })}
+        onSave={() => run(async () => { setShowSave(true); })}
         onHelp={() => setShowShortcuts(true)}
         actions={
           <ElementActions
@@ -1536,15 +1535,17 @@ export default function Editor({
           }}
         />
       )}
-      {showPrint && (
-        <PrintDialog
+      {showSave && (
+        <SaveDialog
           book={s.book}
           pages={s.pages}
+          allowFiles={features.has('files')}
+          allowPrint={features.has('print')}
           onRename={async (title) => {
             const book = await api<Notebook>('update', { id: s.book!.id, revision: s.book!.revision, title });
             useEditor.setState({ book });
           }}
-          onClose={() => setShowPrint(false)}
+          onClose={() => setShowSave(false)}
         />
       )}
       {showShare && (
