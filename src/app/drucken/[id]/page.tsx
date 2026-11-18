@@ -5,8 +5,10 @@ import PrintBook from '@/components/PrintBook';
 export const dynamic = 'force-dynamic';
 export default async function Drucken({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ seiten?: string; drucken?: string }>;
 }) {
   const user = await currentUser();
   if (!user) redirect('/anmelden');
@@ -17,5 +19,7 @@ export default async function Drucken({
       if (e instanceof BookError && [400, 404].includes(e.status)) notFound();
       throw e;
     });
-  return <PrintBook data={data} />;
+  const { seiten, drucken } = await searchParams;
+  const only = typeof seiten === 'string' && seiten ? seiten.split(',') : null;
+  return <PrintBook data={data} only={only} autoPrint={drucken === '1'} />;
 }

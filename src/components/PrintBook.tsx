@@ -1,20 +1,49 @@
 'use client';
 import { Picker } from './ui/Choice';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { BookData } from '@/lib/notebook-model';
 import PageView from './PageView';
-export default function PrintBook({ data }: { data: BookData }) {
-  const [orientation, setOrientation] = useState<
-    'all' | 'portrait' | 'landscape'
-  >('all');
+async function printWhenLoaded() {
+  await document.fonts.ready;
+  await Promise.all(
+    Array.from(document.images).map((image) => image.decode().catch(() => undefined)),
+  );
+  window.print();
+}
+/** Druckansicht. Aus dem Dialog „Drucken und PDF“ kommen die gewählten Seiten
+ *  (`only`) und der Wunsch, gleich den Druckdialog zu öffnen (`autoPrint`). */
+export default function PrintBook({
+  data,
+  only = null,
+  autoPrint = false,
+}: {
+  data: BookData;
+  only?: string[] | null;
+  autoPrint?: boolean;
+}) {
+  const [orientation, setOrientation] = useState<'all' | 'portrait' | 'landscape'>('all');
   const [busy, setBusy] = useState(false);
-  const mixed = new Set(data.pages.map((p) => p.orientation)).size > 1;
+  const printable = data.pages.filter(
+    (p) => p.paperMode !== 'endless' && (!only || only.includes(p.id)),
+  );
+  const mixed = new Set(printable.map((p) => p.orientation)).size > 1;
   const pages =
-    orientation === 'all'
-      ? data.pages
-      : data.pages.filter((p) => p.orientation === orientation);
-  if(data.pages.some(p=>p.paperMode==='endless'))return <main className="print-book"><Link className="knopf" href={`/heft/${data.book.id}`}>‹ Zurück zum Heft</Link><p>Dieses Heft enthält Endlospapier. Speichere es als Heftdatei oder HTML.</p></main>;
+    orientation === 'all' ? printable : printable.filter((p) => p.orientation === orientation);
+  const started = useRef(false);
+  useEffect(() => {
+    if (!autoPrint || mixed || !printable.length || started.current) return;
+    started.current = true;
+    setBusy(true);
+    void printWhenLoaded().finally(() => setBusy(false));
+  }, [autoPrint, mixed, printable.length]);
+  if (!printable.length)
+    return (
+      <main className="print-book">
+        <Link className="knopf" href={`/heft/${data.book.id}`}>‹ Zurück zum Heft</Link>
+        <p>Dieses Heft enthält Endlospapier. Speichere es als Heftdatei oder HTML.</p>
+      </main>
+    );
   return (
     <main className="print-book">
       <div className="print-controls">
@@ -25,6 +54,8 @@ export default function PrintBook({ data }: { data: BookData }) {
         <p>
           Im Druckdialog: A4, Maßstab 100 %, Ränder „Keine“ und Kopf-/Fußzeilen
           ausschalten. Für eine PDF „Als PDF sichern“ wählen.
+          {printable.length < data.pages.length &&
+            ` Gedruckt ${printable.length === 1 ? 'wird 1 Seite' : `werden ${printable.length} Seiten`} von ${data.pages.length}.`}
         </p>
         {mixed && (
           <label>
@@ -47,14 +78,8 @@ export default function PrintBook({ data }: { data: BookData }) {
           disabled={busy || (mixed && orientation === 'all')}
           onClick={async () => {
             setBusy(true);
-            await document.fonts.ready;
-            await Promise.all(
-              Array.from(document.images).map((image) =>
-                image.decode().catch(() => undefined),
-              ),
-            );
+            await printWhenLoaded();
             setBusy(false);
-            window.print();
           }}
         >
           {busy ? 'Schriften und Bilder laden …' : 'Drucken / als PDF sichern'}

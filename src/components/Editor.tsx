@@ -37,6 +37,7 @@ import SheetDialogFor, { type SheetKind } from './sheets/SheetDialogFor';
 import { ENABLED } from '@/lib/paused';
 import type { WorksheetKind } from '@/lib/learning/worksheets';
 import ShareDialog from './ShareDialog';
+import PrintDialog from './PrintDialog';
 import { LearningRuntime, pageDrawing } from './learning/Runtime';
 import LearningDialog from './learning/LearningDialog';
 import EmbedDialog from './learning/EmbedDialog';
@@ -170,6 +171,7 @@ export default function Editor({
   const [sheetDialog, setSheetDialog] = useState<SheetKind | null>(null);
   const [showGenerator, setShowGenerator] = useState<boolean | { kind: WorksheetKind; title: string; words?: string }>(false);
   const [showShare, setShowShare] = useState(false);
+  const [showPrint, setShowPrint] = useState(false);
   const [learning, setLearning] = useState<PageElement | 'new' | null>(null);
   /** Stamp chosen under “Einfügen”: every tap on the page places it. */
   const [stamp, setStamp] = useState<string | null>(null);
@@ -1005,6 +1007,7 @@ export default function Editor({
         showCollection ||
         showGenerator ||
         showShare ||
+        showPrint ||
         learning ||
         showEmbed ||
         showFiles ||
@@ -1071,7 +1074,7 @@ export default function Editor({
           setReader(true);
         }}
         onShare={() => run(async () => { setShowShare(true); })}
-        onPrint={s.pages.some(p=>p.paperMode==='endless')?undefined:() => run(async () => { window.location.assign(`/drucken/${s.book!.id}`); })}
+        onPrint={s.pages.every(p=>p.paperMode==='endless')?undefined:() => run(async () => { setShowPrint(true); })}
         onHelp={() => setShowShortcuts(true)}
         actions={
           <ElementActions
@@ -1531,6 +1534,17 @@ export default function Editor({
               throw new Error('Bitte erst die aktuelle Seite speichern.');
             for (const p of pages) await add(p);
           }}
+        />
+      )}
+      {showPrint && (
+        <PrintDialog
+          book={s.book}
+          pages={s.pages}
+          onRename={async (title) => {
+            const book = await api<Notebook>('update', { id: s.book!.id, revision: s.book!.revision, title });
+            useEditor.setState({ book });
+          }}
+          onClose={() => setShowPrint(false)}
         />
       )}
       {showShare && (

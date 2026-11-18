@@ -494,6 +494,7 @@ export async function pageSnapshot(
 export async function exportPdf(
   data: BookData,
   onProgress: (message: string) => void,
+  onStep?: (done: number, total: number) => void,
 ): Promise<Blob> {
   if(data.pages.some(p=>p.paperMode==='endless'))throw new Error('Endlospapier wird als Heftdatei oder HTML gespeichert und nicht als PDF gedruckt.');
   const { PDFDocument } = await import('pdf-lib');
@@ -502,6 +503,7 @@ export async function exportPdf(
   pdf.setCreator('Grundschulbuch');
   for (let i = 0; i < data.pages.length; i++) {
     onProgress(`PDF-Seite ${i + 1} von ${data.pages.length}`);
+    onStep?.(i, data.pages.length);
     const page = data.pages[i],
       snapshot = await pageSnapshot(page),
       image = await pdf.embedPng(snapshot.png),
@@ -511,6 +513,7 @@ export async function exportPdf(
       .addPage([width, height])
       .drawImage(image, { x: 0, y: 0, width, height });
   }
+  onStep?.(data.pages.length, data.pages.length);
   return new Blob([new Uint8Array(await pdf.save())], {
     type: 'application/pdf',
   });

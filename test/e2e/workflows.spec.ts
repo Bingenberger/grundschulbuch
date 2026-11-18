@@ -48,11 +48,35 @@ test('Heft erstellen, schreiben, zeichnen, Seiten wechseln, wiederöffnen und dr
   await page.getByRole('button', { name: 'Tafelmodus', exact: true }).click();
   await page.getByRole('button', { name: 'Weiter', exact: true }).click();
   await page.getByRole('button', { name: 'Tafelmodus beenden' }).click();
+  // Drucken und PDF: erst die Seitenauswahl, dann der Dialog wie „Speichern und teilen“.
   await page
     .getByRole('button', { name: 'Drucken / PDF', exact: true })
     .click();
-  await expect(page).toHaveURL(/\/drucken\//);
+  const picker = page.getByRole('dialog', { name: 'Welche Seiten drucken?' });
+  await expect(picker.getByRole('button', { name: /^Seite \d$/ })).toHaveCount(2);
+  await picker.getByRole('button', { name: 'Seite 2', exact: true }).click();
+  await picker.getByRole('button', { name: '1 Seite – weiter', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Drucken und PDF' });
+  await expect(dialog.getByText('1 von 2 Seiten', { exact: true })).toBeVisible();
+  await expect(dialog.getByLabel('Name des Hefts')).toHaveValue('Unsere Buchstaben');
+  const download = page.waitForEvent('download');
+  await dialog.getByRole('button', { name: /PDF-Datei/ }).click();
+  const pdf = await download;
+  expect(pdf.suggestedFilename()).toBe('Unsere Buchstaben (1 Seite).pdf');
+  await expect(dialog.getByText(/PDF gespeichert \(\d+/)).toBeVisible();
+  await dialog.getByRole('button', { name: 'Andere Seiten …' }).click();
+  await picker.getByRole('button', { name: 'Seite 2', exact: true }).click();
+  await picker.getByRole('button', { name: 'Alle 2 Seiten – weiter', exact: true }).click();
+  await expect(dialog.getByText('Alle 2 Seiten', { exact: true })).toBeVisible();
+  await page.addInitScript(() => {
+    window.print = () => {
+      document.body.dataset.printed = '1';
+    };
+  });
+  await dialog.getByRole('button', { name: /Am Drucker drucken/ }).click();
+  await expect(page).toHaveURL(/\/drucken\/[^?]+\?drucken=1$/);
   await expect(page.locator('.print-pages .paper')).toHaveCount(2);
+  await expect(page.locator('body')).toHaveAttribute('data-printed', '1');
   await page.getByRole('link', { name: '‹ Zurück zum Heft' }).click();
   await page.getByRole('button', { name: 'Mein Regal', exact: true }).click();
   await expect(
