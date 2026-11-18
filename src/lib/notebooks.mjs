@@ -153,6 +153,8 @@ export function validatePage(input) {
     if (el.designScale !== undefined) result.designScale = num(el.designScale,.01,1);
     if (el.link !== undefined) result.link = elementLink(el.link);
     if (el.opacity !== undefined) result.opacity = num(el.opacity, 0.01, 1);
+    // Beschreibung zum Vorlesen auch für Sticker, Formen und Zeichnungen.
+    if (['shape', 'sticker', 'stroke'].includes(el.type) && typeof el.alt === 'string' && el.alt.trim()) result.alt = el.alt.slice(0, 300);
     if (el.type === 'text') {
       if(el.referenceFont!==undefined){
         if(typeof el.referenceFont!=='string'||!Object.hasOwn(templateFonts,el.referenceFont))throw new BookError('Unbekannte Vorlagenschrift.');
@@ -181,6 +183,7 @@ export function validatePage(input) {
         if (el.text.length > 200) throw new BookError('Die Antwort ist zu lang.');
       }
       if (el.italic !== undefined) result.italic = !!el.italic;
+      if (el.syllables !== undefined) result.syllables = !!el.syllables;
       if (el.textHint !== undefined) {
         if(typeof el.textHint !== 'string' || el.textHint.length > 500) throw new BookError('Ungültiger Texthinweis.');
         result.textHint = el.textHint;

@@ -107,6 +107,8 @@ export type PageElement = {
   opacity?: number;
   groupId?: string;
   italic?: boolean;
+  /** Silben rot und blau (Silbenmethode); beim Schreiben schwarz. */
+  syllables?: boolean;
   underline?: boolean;
   align?: 'left' | 'center' | 'right' | 'justify';
   lineHeight?: number;

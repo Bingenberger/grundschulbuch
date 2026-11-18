@@ -1,40 +1,14 @@
 import { defaultWords, type LearningSettings, type LearningResponse } from './catalog';
-import { wordBanks } from './words';
+import { plainWord, syllabify } from '../syllables';
 import { alphabetKeys } from './alphabet';
-export const clapWord = (word: string) => word.normalize('NFC').replace(/-/g, '').trim();
+export const clapWord = plainWord;
 const normal = (word: string) => clapWord(word).toLocaleLowerCase('de');
-const dictionary = new Map(Object.values(wordBanks).flat().map(word => [normal(word), word.split('-')]));
-for (const word of ['Son-ne', 'Blu-me', 'Re-gen-bo-gen', 'Scho-ko-la-de', 'Haus', 'Fa-mi-li-e', 'Feu-er', 'Bau-er', 'Fe-ri-en']) dictionary.set(normal(word), word.split('-'));
 export type ClapWord = { word: string; parts: string[]; confirmed: boolean };
 /** A suggestion for unfamiliar words, not an authoritative German syllabifier.
  * Existing teaching lists and explicitly marked syllables take priority. */
 export function clapSyllables(input: string): ClapWord {
-  const text = input.normalize('NFC').trim(), word = clapWord(text);
-  if (text.includes('-')) return { word, parts: text.split('-').filter(Boolean), confirmed: true };
-  const known = dictionary.get(normal(text));
-  if (known) {
-    let offset = 0;
-    return { word, parts: known.map(part => { const value = word.slice(offset, offset + part.length); offset += part.length; return value; }), confirmed: true };
-  }
-  const nuclei: { start: number; end: number }[] = [];
-  const lower = word.toLocaleLowerCase('de');
-  for (let i = 0; i < lower.length; i++) if (/[aeiouäöüy]/.test(lower[i])) {
-    if (lower[i] === 'u' && lower[i - 1] === 'q') continue;
-    const pair = lower.slice(i, i + 2), end = ['au', 'ei', 'eu', 'äu', 'ie', 'ai', 'oi'].includes(pair) ? i + 2 : i + 1;
-    nuclei.push({ start: i, end }); i = end - 1;
-  }
-  const cuts: number[] = [];
-  for (let i = 1; i < nuclei.length; i++) {
-    const previous = nuclei[i - 1], next = nuclei[i], between = lower.slice(previous.end, next.start);
-    let cut = previous.end;
-    if (between.length) {
-      const cluster = ['sch', 'ch', 'ck', 'ph', 'th', 'qu'].find(part => between.endsWith(part));
-      cut = next.start - (cluster?.length || 1);
-    }
-    if (cut > (cuts[cuts.length - 1] || 0)) cuts.push(cut);
-  }
-  const boundaries = [0, ...cuts, word.length];
-  return { word, parts: boundaries.slice(1).map((end, i) => word.slice(boundaries[i], end)).filter(Boolean), confirmed: false };
+  const { word, parts, known } = syllabify(input);
+  return { word, parts, confirmed: known };
 }
 export function clappingWords(c: LearningSettings): ClapWord[] {
   return (c.words?.length ? c.words : defaultWords).slice(0, 16).map(clapSyllables).filter(item => item.word.length > 0).map(item => ({ ...item, confirmed: item.confirmed || !!c.clappingConfirmed?.includes(item.parts.join('-')) }));

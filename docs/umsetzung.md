@@ -323,6 +323,22 @@ so auch in einem anderen Heft einfügen (`src/lib/drop-paste.ts`).
 **Tafel beenden.** „Tafelmodus beenden“ löst erst nach 2 Sekunden Halten aus,
 ein Balken zeigt den Fortschritt; mit der Tastatur (Esc, Eingabe) sofort.
 
+**Seite vorlesen.** Der Knopf „Seite vorlesen“ (unten rechts neben dem Zoom, an
+der Tafel in der Tafelleiste, im Lesemodus oben; Alt+R) liest die Seite von oben
+nach unten, in einer Zeile von links nach rechts: Texte Satz für Satz, der Satz
+leuchtet hell und das gesprochene Wort gelb mit (CSS Custom Highlight API; ohne
+sie wird das Element umrandet), Bilder, Sticker, Formen und Zeichnungen mit
+ihrer Beschreibung, Tontasten spielen ihren Ton bzw. sprechen ihren Text.
+Automatisch vergebene Beschreibungen wie „PDF-Seite 1“ werden übersprungen,
+hineingezogene Bilder bekommen keine. Nochmal tippen hält an, beim Umblättern
+endet das Vorlesen (`src/lib/read-page.ts`, `src/components/usePageReader.ts`).
+
+**Silben rot und blau.** Ein Textelement zeigt auf Wunsch seine Silben
+abwechselnd blau und rot (Silbenmethode, jedes Wort beginnt blau); beim
+Schreiben ist der Text schwarz. Die Trennung nimmt die Silben der Lehrlisten und
+sonst eine einfache Regel – eine falsche Trennung lässt sich noch nicht
+korrigieren (`src/lib/syllables.ts`, auch für „Silben klatschen“).
+
 ## Verwaltung (Admin-Konten)
 
 Unter `/verwaltung` (Link „Verwaltung“ im Regal, nur für Admins):

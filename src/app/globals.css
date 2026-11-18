@@ -5438,3 +5438,7 @@ input[type='checkbox'] {
 @keyframes hold-fill{to{width:100%;}}
 .hold-hint{font-size:11px;font-weight:600;opacity:.8;margin-left:6px;}
 @media (prefers-reduced-motion:reduce){.hold-button.is-holding::after{animation-duration:var(--hold-ms,2000ms);}}
+.syllable-glyph{font-weight:800;font-size:15px;letter-spacing:-.3px;}
+/* Seite vorlesen: ohne Highlight-API wird das Element umrandet (::highlight-Regeln setzt usePageReader) */
+.is-reading{outline:3px solid #f9a825;outline-offset:2px;border-radius:4px;}
+.read-page-button[aria-pressed="true"]{background:#fff3a6;}

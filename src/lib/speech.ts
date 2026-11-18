@@ -1,4 +1,8 @@
-type SpeechOptions = { voice?: string; rate?: number; pitch?: number; onEnd?: () => void; onError?: () => void };
+type SpeechOptions = {
+  voice?: string; rate?: number; pitch?: number; onEnd?: () => void; onError?: () => void;
+  /** Wortgrenzen beim Sprechen (Zeichenposition im Text), soweit die Stimme sie meldet. */
+  onBoundary?: (charIndex: number, charLength: number) => void;
+};
 let activeSpeech: SpeechSynthesisUtterance | null = null;
 /** Use only voices installed on the device; no remote speech service for children.
  * The cancellation handle owns this utterance, so a departing widget cannot
@@ -17,6 +21,9 @@ export function startGermanSpeech(text: string, options: SpeechOptions = {}): ((
   activeSpeech = speech;
   const done = (callback?: () => void) => { if (activeSpeech === speech) { activeSpeech = null; callback?.(); } };
   speech.onend = () => done(options.onEnd); speech.onerror = () => done(options.onError);
+  if (options.onBoundary) speech.onboundary = (e) => {
+    if (activeSpeech === speech && (!e.name || e.name === 'word')) options.onBoundary!(e.charIndex, e.charLength || 0);
+  };
   synthesis.speak(speech);
   return () => {
     if (activeSpeech !== speech) return;

@@ -1,6 +1,6 @@
 'use client';
 import { relink } from '@/lib/learning/uk';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useEditor, flushEditor } from '@/lib/editor-store';
 import { api } from '@/lib/client-api';
 import { applyInsertionMode, templatePolicy, type TemplatePolicies } from '@/lib/template-policy.mjs';
@@ -39,6 +39,7 @@ import type { WorksheetKind } from '@/lib/learning/worksheets';
 import ShareDialog from './ShareDialog';
 import SaveDialog from './SaveDialog';
 import HoldButton from './ui/HoldButton';
+import { usePageReader } from './usePageReader';
 import { LearningRuntime, pageDrawing } from './learning/Runtime';
 import LearningDialog from './learning/LearningDialog';
 import EmbedDialog from './learning/EmbedDialog';
@@ -74,7 +75,6 @@ import {
   type EditorCommand,
   type Shortcuts,
 } from '@/lib/editor-commands';
-import { speakGerman } from '@/lib/speech';
 import ReaderMode from './ReaderMode';
 import FileDialog from './FileDialog';
 import ImageDialog from './ImageDialog';
@@ -216,6 +216,11 @@ export default function Editor({
   const [dropping, setDropping] = useState(false);
   const dragDepth = useRef(0);
   const pendingPaste = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // „Seite vorlesen“: im Lesemodus dessen Seite, sonst die Seite im Editor.
+  const pageReader = usePageReader(
+    useCallback(() => document.querySelector<HTMLElement>('.reader') ?? scroller.current, []),
+    useCallback((message: string) => useEditor.setState({ error: message }), []),
+  );
   const page = s.pages.find((p) => p.id === s.activeId);
   const catalog = useMemo(() => templateCatalog(templates, hiddenTemplates, false, templatePolicies, templateClassId), [templates, hiddenTemplates,templatePolicies,templateClassId]);
   function configuredPages(pages: Page[]) {
@@ -388,12 +393,7 @@ export default function Editor({
         setTemplateMode('new');
         break;
       case 'readPage':
-        speakGerman(
-          page.elements
-            .filter((el) => el.type === 'text')
-            .map((el) => el.text)
-            .join('. '),
-        );
+        pageReader.toggle(page);
         break;
       case 'addText':
         insertText();
@@ -748,7 +748,7 @@ export default function Editor({
           if (kind === 'image') {
             setNotice(`Bild „${file.name}“ wird eingefügt …`);
             const src = await uploadImage(file);
-            const el = cascade(await imageElement({ src, alt: file.name.replace(/\.[a-z0-9]{2,5}$/i, '') }, size), others(), size);
+            const el = cascade(await imageElement({ src, alt: '' }, size), others(), size);
             insert(el);
             placed.push(el);
           } else if (kind === 'audio') {
@@ -1172,6 +1172,8 @@ export default function Editor({
       window.removeEventListener('paste', onPaste);
     };
   });
+  const readerStop = pageReader.stop;
+  useEffect(() => readerStop, [page?.id, readerStop]);
   useEffect(() => {
     if (!notice || busy) return;
     const t = setTimeout(() => setNotice(''), 5000);
@@ -1471,6 +1473,16 @@ export default function Editor({
             </div>
           )}
           <div className="zoom-float" role="group" aria-label="Ansicht">
+            <button
+              type="button"
+              className="read-page-button"
+              aria-pressed={pageReader.reading}
+              title="Liest die Seite vor: Texte, Bildbeschreibungen und Töne – nochmal tippen hält an"
+              onClick={() => pageReader.toggle(page)}
+            >
+              <Icon name="speaker" size={22} />
+              <span>{pageReader.reading ? 'Vorlesen anhalten' : 'Seite vorlesen'}</span>
+            </button>
             <button type="button" aria-label="Ansicht verkleinern" onClick={() => performCommand('zoomOut')}>
               <Icon name="minus" size={22} />
             </button>
@@ -1581,6 +1593,9 @@ export default function Editor({
       </div>
       {board && (
         <div className="board-controls" role="group" aria-label="Tafelwerkzeuge">
+          <button className="knopf" aria-pressed={pageReader.reading} onClick={() => pageReader.toggle(page)}>
+            <Icon name="speaker" size={22} /> {pageReader.reading ? 'Vorlesen anhalten' : 'Seite vorlesen'}
+          </button>
           <button
             className="knopf"
             aria-pressed={boardDraw}
@@ -1649,7 +1664,7 @@ export default function Editor({
             setRecordTarget(id);
             setShowAudio(true);
           }}
-          onSpeak={(p) => speakGerman(p.elements.filter((el) => el.type === 'text').map((el) => el.text).join('. '))}
+          onSpeak={(p) => pageReader.toggle(p)}
           onClose={() => setReader(false)}
         />
       )}

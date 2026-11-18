@@ -3,6 +3,7 @@ import { fountainOutline, pathBounds, smoothPath, strokeFillPolygon } from '@/li
 import { inkPaintOrder } from '@/lib/brushes';
 import InkBrush from './InkBrush';
 import { LinkLayer } from './LinkContext';
+import { SYLLABLE_COLORS, syllableSegments } from '@/lib/syllables';
 import TextFrame, { framePadding } from './TextFrame';
 import { MicGlyph } from './learning/Cassette';
 import AudioButton, { TemplateAudioPlaceholder } from './learning/AudioButton';
@@ -313,11 +314,23 @@ export function ElementContent({ element: el }: { element: PageElement }) {
                 color: run.color,
               }}
             >
-              {run.text}
+              {el.syllables ? <Syllables text={run.text} /> : run.text}
             </span>
           ))
-        : el.text || (el.textHint ? <span style={{color:'#94a3b8'}}>{el.textHint}</span> : '')}
+        : el.text
+          ? el.syllables ? <Syllables text={el.text} /> : el.text
+          : (el.textHint ? <span style={{color:'#94a3b8'}}>{el.textHint}</span> : '')}
     </div>
+    </>
+  );
+}
+/** Silbenmethode: Silben abwechselnd blau und rot. */
+function Syllables({ text }: { text: string }) {
+  return (
+    <>
+      {syllableSegments(text).map((part, i) =>
+        part.tone === null ? part.text : <span key={i} className="syllable" style={{ color: SYLLABLE_COLORS[part.tone] }}>{part.text}</span>,
+      )}
     </>
   );
 }

@@ -155,6 +155,15 @@ export default function ElementBar({
                 unit="pt"
                 onChange={(fontSize) => patchText({ fontSize })}
               />
+              <OptionGroup label="Lesen">
+                <ChoiceButton
+                  icon={<span className="syllable-glyph" aria-hidden="true"><span style={{ color: '#1565c0' }}>Sil</span><span style={{ color: '#d32f2f' }}>ben</span></span>}
+                  label="Silben rot und blau"
+                  title="Den Text in Silben blau und rot zeigen (Silbenmethode) – beim Schreiben ist er schwarz"
+                  pressed={!!first.syllables}
+                  onClick={() => patch({ syllables: !first.syllables })}
+                />
+              </OptionGroup>
               {ruled && (
                 <OptionGroup label="Lineatur">
                   <ChoiceButton icon="rules" label="Passend zur Lineatur" onClick={() => patchText({}, true)} />
@@ -229,11 +238,12 @@ export default function ElementBar({
               <ChoiceButton icon="audio_file" label="Ton bearbeiten" onClick={() => actions.onEditAudio!(first)} />
             </OptionGroup>
           )}
-          {(first.type === 'image' || first.type === 'audio') && (
+          {['image', 'audio', 'sticker', 'shape', 'stroke'].includes(first.type) && (
             <OptionGroup label={first.type === 'audio' ? 'Name' : 'Beschreibung'} plain>
               <input
                 className="option-input"
                 aria-label={first.type === 'audio' ? 'Name der Tontaste' : 'Bildbeschreibung'}
+                title={first.type === 'audio' ? undefined : '„Seite vorlesen“ liest diese Beschreibung vor'}
                 value={first.alt || ''}
                 maxLength={300}
                 onChange={(e) => patch({ alt: e.target.value })}

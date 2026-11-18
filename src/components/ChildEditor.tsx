@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import Icon from './Icon';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useEditor, flushEditor } from '@/lib/editor-store';
 import { speakGerman } from '@/lib/speech';
+import { usePageReader } from './usePageReader';
 import ReaderMode from './ReaderMode';
 import { childApi } from '@/lib/child-api';
 import {
@@ -86,6 +87,10 @@ export default function ChildEditor({
   /** Sound open for trimming and improving. */
   const [editAudio, setEditAudio] = useState<PageElement | null>(null);
   const [readAloud, setReadAloud] = useState(false);
+  const pageReader = usePageReader(
+    useCallback(() => document.querySelector<HTMLElement>('.reader') ?? document.querySelector<HTMLElement>('.canvas-scroll'), []),
+    useCallback((message: string) => useEditor.setState({ error: message }), []),
+  );
   const [showAudio, setShowAudio] = useState(false);
   const [recordTarget, setRecordTarget] = useState<string | null>(null);
   const [draft, setDraft] = useState<PageElement | null>(null);
@@ -170,6 +175,8 @@ export default function ChildEditor({
     setErasePreview(null);
   }
   const fitPage = () => setZoom((z) => fitZoom(scroller.current, z));
+  const readerStop = pageReader.stop;
+  useEffect(() => readerStop, [page?.id, readerStop]);
   usePinchZoom(scroller, zoom, setZoom, { enabled: ready && !reader, onStart: cancelGesture, onFit: fitPage });
   if (!page || s.book?.id !== initial.book.id)
     return <p>Dein Heft wird geöffnet …</p>;
@@ -416,18 +423,8 @@ export default function ChildEditor({
       useEditor.setState({ error: (e as Error).message });
     }
   }
-  function readPage() {
-    if (
-      !speakGerman(
-        page!.elements
-          .filter((el) => el.type === 'text')
-          .map((el) => el.text)
-          .join('. '),
-      )
-    )
-      useEditor.setState({
-        error: 'Bitte eine deutsche Offline-Stimme auf diesem Gerät installieren.',
-      });
+  function readPage(target: Page = page!) {
+    pageReader.toggle(target);
   }
   function closeImages() {
     setShowImages(false);
@@ -677,9 +674,9 @@ export default function ChildEditor({
             </LinkContext.Provider>
             <div className="zoom-float" role="group" aria-label="Seite">
               {features.has('readAloud') && (
-                <button type="button" onClick={readPage}>
+                <button type="button" className="read-page-button" aria-pressed={pageReader.reading} onClick={() => readPage()}>
                   <Icon name="speaker" size={22} />
-                  <span>Seite vorlesen</span>
+                  <span>{pageReader.reading ? 'Vorlesen anhalten' : 'Seite vorlesen'}</span>
                 </button>
               )}
               <button type="button" aria-label="Seite kleiner" onClick={() => setZoom((z) => clampZoom(z - 0.1))}>
