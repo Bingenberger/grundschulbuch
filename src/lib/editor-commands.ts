@@ -3,7 +3,7 @@ export const editorCommands = {
   redo: ['Wiederholen', 'Mod+Shift+z'],
   save: ['Speichern', 'Mod+s'],
   files: ['Speichern und teilen', 'Mod+Shift+s'],
-  help: ['Hilfe / Tastatur', 'F1'],
+  help: ['Hilfe', 'F1'],
   nextPage: ['Nächste Seite', 'Alt+ArrowRight'],
   prevPage: ['Vorherige Seite', 'Alt+ArrowLeft'],
   firstPage: ['Erste Seite', 'Mod+Home'],

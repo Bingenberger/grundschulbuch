@@ -26,7 +26,7 @@ export default function ShortcutDialog({
         aria-modal="true"
         aria-labelledby="shortcuts-title"
       >
-        <h2 id="shortcuts-title">Hilfe & Tastaturkürzel</h2>
+        <h2 id="shortcuts-title">Tastenkürzel</h2>
         <p>
           Wähle ein Feld und drücke die gewünschte Tastenkombination. „Mod“
           bedeutet Strg bzw. ⌘. Markieren und Ziehen bewegt Elemente; der

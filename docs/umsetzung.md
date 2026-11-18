@@ -339,6 +339,14 @@ Schreiben ist der Text schwarz. Die Trennung nimmt die Silben der Lehrlisten und
 sonst eine einfache Regel – eine falsche Trennung lässt sich noch nicht
 korrigieren (`src/lib/syllables.ts`, auch für „Silben klatschen“).
 
+**Hilfe.** „Hilfe“ im Regal und im Heft (auch F1) öffnet die Hilfe: zehn
+Kapitel als Kacheln, häufige Fragen („Wie …?“ mit kurzer Antwort und „Mehr
+dazu“), eine Suche über Titel, Stichwörter und Text (Umlaute gleichgültig) und
+die Themen eines Kapitels untereinander. Im Heft führt „Tastenkürzel ansehen und
+ändern …“ zur Liste der Tastenkürzel. Die Texte stehen in `src/lib/help.ts`;
+ein Test prüft, dass jedes Thema ein Kapitel und jede Frage ein Thema hat. Wer
+die Oberfläche ändert, passt dort den Text an.
+
 ## Verwaltung (Admin-Konten)
 
 Unter `/verwaltung` (Link „Verwaltung“ im Regal, nur für Admins):

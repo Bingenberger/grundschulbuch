@@ -9,6 +9,7 @@ import type { BookData, BookSummary, Notebook } from '@/lib/notebook-model';
 import ScaledPage from './ScaledPage';
 import FileDialog from './FileDialog';
 import SaveDialog from './SaveDialog';
+import HelpDialog from './HelpDialog';
 import LogoutButton from '@/app/LogoutButton';
 const colors = [
   '#52796f',
@@ -30,6 +31,7 @@ export default function Shelf({
 }) {
   const [books, setBooks] = useState(initialBooks);
   const [showFiles, setShowFiles] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   // „Speichern und teilen“ für ein Heft, ohne es zu öffnen
   const [saving, setSaving] = useState<BookData | null>(null);
   const [folders, setFolders] = useState<Folder[]>([]),
@@ -162,6 +164,9 @@ export default function Shelf({
               <Icon name="settings" size={24} /> Verwaltung
             </Link>
           )}
+          <button type="button" className="icon-link help-link" onClick={() => setShowHelp(true)}>
+            <Icon name="questions" size={24} /> Hilfe
+          </button>
           <span>{name}</span>
           <LogoutButton />
         </div>
@@ -470,6 +475,7 @@ export default function Shelf({
         </div>
       )}
       {showFiles && <FileDialog onClose={() => setShowFiles(false)} />}
+      {showHelp && <HelpDialog onClose={() => setShowHelp(false)} />}
       {saving && (
         <SaveDialog
           book={saving.book}

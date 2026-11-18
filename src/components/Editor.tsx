@@ -38,6 +38,7 @@ import { ENABLED } from '@/lib/paused';
 import type { WorksheetKind } from '@/lib/learning/worksheets';
 import ShareDialog from './ShareDialog';
 import SaveDialog from './SaveDialog';
+import HelpDialog from './HelpDialog';
 import HoldButton from './ui/HoldButton';
 import { usePageReader } from './usePageReader';
 import { LearningRuntime, pageDrawing } from './learning/Runtime';
@@ -183,6 +184,7 @@ export default function Editor({
   const [zoom, setZoom] = useState(1);
   const [shortcuts, setShortcuts] = useState<Shortcuts>(defaultShortcuts),
     [showShortcuts, setShowShortcuts] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [guide, setGuide] = useState<DrawingGuide | null>(null);
   const [boardDraw, setBoardDraw] = useState(false);
   const [boardPointer, setBoardPointer] = useState<BoardPointerMode>('none');
@@ -374,7 +376,7 @@ export default function Editor({
         if (features.has('files') || features.has('print')) setShowSave(true);
         break;
       case 'help':
-        setShowShortcuts(true);
+        setShowHelp(true);
         break;
       case 'nextPage':
         if (pageIndex < s.pages.length - 1)
@@ -1115,7 +1117,8 @@ export default function Editor({
         learning ||
         showEmbed ||
         showFiles ||
-        showShortcuts
+        showShortcuts ||
+        showHelp
       )
         return;
       const chord = keyChord(event);
@@ -1146,7 +1149,7 @@ export default function Editor({
     return () => window.removeEventListener('keydown', key);
   });
   const dialogOpen = !!(showImages || templateMode || showTiles || showAudio || showCollection || showGenerator ||
-    showShare || showSave || learning || showEmbed || showFiles || showShortcuts);
+    showShare || showSave || learning || showEmbed || showFiles || showShortcuts || showHelp);
   useEffect(() => {
     const editable = (t: EventTarget | null) =>
       t instanceof HTMLElement && (['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName) || t.isContentEditable);
@@ -1227,7 +1230,7 @@ export default function Editor({
         }}
         onShare={() => run(async () => { setShowShare(true); })}
         onSave={() => run(async () => { setShowSave(true); })}
-        onHelp={() => setShowShortcuts(true)}
+        onHelp={() => setShowHelp(true)}
         actions={
           <ElementActions
             features={features}
@@ -1817,6 +1820,15 @@ export default function Editor({
       )}
       {showEmbed && (
         <EmbedDialog onClose={() => setShowEmbed(false)} onInsert={insert} />
+      )}
+      {showHelp && (
+        <HelpDialog
+          onClose={() => setShowHelp(false)}
+          onShortcuts={() => {
+            setShowHelp(false);
+            setShowShortcuts(true);
+          }}
+        />
       )}
       {showShortcuts && (
         <ShortcutDialog

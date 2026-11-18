@@ -5442,3 +5442,33 @@ input[type='checkbox'] {
 /* Seite vorlesen: ohne Highlight-API wird das Element umrandet (::highlight-Regeln setzt usePageReader) */
 .is-reading{outline:3px solid #f9a825;outline-offset:2px;border-radius:4px;}
 .read-page-button[aria-pressed="true"]{background:#fff3a6;}
+
+/* Hilfe */
+.help-link{border:0;background:none;font:inherit;cursor:pointer;}
+.modal.help-dialog{width:880px;height:min(86dvh,820px);display:flex;flex-direction:column;}
+.help-search{display:flex;align-items:center;gap:10px;padding:0 12px;border:1px solid var(--rand);border-radius:12px;background:var(--flaeche);}
+.help-search input{flex:1;height:44px;border:0;outline:0;background:none;font:inherit;font-size:16px;color:inherit;}
+.help-search:focus-within{border-color:var(--akzent);box-shadow:0 0 0 3px #2563eb22;}
+.help-body{flex:1;min-height:0;overflow-y:auto;margin-top:14px;padding-right:4px;}
+.help-chapters{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;}
+.help-chapter{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:14px;border:2px solid var(--rand);border-radius:16px;background:var(--flaeche);font:inherit;color:inherit;text-align:left;cursor:pointer;}
+.help-chapter:hover{border-color:var(--akzent);}
+.help-chapter strong{font-size:16px;}
+.help-chapter small{font-size:13px;line-height:1.35;color:var(--text-leise);}
+.help-faq-title,.help-chapter-title{display:flex;align-items:center;gap:10px;margin:22px 0 8px;font-size:18px;}
+.help-faq{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
+.help-faq > li > button{width:100%;padding:10px 14px;border:1px solid var(--rand);border-radius:12px;background:var(--flaeche);font:inherit;font-weight:600;color:inherit;text-align:left;cursor:pointer;}
+.help-faq > li > button[aria-expanded="true"]{border-color:var(--akzent);background:#eff6ff;}
+.help-answer{padding:6px 14px 4px;}
+.modal .help-answer p{margin:4px 0;font-size:15px;color:var(--text);}
+.help-more{border:0;background:none;padding:4px 0;font:inherit;font-size:14px;font-weight:700;color:var(--akzent-dunkel);cursor:pointer;}
+.help-back{margin-bottom:4px;}
+.help-topic{padding:12px 14px;margin:8px 0;border-radius:14px;scroll-margin-top:8px;}
+.help-topic.is-focus{background:#fff8d6;}
+.help-topic h4{margin:0 0 6px;font-size:16px;}
+.modal .help-topic p{margin:6px 0;font-size:15px;line-height:1.5;color:var(--text);}
+.help-results{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
+.help-results button{display:flex;flex-direction:column;gap:3px;width:100%;padding:10px 14px;border:1px solid var(--rand);border-radius:12px;background:var(--flaeche);font:inherit;color:inherit;text-align:left;cursor:pointer;}
+.help-results button:hover{border-color:var(--akzent);}
+.help-results small{font-size:13px;color:var(--text-leise);}
+.modal .help-empty{font-size:15px;}
