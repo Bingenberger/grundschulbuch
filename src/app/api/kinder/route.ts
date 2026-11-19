@@ -79,6 +79,7 @@ export async function POST(request: Request) {
         break;
       case 'addPage': {
         const data = await books.getBook(child.id, body.id);
+        if (data.book.collected) return jsonError(books.COLLECTED, 403);
         if (!data.book.allowChildPages || data.book.trashed)
           return jsonError('Bitte deine Lehrkraft um eine neue Seite.', 403);
         const page = books.validatePage(body.page);
@@ -95,7 +96,7 @@ export async function POST(request: Request) {
         break;
       }
       case 'trash':
-        result = await books.trashBook(child.id, body.id);
+        result = await books.trashBook(child.id, body.id, true, true);
         break;
       case 'images':
         result = child.images;

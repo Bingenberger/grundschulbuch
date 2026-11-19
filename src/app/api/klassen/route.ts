@@ -35,6 +35,23 @@ export async function POST(request: Request) {
           body.allowChildAudio,
         );
         break;
+      case 'distributions':
+        result = await classes.distributions(user.id, body.id);
+        break;
+      case 'collect':
+        if (typeof body.key !== 'string') return jsonError('Heft fehlt.', 400);
+        result = await classes.collect(
+          user.id,
+          body.id,
+          body.key,
+          body.collected !== false,
+          Array.isArray(body.childIds) ? body.childIds : undefined,
+        );
+        break;
+      case 'gather':
+        if (typeof body.key !== 'string') return jsonError('Heft fehlt.', 400);
+        result = await classes.gather(user.id, user.role, body.id, body.key);
+        break;
       case 'help':
         result = await classes.issueHelpCode(user.id, body.id, body.childId);
         break;

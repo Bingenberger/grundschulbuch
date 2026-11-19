@@ -257,3 +257,49 @@ test('Ältere Klassen mit einer Lehrkraft (teacherId) gelten weiter', async () =
   const raw = JSON.parse(await fs.readFile(store.dataPath('klassen', `${id}.json`), 'utf8'));
   assert.equal('teacherId' in raw, false);
 });
+
+test('Einsammeln: Kinder sehen das Heft nur noch an, Lehrkraft kommentiert, gibt zurück und legt ein Sammelheft an', async () => {
+  const c = await newClass('Einsammeln');
+  const [ada, ben] = c.children;
+  const source = await books.createBook(teacher, 'lehrkraft', { title: 'Lesetagebuch' });
+  source.pages[0].elements = [element()];
+  await books.savePage(teacher, source.book.id, source.pages[0]);
+  const first = await klass.distribute(teacher, c.id, source.book.id, undefined, false, false);
+  const second = await klass.distribute(teacher, c.id, source.book.id, [ben.id], false, false);
+  assert.equal(first[0].distributionId, first[1].distributionId);
+  assert.notEqual(first[0].distributionId, second[0].distributionId);
+  const adaBook = first.find((b) => b.ownerId === ada.id);
+  let page = (await books.getBook(ada.id, adaBook.id)).pages[0];
+  page = await books.savePage(ada.id, adaBook.id, { ...page, elements: [...page.elements, { ...element(), text: 'Ada war hier' }] }, true);
+
+  let list = await klass.distributions(teacher, c.id);
+  assert.equal(list.length, 2);
+  const group = list.find((d) => d.key === first[0].distributionId);
+  assert.deepEqual(group.copies.map((x) => x.childName), ['Ada', 'Ben']);
+  assert.deepEqual(group.copies[0].editedPages, [1]);
+  assert.deepEqual(group.copies[1].editedPages, []);
+  await assert.rejects(klass.distributions(other, c.id), status(404));
+  await assert.rejects(klass.collect(other, c.id, group.key, true), status(404));
+
+  list = await klass.collect(teacher, c.id, group.key, true);
+  assert.ok(list.find((d) => d.key === group.key).copies.every((x) => x.collected));
+  assert.ok(list.find((d) => d.key !== group.key).copies.every((x) => !x.collected), 'andere Austeilung bleibt bei den Kindern');
+  await assert.rejects(books.savePage(ada.id, adaBook.id, { ...page, elements: page.elements.slice(0, 1) }, true), status(403));
+  await assert.rejects(books.trashBook(ada.id, adaBook.id, true, true), status(403));
+  const commented = await books.savePage(ada.id, adaBook.id, { ...page, elements: [...page.elements, { ...element(), text: 'Prima!' }] }, false, teacher);
+  assert.equal(commented.lastEditorId, teacher);
+
+  list = await klass.collect(teacher, c.id, group.key, false, [ada.id]);
+  const after = list.find((d) => d.key === group.key).copies;
+  assert.deepEqual(after.map((x) => x.collected), [false, true]);
+  await books.savePage(ada.id, adaBook.id, commented, true);
+
+  const gathered = await klass.gather(teacher, 'lehrkraft', c.id, group.key);
+  assert.equal(gathered.book.ownerId, teacher);
+  assert.equal(gathered.pages.length, 4);
+  assert.equal(gathered.pages[0].elements[0].text, 'Ada');
+  assert.ok(gathered.pages[1].elements.some((el) => el.text === 'Ada war hier'));
+  assert.equal(gathered.pages[2].elements[0].text, 'Ben');
+  assert.equal((await books.getBook(ada.id, adaBook.id)).pages.length, 1, 'Kinderhefte bleiben bei den Kindern');
+  await assert.rejects(klass.gather(teacher, 'lehrkraft', c.id, 'heft-unbekannt'), status(404));
+});

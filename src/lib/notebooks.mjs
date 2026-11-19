@@ -522,7 +522,12 @@ function blankPage(orientation = 'portrait') {
     elements: [],
   };
 }
-export async function createBook(owner, role, input) {
+/**
+ * `options.keepPages` takes the pages as they are (no template rules applied
+ * again), e.g. for the collection book of children's copies. Only server code
+ * passes it, never a request body.
+ */
+export async function createBook(owner, role, input, options = {}) {
   const bookId = crypto.randomUUID();
   const now = new Date().toISOString();
   const renamed = new Map();
@@ -534,7 +539,7 @@ export async function createBook(owner, role, input) {
       })
     : [blankPage(input.orientation === 'landscape' ? 'landscape' : 'portrait')];
   pages = remapPageLinks(pages, renamed);
-  if (!input.templateDraft) pages = await Promise.all(pages.map(page => applyTemplatePolicy(owner, role, page)));
+  if (!input.templateDraft && !options.keepPages) pages = await Promise.all(pages.map(page => applyTemplatePolicy(owner, role, page)));
   if (pages.length < 1 || pages.length > 300)
     throw new BookError('Ein Heft braucht 1 bis 300 Seiten.');
   await checkMedia(owner, pages);
@@ -639,6 +644,8 @@ export async function savePage(
       page = previous.elements.length ? { ...inserted, elements: page.elements } : inserted;
     }
     if (childMode) {
+      if (book.collected)
+        throw new BookError(COLLECTED, 403);
       // Functions the teacher allows this child, e.g. { features: ['page', 'audio'] }.
       const allowed = new Set(Array.isArray(childMode.features) ? childMode.features : []);
       if (!allowed.has('page')) for (const key of [
@@ -998,10 +1005,28 @@ export async function readImage(owner, name) {
   return fs.readFile(dataPath('medien', name));
 }
 
-export async function trashBook(owner, bookId, trashed = true) {
+/** Message for children when they try to change a collected book. */
+export const COLLECTED =
+  'Deine Lehrkraft hat dieses Heft eingesammelt. Du kannst es dir ansehen.';
+export async function trashBook(owner, bookId, trashed = true, byChild = false) {
   return withLock(`heft-${id(bookId)}`, async () => {
     const book = await owned(owner, bookId);
+    if (byChild && book.collected) throw new BookError(COLLECTED, 403);
     book.trashed = trashed;
+    book.revision++;
+    await writeJson(bookPath(bookId), book);
+    return book;
+  });
+}
+/**
+ * Collects a child's copy (children may only look at it) or gives it back.
+ */
+export async function setCollected(owner, bookId, collected) {
+  return withLock(`heft-${id(bookId)}`, async () => {
+    const book = await owned(owner, bookId);
+    if (!!book.collected === !!collected) return book;
+    book.collected = !!collected;
+    book.collectedAt = collected ? new Date().toISOString() : null;
     book.revision++;
     await writeJson(bookPath(bookId), book);
     return book;

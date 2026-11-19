@@ -65,6 +65,9 @@ export default function ReaderMode({
   allowExternal,
   onSpeak,
   onClose,
+  readOnly = false,
+  closeLabel = 'Lesemodus beenden',
+  notice,
 }: {
   title: string;
   pages: Page[];
@@ -77,6 +80,11 @@ export default function ReaderMode({
   /** Reads the texts of the page aloud. */
   onSpeak?: (page: Page) => void;
   onClose: () => void;
+  /** Only looking: exercises cannot be answered (e.g. a collected book). */
+  readOnly?: boolean;
+  closeLabel?: string;
+  /** Short line under the bar, e.g. why the book cannot be changed. */
+  notice?: string;
 }) {
   const index = Math.max(0, pages.findIndex((p) => p.id === pageId));
   const page = pages[index];
@@ -156,7 +164,7 @@ export default function ReaderMode({
       <header className="reader-bar">
         <button type="button" className="reader-button reader-close" onClick={onClose}>
           <Icon name="cancel" size={24} />
-          <span>Lesemodus beenden</span>
+          <span>{closeLabel}</span>
         </button>
         <h1 className="reader-title">{title}</h1>
         <span className="reader-count" role="status">
@@ -209,6 +217,11 @@ export default function ReaderMode({
           )}
         </div>
       </header>
+      {notice && (
+        <p className="reader-notice" role="note">
+          <Icon name="lock" size={20} /> {notice}
+        </p>
+      )}
       <div
         className="reader-stage"
         ref={stage}
@@ -257,7 +270,7 @@ export default function ReaderMode({
               scale={scale}
               className={turn ? `turn-in ${effect} ${turn.forward ? 'forward' : 'back'}` : ''}
             >
-              <LearningRuntime interactive allowExternal={allowExternal} onResponse={onResponse} onRecord={onRecord} uploadAudio={uploadAudio}>
+              <LearningRuntime interactive={!readOnly} allowExternal={allowExternal} onResponse={onResponse} onRecord={onRecord} uploadAudio={uploadAudio}>
                 <LinkContext.Provider
                   value={{
                     openPage: (id) => go(pages.findIndex((p) => p.id === id)),

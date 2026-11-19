@@ -17,8 +17,8 @@ ihren Heften. Die App läuft als Serveranwendung auf dem Schulserver.
    Text, Bild und Zeichnung frei auf der Seite, Schulschriften, Tafelmodus,
    Druck und PDF.
 2. **Phase 2 – Kinder:** Klassen, Anmeldung per QR-Karte (auch vorhandene
-   Anton-Anmeldecodes), reduzierte Oberfläche für Kinder, Hefte austeilen und
-   einsehen.
+   Anton-Anmeldecodes), reduzierte Oberfläche für Kinder, Hefte austeilen,
+   einsehen und einsammeln.
 3. **Phase 3 – Inhalte:** Arbeitsblatt-Generatoren, Ton und Vorlesen,
    Vorlagen-Katalog, persönliches Regal, Teilen im Kollegium.
 

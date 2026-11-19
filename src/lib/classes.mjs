@@ -8,6 +8,7 @@ import {
   createBook,
   listBooks,
   deleteBook,
+  setCollected,
 } from './notebooks.mjs';
 import { mediaReferences } from './learning/validation.mjs';
 import { keyedHash } from './sessions.mjs';
@@ -280,6 +281,8 @@ export async function distribute(
       (c) => !childIds || childIds.includes(c.id),
     );
     const sourceImages = mediaReferences(source.pages);
+    const distributionId = crypto.randomUUID();
+    const distributedAt = new Date().toISOString();
     for (const child of chosen) {
       await grantImages(child.id, [...sourceImages, ...klass.images]);
       const copy = await createBook(child.id, 'kind', {
@@ -294,6 +297,8 @@ export async function distribute(
       copy.book.classId = classId;
       copy.book.allowChildPages = !!allowChildPages;
       copy.book.allowChildAudio = !!allowChildAudio;
+      copy.book.distributionId = distributionId;
+      copy.book.distributedAt = distributedAt;
       await writeJson(dataPath('hefte', copy.book.id, 'heft.json'), copy.book);
       result.push(copy.book);
     }
@@ -301,6 +306,135 @@ export async function distribute(
   });
 }
 
+/**
+ * Copies handed out in one go belong together. Copies from before
+ * distributionId existed are grouped by the book they came from.
+ */
+const distributionKey = (book) =>
+  book.distributionId || `heft-${book.sourceId}`;
+/** Children's copies of distributed books in a class, in class order. */
+async function classCopies(klass) {
+  const result = [];
+  for (const child of klass.children)
+    for (const book of await listBooks(child.id))
+      if (book.classId === klass.id && book.sourceId)
+        result.push({ child, book });
+  return result;
+}
+async function overview(klass) {
+  const groups = new Map();
+  for (const { child, book } of await classCopies(klass)) {
+    const key = distributionKey(book);
+    if (!groups.has(key))
+      groups.set(key, {
+        key,
+        sourceId: book.sourceId,
+        title: book.title,
+        color: book.color,
+        distributedAt: book.distributedAt || book.createdAt,
+        copies: [],
+      });
+    const { pages } = await getBook(child.id, book.id);
+    groups.get(key).copies.push({
+      childId: child.id,
+      childName: child.name,
+      bookId: book.id,
+      updatedAt: book.updatedAt,
+      pages: pages.length,
+      editedPages: pages
+        .map((p, i) => (p.lastEditorId === child.id ? i + 1 : 0))
+        .filter(Boolean),
+      collected: !!book.collected,
+      collectedAt: book.collectedAt || null,
+      trashed: !!book.trashed,
+    });
+  }
+  return [...groups.values()].sort((a, b) =>
+    b.distributedAt.localeCompare(a.distributedAt),
+  );
+}
+/** Teacher: which books were handed out in a class and how far the children are. */
+export async function distributions(owner, classId) {
+  return overview(await ownedClass(owner, classId));
+}
+/**
+ * Teacher: collects the copies of one distribution (children may then only
+ * look at them) or gives them back. Without childIds all copies.
+ */
+export async function collect(owner, classId, key, collected, childIds) {
+  const klass = await ownedClass(owner, classId);
+  const copies = (await classCopies(klass)).filter(
+    ({ child, book }) =>
+      distributionKey(book) === key &&
+      (!Array.isArray(childIds) || childIds.includes(child.id)),
+  );
+  if (!copies.length) throw new BookError('Keine ausgeteilten Hefte gefunden.', 404);
+  for (const { child, book } of copies)
+    await setCollected(child.id, book.id, !!collected);
+  return overview(klass);
+}
+/**
+ * Teacher: puts all children's copies of one distribution into one new book
+ * on the teacher's shelf, each behind a page with the child's name, e.g. to
+ * look through, print or save as PDF. The copies stay with the children.
+ */
+export async function gather(owner, role, classId, key) {
+  const klass = await ownedClass(owner, classId);
+  const copies = (await classCopies(klass)).filter(
+    ({ book }) => distributionKey(book) === key && !book.trashed,
+  );
+  if (!copies.length) throw new BookError('Keine ausgeteilten Hefte gefunden.', 404);
+  const pages = [];
+  for (const { child, book } of copies) {
+    const data = await getBook(child.id, book.id);
+    const orientation = data.pages[0]?.orientation || 'portrait';
+    const width = orientation === 'landscape' ? 297 : 210;
+    const label = (text, y, fontSize, height) => ({
+      id: crypto.randomUUID(),
+      type: 'text',
+      x: 20,
+      y,
+      width: width - 40,
+      height,
+      rotation: 0,
+      locked: false,
+      color: '#1f2933',
+      text,
+      font: 'Andika',
+      fontSize,
+      bold: fontSize > 30,
+    });
+    pages.push({
+      id: crypto.randomUUID(),
+      revision: 0,
+      orientation,
+      ruling: 'blanko',
+      elements: [
+        label(child.name, 50, 48, 25),
+        label(book.title, 85, 20, 12),
+      ],
+    });
+    pages.push(...data.pages);
+  }
+  if (pages.length > 300)
+    throw new BookError(
+      `Das Sammelheft hätte ${pages.length} Seiten, erlaubt sind 300. Bitte die Kinderhefte einzeln ansehen.`,
+    );
+  // The teacher may already open every child's book; the collection book
+  // keeps the children's pictures and recordings.
+  await grantImages(owner, mediaReferences(pages));
+  const first = copies[0].book;
+  return createBook(
+    owner,
+    role,
+    {
+      title: `${first.title.slice(0, 90)} · eingesammelt ${klass.title.slice(0, 20)}`,
+      color: first.color,
+      pages,
+    },
+    { keepPages: true },
+  );
+}
 export async function childById(childId, includeArchived = false) {
   for (const klass of await allClasses()) {
     const child = klass.children.find((c) => c.id === childId);

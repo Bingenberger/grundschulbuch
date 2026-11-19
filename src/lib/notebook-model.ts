@@ -185,6 +185,12 @@ export type Notebook = {
   allowChildPages: boolean;
   allowChildAudio?: boolean;
   folderId?: string | null;
+  /** Ties the child copies of one distribution together. */
+  distributionId?: string;
+  distributedAt?: string;
+  /** Collected by the teacher: the child may only look at it. */
+  collected?: boolean;
+  collectedAt?: string | null;
 };
 export type BookSummary = Notebook & {
   preview: Page;

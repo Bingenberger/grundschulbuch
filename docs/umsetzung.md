@@ -258,6 +258,30 @@ Editor öffnen, mit Stift, Text oder Stempel kommentieren und an der Tafel zeige
 Kinder legen Hefte nur in den Papierkorb; Lehrkräfte können sie zurückholen oder
 endgültig löschen.
 
+### Ausgeteilte Hefte einsammeln
+
+Jede Austeilung bekommt eine `distributionId` und ein `distributedAt`; Kopien
+aus der Zeit davor werden über `sourceId` zusammengefasst. Unter „Meine
+Klassen“ → „Ausgeteilte Hefte“ steht jede Austeilung der Klasse (neueste
+zuerst) mit Datum, Zahl der Kinder, wie viele schon gearbeitet haben und wie
+viele Hefte eingesammelt sind. „Kinder anzeigen“ listet die Kopien mit
+bearbeiteten Seiten, Stand, Papierkorb und den Knöpfen „Öffnen“ sowie
+„Einsammeln“/„Zurückgeben“ für das einzelne Kind.
+
+- **Einsammeln** setzt `collected` und `collectedAt` an den Kinderkopien. Der
+  Server lehnt dann Seitenänderungen im Kindermodus, neue Seiten und den
+  Papierkorb durch das Kind ab (403 mit Hinweis). Die Lehrkraft kann weiter
+  kommentieren. Das Kind sieht das Heft im Regal mit „Eingesammelt – nur
+  ansehen“ und öffnet es im Lesemodus ohne bedienbare Aufgaben, mit Vorlesen,
+  falls freigegeben.
+- **Zurückgeben** nimmt die Sperre wieder weg, für alle oder einzelne Kinder.
+- **Sammelheft anlegen** legt ein neues Heft der Lehrkraft an: pro Kind eine
+  Namensseite und dahinter seine Seiten, in der Reihenfolge der Klassenliste,
+  ohne Hefte im Papierkorb. Die Seiten werden unverändert übernommen (keine
+  erneute Anwendung der Vorlagenregeln); Bilder und Aufnahmen der Kinder werden
+  für die Lehrkraft freigegeben. Mehr als 300 Seiten werden abgelehnt. Drucken
+  und PDF laufen über „Speichern“ wie bei jedem Heft.
+
 ## Bearbeitbare Originalvorlagen für Seiten
 
 Die statischen Seitenvorlagen außerhalb „Papier & Lineatur“ und „Einstellbar“

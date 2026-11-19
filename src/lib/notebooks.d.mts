@@ -19,6 +19,7 @@ export function createBook(
   owner: string,
   role: string,
   input: { title: string; color?: string; pages?: Page[]; sourceId?: string; orientation?: 'portrait' | 'landscape'; templateDraft?: boolean },
+  options?: { keepPages?: boolean },
 ): Promise<BookData>;
 export function updateBook(
   owner: string,
@@ -68,6 +69,13 @@ export function trashBook(
   owner: string,
   bookId: string,
   trashed?: boolean,
+  byChild?: boolean,
+): Promise<Notebook>;
+export const COLLECTED: string;
+export function setCollected(
+  owner: string,
+  bookId: string,
+  collected: boolean,
 ): Promise<Notebook>;
 export function accessibleOwner(
   teacher: string,

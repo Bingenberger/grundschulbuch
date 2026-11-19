@@ -108,8 +108,13 @@ export default function ChildHome({
                     <ScaledPage page={book.preview} decorative />
                   </div>
                   <strong>{book.title}</strong>
+                  {book.collected && (
+                    <small className="child-book-collected">
+                      <Icon name="lock" size={18} /> Eingesammelt – nur ansehen
+                    </small>
+                  )}
                 </Link>
-                <button
+                {!book.collected && <button
                   className="sidebar-link"
                   onClick={async () => {
                     if (
@@ -127,7 +132,7 @@ export default function ChildHome({
                   }}
                 >
                   In den Papierkorb
-                </button>
+                </button>}
               </article>
             ))}
             <button

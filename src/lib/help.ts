@@ -181,6 +181,12 @@ export const helpTopics: HelpTopic[] = [
     body: [
       '„Ein Heft austeilen“ unter „Meine Klassen“: Jedes Kind erhält eine eigene Kopie. Du siehst die Hefte der Kinder und kannst sie öffnen.',
     ] },
+  { id: 'einsammeln', chapter: 'klassen', title: 'Hefte einsammeln', keywords: 'einsammeln abgeben zurückgeben sammelheft sperren korrigieren pdf ausgeteilt',
+    body: [
+      'Unter „Meine Klassen“ → „Ausgeteilte Hefte“ steht jedes ausgeteilte Heft mit dem Stand der Kinder. „Kinder anzeigen“ listet jedes Kind mit seinen bearbeiteten Seiten; „Öffnen“ zeigt sein Heft im Editor, dort kannst du kommentieren.',
+      '„Einsammeln“ sperrt die Hefte: Die Kinder können sie nur noch ansehen und vorlesen lassen. „Zurückgeben“ macht sie wieder beschreibbar. Beides geht für alle Kinder auf einmal oder einzeln.',
+      '„Sammelheft anlegen“ legt alle Kinderhefte hintereinander, jeweils mit einer Seite mit dem Namen des Kindes, als neues Heft in dein Regal. Von dort kannst du es drucken oder als PDF speichern. Die Hefte der Kinder bleiben unverändert.',
+    ] },
   { id: 'freigaben', chapter: 'klassen', title: 'Was die Kinder sehen', keywords: 'funktionen freigeben kinder einschränken',
     body: [
       'Unter „Was die Kinder im Heft sehen“ schaltest du für die Klasse oder ein einzelnes Kind Werkzeuge ein oder aus. Die Oberfläche der Kinder ist dieselbe wie deine, nur mit weniger Knöpfen.',
@@ -229,6 +235,7 @@ export const helpQuestions: HelpQuestion[] = [
   { q: 'lasse ich eine Seite vorlesen?', topic: 'vorlesen', a: '„Seite vorlesen“ unten rechts – nochmal tippen hält an.' },
   { q: 'zeige ich Silben farbig?', topic: 'silben', a: 'Text antippen, unten „Silben rot und blau“.' },
   { q: 'gebe ich ein Heft an die Kinder weiter?', topic: 'austeilen', a: '„Meine Klassen“ → „Ein Heft austeilen“ – jedes Kind bekommt eine eigene Kopie.' },
+  { q: 'sammle ich ausgeteilte Hefte wieder ein?', topic: 'einsammeln', a: '„Meine Klassen“ → „Ausgeteilte Hefte“ → „Einsammeln“; „Sammelheft anlegen“ holt alle Kinderhefte in dein Regal.' },
   { q: 'drucke ich ein Heft aus?', topic: 'drucken', a: '„Speichern“ → „PDF“ oder „Am Drucker drucken“.' },
   { q: 'kopiere ich eine Seite in ein anderes Heft?', topic: 'seiten-verwalten', a: 'Seite → Seiten → „Seite kopieren“, dann im anderen Heft „Seite einfügen“.' },
   { q: 'bringe ich ein Heft auf einen anderen Server?', topic: 'speichern', a: '„Speichern“ → „Bearbeitbare Heftdatei“, dort im Regal „Heft, ePub oder PDF öffnen“.' },

@@ -5,12 +5,13 @@ import { Choices, Picker } from './ui/Choice';
 import FeatureSwitches from './FeatureSwitches';
 import { CHILD_DEFAULTS } from '@/lib/child-features.mjs';
 import { uuid } from '@/lib/notebook-model';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import QRCode from 'qrcode';
 import { classApi, qrDigest } from '@/lib/child-api';
 import { api, uploadImage } from '@/lib/client-api';
-import type { SchoolClass, Child } from '@/lib/classes.mjs';
+import type { SchoolClass, Child, Distribution } from '@/lib/classes.mjs';
+import type { BookData } from '@/lib/notebook-model';
 import type { BookSummary } from '@/lib/notebook-model';
 import QrScanner from './QrScanner';
 export default function Classroom({
@@ -41,6 +42,25 @@ export default function Classroom({
   const [selectedChildren, setSelectedChildren] = useState<string[]>([]);
   const [featureChild, setFeatureChild] = useState('');
   const active = classes.find((c) => c.id === activeId);
+  /** Books handed out in the active class (loaded per class). */
+  const [handedOut, setHandedOut] = useState<{ classId: string; list: Distribution[] } | null>(null);
+  const [openDistribution, setOpenDistribution] = useState('');
+  const [gathered, setGathered] = useState<{ id: string; title: string } | null>(null);
+  const distributionList = handedOut?.classId === activeId ? handedOut.list : null;
+  useEffect(() => {
+    if (!activeId) return;
+    let current = true;
+    classApi<Distribution[]>('distributions', { id: activeId })
+      .then((list) => current && setHandedOut({ classId: activeId, list }))
+      .catch((e: Error) => current && setError(e.message));
+    return () => {
+      current = false;
+    };
+  }, [activeId]);
+  async function collect(key: string, collected: boolean, childIds?: string[]) {
+    const list = await classApi<Distribution[]>('collect', { id: activeId, key, collected, childIds });
+    setHandedOut({ classId: activeId, list });
+  }
   async function run(task: () => Promise<void>) {
     setBusy(true);
     setError('');
@@ -409,12 +429,141 @@ export default function Classroom({
                       ? selectedChildren
                       : undefined,
                   });
+                  setHandedOut({
+                    classId: activeId,
+                    list: await classApi<Distribution[]>('distributions', { id: activeId }),
+                  });
                   setMessage('Das Heft wurde ausgeteilt.');
                 })
               }
             >
               Heft austeilen
             </button>
+          </section>
+          <section className="karte class-section">
+            <h2>Ausgeteilte Hefte</h2>
+            <p>
+              Eingesammelte Hefte können die Kinder nur noch ansehen. Du kannst
+              sie weiter öffnen und kommentieren und jederzeit zurückgeben. Das
+              Sammelheft legt alle Kinderhefte hintereinander in dein Regal –
+              zum Durchsehen, Drucken oder Speichern als PDF.
+            </p>
+            {gathered && (
+              <p className="hinweis" role="status">
+                Sammelheft „{gathered.title}“ liegt in deinem Regal.{' '}
+                <Link href={`/heft/${gathered.id}`}>Jetzt öffnen</Link>
+              </p>
+            )}
+            {!distributionList && <p className="hinweis">Wird geladen …</p>}
+            {distributionList && !distributionList.length && (
+              <p className="hinweis">In dieser Klasse wurde noch kein Heft ausgeteilt.</p>
+            )}
+            {distributionList?.map((d) => {
+              const collected = d.copies.filter((c) => c.collected).length;
+              const worked = d.copies.filter((c) => c.editedPages.length).length;
+              const expanded = openDistribution === d.key;
+              return (
+                <article className="distribution" key={d.key}>
+                  <header>
+                    <span className="distribution-color" style={{ background: d.color }} aria-hidden="true" />
+                    <div>
+                      <strong>{d.title}</strong>
+                      <small>
+                        Ausgeteilt am {new Date(d.distributedAt).toLocaleDateString('de-DE')} an{' '}
+                        {d.copies.length === 1 ? '1 Kind' : `${d.copies.length} Kinder`} · bearbeitet von{' '}
+                        {worked} · {collected === d.copies.length
+                          ? 'alle eingesammelt'
+                          : collected
+                            ? `${collected} eingesammelt`
+                            : 'noch bei den Kindern'}
+                      </small>
+                    </div>
+                  </header>
+                  <div className="child-row-actions">
+                    {collected < d.copies.length && (
+                      <button
+                        className="knopf compact"
+                        disabled={busy}
+                        onClick={() => {
+                          if (
+                            confirm(
+                              `„${d.title}“ bei allen Kindern einsammeln? Danach können sie es nur noch ansehen. Was ein Kind gerade schreibt, wird nicht mehr gespeichert.`,
+                            )
+                          )
+                            void run(async () => {
+                              await collect(d.key, true);
+                              setMessage(`„${d.title}“ wurde eingesammelt.`);
+                            });
+                        }}
+                      >
+                        <Icon name="lock" size={18} /> Einsammeln
+                      </button>
+                    )}
+                    {collected > 0 && (
+                      <button
+                        className="knopf compact"
+                        disabled={busy}
+                        onClick={() =>
+                          run(async () => {
+                            await collect(d.key, false);
+                            setMessage(`„${d.title}“ wurde an die Kinder zurückgegeben.`);
+                          })
+                        }
+                      >
+                        <Icon name="unlock" size={18} /> Zurückgeben
+                      </button>
+                    )}
+                    <button
+                      className="knopf compact"
+                      disabled={busy}
+                      onClick={() =>
+                        run(async () => {
+                          const data = await classApi<BookData>('gather', { id: activeId, key: d.key });
+                          setGathered({ id: data.book.id, title: data.book.title });
+                        })
+                      }
+                    >
+                      <Icon name="collect" size={18} /> Sammelheft anlegen
+                    </button>
+                    <button
+                      className="knopf compact"
+                      aria-expanded={expanded}
+                      onClick={() => setOpenDistribution(expanded ? '' : d.key)}
+                    >
+                      <Icon name="conference_call" size={18} /> {expanded ? 'Kinder ausblenden' : 'Kinder anzeigen'}
+                    </button>
+                  </div>
+                  {expanded && (
+                    <ul className="distribution-copies">
+                      {d.copies.map((c) => (
+                        <li key={c.bookId}>
+                          <strong>{c.childName}</strong>
+                          <small>
+                            {c.collected ? 'Eingesammelt' : 'Beim Kind'}
+                            {c.trashed ? ' · im Papierkorb' : ''} · bearbeitete Seiten:{' '}
+                            {c.editedPages.length ? c.editedPages.join(', ') : 'noch keine'} von {c.pages} · zuletzt{' '}
+                            {new Date(c.updatedAt).toLocaleString('de-DE')}
+                          </small>
+                          <span className="distribution-copy-actions">
+                            <Link className="knopf compact" href={`/heft/${c.bookId}`}>
+                              <Icon name="reading_ebook" size={18} /> Öffnen
+                            </Link>
+                            <button
+                              className="knopf compact"
+                              disabled={busy}
+                              onClick={() => run(() => collect(d.key, !c.collected, [c.childId]))}
+                            >
+                              <Icon name={c.collected ? 'unlock' : 'lock'} size={18} />{' '}
+                              {c.collected ? 'Zurückgeben' : 'Einsammeln'}
+                            </button>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </article>
+              );
+            })}
           </section>
           <section className="karte class-section">
             <h2>Freigegebene Bilder</h2>
@@ -578,6 +727,7 @@ export default function Classroom({
                 <Link href={`/heft/${b.id}`} className="knopf">
                   {b.title}
                   {b.trashed ? ' · Papierkorb' : ''}
+                  {b.collected ? ' · eingesammelt' : ''}
                 </Link>
                 <small>
                   Letzte Arbeit: {new Date(b.updatedAt).toLocaleString('de-DE')}

@@ -69,3 +69,39 @@ export function adminChangeClass(classId: string, input: Record<string, unknown>
 export function adminDeleteClass(classId: string): Promise<void>;
 export function moveChild(childId: string, targetClassId: string): Promise<SchoolClass>;
 export function grantTeachers(child: Pick<ChildRecord, 'teacherIds'>, sources: string[]): Promise<void>;
+/** One child's copy of a distributed book. */
+export type DistributedCopy = {
+  childId: string;
+  childName: string;
+  bookId: string;
+  updatedAt: string;
+  pages: number;
+  /** Page numbers (from 1) the child has worked on. */
+  editedPages: number[];
+  collected: boolean;
+  collectedAt: string | null;
+  trashed: boolean;
+};
+/** A book handed out to (some) children of a class at one time. */
+export type Distribution = {
+  key: string;
+  sourceId: string | null;
+  title: string;
+  color: string;
+  distributedAt: string;
+  copies: DistributedCopy[];
+};
+export function distributions(owner: string, classId: string): Promise<Distribution[]>;
+export function collect(
+  owner: string,
+  classId: string,
+  key: string,
+  collected: boolean,
+  childIds?: string[],
+): Promise<Distribution[]>;
+export function gather(
+  owner: string,
+  role: string,
+  classId: string,
+  key: string,
+): Promise<import('./notebook-model').BookData>;

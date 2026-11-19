@@ -164,6 +164,8 @@ Elemente, auch wenn die Kinderoberfläche erst in Phase 2 kommt.
 - Übersicht für die Lehrkraft: Wer hat welche Seite bearbeitet, Kinderhefte
   ansehen, mit Stift oder Stempel kommentieren
 - Kinderheft an der Tafel zeigen (Tafelmodus)
+- Hefte einsammeln: Kinderkopien einer Austeilung sperren (nur ansehen) und
+  zurückgeben, Sammelheft mit allen Kinderheften für Durchsicht, Druck und PDF
 
 ### Phase 3 – Inhalte und Arbeitsblätter
 
