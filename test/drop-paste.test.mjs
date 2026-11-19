@@ -21,9 +21,10 @@ test('Eingefügter Text: nur eine einzelne http(s)-Adresse wird ein Internet-Ele
  assert.equal(pastedUrl('javascript:alert(1)'),null);
  assert.equal(pastedUrl('https://user:pw@example.org/'),null);
  assert.equal(pastedUrl('Hallo Welt'),null);
- assert.equal(embedKindFor('https://www.youtube.com/watch?v=x'),'video');
- assert.equal(embedKindFor('https://youtu.be/x'),'video');
- assert.equal(embedKindFor('https://www.zdf.de/kinder/logo'),'video');
+ assert.equal(embedKindFor('https://www.youtube.com/watch?v=jNQXAC9IVRw'),'video');
+ assert.equal(embedKindFor('https://youtu.be/jNQXAC9IVRw'),'video');
+ assert.equal(embedKindFor('https://www.zdf.de/video/dokus/frontal-die-doku-100/inside-deutsche-bank-106'),'video');
+ assert.equal(embedKindFor('https://www.zdf.de/kinder/logo'),'link');
  assert.equal(embedKindFor('https://example.org/film.mp4'),'video');
  assert.equal(embedKindFor('https://example.org/'),'link');
 });

@@ -181,6 +181,8 @@ export default function Editor({
   /** Stamp chosen under “Einfügen”: every tap on the page places it. */
   const [stamp, setStamp] = useState<string | null>(null);
   const [showEmbed, setShowEmbed] = useState(false);
+  /** Embedded video or web page open in „Video oder Webseite ändern“. */
+  const [editEmbed, setEditEmbed] = useState<PageElement | null>(null);
   const [recordTarget, setRecordTarget] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
   const [shortcuts, setShortcuts] = useState<Shortcuts>(defaultShortcuts),
@@ -1526,6 +1528,7 @@ export default function Editor({
               onLock: () => performCommand('lock'),
               onFill: openFill,
               onEditImage: setEditImage,
+              onEditEmbed: setEditEmbed,
               onEditAudio: setEditAudio,
               onCollection: () => {
                 const name = prompt('Name für die Sammlung');
@@ -1820,6 +1823,15 @@ export default function Editor({
                 ),
               }));
           }}
+        />
+      )}
+      {editEmbed && (
+        <EmbedDialog
+          element={editEmbed}
+          onClose={() => setEditEmbed(null)}
+          onInsert={(changed) =>
+            s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === changed.id ? changed : el)) }))
+          }
         />
       )}
       {showEmbed && (

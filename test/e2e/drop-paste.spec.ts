@@ -91,7 +91,7 @@ test('Hineinziehen, Einfügen aus anderen Apps, Seiten zwischen Heften kopieren,
 
   // Aus anderen Apps einfügen: Adresse, Text, Bild.
   await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Seite 1 öffnen' }).click();
-  await paste(page, { text: 'https://www.youtube.com/watch?v=abc123' });
+  await paste(page, { text: 'https://www.youtube.com/watch?v=jNQXAC9IVRw' });
   await paste(page, { text: 'Aus einer anderen App' });
   await paste(page, { file: { name: 'Bild.png', type: 'image/png', data: png } });
   await expect.poll(async () => {

@@ -51,9 +51,9 @@ test('Einfügen: Formen, Sticker und Stempel (auch Emojis) direkt über die unte
   await expect(elements).toHaveCount(count);
 
   await rail.getByRole('button', { name: 'Internet', exact: true }).click();
-  await expect(page.getByRole('dialog', { name: 'Video, Webseite oder QR-Code' })).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Video oder Webseite einfügen' })).toBeVisible();
   await page.keyboard.press('Escape');
-  await page.getByRole('dialog', { name: 'Video, Webseite oder QR-Code' }).getByRole('button', { name: /Schließen|Abbrechen/ }).first().click().catch(() => undefined);
+  await page.getByRole('dialog', { name: 'Video oder Webseite einfügen' }).getByRole('button', { name: /Schließen|Abbrechen/ }).first().click().catch(() => undefined);
   // Worksheet generator and AI design are paused for now (src/lib/paused.ts).
   await rail.getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
   await expect(page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' })).toBeVisible();

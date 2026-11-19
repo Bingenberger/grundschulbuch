@@ -18,7 +18,7 @@ test('Eigene HTML-Apps laufen getrennt vom angemeldeten Editor', async ({
   });
   await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Internet', exact: true }).click();
   const dialog = page.getByRole('dialog', {
-    name: 'Video, Webseite oder QR-Code',
+    name: 'Video oder Webseite einfügen',
   });
   await dialog.getByRole('button', { name: 'Eigene HTML-App', exact: true }).click();
   await dialog.locator('input[type=file]').setInputFiles({

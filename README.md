@@ -78,7 +78,9 @@ in [docs/umsetzung.md](docs/umsetzung.md).
 
 Admins verwalten unter `/verwaltung` (Link „Verwaltung“ im Regal) Konten für
 Lehrkräfte, Klassen mit einer oder mehreren Lehrkräften, Kinder samt
-Anmeldekarten und die Vorlagen für alle. Auf dem Server geht weiterhin:
+Anmeldekarten, die Vorlagen für alle und unter „Einstellungen“ den
+API-Schlüssel für die YouTube-Videosuche (gilt für die ganze Instanz, bleibt auf
+dem Server). Auf dem Server geht weiterhin:
 `node scripts/bootstrap.mjs NAME` (Konto anlegen oder neuer Einmalcode),
 Sperren und Entsperren:
 

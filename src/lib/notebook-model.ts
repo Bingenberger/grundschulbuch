@@ -140,6 +140,8 @@ export type PageElement = {
   response?: LearningResponse;
   url?: string;
   embedKind?: 'video' | 'webpage' | 'link' | 'qr' | 'app';
+  /** Preview picture of a video, copied into the own media store. */
+  poster?: string;
   /** Tapping the link badge opens a web page or another page of the notebook. */
   link?: ElementLink;
 };

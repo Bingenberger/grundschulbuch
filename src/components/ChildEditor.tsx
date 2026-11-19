@@ -103,6 +103,8 @@ export default function ChildEditor({
   const [panel, setPanel] = useState<'insert' | 'page' | null>(null);
   const [stamp, setStamp] = useState<string | null>(null);
   const [showEmbed, setShowEmbed] = useState(false);
+  /** Embedded video or web page open in „Video oder Webseite ändern“. */
+  const [editEmbed, setEditEmbed] = useState<PageElement | null>(null);
   const gesture = useRef<{
     el: PageElement;
     points: Point[];
@@ -705,6 +707,7 @@ export default function ChildEditor({
                 onResize: resizeSelected,
                 onRotate: rotateSelected,
                 onEditImage: setEditImage,
+                onEditEmbed: setEditEmbed,
                 onEditAudio: setEditAudio,
               }}
             />
@@ -733,6 +736,16 @@ export default function ChildEditor({
           )}
         </div>
       </div>
+      {editEmbed && (
+        <EmbedDialog
+          child
+          element={editEmbed}
+          onClose={() => setEditEmbed(null)}
+          onInsert={(changed) =>
+            s.edit((p) => ({ ...p, elements: p.elements.map((el) => (el.id === changed.id ? changed : el)) }))
+          }
+        />
+      )}
       {showEmbed && (
         <EmbedDialog
           child

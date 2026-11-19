@@ -13,9 +13,10 @@ import { uuid, type Template } from '@/lib/notebook-model';
 import type { AdminOverview } from '@/lib/admin';
 import type { AdminAccount } from '@/lib/accounts.mjs';
 import type { SchoolClass } from '@/lib/classes.mjs';
+import type { YoutubeSettings } from '@/lib/video-search.mjs';
 import { templatePolicy, type TemplatePolicy, type TemplatePolicies } from '@/lib/template-policy.mjs';
 
-type Tab = 'konten' | 'klassen' | 'vorlagen';
+type Tab = 'konten' | 'klassen' | 'vorlagen' | 'einstellungen';
 type Slip = { name: string; code: string; expiresAt: string };
 type Card = { name: string; qr: string };
 
@@ -91,6 +92,7 @@ export default function Verwaltung({ initial, me, initialTab='konten' }: { initi
         <ChoiceButton icon="businesswoman" label={`Lehrkräfte (${data.accounts.length})`} pressed={tab === 'konten'} onClick={() => showTab('konten')} />
         <ChoiceButton icon="conference_call" label={`Klassen und Kinder (${data.classes.length})`} pressed={tab === 'klassen'} onClick={() => showTab('klassen')} />
         <ChoiceButton icon="template" label="Vorlagen für alle" pressed={tab === 'vorlagen'} onClick={() => showTab('vorlagen')} />
+        <ChoiceButton icon="settings" label="Einstellungen" pressed={tab === 'einstellungen'} onClick={() => showTab('einstellungen')} />
       </nav>
       {error && (
         <p className="fehler" role="alert">
@@ -101,6 +103,15 @@ export default function Verwaltung({ initial, me, initialTab='konten' }: { initi
       {tab === 'konten' && <Accounts data={data} me={me} busy={busy} run={run} putAccount={putAccount} setData={setData} onSlip={setSlip} />}
       {tab === 'klassen' && (
         <Classes data={data} busy={busy} run={run} putClass={putClass} setData={setData} onCards={setCards} onMessage={setMessage} />
+      )}
+      {tab === 'einstellungen' && (
+        <Settings
+          youtube={data.youtube}
+          busy={busy}
+          run={run}
+          onYoutube={(youtube) => setData((d) => ({ ...d, youtube }))}
+          onMessage={setMessage}
+        />
       )}
       {tab === 'vorlagen' && (
         <Templates
@@ -728,5 +739,113 @@ function Templates({ data, busy, run, setData }: Shared) {
       </div>
       {view==='list'&&shown.length>pageSize&&<div className="admin-template-footer">{pagination('unten')}</div>}
     </>
+  );
+}
+
+/** Settings for the whole instance: the key for the YouTube video search. */
+function Settings({
+  youtube,
+  busy,
+  run,
+  onYoutube,
+  onMessage,
+}: {
+  youtube: YoutubeSettings;
+  busy: boolean;
+  run: (task: () => Promise<void>) => Promise<void>;
+  onYoutube: (youtube: YoutubeSettings) => void;
+  onMessage: (message: string) => void;
+}) {
+  const [key, setKey] = useState('');
+  const save = (values: { key?: string; childSearch?: boolean }, done: string) =>
+    run(async () => {
+      const result = await admin<YoutubeSettings & { warning: string }>('youtube', values);
+      const { warning, ...settings } = result;
+      onYoutube(settings);
+      setKey('');
+      onMessage(warning || done);
+    });
+  return (
+    <section className="karte class-section admin-settings">
+      <h2>YouTube-Videosuche</h2>
+      <p>
+        Mit einem API-Schlüssel für die YouTube Data API v3 können alle Lehrkräfte im Dialog „Video oder Webseite einfügen“ direkt
+        nach Videos suchen. Der Schlüssel gilt für die ganze Schule, bleibt auf dem Server und wird nie an Geräte gesendet.
+      </p>
+      <p className="admin-settings-state" role="status">
+        <Icon name={youtube.configured ? 'ok' : 'high_priority'} size={22} />{' '}
+        {youtube.configured
+          ? `Eingerichtet – Schlüssel endet auf „…${youtube.keyEnd}“${youtube.source === 'datei' ? ' (aus YOUTUBE_API_KEY_FILE)' : ''}${youtube.updatedAt ? `, geändert ${dateTime(youtube.updatedAt)}` : ''}.`
+          : 'Noch nicht eingerichtet. Ohne Schlüssel lassen sich Videos weiterhin über ihre Adresse einfügen.'}
+      </p>
+      <form
+        className="child-create"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void save({ key }, 'Der Schlüssel wurde geprüft und gespeichert.');
+        }}
+      >
+        <input
+          type="password"
+          aria-label="API-Schlüssel für YouTube"
+          autoComplete="off"
+          spellCheck={false}
+          value={key}
+          maxLength={200}
+          onChange={(e) => setKey(e.target.value)}
+          placeholder={youtube.configured ? 'Neuen Schlüssel einfügen' : 'API-Schlüssel einfügen, z. B. AIza…'}
+          required
+        />
+        <button className="knopf knopf-haupt" disabled={busy || !key.trim()}>
+          <Icon name="checkmark" size={20} /> Prüfen und speichern
+        </button>
+        {youtube.configured && youtube.source === 'verwaltung' && (
+          <button
+            type="button"
+            className="knopf danger-text"
+            disabled={busy}
+            onClick={() => {
+              if (confirm('YouTube-Schlüssel entfernen? Die Videosuche ist dann für alle abgeschaltet.'))
+                void save({ key: '' }, 'Der Schlüssel wurde entfernt.');
+            }}
+          >
+            Schlüssel entfernen
+          </button>
+        )}
+      </form>
+      <div className="admin-settings-switch">
+        <ChoiceButton
+          icon="conference_call"
+          label="Kinder mit „Internet“ dürfen Videos suchen"
+          pressed={youtube.childSearch}
+          disabled={busy}
+          onClick={() =>
+            void save(
+              { childSearch: !youtube.childSearch },
+              youtube.childSearch ? 'Kinder können nicht mehr suchen.' : 'Kinder mit „Internet“ können jetzt Videos suchen.',
+            )
+          }
+        />
+        <small>
+          {youtube.childSearch
+            ? 'An: Kinder, denen „Internet“ erlaubt ist, können im Heft selbst suchen (SafeSearch „streng“).'
+            : 'Aus: Nur Lehrkräfte suchen. Kinder fügen Videos weiter über die Adresse ein.'}
+        </small>
+      </div>
+      <details className="admin-settings-help">
+        <summary>So bekommst du einen Schlüssel</summary>
+        <ol>
+          <li>In der Google Cloud Console (console.cloud.google.com) ein Projekt anlegen oder wählen.</li>
+          <li>Unter „APIs und Dienste“ → „Bibliothek“ die „YouTube Data API v3“ aktivieren.</li>
+          <li>Unter „Anmeldedaten“ → „Anmeldedaten erstellen“ → „API-Schlüssel“ wählen.</li>
+          <li>Den Schlüssel unter „API-Einschränkungen“ auf die YouTube Data API v3 beschränken und hier einfügen.</li>
+        </ol>
+        <p>
+          Eine Suche kostet 100 von 10.000 kostenlosen Einheiten am Tag – also etwa 100 Suchen täglich für die ganze Schule. Gleiche
+          Suchen werden sechs Stunden lang zwischengespeichert, und jedes Konto kann höchstens 30-mal in der Stunde suchen. Gesucht wird
+          mit SafeSearch „streng“ und nur nach Videos, die sich einbetten lassen.
+        </p>
+      </details>
+    </section>
   );
 }

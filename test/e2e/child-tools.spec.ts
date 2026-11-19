@@ -66,7 +66,7 @@ test('Kinder: Einfügen, Ton, Internet und Seite sind schaltbar und funktioniere
 
     // Internet: a video, but no own HTML apps.
     await rail.getByRole('button', { name: 'Internet', exact: true }).click();
-    const embed = child.getByRole('dialog', { name: 'Video, Webseite oder QR-Code' });
+    const embed = child.getByRole('dialog', { name: 'Video oder Webseite einfügen' });
     await expect(embed.getByRole('button', { name: 'Eigene HTML-App' })).toHaveCount(0);
     await embed.getByLabel('Internetadresse').fill('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
     await embed.getByRole('button', { name: 'Einfügen', exact: true }).click();

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
+import { detectVideo, MEDIATHEK_NAMES, playerAddress, playsInPage } from '@/lib/video-address.mjs';
 import { useEffect, useId, useState } from 'react';
 import QRCode from 'qrcode';
 import type { PageElement, Page } from '@/lib/notebook-model';
@@ -355,26 +356,7 @@ export function EmbedContent({ element: el }: { element: PageElement }) {
     };
   }, [el.embedKind, el.src, loaded, runtime.allowExternal]);
   const url = el.url || '';
-  let videoUrl = url;
-  try {
-    const parsed = new URL(url);
-    if (
-      ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be'].includes(
-        parsed.hostname,
-      )
-    ) {
-      const id =
-        parsed.hostname === 'youtu.be'
-          ? parsed.pathname.slice(1)
-          : parsed.searchParams.get('v') || parsed.pathname.split('/').pop();
-      if (id && /^[\w-]{6,20}$/.test(id))
-        videoUrl = `https://www.youtube-nocookie.com/embed/${id}`;
-    } else if (['vimeo.com', 'www.vimeo.com'].includes(parsed.hostname)) {
-      const id = parsed.pathname.split('/').pop();
-      if (/^\d+$/.test(id || ''))
-        videoUrl = `https://player.vimeo.com/video/${id}`;
-    }
-  } catch {}
+  const videoUrl = playerAddress(url);
   useEffect(() => {
     let active = true;
 
@@ -432,6 +414,34 @@ export function EmbedContent({ element: el }: { element: PageElement }) {
     );
   if (el.embedKind === 'link' && !runtime.allowExternal)
     return <span>{el.alt || url}</span>;
+  // ARD/ZDF videos without the broadcaster's player open the Mediathek.
+  if (el.embedKind === 'video' && !playsInPage(url)) {
+    const kind = detectVideo(url)?.kind as 'ard' | 'zdf';
+    const inside = (
+      <>
+        {el.poster ? <img src={el.poster} alt="" draggable={false} /> : <span className="embed-poster-blank" aria-hidden="true" />}
+        <span className="embed-play" aria-hidden="true">▶</span>
+        <strong>
+          {el.alt || 'Video'}
+          <small> · {MEDIATHEK_NAMES[kind]} ↗</small>
+        </strong>
+      </>
+    );
+    return runtime.interactive && runtime.allowExternal ? (
+      <a
+        className="embed-poster"
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        onPointerDown={(e) => e.stopPropagation()}
+        aria-label={`${el.alt || 'Video'} in der ${MEDIATHEK_NAMES[kind]} ansehen (neues Fenster)`}
+      >
+        {inside}
+      </a>
+    ) : (
+      <div className="embed-poster">{inside}</div>
+    );
+  }
   if (el.embedKind === 'link')
     return (
       <a
@@ -454,11 +464,26 @@ export function EmbedContent({ element: el }: { element: PageElement }) {
             title={el.alt || 'Eingebetteter Inhalt'}
             sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
             allow="fullscreen"
-            referrerPolicy="no-referrer"
+            // Video players (YouTube: „Fehler 153“) refuse to play without
+            // knowing the page's origin; the path is never sent.
+            referrerPolicy={el.embedKind === 'video' ? 'strict-origin-when-cross-origin' : 'no-referrer'}
             style={{ width: '100%', height: '100%', border: 0 }}
           />
         )
       ) : (
+        el.embedKind === 'video' && el.poster ? (
+          <button
+            type="button"
+            className="embed-poster"
+            disabled={!runtime.interactive || !runtime.allowExternal}
+            onClick={() => setLoaded(true)}
+            aria-label={`${el.alt || 'Video'} abspielen`}
+          >
+            <img src={el.poster} alt="" draggable={false} />
+            <span className="embed-play" aria-hidden="true">▶</span>
+            {el.alt && <strong>{el.alt}</strong>}
+          </button>
+        ) : (
         <div className="embed-placeholder">
           <strong>
             {el.alt || (el.embedKind === 'video' ? 'Video' : 'Webseite')}
@@ -468,9 +493,10 @@ export function EmbedContent({ element: el }: { element: PageElement }) {
             disabled={!runtime.interactive || !runtime.allowExternal}
             onClick={() => setLoaded(true)}
           >
-            Externen Inhalt laden
+            {el.embedKind === 'video' ? '▶ Video abspielen' : 'Externen Inhalt laden'}
           </button>
         </div>
+        )
       )}
     </div>
   );

@@ -1,0 +1,10 @@
+export type VideoKind = 'youtube' | 'vimeo' | 'ard' | 'zdf' | 'file';
+export function youtubeId(address: string): string | null;
+export function detectVideo(address: string): { kind: VideoKind; id?: string; embed?: boolean } | null;
+export const VIDEO_SOURCES: Record<VideoKind, string>;
+export function playerAddress(address: string): string;
+export function autoplayAddress(address: string): string;
+export function playsInPage(address: string): boolean;
+export const MEDIATHEK_NAMES: Record<'ard' | 'zdf', string>;
+export function hostOf(address: string): string;
+export function webAddress(input: unknown): string | null;

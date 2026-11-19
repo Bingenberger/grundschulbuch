@@ -67,6 +67,60 @@ const gallery = http.createServer((request, response) => {
   response.end();
 });
 await new Promise((resolve) => gallery.listen(3199, '127.0.0.1', resolve));
+// Stand-in for YouTube: Data API v3 (search, videos), oEmbed and preview pictures.
+const preview = await sharp({ create: { width: 320, height: 180, channels: 3, background: '#6d4c41' } }).jpeg().toBuffer();
+const youtubeVideos = [
+  { id: 'igelvideo01', title: 'Der Igel im Winter &amp; Frühling', channel: 'Sachgeschichten', duration: 'PT3M20S' },
+  { id: 'igelvideo02', title: 'Igel bauen ein Nest', channel: 'Tierforscher', duration: 'PT12M5S' },
+];
+const youtube = http.createServer((request, response) => {
+  const url = new URL(request.url, 'http://127.0.0.1');
+  const send = (status, body) => {
+    response.writeHead(status, { 'Content-Type': 'application/json' });
+    response.end(JSON.stringify(body));
+  };
+  if (url.pathname.startsWith('/youtube/v3/') && url.searchParams.get('key') !== 'AIzaTESTSCHLUESSEL')
+    return send(400, { error: { errors: [{ reason: 'keyInvalid' }] } });
+  if (url.pathname === '/youtube/v3/search') {
+    const q = (url.searchParams.get('q') || '').toLowerCase();
+    const hits = q.includes('igel') ? youtubeVideos : [];
+    return send(200, {
+      items: hits.map((v) => ({ id: { kind: 'youtube#video', videoId: v.id }, snippet: { title: v.title, channelTitle: v.channel, description: '', publishedAt: '2025-01-15T08:00:00Z' } })),
+    });
+  }
+  if (url.pathname === '/youtube/v3/videos') {
+    const ids = (url.searchParams.get('id') || '').split(',');
+    return send(200, { items: youtubeVideos.filter((v) => ids.includes(v.id)).map((v) => ({ id: v.id, contentDetails: { duration: v.duration }, statistics: { viewCount: '4321' } })) });
+  }
+  if (url.pathname === '/oembed') {
+    const id = new URL(url.searchParams.get('url') || 'http://x').searchParams.get('v');
+    const video = youtubeVideos.find((v) => v.id === id);
+    return video ? send(200, { title: video.title.replace('&amp;', '&') }) : send(404, {});
+  }
+  // ARD Mediathek: „erlaubt“ may be embedded, every other video only opens the Mediathek.
+  const ard = /^\/page-gateway\/pages\/ard\/item\/([\w-]+)$/.exec(url.pathname);
+  if (ard) {
+    const open = ard[1].startsWith('Y3JpZERlcmxhdWJ0');
+    return send(200, { widgets: [{ title: open ? 'Igel im Herbst' : 'Igel in der Stadt', embeddable: open, image: { src: 'http://127.0.0.1:3198/image-service/images/igel?w={width}' } }] });
+  }
+  // ZDF: a video page without the ZDF player.
+  if (url.pathname.startsWith('/video/')) {
+    response.writeHead(200, { 'Content-Type': 'text/html' });
+    return response.end('<meta property="og:title" content="Igel-Doku | jetzt im ZDF streamen"><meta property="og:image" content="http://127.0.0.1:3198/assets/igel~1920x1080">');
+  }
+  if (/^\/(vi\/[\w-]{11}\/(mq|hq)default\.jpg|image-service\/images\/igel|assets\/igel~768x432)$/.test(url.pathname)) {
+    response.writeHead(200, { 'Content-Type': 'image/jpeg' });
+    return response.end(preview);
+  }
+  response.writeHead(404);
+  response.end();
+});
+await new Promise((resolve) => youtube.listen(3198, '127.0.0.1', resolve));
+process.env.YOUTUBE_API_ORIGIN = 'http://127.0.0.1:3198';
+process.env.YOUTUBE_IMAGE_ORIGIN = 'http://127.0.0.1:3198';
+process.env.YOUTUBE_OEMBED_ORIGIN = 'http://127.0.0.1:3198';
+process.env.ARD_API_ORIGIN = 'http://127.0.0.1:3198';
+process.env.ZDF_PAGE_ORIGIN = 'http://127.0.0.1:3198';
 process.env.GALLERY_ORIGIN = 'http://127.0.0.1:3199';
 process.env.GALLERY_TOKEN_FILE = path.join(directory, 'gallery-token');
 await fs.cp('public', '.next/standalone/public', { recursive: true });
@@ -83,6 +137,7 @@ async function stop() {
   stopping = true;
   server.kill('SIGTERM');
   gallery.close();
+  youtube.close();
   await fs.rm(directory, { recursive: true, force: true });
 }
 process.on('SIGTERM', stop);

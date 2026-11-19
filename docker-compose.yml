@@ -24,6 +24,8 @@ services:
       AI_BASE_URL: ${AI_BASE_URL:-}
       AI_MODEL: ${AI_MODEL:-}
       AI_API_KEY_FILE: ${AI_API_KEY_FILE:-}
+      # Optional: key for the YouTube video search; usually set in the admin area.
+      YOUTUBE_API_KEY_FILE: ${YOUTUBE_API_KEY_FILE:-}
     volumes:
       - data:/data
       - ${GRUNDSCHULBUCH_ASSET_DIR:-./public/inhalte}:/assets:ro

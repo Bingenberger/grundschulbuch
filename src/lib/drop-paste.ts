@@ -2,6 +2,7 @@
 // Elemente und Seiten, die auch in einem anderen Heft gilt (sessionStorage:
 // bleibt in diesem Tab beim Wechsel des Hefts, verschwindet mit dem Tab).
 import type { Page, PageElement } from './notebook-model';
+import { detectVideo } from './video-address.mjs';
 
 export type DroppedKind = 'image' | 'audio' | 'pdf' | 'book' | null;
 
@@ -30,11 +31,9 @@ export function pastedUrl(text: string): string | null {
   }
 }
 
-const VIDEO = /(^|\.)(youtube\.com|youtu\.be|youtube-nocookie\.com|vimeo\.com|zdf\.de|zdfheute\.de)$/i;
+/** Video addresses (YouTube, Vimeo, ARD/ZDF Mediathek, video files) become videos, others link cards. */
 export function embedKindFor(url: string): 'video' | 'link' {
-  const u = new URL(url);
-  if (VIDEO.test(u.hostname) || /\.(mp4|webm|mov|m4v)$/i.test(u.pathname)) return 'video';
-  return 'link';
+  return detectVideo(url) ? 'video' : 'link';
 }
 
 /** Markierung in der System-Zwischenablage: „Einfügen“ nimmt dann die Elemente aus dem Heft. */

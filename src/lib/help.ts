@@ -87,9 +87,18 @@ export const helpTopics: HelpTopic[] = [
       'Ziehe Dateien einfach auf die Seite („Loslassen zum Einfügen“): Bilder und Töne kommen auf die Seite, eine PDF wird zu Seiten hinter dieser, eine Heftdatei oder ein ePub wird geöffnet.',
       'Mit Strg+V (am Mac ⌘V) fügst du aus anderen Apps ein: ein Bild als Bild, eine Webadresse als Video oder Link, anderen Text als Textfeld.',
     ] },
-  { id: 'internet', chapter: 'elemente', title: 'Internet: Video, Webseite, QR-Code', keywords: 'youtube video webseite qr link einbetten',
+  { id: 'internet', chapter: 'elemente', title: 'Internet: Video, Webseite, QR-Code', keywords: 'youtube video webseite qr link einbetten vimeo zdf ard mediathek logo kärtchen ändern fehler 153',
     body: [
-      '„Internet“ setzt ein Video, eine Webseite, einen Link oder einen QR-Code auf die Seite. Inhalte von außen laden erst, wenn jemand sie antippt.',
+      '„Internet“ öffnet „Video oder Webseite einfügen“. Gib die Internetadresse ein – das Heft erkennt selbst, ob es ein Video (YouTube, Vimeo, ARD- oder ZDF-Mediathek, Videodatei) oder eine Webseite ist, und holt Titel und Vorschaubild. Der Titel wird auch vorgelesen; „Ausprobieren“ öffnet die Adresse in einem neuen Fenster.',
+      'Videos aus der ARD- und ZDF-Mediathek spielen im Heft mit dem Player des Senders – aber nur, wenn der Sender das für dieses Video erlaubt. Sonst erscheint ein Bild mit Titel; Antippen öffnet das Video in der Mediathek in einem neuen Fenster. Viele Mediathek-Videos sind nur eine Zeit lang abrufbar.',
+      'Eine Webseite erscheint als Kärtchen mit Titel und Adresse oder mit „Webseite direkt im Heft zeigen“ auf der Seite selbst. Inhalte von außen laden erst, wenn jemand sie antippt. Ist das Element ausgewählt, ändert „Ändern“ unten Adresse, Art und Titel.',
+      'Dazu gibt es „QR-Plakat“ (ein QR-Code zu einer Adresse) und für Lehrkräfte „Eigene HTML-App“.',
+    ] },
+  { id: 'videosuche', chapter: 'elemente', title: 'Videos auf YouTube suchen', keywords: 'youtube video suchen suche finden filme schlüssel api',
+    body: [
+      'Unter „Internet“ → „Video suchen“ suchst du direkt auf YouTube: Suchbegriff eingeben, nach Länge (kurz, mittel, lang) und Reihenfolge (passendste, neueste, meistgesehen) filtern. Ein Tipp auf das Vorschaubild spielt das Video im Dialog ab, „Auswählen“ übernimmt es mit Titel und Vorschaubild; „Mehr Ergebnisse“ lädt weitere.',
+      'Gesucht wird mit SafeSearch „streng“ und nur nach Videos, die sich einbetten lassen. Sieh dir jedes Video trotzdem vorher selbst an.',
+      'Die Suche braucht einen YouTube-Schlüssel, den die Verwaltung unter „Einstellungen“ einmal für die ganze Schule hinterlegt. Dort lässt sich auch erlauben, dass Kinder mit „Internet“ suchen.',
     ] },
   { id: 'link', chapter: 'elemente', title: 'Link zu einer Webseite oder Heftseite', keywords: 'verlinken verknüpfen sprung',
     body: [
@@ -236,6 +245,7 @@ export const helpQuestions: HelpQuestion[] = [
   { q: 'zeige ich Silben farbig?', topic: 'silben', a: 'Text antippen, unten „Silben rot und blau“.' },
   { q: 'gebe ich ein Heft an die Kinder weiter?', topic: 'austeilen', a: '„Meine Klassen“ → „Ein Heft austeilen“ – jedes Kind bekommt eine eigene Kopie.' },
   { q: 'sammle ich ausgeteilte Hefte wieder ein?', topic: 'einsammeln', a: '„Meine Klassen“ → „Ausgeteilte Hefte“ → „Einsammeln“; „Sammelheft anlegen“ holt alle Kinderhefte in dein Regal.' },
+  { q: 'finde ich ein passendes Video?', topic: 'videosuche', a: '„Internet“ → „Video suchen“ – sucht auf YouTube mit SafeSearch „streng“.' },
   { q: 'drucke ich ein Heft aus?', topic: 'drucken', a: '„Speichern“ → „PDF“ oder „Am Drucker drucken“.' },
   { q: 'kopiere ich eine Seite in ein anderes Heft?', topic: 'seiten-verwalten', a: 'Seite → Seiten → „Seite kopieren“, dann im anderen Heft „Seite einfügen“.' },
   { q: 'bringe ich ein Heft auf einen anderen Server?', topic: 'speichern', a: '„Speichern“ → „Bearbeitbare Heftdatei“, dort im Regal „Heft, ePub oder PDF öffnen“.' },

@@ -338,7 +338,7 @@ Heftseite als Sprung zu dieser Seite, sofern sie im PDF ist
 zu Seiten hinter der aktuellen Seite, eine Heftdatei, ein ePub oder ein
 gespeichertes HTML-Heft wird geöffnet. ⌘V/Strg+V fügt auch aus anderen Apps ein:
 Bilder als Bild, eine einzelne Webadresse als Internet-Element (YouTube, Vimeo,
-ZDF und Videodateien als Video), anderer Text als Textfeld. Kopiert man Elemente
+ARD-/ZDF-Mediathek und Videodateien als Video), anderer Text als Textfeld. Kopiert man Elemente
 im Heft, trägt die Zwischenablage des Geräts eine Markierung; dann fügt ⌘V die
 Elemente aus dem Heft ein. Elemente und Seiten („Seite kopieren“ unter Seite →
 Seiten oder in der Kachelansicht) bleiben in diesem Tab kopiert und lassen sich
@@ -432,6 +432,72 @@ Unter `/verwaltung` (Link „Verwaltung“ im Regal, nur für Admins):
   bearbeitbar, fest positioniert) sind je Vorlage einstellbar; geänderte
   Vorlagen lassen sich auf das Original zurücksetzen. Einzelheiten:
   [vorlagenverwaltung.md](vorlagenverwaltung.md).
+- **Einstellungen:** Schlüssel für die YouTube-Videosuche (siehe unten).
+
+## Video oder Webseite einfügen
+
+„Internet“ öffnet den Dialog wie in Lernsachen-Heft: ein Adressfeld (auch ohne
+`https://`), das Heft erkennt Videos (YouTube auch als youtu.be und Shorts,
+Vimeo, ARD- und ZDF-Mediathek, Videodateien) und Webseiten selbst
+(`src/lib/video-address.mjs`). Bei YouTube und Vimeo holt der Server nach einer
+kurzen Pause Titel (oEmbed) und bei YouTube das Vorschaubild; ein Tipp auf das
+Bild spielt das Video im Dialog ab.
+
+Video-Player bekommen die Herkunft der Seite (`referrerpolicy` =
+`strict-origin-when-cross-origin`, nur Schema und Host, kein Pfad): YouTube
+verweigert eingebettete Videos ohne sie mit „Fehler 153“. Webseiten und
+HTML-Apps bleiben bei `no-referrer`.
+
+Die Mediatheken erlauben nur ihre eigenen Player in fremden Seiten: zdf.de
+sendet `X-Frame-Options: SAMEORIGIN`, die ARD zeigt sonst ihre ganze Webseite.
+Der Server holt deshalb für ARD-Adressen über die Mediathek-API Titel, Bild und
+`embeddable`; erlaubt die ARD das Einbetten, speichert das Heft den Player
+`ardmediathek.de/embed/<id>`. Für ZDF-Seiten liest der Server `og:title`,
+`og:image` und den ZDF-Player (`ngp.zdf.de/miniplayer/embed/?mediaID=…`) aus der
+Videoseite; bei Adressen mit `/play/…` (Reihen-Player) aus derselben Seite unter
+`/video/…`, weil nur diese den Player nennt. Ohne erlaubten Player bleibt die Mediathek-Adresse gespeichert, und
+die Seite zeigt Bild und Titel mit „ZDF-Mediathek ↗“ bzw. „ARD Mediathek ↗“ –
+Antippen öffnet das Video in einem neuen Fenster. Das Bild wird wie bei YouTube
+in die eigenen Medien kopiert (`/api/internet/vorschau/mediathek?adresse=…` für
+den Dialog). Der Server fragt dabei nur api.ardmediathek.de und zdf.de bzw.
+zdfheute.de. Webseiten kommen als Kärtchen (`link`) oder
+mit „Webseite direkt im Heft zeigen“ (`webpage`) auf die Seite. Mediathek-Adressen
+lassen sich mit „Kein Video? Als Webseite einfügen“ umstellen. „Ausprobieren“
+öffnet die Adresse, der Titel wird vorgelesen. „QR-Plakat“ und (nur Lehrkräfte)
+„Eigene HTML-App“ bleiben als weitere Arten. Ein ausgewähltes Element hat unten
+„Ändern“ (gleicher Dialog als „Video oder Webseite ändern“, Position und Größe
+bleiben) und „In neuem Fenster öffnen“.
+
+Beim Einfügen eines YouTube- oder Mediathek-Videos kopiert der Server das Vorschaubild in die
+eigenen Medien (`poster` am Element, nur `/api/medien/…` und nur bei Videos).
+Die Seite zeigt es mit ▶ und Titel; YouTube wird erst beim Abspielen gefragt
+(über youtube-nocookie.com). Auch im Druck und PDF erscheint das Bild.
+
+### YouTube-Videosuche
+
+„Video suchen“ nutzt die YouTube Data API v3 (`search.list` mit
+`safeSearch=strict`, `videoEmbeddable=true`, `type=video`,
+`relevanceLanguage=de`, `regionCode=DE`; dazu `videos.list` für Länge und
+Aufrufe). Filter: Länge (alle, unter 4, 4–20, über 20 Minuten) und Reihenfolge
+(passendste, neueste, meistgesehen); 12 Treffer je Seite, „Mehr Ergebnisse“
+blättert weiter. Vorschaubilder laufen über `/api/internet/vorschau/<id>`, so
+sprechen die Geräte nicht selbst mit YouTube.
+
+Den Schlüssel hinterlegt die Verwaltung unter „Einstellungen“ für die ganze
+Instanz (`/data/einstellungen/youtube.json`, Dateirechte 0600). Er wird beim
+Speichern mit einer günstigen Anfrage geprüft (ohne Netz: gespeichert mit
+Hinweis) und nie an Browser ausgeliefert; die Verwaltung sieht nur die letzten
+vier Zeichen. Ersatzweise liest der Server `YOUTUBE_API_KEY_FILE`. Kinder
+suchen nur, wenn die Verwaltung „Kinder mit „Internet“ dürfen Videos suchen“
+einschaltet; sonst fügen sie Videos über die Adresse ein.
+
+Eine Suche kostet 100 der 10.000 kostenlosen Einheiten am Tag. Deshalb werden
+gleiche Suchen sechs Stunden im Speicher gehalten (Filter und Seite zählen
+mit), und jedes Konto sucht höchstens 30-mal pro Stunde. Ist das Kontingent
+aufgebraucht oder der Schlüssel ungültig, erklärt der Dialog das; Adressen
+lassen sich weiter einfügen. Für die Abnahmetests ersetzt ein Testserver die
+YouTube-Dienste (`YOUTUBE_API_ORIGIN`, `YOUTUBE_IMAGE_ORIGIN`,
+`YOUTUBE_OEMBED_ORIGIN`).
 
 ## Geteilte iPads
 

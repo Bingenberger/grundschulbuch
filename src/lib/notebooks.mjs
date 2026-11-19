@@ -365,6 +365,11 @@ export function validatePage(input) {
       }
       result.embedKind = el.embedKind;
       result.alt = typeof el.alt === 'string' ? el.alt.slice(0, 300) : '';
+      if (el.poster !== undefined && el.poster !== null && el.poster !== '') {
+        if (el.embedKind !== 'video' || typeof el.poster !== 'string' || !/^\/api\/medien\/[a-f0-9]{64}\.(png|jpg|webp)$/.test(el.poster))
+          throw new BookError('Ungültiges Vorschaubild.');
+        result.poster = el.poster;
+      }
     } else {
       if (
         !Array.isArray(el.points) ||

@@ -17,7 +17,7 @@ test('Hilfe: Kapitel, häufige Fragen, Suche und Tastenkürzel – im Regal und 
   await page.getByRole('button', { name: 'Hilfe', exact: true }).click();
   let help = page.getByRole('dialog', { name: 'Hilfe' });
   await expect(help.getByRole('button', { name: /Regal und Hefte/ })).toBeVisible();
-  await expect(help.getByRole('button', { name: /^Wie / })).toHaveCount(17);
+  await expect(help.getByRole('button', { name: /^Wie / })).toHaveCount(19);
   await help.getByRole('button', { name: 'Wie drucke ich ein Heft aus?' }).click();
   await expect(help.getByText('„Speichern“ → „PDF“ oder „Am Drucker drucken“.')).toBeVisible();
   await help.getByRole('button', { name: /Mehr dazu: Drucken und PDF/ }).click();

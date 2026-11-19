@@ -7,5 +7,5 @@ export default async function VerwaltungSeite({searchParams}:{searchParams:Promi
   const user = await currentUser();
   if (!user) redirect('/anmelden');
   if (user.role !== 'admin') redirect('/');
-  return <Verwaltung initial={await adminOverview()} me={user.id} initialTab={(await searchParams).bereich==='vorlagen'?'vorlagen':'konten'} />;
+  return <Verwaltung initial={await adminOverview()} me={user.id} initialTab={(({vorlagen:'vorlagen',einstellungen:'einstellungen'} as const)[(await searchParams).bereich as 'vorlagen'|'einstellungen'])??'konten'} />;
 }

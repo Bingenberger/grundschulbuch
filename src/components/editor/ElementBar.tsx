@@ -11,13 +11,6 @@ import { palette } from './DrawingBar';
 import { isPlaceholder } from './image-elements';
 import { FrameGlyph, frameFill, frameKind, frameLine, frameWidth, type TextFrameKind } from '../TextFrame';
 import { fitText, onRuling, pxToMm } from './text-measure';
-import { webAddress } from '@/lib/learning/medien';
-
-function EmbedAddress({element,onChange}:{element:PageElement;onChange:(patch:Partial<PageElement>)=>void}) {
-  const [url,setUrl]=useState(element.url||'');
-  const ready=webAddress(url);
-  return <OptionGroup label="Internetadresse"><input className="option-input" aria-label="Internetadresse" value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://…"/><ChoiceButton icon="checkmark" label="Adresse übernehmen" disabled={!ready} onClick={()=>onChange({url:ready!})}/></OptionGroup>;
-}
 
 export type ElementActions = {
   onResize: (factor: number) => void;
@@ -36,6 +29,8 @@ export type ElementActions = {
   onEditAudio?: (element: PageElement) => void;
   /** Opens the image dialog for a photo placeholder. */
   onFill?: (element: PageElement) => void;
+  /** Opens „Video oder Webseite ändern“ for an embedded video, web page or QR poster. */
+  onEditEmbed?: (element: PageElement) => void;
 };
 
 const textFrames: [TextFrameKind, string][] = [
@@ -129,7 +124,12 @@ export default function ElementBar({
       icon: 'settings',
       content: (
         <>
-          {first.type==='embed' && first.embedKind!=='app' && <EmbedAddress key={first.id} element={first} onChange={patch}/>}
+          {first.type==='embed' && first.embedKind!=='app' && (
+            <OptionGroup label={first.embedKind==='qr' ? 'QR-Plakat' : first.embedKind==='video' ? 'Video' : 'Webseite'}>
+              {actions.onEditEmbed && !locked && <ChoiceButton icon="globe" label={first.url ? 'Ändern' : 'Video oder Webseite einfügen'} onClick={() => actions.onEditEmbed!(first)} />}
+              {first.url && <ChoiceButton icon="share" label="In neuem Fenster öffnen" onClick={() => window.open(first.url, '_blank', 'noopener')} />}
+            </OptionGroup>
+          )}
           {(first.type === 'widget' || first.type === 'activity') && actions.onConfigure && (
             <OptionGroup label={first.type === 'widget' ? 'Lernwerkzeug' : 'Übung'}>
               <ChoiceButton icon="settings" label="Aufgabe gestalten" onClick={() => actions.onConfigure!(first)} />
