@@ -418,6 +418,8 @@ Object.assign(sheetAliases, {
   [pick('labels case', labelsDialog, /label: ([\w$]+)\(`GROSS`, `upper`\)/)]: 'labelCase',
   [pick('labels defaults', fns.get(find('labels load', t => t.startsWith('function') && t.includes(`localStorage.getItem(${labelsKey})`))), /return ([\w$]+);/)]: 'LABEL_DEFAULTS',
 });
+// The carpet of one Programmieren task as a square picture (for building own tasks, added 2026-11-20).
+sheetAliases[find('code carpet', t => t.startsWith('function') && t.includes('n10.noGoal') && t.includes('viewBox="${'))] = 'codeCarpet';
 const sheets = extract(Object.keys(sheetAliases));
 { const outside = sheets.replace(/http:\/\/www\.w3\.org\/[\w/]+/g, '').replaceAll('https://www.latex-project.org/lppl/', '').replaceAll('https://github.com/hyphenation/tex-hyphen', '') /* licence texts of the hyphenation patterns, no requests */.match(/.{0,60}https?:\/\/.{0,60}/g); if (outside) { console.error(outside.join('\n')); throw Error('The worksheets would reach an outside address.'); } }
 let sheetCode = sheets;

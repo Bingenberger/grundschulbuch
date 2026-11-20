@@ -84,6 +84,8 @@ import { ChoiceButton, Choices, OptionGroup } from '../ui/Choice';
 import { GROUPS, LEVELS, TOLERANCES, geoConfig, makeTasks, taskText, type GeoConfig } from '@/lib/learning/geodraw';
 import { mathTool, pageSize, viewSize } from '@/lib/learning/mathtool';
 import MathToolOptions from './MathToolOptions';
+import { unsolvable } from '@/lib/learning/code-editor';
+import { codeSettings } from './CodeWidget';
 import { uploadImage } from '@/lib/client-api';
 const activityIcons: Record<ActivityKind, IconName> = {
   quiz: 'questions', matching: 'flow_chart', cloze: 'rules', typing: 'signature',
@@ -373,6 +375,10 @@ export default function LearningDialog({
               if (settings.musicTemplate === 'karaoke') {
                 const config = decodeMusicConfig(settings.musicConfig);
                 readySettings = { ...settings, musicConfig: encodeMusicConfig({ ...config, karaoke: cleanKaraokeSettings(config.karaoke) }) };
+              }
+              if (kind === 'programmieren') {
+                const bad = unsolvable(codeSettings(settings.pg));
+                if (bad >= 0) { setError(`Aufgabe ${bad + 1} ist so nicht lösbar.`); return; }
               }
               if (kind === 'alphabet' && settings.words?.some(word => word.length > 80)) { setError('Ein Übungswort darf höchstens 80 Zeichen haben.'); return; }
               if (kind === 'alphabet' && settings.alphabetPractice && !practiceWords(settings).length) { setError('Bitte mindestens ein Übungswort hinterlegen.'); return; }

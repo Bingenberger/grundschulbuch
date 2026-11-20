@@ -250,3 +250,13 @@ dazu kommen aus unserer Bildsuche und liegen auf dem Schulserver.
   mitgelieferten Laut zurück. Anders als in der Vorlage gelten die Aufnahmen
   für diese Tastatur, nicht für alle Tastaturen der App.
 - Eintippkästchen der Arbeitsblätter sind festgemacht wie in der Vorlage.
+- **Programmieren: eigene Aufgaben** (`lib/learning/code-editor.ts`,
+  `CodeOptions.tsx`): Aufgaben durchblättern („Aufgabe 2 von 5 · eigene“),
+  „Diese neu“, „Löschen“, „+ Aufgabe“, „Alle anderen neu“; „Selbst bauen“ mit
+  Figur, Ziel, Hindernis, Stern und Verschieben auf dem Teppich (Bild aus
+  `codeCarpet` des Ports); Prüfung „Lösbar – das kürzeste Programm hat …“ bzw.
+  „So geht es nicht …“, unlösbare Aufgaben lassen sich nicht übernehmen.
+  Einstellungen wie Schwierigkeit würfeln die Aufgaben neu, eigene bleiben
+  (außer bei anderer Lektion oder Teppichgröße). Offen: das Werkzeug „Linie“
+  für eigene Formen beim Zeichnen mit dem Stift (braucht `lines` im
+  Programmieren-Code, den es erst in 1.49.0 gibt).

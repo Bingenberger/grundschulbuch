@@ -2,10 +2,12 @@
 // Settings of Programmieren with the choices of the reference's dialog: lesson,
 // kind of task, input (cards or keys like a floor robot), help, words or
 // numbers, difficulty, obstacles, carpet, number of tasks, figure, look, speed,
-// voice – and the robot itself as a playable preview. (The reference also lets
-// teachers draw their own tasks on the carpet; here the tasks are made by the
-// reference from these settings.)
-import { useLayoutEffect, useRef } from 'react';
+// voice – and the robot itself as a playable preview. As in Lernsachen-Heft
+// 1.49.0 the tasks can be gone through one by one, thrown again, deleted,
+// added, and built on the carpet (figure, goal, obstacles, stars, moving).
+import { useLayoutEffect, useRef, useState } from 'react';
+import { codeCarpet } from '@/lib/sheets/sheets-1473';
+import { applyTool, cellAt, cellBox, changeSettings, checkTask, codeTools, freshTasks, renewKeepingOwn, TOOL_HINTS, TOOL_LABELS, type Cell, type CodeTask, type CodeTool } from '@/lib/learning/code-editor';
 import type { JsonValue } from '@/lib/learning/catalog';
 import { CODE_CARPETS, CODE_CHOICES, CODE_COSTUMES, CODE_CSS, CODE_RANGES, CODE_SIZES, carpetPicture, codeLevelHint, codeWithoutPad, costumePicture, renderCode } from '@/lib/reference/tools-runtime';
 import { fingerprint } from '@/lib/learning/werkzeuge';
@@ -65,11 +67,67 @@ function Preview({ pg }: { pg: Record<string, unknown> }) {
 
 export default function CodeOptions({ value, onChange, upload, busy }: { value: unknown; onChange: (v: JsonValue) => void; upload: (file: File, done: (src: string) => void) => Promise<void>; busy: boolean }) {
   const pg = codeSettings(value);
+  const tasks = pg.tasks as CodeTask[];
+  const [index, setIndex] = useState(0);
+  const [tool, setTool] = useState<CodeTool | null>(null);
+  const [pick, setPick] = useState<Cell | null>(null);
+  const at = Math.min(index, tasks.length - 1), task = tasks[at];
+  const tools = codeTools(pg);
+  const save = (next: Record<string, unknown>) => onChange(codeSettings(next) as unknown as JsonValue);
+  const setTasks = (list: CodeTask[], go = at) => { save({ ...pg, count: list.length, tasks: list }); setIndex(go); setPick(null); };
+  const check = checkTask(pg, task);
+  const carpet = tool ? svg(codeCarpet(pg, task)) : '';
+  const tap = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!tool) return;
+    const box = e.currentTarget.getBoundingClientRect();
+    const cell = cellAt(task.n, (e.clientX - box.left) / box.width, (e.clientY - box.top) / box.height);
+    if (!cell) return;
+    const r = applyTool(task, tool, cell[0], cell[1], pick);
+    if (r.t !== task) save({ ...pg, tasks: tasks.map((t, i) => (i === at ? r.t : t)) });
+    setPick(r.pick);
+  };
+  const mark = pick && cellBox(task.n, pick[0], pick[1]);
   return (
-    <div className="receipt-options tool-options">
-      <Preview pg={pg} />
-      <p className="option-hint">Probier es aus: Bausteine antippen und das Programm laufen lassen.</p>
-      <ToolForm fields={FIELDS} value={pg} onChange={(d) => onChange(codeSettings(d) as unknown as JsonValue)} upload={upload} busy={busy} />
+    <div className="receipt-options tool-options code-options">
+      <div className="code-nav">
+        <button type="button" className="knopf compact" aria-label="Aufgabe davor" disabled={at <= 0} onClick={() => { setIndex(at - 1); setPick(null); }}>‹</button>
+        <strong>Aufgabe {at + 1} von {tasks.length}{task.own ? ' · eigene' : ''}</strong>
+        <button type="button" className="knopf compact" aria-label="Nächste Aufgabe" disabled={at >= tasks.length - 1} onClick={() => { setIndex(at + 1); setPick(null); }}>›</button>
+      </div>
+      {tool ? (
+        <div className={`code-board${tool ? ' is-editing' : ''}`} onClick={tap}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- The carpet drawn by the reference. */}
+          <img src={carpet} alt={`Teppich der Aufgabe ${at + 1}`} draggable={false} />
+          {mark && <span className="code-pick" style={{ left: `${mark.left * 100}%`, top: `${mark.top * 100}%`, width: `${mark.w * 100}%`, height: `${mark.h * 100}%` }} />}
+        </div>
+      ) : (
+        <>
+          <Preview pg={{ ...pg, tasks: [task], count: 1 }} />
+          <p className="option-hint">Probier es aus: Bausteine antippen und das Programm laufen lassen.</p>
+        </>
+      )}
+      {tools.length > 0 && (
+        <div className="code-build">
+          <strong>Selbst bauen:</strong>
+          <div className="sheet-chips" role="radiogroup" aria-label="Werkzeug">
+            {tools.map((t) => (
+              <button key={t} type="button" role="radio" aria-checked={tool === t} className={`sheet-chip${tool === t ? ' is-active' : ''}`} onClick={() => { setTool(tool === t ? null : t); setPick(null); }}>
+                {TOOL_LABELS[t]}
+              </button>
+            ))}
+          </div>
+          <p className="option-hint">{tool ? TOOL_HINTS[tool] : 'Wähle ein Werkzeug und tippe in die Vorschau.'}</p>
+        </div>
+      )}
+      <p className={`code-check${check.ok ? '' : ' is-bad'}`} role="status">{check.ok ? '✓ ' : '✗ '}{check.text || 'In Ordnung.'}</p>
+      <div className="learning-actions code-taskbar">
+        <button type="button" className="knopf compact" onClick={() => setTasks(tasks.map((t, i) => (i === at ? freshTasks({ ...pg, count: 1 }, codeSettings)[0] : t)))}>Diese neu</button>
+        <button type="button" className="knopf compact" disabled={tasks.length <= 1} onClick={() => setTasks(tasks.filter((_, i) => i !== at), Math.max(0, at - 1))}>Löschen</button>
+        <button type="button" className="knopf compact" disabled={tasks.length >= 10} onClick={() => setTasks([...tasks, freshTasks({ ...pg, count: 1 }, codeSettings)[0]], tasks.length)}>+ Aufgabe</button>
+        <button type="button" className="knopf compact" onClick={() => setTasks(renewKeepingOwn(pg, codeSettings))}>Alle anderen neu</button>
+      </div>
+      <p className="option-hint">Jede ausgewürfelte Aufgabe ist lösbar. Selbst gebaute Aufgaben („eigene“) bleiben, wenn du Einstellungen änderst oder neue Aufgaben würfelst – außer bei einer anderen Lektion oder Teppichgröße.</p>
+      <ToolForm fields={FIELDS} value={pg} onChange={(d) => { const next = changeSettings(pg, d, codeSettings); if (next.lesson !== pg.lesson) setTool(null); save(next); setIndex((i) => Math.min(i, (next.tasks as unknown[]).length - 1)); }} upload={upload} busy={busy} />
     </div>
   );
 }
