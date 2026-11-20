@@ -167,8 +167,9 @@ dazu kommen aus unserer Bildsuche und liegen auf dem Schulserver.
   sind unverändert übernommen (`src/lib/sheets/sheets-1473.ts`, vom
   Extraktionsskript), die Dialoge folgen ihnen mit unseren Bausteinen
   (Übungen, Stufe, Seiten, Lösungsseiten, Vorschau). Lösungskontrolle wie in
-  der Vorlage (Stand 20.11.2026) für Karopapier, Rechnen im Alltag und Laute
-  hören: „Keine“, „Sofort ✓ ✗“ oder „Knopf ‚Prüfen‘“ (zeigt ✓/✗ und „3 von 5
+  der Vorlage (Stand 20.11.2026, Version 1.49.0) für Karopapier, Rechnen im
+  Alltag, Laute hören und die älteren Generatoren Mathe-Aufgaben, Uhrzeiten
+  üben, Rechnen mit Geld, Noten lernen (`checkItems` in reference-sheets.ts): „Keine“, „Sofort ✓ ✗“ oder „Knopf ‚Prüfen‘“ (zeigt ✓/✗ und „3 von 5
   richtig · …“; das Zeichen bleibt, bis die Antwort geändert wird). Vergleich
   in `lib/sheets/answers.ts` (7 = 7 cm = 70 mm, Uhrzeiten, Geld). Seiten mit
   Lineal-Aufgaben (Karopapier „Strecken messen/zeichnen“, `page.tool`): Stift

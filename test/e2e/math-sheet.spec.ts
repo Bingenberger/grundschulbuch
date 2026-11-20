@@ -176,3 +176,28 @@ test('Buchstaben üben und Ziffern üben: Schrift, Schwungübungen, Anlautbild w
   await expect(page.locator('.page-thumbnail')).toHaveCount(4);
   await page.screenshot({ path: test.info().outputPath('ziffern-seite.png') });
 });
+
+test('Mathe-Aufgaben mit Lösungskontrolle: Knopf „Prüfen“ wie in der Vorlage', async ({ page }) => {
+  await login(page);
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Mathe prüfen', pages: [newPage('blanko', 'landscape')] } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  await page.evaluate(() => localStorage.removeItem('grundschulbuch-mathe-aufgaben'));
+  await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Neue Seite', exact: true }).click();
+  const templates = page.getByRole('dialog', { name: 'Neue Seite' });
+  await templates.getByRole('navigation', { name: 'Kategorien' }).getByRole('button', { name: /^Einstellbar · / }).click();
+  await templates.getByRole('button', { name: 'Vorlage Mathe-Aufgaben' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Mathe-Aufgaben' });
+  await dialog.getByRole('radiogroup', { name: 'Lösungskontrolle' }).getByRole('radio', { name: 'Knopf „Prüfen“' }).click();
+  await expect(dialog.getByText(/Oben rechts steht ein Knopf „Prüfen“/)).toBeVisible();
+  await dialog.getByRole('button', { name: /Seite einfügen/ }).click();
+  await expect(dialog).toHaveCount(0, { timeout: 20000 });
+  const surface = page.locator('.interaction-surface');
+  const boxes = surface.locator('.answer-field');
+  const count = await boxes.count();
+  expect(count).toBeGreaterThan(3);
+  await boxes.nth(0).click(); await page.keyboard.type('9999');
+  await surface.getByRole('button', { name: 'Prüfen', exact: true }).click();
+  await expect(page.getByRole('status').filter({ hasText: `0 von ${count} richtig` })).toBeVisible();
+  await expect(surface.locator('.answer-mark.is-bad')).toHaveCount(1);
+  await page.screenshot({ path: test.info().outputPath('mathe-pruefen.png') });
+});

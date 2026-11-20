@@ -103,7 +103,7 @@ export default function MathSheetDialog({ onClose, onInsert }: { onClose: () => 
             </div>
           </Section>
         )}
-        <PagesSection n={settings ? 4 : 3} o={o} set={set} chosen={chosen.length} missing={missing} />
+        <PagesSection n={settings ? 4 : 3} o={o} set={set} chosen={chosen.length} missing={missing} checkable />
       </div>
       <Preview pages={pages} hint="In jedes Kästchen tippt man das Ergebnis – oder schreibt es mit dem Stift." />
     </SheetDialog>

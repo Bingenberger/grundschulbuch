@@ -44,7 +44,7 @@ export default function ClockSheetDialog({ onClose, onInsert }: { onClose: () =>
             ))}
           </div>
         </Section>
-        <PagesSection n={3} o={o} set={set} chosen={o.formats.length} missing={missing} />
+        <PagesSection n={3} o={o} set={set} chosen={o.formats.length} missing={missing} checkable />
       </div>
       <Preview pages={pages} hint="Die Uhrzeit tippt man in die Kästchen – die Zeiger malt man mit dem Stift." />
     </SheetDialog>

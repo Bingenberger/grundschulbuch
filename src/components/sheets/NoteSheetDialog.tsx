@@ -58,7 +58,7 @@ export default function NoteSheetDialog({ onClose, onInsert }: { onClose: () => 
             ))}
           </div>
         </Section>
-        <PagesSection n={3} o={o} set={set} chosen={o.formats.length} missing={missing} />
+        <PagesSection n={3} o={o} set={set} chosen={o.formats.length} missing={missing} checkable />
       </div>
       <Preview pages={pages} hint="Die Notennamen tippt man in die Kästchen – Noten zeichnet man mit dem Stift." />
     </SheetDialog>

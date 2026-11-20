@@ -47,7 +47,7 @@ export const helpTopics: HelpTopic[] = [
     body: [
       '„Neue Seite“ in der Seitenübersicht links öffnet die Vorlagen: Lineaturen, Karopapier, Notenlinien und viele gestaltete Seiten. Links stehen die Kategorien, oben die Suche; zuletzt benutzte Vorlagen stehen vorn.',
       'Unter „Einstellbar“ machen Vorlagen nach deinen Einstellungen fertige Arbeitsblätter – zum Beispiel Mathe-Aufgaben, Uhrzeiten, Geld, Buchstaben oder Labyrinthe, auf Wunsch mit Lösungsseiten.',
-      'Bei Karopapier, Rechnen im Alltag und Laute hören gibt es eine Lösungskontrolle: Die Kinder tippen ihre Ergebnisse in die Kästchen, und daneben erscheint sofort ✓ oder ✗ – oder erst, wenn sie oben rechts auf „Prüfen“ tippen. Auf Seiten zum Messen und Zeichnen ist der Stift schon an, und das Lineal liegt unten links bereit; die Kästchen lassen sich trotzdem antippen.',
+      'Bei Mathe-Aufgaben, Uhrzeiten üben, Rechnen mit Geld, Noten lernen, Karopapier, Rechnen im Alltag und Laute hören gibt es eine Lösungskontrolle: Die Kinder tippen ihre Ergebnisse in die Kästchen, und daneben erscheint sofort ✓ oder ✗ – oder erst, wenn sie oben rechts auf „Prüfen“ tippen. Auf Seiten zum Messen und Zeichnen ist der Stift schon an, und das Lineal liegt unten links bereit; die Kästchen lassen sich trotzdem antippen.',
       'Eine Seite kann auch Endlospapier sein: Es wächst in alle Richtungen mit dem Inhalt. Endlospapier kommt nicht ins PDF und nicht auf den Drucker.',
     ] },
   { id: 'seite-einstellen', chapter: 'seiten', title: 'Seite einstellen: Papier, Farben, Rahmen', keywords: 'design hintergrund papierfarbe rahmen format hoch quer',

@@ -64,3 +64,32 @@ test('Karopapier: Kästchen mit Lösung, „Prüfen“-Knopf und Lineal auf Mess
   const [plain] = make('none', ['measure']);
   assert.ok(plain.elements.every((e) => e.answer === undefined && e.action === undefined));
 });
+
+test('Mathe-Aufgaben, Uhrzeiten, Geld, Noten: Lösungskontrolle wie in der Vorlage 1.49.0', async () => {
+  const ref = await bundle('src/lib/sheets/reference-sheets.ts');
+  const { toPages } = await bundle('src/lib/sheets/convert.ts');
+  const sheets = [
+    ['Mathe', (check) => ref.makeMathPages({ ...ref.MATH_DEFAULTS, range: 100, formats: ['plus', 'minus', 'wall'], layout: 'mixed', pages: 1, solutions: true, check }, undefined)],
+    ['Uhr', (check) => ref.makeClockPages({ ...ref.CLOCK_DEFAULTS, formats: ['read', 'words'], layout: 'mixed', pages: 1, solutions: true, check }, undefined)],
+    ['Noten', (check) => ref.makeNotePages({ ...ref.NOTE_DEFAULTS, layout: 'mixed', pages: 1, solutions: true, check }, undefined)],
+    ['Geld', (check) => ref.makeMoneyPages({ ...ref.MONEY_DEFAULTS, layout: 'mixed', pages: 1, solutions: true, check }, undefined, undefined)],
+  ];
+  assert.ok(sameAnswer('13', '13,00 €') && sameAnswer('97 ct', '0,97 €') && sameAnswer('0', '00'), 'money and minutes as typed by children');
+  for (const [name, make] of sheets) {
+    const [page, solution] = toPages(make('button'));
+    const boxes = page.elements.filter((e) => e.placeholder !== undefined && e.type === 'text');
+    assert.ok(boxes.length > 0, `${name}: answer boxes`);
+    assert.ok(boxes.every((e) => typeof e.answer === 'string' && e.answer && e.check === 'button'), `${name}: every box knows its result`);
+    assert.ok(boxes.every((e) => sameAnswer(e.answer, e.answer)), `${name}: results are checkable`);
+    assert.equal(page.elements.filter((e) => e.action === 'check').length, 1, `${name}: one Prüfen`);
+    // Typing the results makes everything right.
+    const filled = { ...page, elements: page.elements.map((e) => (e.answer !== undefined ? { ...e, text: e.answer } : e)) };
+    assert.match(checkPage(filled).message, /^Alles richtig/, name);
+    // The solution page shows the results and checks nothing.
+    assert.ok(solution.elements.every((e) => e.answer === undefined && e.action === undefined), `${name}: solution page`);
+    const [plain] = toPages(make('none'));
+    assert.ok(plain.elements.every((e) => e.answer === undefined && e.action === undefined), `${name}: without Lösungskontrolle`);
+    const [each] = toPages(make('each'));
+    assert.ok(each.elements.some((e) => e.check === 'each') && !each.elements.some((e) => e.action), `${name}: Sofort without button`);
+  }
+});

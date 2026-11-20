@@ -761,12 +761,24 @@ function yV(e10, t10, n10, r10, i10) {
   for (let a11 = 0; a11 < i10; a11++) n10.row(e10, t10, r10), r10 += o10 + UB;
   return r10;
 }
+// Lösungskontrolle as in Lernsachen-Heft 1.49.0: answer boxes get their result
+// and the way they are checked; with `button` a green “Prüfen” sits at the top right.
+function checkItems(e10, t10) {
+  if (!t10 || t10 === `none` || !e10.answers.size) return e10.items;
+  let n10 = e10.items.map((n11) => {
+    let r10 = e10.answers.get(n11.id);
+    return r10 !== void 0 && n11.type === `text` ? { ...n11, answer: String(r10), check: t10 } : n11;
+  });
+  return t10 === `button` && n10.push(j({ x: 1100, y: 32, w: 230, h: 66, size: 34, html: `Pr\xFCfen`, font: `nunito`, bold: true, align: `center`, color: `#ffffff`, fill: `#16a34a`, action: `check`, locked: true })), n10;
+}
 function Fve(e10, t10, n10) {
   let r10 = ZO(n10);
-  r10.items = e10.items.map((e11) => {
+  // Solution pages: no “Prüfen” and nothing to check.
+  r10.items = e10.items.filter((e11) => !(e11.type === `text` && e11.action)).map((e11) => {
     let n11 = t10.swaps.get(e11.id);
     if (n11) return { ...n11, id: YO(`st`) };
     let r11 = { ...e11, id: YO(e11.type.slice(0, 2)) }, i11 = t10.answers.get(e11.id);
+    r11.type === `text` && (delete r11.answer, delete r11.check, delete r11.marked);
     return i11 !== void 0 && r11.type === `text` && (r11.html = mT(i11), r11.color = cve, r11.bold = true, delete r11.placeholder), r11;
   });
   let i10 = r10.items.find((e11) => e11.type === `text` && e11.y < HB && e11.size === 44);
@@ -776,7 +788,7 @@ function bV(e10, t10, n10, r10, i10, a10) {
   if (!e10.length) return [];
   let o10 = [], s10 = (e11) => {
     let t11 = ZO(i10);
-    return t11.items = e11.items, t11;
+    return t11.items = checkItems(e11, t10.check), t11;
   };
   if (t10.layout === `single` || e10.length === 1) {
     let i11 = Math.max(1, t10.pages);

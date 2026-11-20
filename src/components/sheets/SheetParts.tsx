@@ -27,6 +27,7 @@ export const cleanLayout = <T extends SheetLayout>(v: T): T => ({
   layout: v.layout === 'single' ? 'single' : 'mixed',
   pages: Math.min(20, Math.max(1, Number(v.pages) || 1)),
   solutions: v.solutions === true,
+  check: v.check === 'each' || v.check === 'button' ? v.check : 'none',
 });
 
 export function Section({ title, children }: { title: string; children: ReactNode }) {

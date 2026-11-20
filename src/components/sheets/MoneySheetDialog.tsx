@@ -107,7 +107,7 @@ export default function MoneySheetDialog({ onClose, onInsert }: { onClose: () =>
             </p>
           )}
         </Section>
-        <PagesSection n={3} o={o} set={set} chosen={chosen.length} missing={missing} />
+        <PagesSection n={3} o={o} set={set} chosen={chosen.length} missing={missing} checkable />
       </div>
       <Preview pages={pages} hint="Die Beträge tippt man in die Kästchen – oder schreibt sie mit dem Stift. Einkreisen geht mit dem Stift." />
     </SheetDialog>
