@@ -169,11 +169,11 @@ const SKIP = new Set([
 ]);
 
 /** Regal › Mathe of the reference. */
-const mathTools: [string, MathToolKind, number, string][] = [
-  ['Rechenschiffchen 5', 'boat', 5, 'fünf Plätze, blau und rot'],
-  ['Rechenschiffchen 10', 'boat', 10, 'Plättchen blau und rot, immer der Reihe nach'],
-  ['Rechenschiffchen 20', 'boat', 20, 'zwei Schiffchen bis 20'],
-  ['Rechenrahmen 20', 'abacus', 2, 'zwei Reihen mit je 10 Kugeln'],
+const mathTools: [string, MathToolKind, number, string, Partial<LearningSettings>?][] = [
+  ['Rechenschiffchen 10', 'boat', 10, 'zwei Fünfer-Schiffchen, Plättchen blau und rot'],
+  ['Rechenschiffchen 5', 'boat', 5, 'ein Schiffchen mit fünf Plätzen'],
+  ['Rechenschiffchen 20', 'boat', 20, 'vier Schiffchen in zwei Zehner-Reihen', { mathWide: true }],
+  ['Rechenrahmen 20', 'abacus', 2, 'zwei Reihen, Farbwechsel nach fünf Kugeln'],
   ['Rechenrahmen 100', 'abacus', 10, 'zehn Reihen mit je 10 Kugeln'],
   ['Lineal 15 cm', 'ruler', 15, 'in echter Größe beim Ausdrucken'],
   ['Lineal 30 cm', 'ruler', 30, 'in echter Größe beim Ausdrucken'],
@@ -206,13 +206,13 @@ export function receiptPage(orientation: Page['orientation'], receipt: LearningS
   return [page];
 }
 
-const toolBlocks: LearningBlock[] = mathTools.map(([title, tool, n, hint]) => ({
+const toolBlocks: LearningBlock[] = mathTools.map(([title, tool, n, hint, extra]) => ({
   id: `mathtool-${tool}-${n}`,
   title,
   subject: 'Mathematik',
   type: 'widget',
   kind: 'mathtool',
-  preset: { ...defaultSettings('mathtool'), title, mathTool: tool, mathSize: n },
+  preset: { ...defaultSettings('mathtool'), title, mathTool: tool, mathSize: n, ...extra },
   direct: true,
   words: `${title} ${hint} mathematik zwanzigerfeld hunderterfeld`,
 }));

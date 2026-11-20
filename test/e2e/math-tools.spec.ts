@@ -23,9 +23,12 @@ test('Mathe-Werkzeuge wie in der Vorlage: Rechenschiffchen, Rechenrahmen, Tasche
 
   await insert(page, 'Rechenschiffchen 10');
   const boat = surface.getByRole('group', { name: /^Rechenschiffchen 10/ });
-  await boat.getByRole('button', { name: 'Platz 7' }).click(); // tapping anywhere adds the next one
-  await boat.getByRole('button', { name: 'Platz 2' }).click();
-  await boat.getByRole('button', { name: 'Platz 2, blau' }).click(); // last one: blue → red
+  await boat.getByRole('button', { name: 'Platz 4' }).click(); // a free place fills up to there
+  await expect(boat).toHaveAttribute('aria-label', 'Rechenschiffchen 10: 4 blaue und 0 rote Plättchen.');
+  await boat.getByRole('button', { name: 'Platz 2, blau' }).click(); // blue turns red with all after it
+  await expect(boat).toHaveAttribute('aria-label', 'Rechenschiffchen 10: 1 blaue und 3 rote Plättchen.');
+  await boat.getByRole('button', { name: 'Ein Plättchen weg' }).click();
+  await boat.getByRole('button', { name: 'Ein Plättchen weg' }).click();
   await expect(boat).toHaveAttribute('aria-label', 'Rechenschiffchen 10: 1 blaue und 1 rote Plättchen.');
   await page.screenshot({ path: test.info().outputPath('rechenschiffchen.png') });
   await page.keyboard.press('Escape');
@@ -51,6 +54,53 @@ test('Mathe-Werkzeuge wie in der Vorlage: Rechenschiffchen, Rechenrahmen, Tasche
   await page.reload();
   await expect(page.locator('.interaction-surface').getByRole('group', { name: /^Rechenschiffchen 10/ })).toHaveAttribute('aria-label', 'Rechenschiffchen 10: 1 blaue und 1 rote Plättchen.');
   await page.screenshot({ path: test.info().outputPath('mathe-werkzeuge.png') });
+});
+
+test('Rechenschiffchen und Rechenrahmen einstellen wie in der Vorlage', async ({ page }) => {
+  await login(page);
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Mathe einstellen', orientation: 'landscape' } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  const surface = page.locator('.interaction-surface');
+  await insert(page, 'Rechenschiffchen 10');
+  const settings = async () => {
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur()); // Enter on a focused key would press it
+    await surface.click({ position: { x: 5, y: 5 } });
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.press('Enter');
+    return page.getByRole('dialog', { name: 'Lernwerkzeug gestalten', exact: true });
+  };
+  let dialog = await settings();
+  await dialog.getByRole('radiogroup', { name: 'Plätze' }).getByRole('radio', { name: '20 Plätze' }).click();
+  await dialog.getByRole('radiogroup', { name: 'Anordnung' }).getByRole('radio', { name: 'Nebeneinander (Zehner-Reihen)' }).click();
+  await dialog.getByRole('slider', { name: 'Blaue Plättchen' }).fill('4');
+  await dialog.getByRole('slider', { name: 'Rote Plättchen' }).fill('3');
+  await dialog.getByRole('radiogroup', { name: 'Rechnung' }).getByRole('radio', { name: 'Rechnung zum Aufdecken (?)' }).click();
+  await expect(dialog.locator('.mt-preview svg')).toHaveAttribute('aria-label', 'Rechenschiffchen 20: 4 blaue und 3 rote Plättchen.');
+  await page.screenshot({ path: test.info().outputPath('rechenschiffchen-einstellen.png') });
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  const boat = surface.getByRole('group', { name: /^Rechenschiffchen 20/ });
+  await expect(boat).toHaveAttribute('aria-label', 'Rechenschiffchen 20: 4 blaue und 3 rote Plättchen.');
+  await boat.getByRole('button', { name: 'Zahl zeigen' }).click();
+  await expect(boat.getByRole('button', { name: '4 + 3 = 7 – antippen zum Verdecken' })).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  // Switched to the Rechenrahmen with a number at the start: all beads coloured.
+  dialog = await settings();
+  await dialog.getByRole('button', { name: 'Rechenrahmen', exact: true }).click();
+  await dialog.getByRole('radiogroup', { name: 'Größe' }).getByRole('radio', { name: 'Bis 100 (zehn Reihen)' }).click();
+  await dialog.getByRole('slider', { name: 'Zahl' }).fill('43');
+  await dialog.getByRole('radiogroup', { name: 'Zahl', exact: true }).getByRole('radio', { name: 'Zahl immer zeigen' }).click();
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  const frame = surface.getByRole('group', { name: /^Rechenrahmen 100/ });
+  await expect(frame).toHaveAttribute('aria-label', 'Rechenrahmen 100: 43 Kugeln links.');
+  const fills = await frame.locator('.mt-bead ellipse:first-child').evaluateAll((list) => [...new Set(list.map((e) => e.getAttribute('fill')))]);
+  expect(fills.sort()).toEqual(['#1c7ed6', '#e03131']);
+  await frame.getByRole('button', { name: 'Reihe 6, Kugel 1', exact: true }).click();
+  await expect(frame).toHaveAttribute('aria-label', 'Rechenrahmen 100: 44 Kugeln links.');
+  await frame.getByRole('button', { name: 'Alle Kugeln nach rechts' }).click();
+  await expect(frame).toHaveAttribute('aria-label', 'Rechenrahmen 100: 43 Kugeln links.'); // back to the start
+  await page.screenshot({ path: test.info().outputPath('rechenrahmen-100.png') });
 });
 
 test('Kassenzettel: Summe und Rückgeld eintragen, Stempel, nächster Zettel', async ({ page }) => {

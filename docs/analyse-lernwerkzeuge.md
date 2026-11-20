@@ -234,6 +234,20 @@ Umbau Stück für Stück geprüft.
   Lineal 10–30 cm in echter Größe (Elementbreite in mm), Taschenrechner (spricht
   das Ergebnis). Gleiche Maße, Farben und Logik; „Alles weg“-Knopf. Der Zustand
   wird als Antwort gespeichert (bleibt in Kinderheften erhalten).
+- Nachgezogen nach Lernsachen-Heft-komplett (Stand 20.11.2026): Einstellungsseite
+  „Rechenschiffchen/Rechenrahmen einstellen“ (`MathToolOptions.tsx`, mit Vorschau):
+  Plätze 5/10/20 und Anordnung untereinander (Fünfer-Reihen) oder nebeneinander
+  (Zehner-Reihen), blaue und rote Plättchen am Anfang, Rechnung darunter
+  (nicht, zum Aufdecken „?“, immer); Rahmen bis 20/100, Zahl am Anfang, Zahl
+  darunter. Neue Schiffchen-Logik: erst blau, dann rot, ohne Lücke; freier Platz
+  füllt bis dorthin, blaues Plättchen wird mit allen dahinter rot, rotes mit allen
+  davor blau; Knöpfe „blau dazu“, „rot dazu“, „eins weg“, „zurücksetzen“ (auf den
+  Anfang der Einstellungen). Rechenrahmen: alle Kugeln gefärbt (vorher waren die
+  rechten fünf weiß – Fehler der alten Vorlage), beim 100er beginnen die unteren
+  fünf Reihen blau. Einstellungen `mathWide`, `mathBlue`, `mathRed`, `mathStart`,
+  `mathShow`; ältere Antworten (`cells`) werden weiter gelesen. Ändern der
+  Einstellungen setzt die Antwort zurück und passt die Größe an (Maßstab bleibt).
+  Offen: Kassenzettel-Streifen am Taschenrechner („Rechner mit Zettel“).
 - Neuer Baustein `receipt` (`lib/learning/receipt.ts`, `Receipt.tsx`):
   Kassenzettel wie „Rechnen mit dem Taschenrechner“ – drei Warenlisten
   (Supermarkt, Kaufhaus, Kiosk), leichte oder krumme Preise, Summe mit

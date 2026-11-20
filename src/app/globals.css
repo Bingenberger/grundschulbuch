@@ -4694,6 +4694,12 @@ a.embed-poster {text-decoration:none;}
 .math-tool .mt-bead { transition: transform 0.28s cubic-bezier(0.3, 1.3, 0.5, 1); }
 .math-tool .mt-token { transform-box: fill-box; transform-origin: center; animation: mt-pop 0.22s ease-out; }
 @keyframes mt-pop { from { transform: scale(0.4); } to { transform: scale(1); } }
+.mt-options { display: grid; gap: 14px; }
+.mt-options .sheet-section { margin-bottom: 0; }
+.mt-options .sheet-chips + .sheet-chips { margin-top: 10px; }
+.mt-preview { display: grid; place-items: center; padding: 12px; border-radius: 12px; background: #f1f5f9; }
+.mt-preview .math-tool { width: 100%; height: 200px; }
+.mt-note { margin: 8px 0 0; font-size: 14px; color: #475569; }
 @media (prefers-reduced-motion: reduce) {
   .math-tool .mt-bead { transition: none; }
   .math-tool .mt-token { animation: none; }

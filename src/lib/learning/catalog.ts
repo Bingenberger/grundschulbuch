@@ -116,6 +116,14 @@ export type LearningSettings = {
   /** Mathe-Werkzeug: boat, abacus, ruler or calc, and its size (5/10/20, 2/10, cm). */
   mathTool?: 'boat' | 'abacus' | 'ruler' | 'calc';
   mathSize?: number;
+  /** Rechenschiffchen side by side (rows of ten), tokens at the start. */
+  mathWide?: boolean;
+  mathBlue?: number;
+  mathRed?: number;
+  /** Rechenrahmen: number set at the start. */
+  mathStart?: number;
+  /** Sum (boats) or number (frame) below: off, “?” to tap open, always. */
+  mathShow?: 'off' | 'tap' | 'on';
   /** Geometrie: Formen zeichnen (see learning/geodraw.ts). */
   geo?: { level?: string; count?: number; groups?: string[]; tol?: string; flash?: number; tasks?: { k: string; a: number; b?: number; d?: number; n?: number }[] };
   /** Einkaufen an der Kasse (see learning/checkout.ts). */

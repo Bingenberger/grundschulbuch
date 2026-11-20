@@ -2,25 +2,34 @@
 import type { PageElement } from '@/lib/notebook-model';
 import {
   CALC_KEYS,
+  beadRed,
   beadX,
+  boatAt,
+  boatButton,
+  boatOf,
+  boatSum,
+  buttonRow,
   freshCalc,
   isOperator,
   mathTool,
   mathToolLabel,
   pressKey,
+  rowsOf,
   showNumber,
   tapAbacus,
   tapBoat,
   viewSize,
+  BOAT_H,
+  BUTTON_ROOM,
+  type Boat,
   type Calc,
   type MathTool as Tool,
-  type Token,
 } from '@/lib/learning/mathtool';
 import { speakGerman } from '@/lib/speech';
 import { useLearning } from './Runtime';
 
 const FONT = 'Verdana, Arial, sans-serif';
-const BLUE = '#1c7ed6', RED = '#e03131';
+const BLUE = '#1c7ed6', BLUE_EDGE = '#1864ab', RED = '#e03131', RED_EDGE = '#a51111', GREY = '#475569';
 const r1 = (n: number) => Math.round(n * 10) / 10;
 
 /** A tappable part of the drawing; keys work with Enter and Space too. */
@@ -51,83 +60,151 @@ function Key({ label, active, onPress, children }: { label: string; active: bool
   );
 }
 
-function Reset({ x, y, active, onPress }: { x: number; y: number; active: boolean; onPress: () => void }) {
-  if (!active) return null;
+/** A round button below boats and frame. */
+function RoundKey({ label, x, y, fill = '#fff', edge = '#94a3b8', onPress, children }: { label: string; x: number; y: number; fill?: string; edge?: string; onPress: () => void; children: React.ReactNode }) {
   return (
-    <Key label="Alles weg" active onPress={onPress}>
-      <circle cx={x} cy={y} r="28" fill="#fff" stroke="#94a3b8" strokeWidth="3" />
-      <path
-        d={`M${x - 10} ${y - 2}a11 11 0 1 0 3.2-7.8M${x - 10} ${y - 13}v8.6h8.6`}
-        fill="none"
-        stroke="#475569"
-        strokeWidth="3.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <Key label={label} active onPress={onPress}>
+      <circle cx={x} cy={y} r="31" fill={fill} stroke={edge} strokeWidth="3.5" />
+      {children}
     </Key>
   );
 }
 
-function Boats({ t, cells, active, tap, reset }: { t: Tool; cells: Token[]; active: boolean; tap: (i: number) => void; reset: () => void }) {
-  const v = viewSize(t), boats = t.n === 20 ? 2 : 1, rows = t.n === 5 ? 1 : 2;
-  const parts: React.ReactNode[] = [];
-  for (let b = 0; b < boats; b++) {
-    const y = 20 + b * 300, h = rows === 1 ? 150 : 260;
-    parts.push(
-      <g key={`hull-${b}`}>
-        <path d={`M70 ${y}H520Q600 ${y} 600 ${y + h / 2}Q600 ${y + h} 520 ${y + h}H70Q20 ${y + h} 20 ${y + h / 2}Q20 ${y} 70 ${y}Z`} fill="#c2410c" stroke="#7c2d12" strokeWidth="6" />
-        <path d={`M70 ${y + 14}H515Q584 ${y + 14} 584 ${y + h / 2}Q584 ${y + h - 14} 515 ${y + h - 14}H70Q36 ${y + h - 14} 36 ${y + h / 2}Q36 ${y + 14} 70 ${y + 14}Z`} fill="#fde68a" stroke="#d97706" strokeWidth="3" />
-      </g>,
-    );
-    for (let row = 0; row < rows; row++)
-      for (let col = 0; col < 5; col++) {
-        const i = b * 10 + row * 5 + col, cx = 110 + col * 100, cy = y + (rows === 1 ? h / 2 : 75 + row * 110), token = cells[i] ?? 0;
-        parts.push(
-          <Key key={`c${i}`} label={`Platz ${i + 1}${token ? (token === 1 ? ', blau' : ', rot') : ''}`} active={active} onPress={() => tap(i)}>
-            <circle cx={cx} cy={cy} r="44" fill="#fff" stroke="#b45309" strokeWidth="3" />
-            <circle cx={cx} cy={cy + 3} r="40" fill="#fef3c7" />
-            {token !== 0 && (
-              <g className="mt-token">
-                <circle cx={cx} cy={cy} r="37" fill={token === 1 ? BLUE : RED} stroke={token === 1 ? '#1864ab' : '#a51111'} strokeWidth="3" />
-                <circle cx={cx - 12} cy={cy - 13} r="10" fill="#fff" opacity=".35" />
-              </g>
-            )}
-          </Key>,
-        );
-      }
-  }
+function Reset({ x, y, label, onPress }: { x: number; y: number; label: string; onPress: () => void }) {
   return (
-    <>
-      {parts}
-      <Reset x={640} y={v.h / 2} active={active} onPress={reset} />
-    </>
+    <RoundKey label={label} x={x} y={y} onPress={onPress}>
+      <path d={`M${x - 11} ${y - 2}a12 12 0 1 0 3.5-8.5M${x - 11} ${y - 14}v9.4h9.4`} fill="none" stroke={GREY} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+    </RoundKey>
   );
 }
 
-function Abacus({ t, rows, active, tap, reset }: { t: Tool; rows: number[]; active: boolean; tap: (row: number, bead: number) => void; reset: () => void }) {
-  const height = t.n * 74 + 30;
-  return (
+/** Sum or number below: always shown, or a “?” to tap open (printed as a task). */
+function Shown({ t, open, active, x, y, w, text, toggle, children }: { t: Tool; open: boolean; active: boolean; x: number; y: number; w: number; text: string; toggle: () => void; children: React.ReactNode }) {
+  const hidden = t.show === 'tap' && !open;
+  const box = hidden ? (
     <>
-      <rect x="40" y="15" width="940" height={height} rx="18" fill="#d6a46a" stroke="#8a5a2b" strokeWidth="6" />
-      <rect x="70" y="40" width="880" height={height - 50} rx="8" fill="#fbf3e4" />
+      <rect x={x} y={y} width={w} height="62" rx="16" fill="#e7f5ff" stroke="#74c0fc" strokeWidth="3" strokeDasharray="9 7" />
+      <text x={x + w / 2} y={y + 47} textAnchor="middle" fontFamily={FONT} fontWeight="700" fontSize="44" fill="#1971c2">
+        ?
+      </text>
+    </>
+  ) : (
+    <>
+      <rect x={x} y={y} width={w} height="62" rx="16" fill="#fff" stroke="#cbd5e1" strokeWidth="3" />
+      {children}
+    </>
+  );
+  if (t.show !== 'tap' || !active) return <g>{box}</g>;
+  return (
+    <Key label={hidden ? 'Zahl zeigen' : `${text} – antippen zum Verdecken`} active onPress={toggle}>
+      {box}
+    </Key>
+  );
+}
+
+const plus = (x: number, y: number) => <path d={`M${x - 12} ${y}h24M${x} ${y - 12}v24`} stroke="#fff" strokeWidth="5.5" strokeLinecap="round" />;
+
+function Boats({ t, boat, open, active, set, toggle, reset }: { t: Tool; boat: Boat; open: boolean; active: boolean; set: (b: Boat) => void; toggle: () => void; reset: () => void }) {
+  const v = viewSize(t), filled = boat.blue + boat.red, parts: React.ReactNode[] = [];
+  for (let b = 0; b < t.n / 5; b++) {
+    const { x, y } = boatAt(t, b);
+    parts.push(
+      <g key={`hull-${b}`}>
+        <path d={`M${x + 26} ${y}H${x + 440}Q${x + 520} ${y} ${x + 540} ${y + 64}Q${x + 520} ${y + 128} ${x + 440} ${y + 128}H${x + 26}Q${x} ${y + 128} ${x} ${y + 102}V${y + 26}Q${x} ${y} ${x + 26} ${y}Z`} fill="#c98b4f" stroke="#7c4a1e" strokeWidth="5" strokeLinejoin="round" />
+        <path d={`M${x + 30} ${y + 12}H${x + 436}Q${x + 504} ${y + 12} ${x + 521} ${y + 64}Q${x + 504} ${y + 116} ${x + 436} ${y + 116}H${x + 30}Q${x + 12} ${y + 116} ${x + 12} ${y + 98}V${y + 30}Q${x + 12} ${y + 12} ${x + 30} ${y + 12}Z`} fill="#f2d7a6" />
+      </g>,
+    );
+    for (let e = 0; e < 5; e++) {
+      const i = b * 5 + e, cx = x + 58 + e * 92, cy = y + BOAT_H / 2, isBlue = i < boat.blue;
+      parts.push(
+        <Key key={`c${i}`} label={`Platz ${i + 1}${i < filled ? (isBlue ? ', blau' : ', rot') : ''}`} active={active} onPress={() => set(tapBoat(boat, i))}>
+          <circle cx={cx} cy={cy} r="38" fill="#d9b27c" stroke="#a9753f" strokeWidth="3" />
+          <path d={`M${cx - 30} ${cy - 14}a33 33 0 0 1 60 0`} fill="none" stroke="#a9753f" strokeWidth="3" strokeLinecap="round" opacity=".55" />
+          {i < filled && (
+            <g className="mt-token">
+              <circle cx={cx} cy={cy} r="34" fill={isBlue ? BLUE : RED} stroke={isBlue ? BLUE_EDGE : RED_EDGE} strokeWidth="3.5" />
+              <circle cx={cx} cy={cy} r="25" fill="none" stroke="#fff" strokeWidth="2" opacity=".28" />
+              <ellipse cx={cx - 11} cy={cy - 13} rx="10" ry="7" fill="#fff" opacity=".35" />
+            </g>
+          )}
+        </Key>,
+      );
+    }
+  }
+  const y = buttonRow(t);
+  if (active)
+    parts.push(
+      <g key="keys">
+        <RoundKey label="Ein blaues Plättchen dazu" x={52} y={y} fill={BLUE} edge={BLUE_EDGE} onPress={() => set(boatButton(boat, 'blue', t.n))}>
+          {plus(52, y)}
+        </RoundKey>
+        <RoundKey label="Ein rotes Plättchen dazu" x={124} y={y} fill={RED} edge={RED_EDGE} onPress={() => set(boatButton(boat, 'red', t.n))}>
+          {plus(124, y)}
+        </RoundKey>
+        <RoundKey label="Ein Plättchen weg" x={196} y={y} onPress={() => set(boatButton(boat, 'less', t.n))}>
+          <path d={`M184 ${y}h24`} stroke={GREY} strokeWidth="5.5" strokeLinecap="round" />
+        </RoundKey>
+        <Reset x={268} y={y} label="Alle Plättchen weg" onPress={reset} />
+      </g>,
+    );
+  if (t.show) {
+    const x = v.w - 20 - 244, text = boatSum(boat), size = text.length > 10 ? 30 : 36;
+    parts.push(
+      <Shown key="sum" t={t} open={open} active={active} x={x} y={y - 31} w={244} text={text} toggle={toggle}>
+        <text x={x + 122} y={r1(y + size * 0.36)} textAnchor="middle" fontFamily={FONT} fontWeight="700" fontSize={size}>
+          {boat.blue && boat.red ? (
+            <>
+              <tspan fill={BLUE_EDGE}>{boat.blue}</tspan>
+              <tspan fill={GREY}> + </tspan>
+              <tspan fill={RED_EDGE}>{boat.red}</tspan>
+              <tspan fill={GREY}> = </tspan>
+              <tspan fill="#1f2937">{filled}</tspan>
+            </>
+          ) : (
+            <tspan fill={boat.red ? RED_EDGE : boat.blue ? BLUE_EDGE : '#1f2937'}>{filled}</tspan>
+          )}
+        </text>
+      </Shown>,
+    );
+  }
+  // Without buttons and number the boats sit in the middle.
+  return <g transform={!active && !t.show ? `translate(0 ${BUTTON_ROOM / 2 - 7})` : undefined}>{parts}</g>;
+}
+
+function Abacus({ t, rows, open, active, tap, toggle, reset }: { t: Tool; rows: number[]; open: boolean; active: boolean; tap: (row: number, bead: number) => void; toggle: () => void; reset: () => void }) {
+  const height = t.n * 74 + 30, y = buttonRow(t), sum = rows.reduce((a, b) => a + b, 0);
+  return (
+    <g transform={!active && !t.show ? `translate(0 ${BUTTON_ROOM / 2 - 5})` : undefined}>
+      <rect x="40" y="10" width="940" height={height} rx="18" fill="#d6a46a" stroke="#8a5a2b" strokeWidth="6" />
+      <rect x="70" y="35" width="880" height={height - 50} rx="8" fill="#fbf3e4" />
       {Array.from({ length: t.n }, (_, row) => {
-        const cy = 50 + row * 74 + 27, colour = (t.n === 2 ? row === 0 : row < 5) ? RED : BLUE, left = rows[row] ?? 0;
+        const cy = 45 + row * 74 + 27, left = rows[row] ?? 0;
         return (
           <g key={row}>
             <line x1="70" y1={cy} x2="950" y2={cy} stroke="#8a8f98" strokeWidth="5" />
-            {Array.from({ length: 10 }, (_, bead) => (
-              <Key key={bead} label={`Reihe ${row + 1}, Kugel ${bead + 1}${bead < left ? ' (links)' : ''}`} active={active} onPress={() => tap(row, bead)}>
-                <g className="mt-bead" style={{ transform: `translateX(${beadX(bead, left)}px)` }}>
-                  <ellipse cx="0" cy={cy} rx="29" ry="30" fill={bead < 5 ? colour : '#f8fafc'} stroke={bead < 5 ? '#0b1220' : '#64748b'} strokeOpacity=".45" strokeWidth="2.5" />
-                  <ellipse cx="-9" cy={cy - 11} rx="9" ry="6" fill="#fff" opacity=".45" />
-                </g>
-              </Key>
-            ))}
+            {Array.from({ length: 10 }, (_, bead) => {
+              const red = beadRed(t, row, bead);
+              return (
+                <Key key={bead} label={`Reihe ${row + 1}, Kugel ${bead + 1}${bead < left ? ' (links)' : ''}`} active={active} onPress={() => tap(row, bead)}>
+                  <g className="mt-bead" style={{ transform: `translateX(${beadX(bead, left)}px)` }}>
+                    <ellipse cx="0" cy={cy} rx="29" ry="30" fill={red ? RED : BLUE} stroke={red ? RED_EDGE : BLUE_EDGE} strokeWidth="2.5" />
+                    <ellipse cx="-9" cy={cy - 11} rx="9" ry="6" fill="#fff" opacity=".45" />
+                  </g>
+                </Key>
+              );
+            })}
           </g>
         );
       })}
-      <Reset x={1025} y={48} active={active} onPress={reset} />
-    </>
+      {active && <Reset x={72} y={y} label="Alle Kugeln nach rechts" onPress={reset} />}
+      {t.show && (
+        <Shown t={t} open={open} active={active} x={800} y={y - 31} w={180} text={String(sum)} toggle={toggle}>
+          <text x="890" y={y + 16} textAnchor="middle" fontFamily={FONT} fontWeight="700" fontSize="44" fill="#1f2937">
+            {sum}
+          </text>
+        </Shown>
+      )}
+    </g>
   );
 }
 
@@ -190,11 +267,12 @@ export default function MathTool({ element: el }: { element: PageElement }) {
   const { state, update, interactive } = useLearning(el);
   const t = mathTool(el.settings);
   const v = viewSize(t);
-  const cells = (Array.isArray(state.cells) && state.cells.length === t.n ? state.cells : Array(t.tool === 'boat' ? t.n : 0).fill(0)) as Token[];
-  const rows = (Array.isArray(state.rows) && state.rows.length === t.n ? state.rows : Array(t.tool === 'abacus' ? t.n : 0).fill(0)) as number[];
+  const boat = boatOf(t, state), rows = rowsOf(t, state), open = state.open === true;
   const calc = (state.calc && typeof state.calc === 'object' ? state.calc : freshCalc()) as Calc;
   const active = interactive && t.tool !== 'ruler';
-  const reset = () => update({ cells: [], rows: [], calc: null });
+  // Back to what the settings put there at the start.
+  const reset = () => update({ cells: null, blue: null, red: null, rows: null, open: null, calc: null });
+  const toggle = () => update({ open: !open });
   return (
     <svg
       className={`math-tool math-tool-${t.tool}`}
@@ -202,10 +280,10 @@ export default function MathTool({ element: el }: { element: PageElement }) {
       width="100%"
       height="100%"
       role={t.tool === 'ruler' ? 'img' : 'group'}
-      aria-label={mathToolLabel(t, { cells, rows, calc })}
+      aria-label={mathToolLabel(t, { boat, rows, calc })}
     >
-      {t.tool === 'boat' && <Boats t={t} cells={cells} active={active} tap={(i) => update({ cells: tapBoat(cells, i) })} reset={reset} />}
-      {t.tool === 'abacus' && <Abacus t={t} rows={rows} active={active} tap={(row, bead) => update({ rows: tapAbacus(rows, row, bead) })} reset={reset} />}
+      {t.tool === 'boat' && <Boats t={t} boat={boat} open={open} active={active} set={(b) => update({ cells: null, ...b })} toggle={toggle} reset={reset} />}
+      {t.tool === 'abacus' && <Abacus t={t} rows={rows} open={open} active={active} tap={(row, bead) => update({ rows: tapAbacus(rows, row, bead) })} toggle={toggle} reset={reset} />}
       {t.tool === 'ruler' && <Ruler t={t} />}
       {t.tool === 'calc' && (
         <Calculator

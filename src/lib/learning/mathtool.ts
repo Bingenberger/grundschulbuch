@@ -3,34 +3,94 @@
 // MathTool.tsx draws them as SVG.
 
 export type MathToolKind = 'boat' | 'abacus' | 'ruler' | 'calc';
-export type MathTool = { tool: MathToolKind; n: number };
+/** Under boats and frame: nothing, a “?” to tap open, or always shown. */
+export type MathShow = 'tap' | 'on';
+export type MathTool = {
+  tool: MathToolKind;
+  n: number;
+  /** Boats side by side (rows of ten) instead of one below the other. */
+  wide?: boolean;
+  /** Tokens already in the boats at the start. */
+  blue?: number;
+  red?: number;
+  /** Number already set on the frame at the start. */
+  start?: number;
+  show?: MathShow;
+};
+export type MathToolSettings = {
+  mathTool?: unknown;
+  mathSize?: unknown;
+  mathWide?: unknown;
+  mathBlue?: unknown;
+  mathRed?: unknown;
+  mathStart?: unknown;
+  mathShow?: unknown;
+};
 
-/** Clean settings: boats 5/10/20, frames 2 or 10 rows, rulers 10–30 cm. */
-export function mathTool(settings: { mathTool?: unknown; mathSize?: unknown } | undefined): MathTool {
+const whole = (v: unknown, min: number, max: number) => (typeof v === 'number' && Number.isFinite(v) ? Math.min(max, Math.max(min, Math.round(v))) : 0);
+
+/** Clean settings as the reference does: boats 5/10/20, frames 2 or 10 rows, rulers 10–30 cm. */
+export function mathTool(settings: MathToolSettings | undefined): MathTool {
   const tool: MathToolKind = ['abacus', 'ruler', 'calc'].includes(settings?.mathTool as string)
     ? (settings!.mathTool as MathToolKind)
     : 'boat';
   const raw = typeof settings?.mathSize === 'number' && Number.isFinite(settings.mathSize) ? Math.round(settings.mathSize) : 0;
-  if (tool === 'boat') return { tool, n: [5, 10, 20].includes(raw) ? raw : 10 };
-  if (tool === 'abacus') return { tool, n: raw === 2 ? 2 : 10 };
+  const show = settings?.mathShow === 'tap' || settings?.mathShow === 'on' ? { show: settings.mathShow as MathShow } : {};
+  if (tool === 'boat') {
+    const n = [5, 10, 20].includes(raw) ? raw : 10, blue = whole(settings?.mathBlue, 0, n), red = whole(settings?.mathRed, 0, n - blue);
+    return { tool, n, ...show, ...(settings?.mathWide === true && n > 5 ? { wide: true } : {}), ...(blue ? { blue } : {}), ...(red ? { red } : {}) };
+  }
+  if (tool === 'abacus') {
+    const n = raw === 2 ? 2 : 10, start = whole(settings?.mathStart, 0, n * 10);
+    return { tool, n, ...show, ...(start ? { start } : {}) };
+  }
   if (tool === 'ruler') return { tool, n: Math.min(30, Math.max(10, raw || 20)) };
   return { tool, n: 0 };
 }
 
+/** Back into the settings of the element (all fields, so old values disappear). */
+export function mathToolSettings(t: MathTool) {
+  return {
+    mathTool: t.tool,
+    mathSize: t.n,
+    mathWide: t.wide ?? false,
+    mathBlue: t.blue ?? 0,
+    mathRed: t.red ?? 0,
+    mathStart: t.start ?? 0,
+    mathShow: (t.show ?? 'off') as MathShow | 'off',
+  };
+}
+
+/** Room below boats and frame for the buttons and the number. */
+export const BUTTON_ROOM = 84;
+export const BOAT_H = 128, BOAT_GAP = 12, BOAT_BREAK = 22;
+const boatsHeight = (t: MathTool) => {
+  const rows = t.wide && t.n > 5 ? t.n / 10 : t.n / 5;
+  return rows * BOAT_H + (rows - 1) * BOAT_GAP + (!t.wide && t.n === 20 ? BOAT_BREAK : 0);
+};
+
 /** Drawing size (SVG units; for the ruler these are millimetres). */
 export function viewSize(t: MathTool) {
-  if (t.tool === 'boat') return { w: 680, h: t.n === 5 ? 190 : t.n === 20 ? 600 : 300 };
-  if (t.tool === 'abacus') return { w: 1060, h: t.n * 74 + 60 };
+  if (t.tool === 'boat') return { w: t.wide && t.n > 5 ? 1136 : 580, h: 14 + boatsHeight(t) + BUTTON_ROOM };
+  if (t.tool === 'abacus') return { w: 1020, h: t.n * 74 + 50 + BUTTON_ROOM };
   if (t.tool === 'ruler') return { w: t.n * 10 + 16, h: 32 };
   return { w: 360, h: 520 };
 }
 
-/** Size on the page in mm; the ruler has its real length when printed. */
+/** Where boat number b (five places each) lies. */
+export function boatAt(t: MathTool, b: number) {
+  return t.wide && t.n > 5 ? { x: 20 + (b % 2) * 556, y: 14 + Math.floor(b / 2) * 140 } : { x: 20, y: 14 + b * 140 + (b >= 2 ? BOAT_BREAK : 0) };
+}
+/** Middle of the row of buttons below the boats or the frame. */
+export const buttonRow = (t: MathTool) => (t.tool === 'boat' ? 14 + boatsHeight(t) + 14 + 31 : 10 + t.n * 74 + 30 + 12 + 31);
+
+/** Size on the page in mm (reference page: 1400 px = 297 mm); the ruler has its real length when printed. */
 export function pageSize(t: MathTool) {
   const v = viewSize(t);
   if (t.tool === 'ruler') return { width: v.w, height: v.h };
-  const width = t.tool === 'boat' ? 93.3 : t.tool === 'abacus' ? 135.8 : 63.6;
-  return { width, height: Math.round((width * v.h) / v.w * 10) / 10 };
+  const s = Math.min(t.tool === 'boat' ? 0.76 : t.tool === 'abacus' ? 0.62 : 300 / 360, 1320 / v.w);
+  const mm = (px: number) => Math.round(Math.round(px * s) * (297 / 1400) * 10) / 10;
+  return { width: mm(v.w), height: mm(v.h) };
 }
 
 export function mathToolTitle(t: MathTool) {
@@ -40,26 +100,56 @@ export function mathToolTitle(t: MathTool) {
   return 'Taschenrechner';
 }
 
-// ── Rechenschiffchen: 0 empty, 1 blue, 2 red ─────────────────────────────
+// ── Rechenschiffchen: first the blue tokens, then the red ones, no gaps ──
 
-export type Token = 0 | 1 | 2;
+export type Boat = { blue: number; red: number };
 
 /**
- * Always in order: tapping at or after the end adds a token in the next free
- * place (the colour of the one before; the first is blue). Tapping the last
- * token turns blue into red and red into nothing.
+ * As in the reference: tapping a free place fills up to there (in the colour
+ * of the last token), tapping a blue token turns it and all after it red,
+ * tapping a red one turns it and all before it blue.
  */
-export function tapBoat(cells: Token[], index: number): Token[] {
-  const next = [...cells];
-  const free = next.findIndex((c) => c === 0);
-  const filled = free < 0 ? next.length : free;
-  if (index >= filled) {
-    if (filled < next.length) next[filled] = filled > 0 ? next[filled - 1] : 1;
-  } else if (index === filled - 1) next[index] = next[index] === 1 ? 2 : 0;
-  return next;
+export function tapBoat(s: Boat, index: number): Boat {
+  const filled = s.blue + s.red;
+  if (index >= filled) return s.red > 0 ? { blue: s.blue, red: s.red + index + 1 - filled } : { blue: s.blue + index + 1 - filled, red: 0 };
+  if (index < s.blue) return { blue: index, red: s.red + s.blue - index };
+  return { blue: index + 1, red: filled - index - 1 };
+}
+
+/** The round buttons below: one blue or red token more, one less. */
+export function boatButton(s: Boat, key: 'blue' | 'red' | 'less', n: number): Boat {
+  const filled = s.blue + s.red;
+  if (key === 'blue' && filled < n) return { ...s, blue: s.blue + 1 };
+  if (key === 'red' && filled < n) return { ...s, red: s.red + 1 };
+  if (key === 'less') return s.red > 0 ? { ...s, red: s.red - 1 } : s.blue > 0 ? { ...s, blue: s.blue - 1 } : s;
+  return s;
+}
+
+/** “4 + 3 = 7” or just “7”. */
+export const boatSum = (s: Boat) => (s.blue && s.red ? `${s.blue} + ${s.red} = ${s.blue + s.red}` : String(s.blue + s.red));
+
+/** Tokens from the saved answer; older answers kept a list of places (1 blue, 2 red). */
+export function boatOf(t: MathTool, state: { blue?: unknown; red?: unknown; cells?: unknown }): Boat {
+  if (typeof state.blue === 'number' || typeof state.red === 'number') {
+    const blue = whole(state.blue, 0, t.n);
+    return { blue, red: whole(state.red, 0, t.n - blue) };
+  }
+  if (Array.isArray(state.cells) && state.cells.length === t.n) {
+    const blue = state.cells.filter((c) => c === 1).length;
+    return { blue, red: Math.min(t.n - blue, state.cells.filter((c) => c === 2).length) };
+  }
+  return { blue: t.blue ?? 0, red: t.red ?? 0 };
 }
 
 // ── Rechenrahmen: per row the number of beads pushed to the left ─────────
+
+/** Rows at the start: full rows are tens, the next row holds the ones. */
+export const abacusStart = (t: MathTool) => Array.from({ length: t.tool === 'abacus' ? t.n : 0 }, (_, row) => Math.min(10, Math.max(0, (t.start ?? 0) - row * 10)));
+
+/** Rows from the saved answer, else the number set at the start. */
+export function rowsOf(t: MathTool, state: { rows?: unknown }): number[] {
+  return Array.isArray(state.rows) && state.rows.length === t.n ? state.rows.map((r) => whole(r, 0, 10)) : abacusStart(t);
+}
 
 /** Tapping a bead on the right pushes it (and those before it) left, and back. */
 export function tapAbacus(rows: number[], row: number, bead: number): number[] {
@@ -72,6 +162,9 @@ export function tapAbacus(rows: number[], row: number, bead: number): number[] {
 export const BEAD_STEP = 62;
 /** x position of a bead: those counted sit on the left, the others on the right. */
 export const beadX = (bead: number, left: number) => (bead < left ? 100 + bead * BEAD_STEP : 920 - (9 - bead) * BEAD_STEP);
+
+/** Bead colour: red and blue change after five; on the frame to 100 the lower half starts blue. */
+export const beadRed = (t: MathTool, row: number, bead: number) => (bead < 5) !== (t.n === 10 && row >= 5);
 
 // ── Taschenrechner ─────────────────────────────────────────────────────────
 
@@ -136,14 +229,14 @@ export const CALC_KEYS: [string, string, number, number, number, number][] = [
 export const isOperator = (action: string) => action in OPS || action === '=';
 
 /** What a screen reader hears. */
-export function mathToolLabel(t: MathTool, state: { cells?: Token[]; rows?: number[]; calc?: Calc }) {
+export function mathToolLabel(t: MathTool, state: { boat?: Boat; rows?: number[]; calc?: Calc }) {
   if (t.tool === 'boat') {
-    const blue = state.cells?.filter((c) => c === 1).length ?? 0, red = state.cells?.filter((c) => c === 2).length ?? 0;
+    const blue = state.boat?.blue ?? 0, red = state.boat?.red ?? 0;
     return `${mathToolTitle(t)}${blue || red ? `: ${blue} blaue und ${red} rote Plättchen` : ''}.`;
   }
   if (t.tool === 'abacus') {
     const left = state.rows?.reduce((a, b) => a + b, 0) ?? 0;
-    return `${mathToolTitle(t)}${left ? `: ${left} Kugeln links` : ''}.`;
+    return `${mathToolTitle(t)}${left ? `: ${left} ${left === 1 ? 'Kugel' : 'Kugeln'} links` : ''}.`;
   }
   if (t.tool === 'calc') return `Taschenrechner: ${state.calc?.shown ?? '0'}.`;
   return `${mathToolTitle(t)}.`;

@@ -82,7 +82,8 @@ import { clone, uuid, type Page, type PageElement } from '@/lib/notebook-model';
 import { learningBlocks, SUBJECTS, type LearningBlock, type Subject } from '@/lib/learning/blocks';
 import { ChoiceButton, Choices, OptionGroup } from '../ui/Choice';
 import { GROUPS, LEVELS, TOLERANCES, geoConfig, makeTasks, taskText, type GeoConfig } from '@/lib/learning/geodraw';
-import { mathTool, pageSize } from '@/lib/learning/mathtool';
+import { mathTool, pageSize, viewSize } from '@/lib/learning/mathtool';
+import MathToolOptions from './MathToolOptions';
 import { uploadImage } from '@/lib/client-api';
 const activityIcons: Record<ActivityKind, IconName> = {
   quiz: 'questions', matching: 'flow_chart', cloze: 'rules', typing: 'signature',
@@ -552,6 +553,20 @@ export default function LearningDialog({
                   type === 'activity' ? (kind as ActivityKind) : undefined,
                 settings: kind === 'checkout' ? { ...settings, checkout: shopConfig(settings.checkout) as unknown as JsonValue } : readySettings,
               };
+              // Mathe-Werkzeug changed: start again from the new settings and keep the scale, as the reference does.
+              if (kind === 'mathtool' && element) {
+                const before = mathTool(element.settings), after = mathTool(settings);
+                if (JSON.stringify(before) !== JSON.stringify(after)) {
+                  delete learning.response;
+                  if (after.tool === 'ruler') Object.assign(learning, pageSize(after));
+                  else {
+                    const scale = before.tool === after.tool ? element.width / viewSize(before).w : pageSize(after).width / viewSize(after).w;
+                    const v = viewSize(after);
+                    learning.width = Math.round(v.w * scale * 10) / 10;
+                    learning.height = Math.round(v.h * scale * 10) / 10;
+                  }
+                }
+              }
               if (settings.musicTemplate && JSON.stringify(element?.settings?.musicConfig) !== JSON.stringify(readySettings.musicConfig) && learning.response) {
                 const { musicConfig: previousMusic, ...response } = learning.response; void previousMusic; learning.response = response;
               }
@@ -808,34 +823,7 @@ export default function LearningDialog({
                 </button>
               </fieldset>
             )}
-            {kind === 'mathtool' && (() => {
-              const t = mathTool(settings);
-              const sizes: [number, string][] =
-                t.tool === 'boat' ? [[5, '5'], [10, '10'], [20, '20']] : t.tool === 'abacus' ? [[2, 'bis 20'], [10, 'bis 100']] : t.tool === 'ruler' ? [[10, '10 cm'], [15, '15 cm'], [20, '20 cm'], [30, '30 cm']] : [];
-              return (
-                <>
-                  <Choices
-                    label="Werkzeug"
-                    value={t.tool}
-                    onChange={(tool) => patch({ mathTool: tool, mathSize: tool === 'boat' ? 10 : tool === 'abacus' ? 2 : tool === 'ruler' ? 15 : 0 })}
-                    options={[
-                      { value: 'boat', label: 'Rechenschiffchen', icon: 'calculator' },
-                      { value: 'abacus', label: 'Rechenrahmen', icon: 'org_unit' },
-                      { value: 'ruler', label: 'Lineal', icon: 'ruler' },
-                      { value: 'calc', label: 'Taschenrechner', icon: 'calculator' },
-                    ]}
-                  />
-                  {sizes.length > 0 && (
-                    <Choices
-                      label="Größe"
-                      value={t.n}
-                      onChange={(mathSize) => patch({ mathSize })}
-                      options={sizes.map(([value, label]) => ({ value, label, icon: <TextGlyph text={String(value)} /> }))}
-                    />
-                  )}
-                </>
-              );
-            })()}
+            {kind === 'mathtool' && <MathToolOptions settings={settings} onChange={patch} />}
             {kind === 'zuordnung' && <ZuordnungOptions value={settings.dnd} title={settings.title || ''} onChange={(dnd) => patch({ dnd })} upload={media} busy={busy} />}
             {kind === 'zeit' && <TimeOptions value={settings.zeit} onChange={(zeit) => patch({ zeit })} />}
             {kind === 'medienseite' && <MediaPageOptions value={settings.medien} onChange={(medien) => patch({ medien })} />}
