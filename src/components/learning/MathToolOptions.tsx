@@ -7,7 +7,7 @@ import type { LearningSettings } from '@/lib/learning/catalog';
 import { mathTool, mathToolSettings, type MathShow, type MathTool as Tool, type MathToolKind } from '@/lib/learning/mathtool';
 import { Choices } from '../ui/Choice';
 import { TextGlyph } from '../ui/Glyphs';
-import { Chips, Section, Slider } from '../sheets/SheetParts';
+import { Chips, Section, Slider, Toggle } from '../sheets/SheetParts';
 import MathTool from './MathTool';
 import { LearningRuntime } from './Runtime';
 
@@ -36,7 +36,7 @@ export default function MathToolOptions({ settings, onChange }: { settings: Lear
           { value: 'calc', label: 'Taschenrechner', icon: 'calculator' },
         ]}
       />
-      {(t.tool === 'boat' || t.tool === 'abacus') && (
+      {t.tool !== 'ruler' && (
         <div className="mt-preview" aria-hidden="true">
           <LearningRuntime interactive={false}>
             <MathTool element={preview} />
@@ -110,6 +110,16 @@ export default function MathToolOptions({ settings, onChange }: { settings: Lear
             <Chips label="Zahl" value={t.show ?? 'off'} options={showOptions('Zahl')} onChange={show} />
           </Section>
         </>
+      )}
+      {t.tool === 'calc' && (
+        <Section title="Kassenzettel">
+          <Toggle
+            checked={!!t.tape}
+            label="Kassenzettel links neben dem Taschenrechner"
+            hint="Ein Papierstreifen läuft mit und listet jede Rechnung der Reihe nach auf – so lässt sich nachvollziehen, was gerechnet wurde. Das × oben am Zettel reißt ihn ab (leert ihn)."
+            onChange={(tape) => set({ tape })}
+          />
+        </Section>
       )}
       {t.tool === 'ruler' && (
         <Choices

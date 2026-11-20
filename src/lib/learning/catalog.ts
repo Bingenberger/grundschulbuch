@@ -124,6 +124,8 @@ export type LearningSettings = {
   mathStart?: number;
   /** Sum (boats) or number (frame) below: off, “?” to tap open, always. */
   mathShow?: 'off' | 'tap' | 'on';
+  /** Taschenrechner: paper strip with every sum. */
+  mathTape?: boolean;
   /** Geometrie: Formen zeichnen (see learning/geodraw.ts). */
   geo?: { level?: string; count?: number; groups?: string[]; tol?: string; flash?: number; tasks?: { k: string; a: number; b?: number; d?: number; n?: number }[] };
   /** Einkaufen an der Kasse (see learning/checkout.ts). */

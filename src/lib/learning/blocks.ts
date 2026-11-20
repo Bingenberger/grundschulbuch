@@ -178,6 +178,7 @@ const mathTools: [string, MathToolKind, number, string, Partial<LearningSettings
   ['Lineal 15 cm', 'ruler', 15, 'in echter Größe beim Ausdrucken'],
   ['Lineal 30 cm', 'ruler', 30, 'in echter Größe beim Ausdrucken'],
   ['Taschenrechner', 'calc', 0, 'plus, minus, mal, geteilt'],
+  ['Rechner mit Zettel', 'calc', 0, 'Taschenrechner mit Kassenzettel – der Zettel listet jede Rechnung auf', { mathTape: true }],
 ];
 /** Settings of the receipt in “Rechnen mit dem Taschenrechner” as in the reference. */
 export const RECEIPT_START = { count: 5, level: 'complex', format: 'eurocent', change: true, rounds: 3 } as const;
@@ -207,7 +208,7 @@ export function receiptPage(orientation: Page['orientation'], receipt: LearningS
 }
 
 const toolBlocks: LearningBlock[] = mathTools.map(([title, tool, n, hint, extra]) => ({
-  id: `mathtool-${tool}-${n}`,
+  id: `mathtool-${tool}-${n}${extra?.mathTape ? '-tape' : ''}`,
   title,
   subject: 'Mathematik',
   type: 'widget',

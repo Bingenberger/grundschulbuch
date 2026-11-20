@@ -2,6 +2,8 @@
 import type { PageElement } from '@/lib/notebook-model';
 import {
   CALC_KEYS,
+  TAPE_MAX,
+  TAPE_W,
   beadRed,
   beadX,
   boatAt,
@@ -233,6 +235,64 @@ function Ruler({ t }: { t: Tool }) {
   );
 }
 
+const MONO = 'Menlo, Consolas, Courier New, monospace';
+
+/** The paper strip of the reference: the last ten sums, newest at the bottom; × tears it off. */
+function Tape({ lines, active, tear }: { lines: string[]; active: boolean; tear: () => void }) {
+  let top = 'M16 32';
+  for (let x = 16; x < 300; x += 12) top += 'l6 -9l6 9';
+  let bottom = '';
+  for (let x = 304; x > 16; x -= 12) bottom += 'l-6 9l-6 -9';
+  const shown = lines.slice(-10);
+  return (
+    <g className="mt-tape">
+      <path d="M22 38h290v462h-290z" fill="#0f172a" opacity=".12" />
+      <path d={`${top}V494${bottom}Z`} fill="#fffdf5" stroke="#94a3b8" strokeWidth="2.5" strokeLinejoin="round" />
+      <text x="30" y="66" fontFamily={MONO} fontSize="18" fontWeight="700" letterSpacing="2" fill={GREY}>
+        RECHNUNGEN
+      </text>
+      <path d="M30 78H272" stroke="#64748b" strokeWidth="2" strokeDasharray="6 5" />
+      {!lines.length ? (
+        <>
+          <text x="150" y="250" textAnchor="middle" fontFamily={FONT} fontSize="18" fill="#64748b">
+            Hier stehen gleich
+          </text>
+          <text x="150" y="277" textAnchor="middle" fontFamily={FONT} fontSize="18" fill="#64748b">
+            deine Rechnungen.
+          </text>
+        </>
+      ) : (
+        <>
+          {lines.length > shown.length && (
+            <text x="150" y="104" textAnchor="middle" fontFamily={MONO} fontSize="22" fontWeight="700" fill="#94a3b8">
+              · · ·
+            </text>
+          )}
+          {shown.map((line, i) => {
+            const y = 478 - (shown.length - 1 - i) * 39, cut = line.lastIndexOf('= ') + 2;
+            const size = line.length > 20 ? 15 : line.length > 17 ? 18 : line.length > 14 ? 21 : 25;
+            return (
+              <g key={`${lines.length - shown.length + i}`}>
+                <text x="272" y={y} textAnchor="end" fontFamily={MONO} fontSize={size} fill="#0f172a" xmlSpace="preserve">
+                  {line.slice(0, cut)}
+                  <tspan fontWeight="700">{line.slice(cut)}</tspan>
+                </text>
+                {i < shown.length - 1 && <path d={`M30 ${y + 12}H272`} stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 5" />}
+              </g>
+            );
+          })}
+        </>
+      )}
+      {active && (
+        <Key label="Zettel abreißen (leeren)" active onPress={tear}>
+          <circle cx="250" cy="57" r="20" fill="#fff" stroke="#94a3b8" strokeWidth="2.5" />
+          <path d="M242 49l16 16M258 49l-16 16" stroke={GREY} strokeWidth="3.2" strokeLinecap="round" />
+        </Key>
+      )}
+    </g>
+  );
+}
+
 function Calculator({ calc, active, press }: { calc: Calc; active: boolean; press: (key: string) => void }) {
   return (
     <>
@@ -269,9 +329,10 @@ export default function MathTool({ element: el }: { element: PageElement }) {
   const v = viewSize(t);
   const boat = boatOf(t, state), rows = rowsOf(t, state), open = state.open === true;
   const calc = (state.calc && typeof state.calc === 'object' ? state.calc : freshCalc()) as Calc;
+  const tape = Array.isArray(state.tape) ? state.tape.filter((l): l is string => typeof l === 'string') : [];
   const active = interactive && t.tool !== 'ruler';
   // Back to what the settings put there at the start.
-  const reset = () => update({ cells: null, blue: null, red: null, rows: null, open: null, calc: null });
+  const reset = () => update({ cells: null, blue: null, red: null, rows: null, open: null, calc: null, tape: null });
   const toggle = () => update({ open: !open });
   return (
     <svg
@@ -285,16 +346,20 @@ export default function MathTool({ element: el }: { element: PageElement }) {
       {t.tool === 'boat' && <Boats t={t} boat={boat} open={open} active={active} set={(b) => update({ cells: null, ...b })} toggle={toggle} reset={reset} />}
       {t.tool === 'abacus' && <Abacus t={t} rows={rows} open={open} active={active} tap={(row, bead) => update({ rows: tapAbacus(rows, row, bead) })} toggle={toggle} reset={reset} />}
       {t.tool === 'ruler' && <Ruler t={t} />}
+      {t.tool === 'calc' && t.tape && <Tape lines={tape} active={active} tear={() => update({ tape: [] })} />}
       {t.tool === 'calc' && (
-        <Calculator
-          calc={calc}
-          active={active}
-          press={(key) => {
-            const next = pressKey(calc, key);
-            update({ calc: next });
-            if (key === '=' && next.shown !== 'Fehler') speakGerman(next.shown.replace('-', 'minus '));
-          }}
-        />
+        <g transform={t.tape ? `translate(${TAPE_W} 0)` : undefined}>
+          <Calculator
+            calc={calc}
+            active={active}
+            press={(key) => {
+              const lines = [...tape];
+              const next = pressKey(calc, key, t.tape ? (line) => lines.push(line) : undefined);
+              update(lines.length !== tape.length ? { calc: next, tape: lines.slice(-TAPE_MAX) } : { calc: next });
+              if (key === '=' && next.shown !== 'Fehler') speakGerman(next.shown.replace('-', 'minus '));
+            }}
+          />
+        </g>
       )}
     </svg>
   );

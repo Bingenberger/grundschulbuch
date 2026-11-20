@@ -247,7 +247,9 @@ Umbau Stück für Stück geprüft.
   fünf Reihen blau. Einstellungen `mathWide`, `mathBlue`, `mathRed`, `mathStart`,
   `mathShow`; ältere Antworten (`cells`) werden weiter gelesen. Ändern der
   Einstellungen setzt die Antwort zurück und passt die Größe an (Maßstab bleibt).
-  Offen: Kassenzettel-Streifen am Taschenrechner („Rechner mit Zettel“).
+  Taschenrechner mit Kassenzettel (`mathTape`, Baustein „Rechner mit Zettel“):
+  Papierstreifen links listet jede Rechnung (höchstens 60, sichtbar die letzten
+  zehn), × reißt ihn ab; der Streifen wird mit der Antwort gespeichert.
 - Neuer Baustein `receipt` (`lib/learning/receipt.ts`, `Receipt.tsx`):
   Kassenzettel wie „Rechnen mit dem Taschenrechner“ – drei Warenlisten
   (Supermarkt, Kaufhaus, Kiosk), leichte oder krumme Preise, Summe mit

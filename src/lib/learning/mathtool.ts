@@ -16,6 +16,8 @@ export type MathTool = {
   /** Number already set on the frame at the start. */
   start?: number;
   show?: MathShow;
+  /** Taschenrechner with the paper strip (Kassenzettel) listing every sum. */
+  tape?: boolean;
 };
 export type MathToolSettings = {
   mathTool?: unknown;
@@ -25,6 +27,7 @@ export type MathToolSettings = {
   mathRed?: unknown;
   mathStart?: unknown;
   mathShow?: unknown;
+  mathTape?: unknown;
 };
 
 const whole = (v: unknown, min: number, max: number) => (typeof v === 'number' && Number.isFinite(v) ? Math.min(max, Math.max(min, Math.round(v))) : 0);
@@ -45,7 +48,7 @@ export function mathTool(settings: MathToolSettings | undefined): MathTool {
     return { tool, n, ...show, ...(start ? { start } : {}) };
   }
   if (tool === 'ruler') return { tool, n: Math.min(30, Math.max(10, raw || 20)) };
-  return { tool, n: 0 };
+  return { tool, n: 0, ...(settings?.mathTape === true ? { tape: true } : {}) };
 }
 
 /** Back into the settings of the element (all fields, so old values disappear). */
@@ -58,6 +61,7 @@ export function mathToolSettings(t: MathTool) {
     mathRed: t.red ?? 0,
     mathStart: t.start ?? 0,
     mathShow: (t.show ?? 'off') as MathShow | 'off',
+    mathTape: t.tape ?? false,
   };
 }
 
@@ -74,8 +78,13 @@ export function viewSize(t: MathTool) {
   if (t.tool === 'boat') return { w: t.wide && t.n > 5 ? 1136 : 580, h: 14 + boatsHeight(t) + BUTTON_ROOM };
   if (t.tool === 'abacus') return { w: 1020, h: t.n * 74 + 50 + BUTTON_ROOM };
   if (t.tool === 'ruler') return { w: t.n * 10 + 16, h: 32 };
-  return { w: 360, h: 520 };
+  return { w: 360 + (t.tape ? TAPE_W : 0), h: 520 };
 }
+
+/** Width of the paper strip left of the calculator. */
+export const TAPE_W = 290;
+/** At most this many sums stay on the strip. */
+export const TAPE_MAX = 60;
 
 /** Where boat number b (five places each) lies. */
 export function boatAt(t: MathTool, b: number) {
@@ -187,8 +196,8 @@ const OPS: Record<string, (a: number, b: number) => number> = {
   '÷': (a, b) => (b === 0 ? NaN : a / b),
 };
 
-/** One key: digits, “,”, “C” (all), “del” (last digit), + − × ÷ and =. */
-export function pressKey(state: Calc, key: string): Calc {
+/** One key: digits, “,”, “C” (all), “del” (last digit), + − × ÷ and =. `log` gets each finished sum (“12 + 30 = 42”). */
+export function pressKey(state: Calc, key: string, log?: (line: string) => void): Calc {
   let c: Calc = state.shown === 'Fehler' && key !== 'C' ? freshCalc() : { ...state };
   if (/^\d$/.test(key)) {
     if (c.fresh || c.shown === '0') c.shown = key;
@@ -204,7 +213,11 @@ export function pressKey(state: Calc, key: string): Calc {
     c.shown = c.shown.length > 1 ? c.shown.slice(0, -1) : '0';
     if (c.shown === '-') c.shown = '0';
   } else if (key in OPS || key === '=') {
-    if (c.op && !c.fresh && c.acc !== null) c.shown = showNumber(OPS[c.op](c.acc, parse(c.shown)));
+    if (c.op && !c.fresh && c.acc !== null) {
+      const result = showNumber(OPS[c.op](c.acc, parse(c.shown)));
+      log?.(`${showNumber(c.acc)} ${c.op} ${showNumber(parse(c.shown))} = ${result}`);
+      c.shown = result;
+    }
     else if (c.op && c.fresh && key !== '=') return { ...c, op: key };
     if (c.shown === 'Fehler') {
       c.acc = null;

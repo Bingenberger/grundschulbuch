@@ -84,7 +84,7 @@ test('Rechenrahmen: alle Kugeln sind gefärbt, nach fünf wechselt die Farbe', (
 });
 
 test('Taschenrechner rechnet wie in der Vorlage', () => {
-  const keys = (list) => list.reduce(pressKey, freshCalc());
+  const keys = (list) => list.reduce((c, k) => pressKey(c, k), freshCalc());
   assert.equal(keys(['1', '2', '+', '3', '0', '=']).shown, '42');
   assert.equal(keys(['7', '÷', '2', '=']).shown, '3,5');
   assert.equal(keys(['2', '+', '3', '×', '4', '=']).shown, '20', 'from left to right');
@@ -95,4 +95,11 @@ test('Taschenrechner rechnet wie in der Vorlage', () => {
   assert.equal(keys(['9', '+', '−', '4', '=']).shown, '5', 'a second operator replaces the first');
   assert.equal(keys(['9', 'C']).shown, '0');
   assert.equal(showNumber(1 / 3), '0,333333333');
+  // Kassenzettel: each finished sum goes onto the strip.
+  const tape = [];
+  ['1', '2', '+', '3', '0', '=', '÷', '4', '=', '+', '='].reduce((c, k) => pressKey(c, k, (line) => tape.push(line)), freshCalc());
+  assert.deepEqual(tape, ['12 + 30 = 42', '42 ÷ 4 = 10,5']);
+  assert.deepEqual(mathTool({ mathTool: 'calc', mathTape: true }), { tool: 'calc', n: 0, tape: true });
+  assert.deepEqual(viewSize({ tool: 'calc', n: 0, tape: true }), { w: 650, h: 520 });
+  assert.equal(pageSize({ tool: 'calc', n: 0, tape: true }).height, 91.9, 'same height as without the strip');
 });

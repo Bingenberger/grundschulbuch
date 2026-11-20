@@ -10,7 +10,7 @@ async function insert(page: Page, title: string) {
   await dialog.getByRole('navigation', { name: 'Fächer' }).getByRole('button', { name: /^Mathematik · / }).click();
   await dialog.getByRole('button', { name: title, exact: true }).click();
   // The ready-made tools go straight onto the page, without the settings step.
-  const direct = /^(Rechenschiffchen|Rechenrahmen|Lineal|Taschenrechner$)/.test(title);
+  const direct = /^(Rechenschiffchen|Rechenrahmen|Lineal|Taschenrechner$|Rechner mit Zettel$)/.test(title);
   if (!direct && await dialog.count()) await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
   await expect(dialog).toHaveCount(0);
 }
@@ -44,6 +44,15 @@ test('Mathe-Werkzeuge wie in der Vorlage: Rechenschiffchen, Rechenrahmen, Tasche
   const calc = surface.getByRole('group', { name: /^Taschenrechner/ });
   for (const key of ['1', '2', '+', '3', '0', '=']) await calc.getByRole('button', { name: key, exact: true }).click();
   await expect(calc).toHaveAttribute('aria-label', 'Taschenrechner: 42.');
+
+  // Rechner mit Zettel: every sum is listed on the strip, × tears it off.
+  await insert(page, 'Rechner mit Zettel');
+  const taped = surface.getByRole('group', { name: /^Taschenrechner/ }).last();
+  for (const key of ['7', '×', '6', '=']) await taped.getByRole('button', { name: key, exact: true }).click();
+  await expect(taped.locator('.mt-tape')).toContainText('7 × 6 = 42');
+  await page.screenshot({ path: test.info().outputPath('rechner-mit-zettel.png') });
+  await taped.getByRole('button', { name: 'Zettel abreißen (leeren)' }).click();
+  await expect(taped.locator('.mt-tape')).toContainText('deine Rechnungen.');
 
   await insert(page, 'Lineal 15 cm');
   const ruler = surface.locator('.page-element', { has: page.getByRole('img', { name: 'Lineal 15 cm.' }) });
