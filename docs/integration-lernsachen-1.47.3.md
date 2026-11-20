@@ -272,3 +272,12 @@ dazu kommen aus unserer Bildsuche und liegen auf dem Schulserver.
 - Figur und sprechendes Foto im Lehrkraft-Editor: Der erste Tipp wählt aus,
   der nächste lässt sprechen (`useTapToPlay`); an der Tafel und bei Kindern
   sprechen sie sofort. Vorher ließ sich das Foto im Editor nicht antippen.
+- **Glücksrad und Würfel › Strichliste daneben** (`syncSpinTally` in
+  `lib/learning/werkzeuge.ts`): Beim Übernehmen bekommt eine Strichliste auf
+  der Seite die neuen Felder (Striche gleicher Felder bleiben, auch die schon
+  getippten), sonst kommt eine neben das Rad (bzw. an den rechten Rand, wenn
+  daneben kein Platz ist). Neue Glücksräder mit Strichliste: Rad links,
+  Strichliste rechts. Texte des Dialogs wie in 1.49.0.
+- **Fehlende Bilder suchen** (gab es schon) sucht jetzt wie die Vorlage mit
+  dem Hauptwort eines Satzes („Es gibt einen Aufzug.“ → „Aufzug“,
+  `pictureWord`) und meldet, für wie viele Zeilen es kein Bild gab.

@@ -130,11 +130,12 @@ function SpinOptions({ c, set }: { c: Config; set: (next: Config) => void }) {
           <Choices label="Seiten" value={c.faces as string} onChange={(faces) => set({ faces })} options={[{ value: 'dots', label: 'Punkte' }, { value: 'numbers', label: 'Zahlen' }]} />
         </>
       )}
-      <Toggle checked={!!c.count} label="Strichliste zählt mit" hint={wheel ? 'Steht eine Strichliste mit denselben Feldern auf der Seite, sieht man dort, was am häufigsten kommt.' : 'Steht eine Strichliste mit den Augenzahlen (bei zwei Würfeln: den Summen 2 bis 12) auf der Seite, zählt sie mit.'} onChange={(count) => set({ count })} />
+      <Toggle checked={!!c.count} label="Strichliste daneben" hint={wheel ? 'Neben dem Rad steht eine Strichliste mit denselben Feldern – so sieht man, was am häufigsten kommt.' : 'Neben dem Würfel steht eine Strichliste mit den Augenzahlen (bei zwei Würfeln: den Summen 2 bis 12).'} onChange={(count) => set({ count })} />
       {!!c.count && (
         <Choices label="Die Striche …" value={c.auto ? 'auto' : 'self'} onChange={(v) => set({ auto: v === 'auto' })} options={[{ value: 'auto', label: 'kommen von selbst' }, { value: 'self', label: 'machen die Kinder' }]}
           hint={c.auto ? (wheel ? 'Jedes Drehen macht beim Ergebnis einen Strich.' : 'Jedes Würfeln macht beim Ergebnis einen Strich.') : 'Die Kinder tippen nach jedem Mal in der Strichliste beim Ergebnis auf + (− nimmt einen Strich weg). Die Stimme erinnert sie: „Mach einen Strich!“'} />
       )}
+      {!!c.count && <p className="option-hint">Eine Strichliste auf dieser Seite bekommt die neuen Felder (die Striche gleicher Felder bleiben) – gibt es keine, kommt eine dazu.</p>}
     </>
   );
 }
@@ -199,7 +200,7 @@ function PatternOptions({ c, set }: { c: Config; set: (next: Config) => void }) 
 
 const HINTS: Partial<Record<ToolId, string>> = {
   tally: '„+“ macht einen Strich, „−“ nimmt einen weg. Jeder fünfte Strich geht quer über die vier davor.',
-  spin: 'Probier es aus: Tippe auf das Rad oder den Würfel.',
+  spin: 'Probier es aus: Tippe auf das Rad oder den Würfel und dann rechts beim Ergebnis auf +.',
   seek: 'Im Heft tippt man die richtigen an. Ausgedruckt kreist man sie ein.',
   pattern: 'Probier es aus: Tippe unten auf die Perle, die als Nächstes kommt.',
 };

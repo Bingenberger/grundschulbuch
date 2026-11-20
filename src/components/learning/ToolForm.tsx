@@ -6,7 +6,7 @@
 // ready-made lists. Like the reference, the form edits a draft (an empty new
 // row stays until it is filled) and passes on the cleaned settings.
 import { useLayoutEffect, useRef, useState } from 'react';
-import { findPicture } from '@/lib/learning/picture-search';
+import { findPicture, pictureWord } from '@/lib/learning/picture-search';
 import { Toggle } from '../sheets/SheetParts';
 import { Choices } from './OptionControls';
 
@@ -59,7 +59,7 @@ function move<T>(list: T[], index: number, by: number) {
   next.splice(index + by, 0, item);
   return next;
 }
-const wordOf = (row: Row, key: string) => String(row.q || row[key] || row.text || row.label || row.name || '').trim();
+const wordOf = (row: Row, key: string) => String(row.q || pictureWord(String(row[key] || row.text || row.label || row.name || ''))).trim();
 
 /** Picture of an entry: search by its word, own picture, or none. */
 function Picture({ src, word, label, onChange, upload, busy }: { src?: string; word: string; label: string; onChange: (img: string | undefined) => void; upload: Upload; busy: boolean }) {
@@ -85,19 +85,28 @@ function Picture({ src, word, label, onChange, upload, busy }: { src?: string; w
 
 function ListEditor({ spec, label, rows, draft, onRows, upload, busy }: { spec: ListSpec; label: string; rows: Row[]; draft: Draft; onRows: (rows: Row[]) => void; upload: Upload; busy: boolean }) {
   const [searching, setSearching] = useState(false);
+  const [note, setNote] = useState('');
   const textKey = spec.text ?? 'text';
   const row = (i: number, patch: Row) => onRows(rows.map((r, j) => (j === i ? { ...r, ...patch } : r)));
   /** Pictures for all entries that have a word but no picture (as “Fehlende Bilder suchen”). */
   const searchAll = async () => {
     const next = [...rows];
     setSearching(true);
+    setNote('');
+    let tried = 0, missing = 0;
     for (let i = 0; i < next.length; i++) {
       const word = wordOf(next[i], textKey);
       if (next[i].img || !word) continue;
-      try { const src = await findPicture(word, new AbortController().signal); if (src) next[i] = { ...next[i], img: src }; } catch { /* keep going */ }
+      tried++;
+      let src: string | null | undefined = null;
+      try { src = await findPicture(word, new AbortController().signal); } catch { /* keep going */ }
+      if (src) next[i] = { ...next[i], img: src };
+      else missing++;
     }
     setSearching(false);
     onRows(next);
+    // As in the reference: say where nothing was found.
+    if (missing) setNote(missing === tried ? 'Keine Bilder gefunden – gibt es Internet?' : `${missing === 1 ? 'Für eine Zeile' : `Für ${missing} Zeilen`} gab es kein Bild. Tippe auf das Bildfeld, um selbst eins zu wählen.`);
   };
   return (
     <div className="receipt-option">
@@ -138,6 +147,7 @@ function ListEditor({ spec, label, rows, draft, onRows, upload, busy }: { spec: 
         <button type="button" className="knopf" disabled={rows.length >= spec.max} onClick={() => onRows([...rows, spec.fresh ? spec.fresh(rows) : { [textKey]: '' }])}>＋ {spec.what}</button>
         {spec.picture && <button type="button" className="knopf" disabled={searching || !rows.some((r) => !r.img && wordOf(r, textKey))} onClick={() => void searchAll()}>{searching ? 'Bilder werden gesucht …' : 'Fehlende Bilder suchen'}</button>}
       </div>
+      {note && <p className="option-hint" role="status">{note}</p>}
       <small className="option-hint">Höchstens {spec.max}.</small>
     </div>
   );

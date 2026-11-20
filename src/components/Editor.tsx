@@ -58,6 +58,7 @@ import InlineText from './editor/InlineText';
 import { settleText, useTextEditing } from './editor/use-text-editing';
 import AnswerField, { CheckButton, isAnswerField, isCheckButton, typedAnswer } from './editor/AnswerField';
 import { useReadyGuide } from './editor/useReadyGuide';
+import { SPIN_WITH_TALLY, syncSpinTally, toolConfig } from '@/lib/learning/werkzeuge';
 import { checkPage } from '@/lib/sheets/answers';
 import TemplateTextField,{isLockedTemplateField} from './editor/TemplateTextField';
 import { fitText } from './editor/text-measure';
@@ -1836,18 +1837,22 @@ export default function Editor({
               : undefined
           }
           onSave={(el) => {
-            if (learning === 'new') {
+            // Glücksrad und Würfel with “Strichliste daneben”: wheel left, tally right – or the tally on the page takes the new fields.
+            const withTally = el.widgetKind === 'werkzeug' && el.settings?.tool === 'spin' && !!(toolConfig('spin', el.settings.werkzeug) as { count?: boolean }).count;
+            const before = learning !== 'new' && learning ? learning.settings?.werkzeug : undefined;
+            if (learning === 'new' && withTally && !templateEditing) {
+              s.edit((p) => ({ ...p, elements: syncSpinTally([...p.elements, { ...el, ...SPIN_WITH_TALLY }], el.id, undefined, size) }));
+              s.select([el.id]);
+            } else if (learning === 'new') {
               // New tools start in the middle of the page and do not cover each other.
               const width = Math.min(el.width, size.width), height = Math.min(el.height, size.height);
               const centred = { ...el, width, height, x: Math.max(0, (size.width - width) / 2), y: Math.max(0, (size.height - height) / 2) };
               insert(cascade(centred, page.elements, size));
             } else
-              s.edit((p) => ({
-                ...p,
-                elements: p.elements.map((old) =>
-                  old.id === el.id ? el : old,
-                ),
-              }));
+              s.edit((p) => {
+                const elements = p.elements.map((old) => (old.id === el.id ? el : old));
+                return { ...p, elements: withTally ? syncSpinTally(elements, el.id, before, size) : elements };
+              });
           }}
         />
       )}

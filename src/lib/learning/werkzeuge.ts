@@ -5,7 +5,7 @@
 // goes into the response, tied to the configuration it belongs to.
 import presetData from './werkzeug-presets.json';
 import sortData from './sort-sets.json';
-import { registerBudget, TOOL_REGISTRY } from '../reference/tools-runtime';
+import { registerBudget, SPIN_COLORS, TOOL_REGISTRY } from '../reference/tools-runtime';
 import { findPicture } from './picture-search';
 import { uuid, type PageElement } from '../notebook-model';
 import { referenceElement } from './page-designs';
@@ -148,3 +148,56 @@ export function presetElements(preset: ToolPreset): PageElement[] {
     } as PageElement];
   });
 }
+
+// ── Glücksrad und Würfel with “Strichliste daneben” (Lernsachen-Heft 1.49.0) ──
+
+type Spin = { mode?: string; dice?: number; count?: boolean; fields?: { label: string; color: string }[] };
+type Cat = { label: string; color: string };
+/** The fields a tally needs for a wheel (its fields) or dice (1–6, sums 2–12). */
+export function spinCats(spin: Spin): Cat[] {
+  if (spin.mode === 'wheel') return (spin.fields ?? []).map((f) => ({ label: f.label, color: f.color }));
+  const first = spin.dice === 2 ? 2 : 1, n = spin.dice === 2 ? 11 : 6, colors = SPIN_COLORS as unknown as string[];
+  return Array.from({ length: n }, (_, i) => ({ label: String(first + i), color: colors[i % colors.length] }));
+}
+/** A tally for the wheel or the dice, with the reference's question. */
+export function spinTally(spin: Spin) {
+  const cats = spinCats(spin);
+  return { title: spin.mode === 'wheel' ? 'Was kommt am häufigsten?' : spin.dice === 2 ? 'Welche Summe kommt am häufigsten?' : 'Welche Zahl kommt am häufigsten?', cats, counts: cats.map(() => 0), view: 'both' };
+}
+const isTally = (el: PageElement) => el.type === 'widget' && el.widgetKind === 'werkzeug' && el.settings?.tool === 'tally';
+const isSpin = (el: PageElement) => el.type === 'widget' && el.widgetKind === 'werkzeug' && el.settings?.tool === 'spin';
+
+/**
+ * After the wheel or dice was set with “Strichliste daneben”: a tally on the
+ * page gets the new fields (strokes of the same fields stay); without one, a
+ * tally comes next to it – as the reference does.
+ */
+export function syncSpinTally(elements: PageElement[], spinId: string, before: unknown, page: { width: number; height: number }): PageElement[] {
+  const spinEl = elements.find((e) => e.id === spinId);
+  if (!spinEl || !isSpin(spinEl)) return elements;
+  const spin = toolConfig('spin', spinEl.settings?.werkzeug) as Spin;
+  if (!spin.count) return elements;
+  const old = spinCats(toolConfig('spin', before ?? spinEl.settings?.werkzeug) as Spin).map((c) => c.label.toLowerCase());
+  const tallies = elements.filter(isTally);
+  const target = tallies.find((t) => ((toolConfig('tally', t.settings?.werkzeug).cats as Cat[]) ?? []).every((c) => old.includes(c.label.toLowerCase()))) ?? (tallies.length === 1 ? tallies[0] : undefined);
+  const fresh = spinTally(spin);
+  if (target) {
+    const now = toolCurrent('tally', target.settings, target.response) as { cats: Cat[]; counts: number[] };
+    const kept = new Map(now.cats.map((c, i) => [c.label.toLowerCase(), now.counts[i] ?? 0]));
+    const config = { ...toolConfig('tally', target.settings?.werkzeug), cats: fresh.cats, counts: fresh.cats.map((c) => kept.get(c.label.toLowerCase()) ?? 0) };
+    return elements.map((e) => {
+      if (e.id !== target.id) return e;
+      const next = { ...e, settings: { ...e.settings, werkzeug: toolConfig('tally', config) as unknown as JsonValue } };
+      delete next.response;
+      return next;
+    });
+  }
+  // Next to the wheel if there is room (reference: 40 apart, at least 480 wide), else at the right edge.
+  const gap = mm(40), wide = mm(680), x = spinEl.x + spinEl.width + gap;
+  const box = page.width - x - mm(30) >= mm(480)
+    ? { x, y: spinEl.y, width: Math.min(wide, page.width - x - mm(30)), height: spinEl.height }
+    : { x: Math.max(0, page.width - wide - mm(30)), y: Math.max(0, Math.min(spinEl.y, page.height - mm(760))), width: wide, height: Math.min(mm(760), page.height) };
+  return [...elements, { id: uuid(), type: 'widget', widgetKind: 'werkzeug', ...box, rotation: 0, locked: false, color: '#253c42', settings: toolSettings('tally', fresh, TOOL_TITLES.tally) } as PageElement];
+}
+/** A new wheel with “Strichliste daneben” goes to the left, its tally to the right (reference layout). */
+export const SPIN_WITH_TALLY = { x: mm(40), y: mm(110), width: mm(600), height: mm(760) };

@@ -27,3 +27,13 @@ export function pictureSize(src: string) {
   }
   return found;
 }
+
+/**
+ * The word to search a picture for, as in Lernsachen-Heft 1.49.0: from a
+ * sentence (“Es gibt einen Aufzug.”) the longest capitalised word after the
+ * first one (“Aufzug”), otherwise the first word.
+ */
+export function pictureWord(text: string): string {
+  const words = text.replace(/[.,!?:;„“"()]/g, ' ').split(/\s+/).filter(Boolean);
+  return (words.slice(1).filter((w) => /^[A-ZÄÖÜ]/.test(w)).sort((a, b) => b.length - a.length)[0] ?? words[0] ?? '').trim();
+}
