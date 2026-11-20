@@ -1,5 +1,6 @@
 'use client';
-import { createContext, useContext, useCallback } from 'react';
+import { createContext, useContext, useCallback, useRef } from 'react';
+import { useEditor } from '@/lib/editor-store';
 import type { Page, PageElement } from '@/lib/notebook-model';
 import type { LearningResponse } from '@/lib/learning/catalog';
 type Runtime = {
@@ -67,5 +68,27 @@ export function pageDrawing(
           return !(cx >= a.x && cx <= a.x + a.width && cy >= a.y && cy <= a.y + a.height);
         }),
       })),
+  };
+}
+
+/**
+ * Tapping a figure or talking photo, as in the reference: while editing, the
+ * first tap selects it (it can be moved) and the next one plays it; at the
+ * board, in a child's book or a protected page it plays at once.
+ */
+export function useTapToPlay(element: PageElement, play: (box: HTMLElement) => void) {
+  const { interactive, onConfigure } = useContext(Context);
+  const selected = useRef(false);
+  const editing = !!onConfigure;
+  const act = (box: HTMLElement) => interactive && (!editing || selected.current || !!box.closest('.board-mode'));
+  return {
+    interactive,
+    onPointerDownCapture: () => { selected.current = useEditor.getState().selected.includes(element.id); },
+    // Outside the editor the tap belongs to the figure; while editing it also selects.
+    onPointerDown: (e: React.PointerEvent) => { if (interactive && !editing) e.stopPropagation(); },
+    onClick: (e: React.MouseEvent<HTMLElement>) => { if (act(e.currentTarget)) play(e.currentTarget); },
+    onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
+      if (interactive && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); e.stopPropagation(); play(e.currentTarget); }
+    },
   };
 }

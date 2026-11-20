@@ -88,6 +88,7 @@ export default function FigureOptions({ settings, onChange, upload, busy }: { se
       <Choices label="So bewegt sich die Figur beim Antippen" value={move ?? ''} onChange={(m) => onChange({ move: m || undefined })}
         options={[{ value: '', label: talks ? 'Von selbst (reden)' : 'Von selbst (winken)', icon: 'refresh' as const }, ...FIGURE_MOVES.map(([value, label]) => ({ value, label, icon: <span className="figure-move" aria-hidden="true">{MOVE_ICONS[value]}</span> }))]} />
       <p className="option-hint">Die Bewegung läuft, während die Figur spricht – auch beim Abspielen im Puppentheater.</p>
+      <p className="option-hint">In jedem Heft wiederverwenden: die Figur auf der Seite antippen, dann „In Sammlung sichern“ – sie liegt dann unter „Selbst gemacht“.</p>
     </div>
   );
 }

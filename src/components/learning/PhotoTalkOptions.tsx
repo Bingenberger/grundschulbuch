@@ -135,6 +135,7 @@ export default function PhotoTalkOptions({ settings, onChange, upload, busy }: {
         <OwnRecording audio={say.audio} onChange={(audio) => setSay({ audio })}
           hint={say.audio ? 'Mit eigener Aufnahme spricht die Aufnahme – der Text ist dann nur noch die Beschreibung. Der Mund bewegt sich, solange sie läuft.' : 'Ohne eigene Aufnahme spricht die Computerstimme. Im Puppentheater spricht das Foto nur mit eigener Aufnahme.'} />
       </div>
+      <p className="option-hint">In jedem Heft wiederverwenden: das Foto auf der Seite antippen, dann „In Sammlung sichern“ – es liegt dann unter „Selbst gemacht“.</p>
       {photo && (
         <div className="photo-talk-preview">
           <div ref={preview} className="reference-widget lh-wg-phototalk" style={{ aspectRatio: `${photo.width} / ${photo.height}` }} />

@@ -151,6 +151,7 @@ export default function LearningDialog({
   onClose,
   onWorksheet,
   onPages,
+  onCollection,
 }: {
   element?: PageElement;
   onSave: (el: PageElement) => void;
@@ -159,6 +160,8 @@ export default function LearningDialog({
   onWorksheet?: () => void;
   /** Building blocks that come as whole pages (the communication book). */
   onPages?: (pages: Page[]) => void;
+  /** “Meine Sammlung”: own figures and photos (“Selbst gemacht”) and other saved elements. */
+  onCollection?: () => void;
 }) {
   const [type, setType] = useState<'widget' | 'activity'>(
     element?.type === 'activity' ? 'activity' : 'widget',
@@ -317,6 +320,7 @@ export default function LearningDialog({
                     onClick={() => setSubject(subject === c ? 'Alle' : c)}
                   />
                 ))}
+                {onCollection && <ChoiceButton icon="filing_cabinet" label="Meine Sammlung" title="Selbst gemacht (eigene Figuren und sprechende Fotos) und Persönlich" onClick={() => { onClose(); onCollection(); }} />}
               </nav>
               <div className="template-main">
                 <div className="template-tools">

@@ -4,7 +4,7 @@
 // its text (the mouth moves with it) or “Hallo, ich bin …”.
 import type { PageElement } from '@/lib/notebook-model';
 import { FIGURE_CSS, figureConfig, renderFigure, speakFigure } from '@/lib/reference/tools-runtime';
-import { useLearning } from './Runtime';
+import { useTapToPlay } from './Runtime';
 import ReferenceWidget from './ReferenceWidget';
 import { ownAudio } from './OwnRecording';
 
@@ -29,25 +29,11 @@ export const FIGURE_MOVES = [
 export const moveOf = (raw: unknown) => (FIGURE_MOVES.some(([id]) => id === raw) ? (raw as string) : undefined);
 
 export default function FigureWidget({ element }: { element: PageElement }) {
-  const { interactive } = useLearning(element);
   const av = figureLook(element.settings?.av), say = sayOf(element.settings?.say), move = moveOf(element.settings?.move);
-  // Tapped (board, child's book, protected page): it speaks its text or recording and moves.
-  const speak = (box: HTMLElement) => speakFigure({ id: element.id, kind: 'avatar', av, say: sayItem(say), ...(move ? { move } : {}) }, box.querySelector('.reference-widget'));
+  // Tapped: it speaks its text or recording and moves.
+  const { interactive, ...tap } = useTapToPlay(element, (box) => speakFigure({ id: element.id, kind: 'avatar', av, say: sayItem(say), ...(move ? { move } : {}) }, box.querySelector('.reference-widget')));
   return (
-    <div
-      className="figure-widget"
-      role={interactive ? 'button' : undefined}
-      tabIndex={interactive ? 0 : -1}
-      aria-label={interactive ? `${String(av.name || 'Figur')} antippen` : undefined}
-      onPointerDown={(e) => interactive && e.stopPropagation()}
-      onClick={(e) => interactive && speak(e.currentTarget)}
-      onKeyDown={(e) => {
-        if (interactive && (e.key === 'Enter' || e.key === ' ')) {
-          e.preventDefault();
-          speak(e.currentTarget);
-        }
-      }}
-    >
+    <div className="figure-widget" role={interactive ? 'button' : undefined} tabIndex={interactive ? 0 : -1} aria-label={interactive ? `${String(av.name || 'Figur')} antippen` : undefined} {...tap}>
       <ReferenceWidget element={element} kind="avatar" field="av" value={{ ...av, _say: say, _move: move }} css={FIGURE_CSS}
         options={{ assets: sayAssets(say), assetUrl }}
         render={(el, item, live, options) => {

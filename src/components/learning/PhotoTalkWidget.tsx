@@ -7,7 +7,7 @@ import { useLayoutEffect, useRef } from 'react';
 import type { PageElement } from '@/lib/notebook-model';
 import { PHOTO_CSS, renderPhotoTalk, speakPhotoTalk } from '@/lib/reference/tools-runtime';
 import { assetUrl, sayAssets, sayItem, sayOf, type Say } from './FigureWidget';
-import { useLearning } from './Runtime';
+import { useTapToPlay } from './Runtime';
 
 export type PhotoTalk = { src: string; width: number; height: number; x1: number; y1: number; x2: number; y2: number; style: string };
 export const PHOTO_STYLE_IDS = ['normal', 'animal', 'monster', 'comic'];
@@ -36,11 +36,11 @@ export function photoItem(id: string, photo: PhotoTalk | undefined, say: Say) {
 }
 
 export default function PhotoTalkWidget({ element }: { element: PageElement }) {
-  const { interactive } = useLearning(element);
   const box = useRef<HTMLDivElement>(null);
   const photo = photoOf(element.settings?.photo), say = sayOf(element.settings?.say);
   const { item, options } = photoItem(element.id, photo, say);
   const key = JSON.stringify([item, say.audio]);
+  const { interactive, ...tap } = useTapToPlay(element, (el) => speakPhotoTalk(item, el));
   useLayoutEffect(() => {
     if (box.current) renderPhotoTalk(box.current, item, true, options);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,14 +53,7 @@ export default function PhotoTalkWidget({ element }: { element: PageElement }) {
         className={`reference-widget lh-wg-phototalk${interactive ? ' is-live' : ''}`}
         role="button"
         tabIndex={interactive ? 0 : -1}
-        onPointerDown={(e) => interactive && e.stopPropagation()}
-        onClick={() => interactive && box.current && speakPhotoTalk(item, box.current)}
-        onKeyDown={(e) => {
-          if (interactive && (e.key === 'Enter' || e.key === ' ') && box.current) {
-            e.preventDefault();
-            speakPhotoTalk(item, box.current);
-          }
-        }}
+        {...tap}
       />
     </>
   );

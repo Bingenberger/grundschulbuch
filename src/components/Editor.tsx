@@ -32,6 +32,8 @@ import { appendSamples, eraseElements, newStroke, pointerSamples, type EraserPro
 import AudioDialog, { AudioEditDialog } from './AudioDialog';
 import { audioElement, audioPlaceholder, cassetteRecorder, isAudioPlaceholder, withRecording } from './editor/audio-elements';
 import CollectionDialog from './CollectionDialog';
+import ShelveDialog from './ShelveDialog';
+import { SHELF_LABELS, shelfCategory } from '@/lib/collection';
 import GeneratorDialog from './GeneratorDialog';
 import SheetDialogFor, { type SheetKind } from './sheets/SheetDialogFor';
 import { ENABLED } from '@/lib/paused';
@@ -173,6 +175,8 @@ export default function Editor({
   const [editAudio, setEditAudio] = useState<PageElement | null>(null);
   const [showAudio, setShowAudio] = useState(false);
   const [showCollection, setShowCollection] = useState(false);
+  /** Elements being put into the collection (“In die Sammlung legen”). */
+  const [shelving, setShelving] = useState<PageElement[] | null>(null);
   /** Worksheet dialogs taken over from the reference. */
   const [sheetDialog, setSheetDialog] = useState<SheetKind | null>(null);
   const [showGenerator, setShowGenerator] = useState<boolean | { kind: WorksheetKind; title: string; words?: string }>(false);
@@ -1126,6 +1130,7 @@ export default function Editor({
         showTiles ||
         showAudio ||
         showCollection ||
+        shelving ||
         showGenerator ||
         showShare ||
         showSave ||
@@ -1164,7 +1169,7 @@ export default function Editor({
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
   });
-  const dialogOpen = !!(showImages || templateMode || showTiles || showAudio || showCollection || showGenerator ||
+  const dialogOpen = !!(showImages || templateMode || showTiles || showAudio || showCollection || shelving || showGenerator ||
     showShare || showSave || learning || showEmbed || showFiles || showShortcuts || showHelp || moreFor);
   useEffect(() => {
     const editable = (t: EventTarget | null) =>
@@ -1543,14 +1548,7 @@ export default function Editor({
               onEditImage: setEditImage,
               onEditEmbed: setEditEmbed,
               onEditAudio: setEditAudio,
-              onCollection: () => {
-                const name = prompt('Name für die Sammlung');
-                if (name?.trim())
-                  void run(async () => {
-                    await api('asset', { title: name, page: { ...page, elements: selected } });
-                    setShowCollection(true);
-                  });
-              },
+              onCollection: () => setShelving(selected),
               onGroup: (group) => performCommand(group ? 'group' : 'ungroup'),
               onConfigure: setLearning,
               onMoreExercises: templateEditing ? undefined : setMoreFor,
@@ -1734,6 +1732,20 @@ export default function Editor({
           }}
         />
       )}
+      {shelving && (
+        <ShelveDialog
+          elements={shelving}
+          onClose={() => setShelving(null)}
+          onSave={(name) => {
+            const elements = shelving;
+            setShelving(null);
+            void run(async () => {
+              await api('asset', { title: name, page: { ...page, elements } });
+              setNotice(`In der Sammlung unter „${SHELF_LABELS[shelfCategory(elements)]}“ abgelegt.`);
+            });
+          }}
+        />
+      )}
       {showCollection && (
         <CollectionDialog
           onClose={() => setShowCollection(false)}
@@ -1797,6 +1809,7 @@ export default function Editor({
       {learning && (
         <LearningDialog
           element={learning === 'new' ? undefined : learning}
+          onCollection={templateEditing ? undefined : () => setShowCollection(true)}
           onPages={(pages) =>
             void run(async () => {
               if(templateEditing){

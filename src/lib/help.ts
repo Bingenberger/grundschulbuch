@@ -108,7 +108,7 @@ export const helpTopics: HelpTopic[] = [
   { id: 'einfuegen', chapter: 'elemente', title: 'Einfügen: Formen, Sticker, Stempel, Sammlung', keywords: 'formen sticker stempel emoji sammlung',
     body: [
       '„Einfügen“ öffnet unten Formen, Sticker und Stempel. Ein Tipp setzt sie auf die Seite.',
-      'In „Meine Sammlung“ legst du Bilder und Elemente ab, die du in vielen Heften brauchst.',
+      'In „Meine Sammlung“ legst du Bilder und Elemente ab, die du in vielen Heften brauchst: auf der Seite antippen, dann „In Sammlung sichern“. Eigene Figuren und sprechende Fotos liegen dort unter „Selbst gemacht“, alles andere unter „Persönlich“. Die Sammlung liegt auf dem Schulserver – in jedem Heft und auf jedem Gerät.',
     ] },
 
   // Bearbeiten

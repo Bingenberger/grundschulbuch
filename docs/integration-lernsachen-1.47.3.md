@@ -260,3 +260,15 @@ dazu kommen aus unserer Bildsuche und liegen auf dem Schulserver.
   (außer bei anderer Lektion oder Teppichgröße). Offen: das Werkzeug „Linie“
   für eigene Formen beim Zeichnen mit dem Stift (braucht `lines` im
   Programmieren-Code, den es erst in 1.49.0 gibt).
+- **Selbst gemacht** (`lib/collection.ts`, `CollectionDialog.tsx`,
+  `ShelveDialog.tsx`): „Meine Sammlung“ ordnet wie das Regal der Vorlage –
+  eigene Figuren und sprechende Fotos unter „Selbst gemacht“, alles andere
+  unter „Persönlich“. „In Sammlung sichern“ öffnet „In die Sammlung legen“
+  mit vorgeschlagenem Namen (Name der Figur, Worte des Fotos …) statt eines
+  Browser-Fensters und meldet „In der Sammlung unter … abgelegt.“. Die
+  Sammlung ist wieder erreichbar: Lernwerkzeuge → „Meine Sammlung“ (seit dem
+  Umbau von „Einfügen“ am 11.11. gab es nur noch Alt+E). Anders als in der
+  Vorlage liegt sie auf dem Schulserver (alle Geräte).
+- Figur und sprechendes Foto im Lehrkraft-Editor: Der erste Tipp wählt aus,
+  der nächste lässt sprechen (`useTapToPlay`); an der Tafel und bei Kindern
+  sprechen sie sofort. Vorher ließ sich das Foto im Editor nicht antippen.
