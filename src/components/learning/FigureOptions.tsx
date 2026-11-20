@@ -3,12 +3,15 @@
 // Settings of a Figur with the choices of the reference's figure editor: name,
 // child or adult, skin, hair, hat, feeling, eyes, brows, mouth, cheeks, beard,
 // glasses, clothes, shoes, and what it says – each choice shown as a picture of
-// the figure itself, as in the reference. (The movements of the reference's
-// editor are not offered here; the figure waves or talks.)
+// the figure itself, as in the reference – with an own recording and the
+// movement when tapped (Lernsachen-Heft 1.49.0).
 import type { JsonValue, LearningSettings } from '@/lib/learning/catalog';
 import { FIGURE_CHOICES, FIGURE_COLORS, FIGURE_CSS, FIGURE_PITCHES, figureSvg, figureView } from '@/lib/reference/tools-runtime';
-import { figureLook, sayOf } from './FigureWidget';
+import { FIGURE_MOVES, figureLook, moveOf, sayOf } from './FigureWidget';
 import ToolForm, { type Draft, type Field } from './ToolForm';
+import OwnRecording from './OwnRecording';
+import { Choices } from '../ui/Choice';
+import { speakGerman } from '@/lib/speech';
 
 type Choice = { id: string; label: string };
 const choices = FIGURE_CHOICES as unknown as Record<string, Choice[]>;
@@ -42,7 +45,7 @@ export const FIGURE_FIELDS: Field[] = [
   { t: 'colors', key: 'bottomColor', label: 'Farbe des Unterteils', colors: colors.bottomColor },
   { t: 'colors', key: 'shoes', label: 'Farbe der Schuhe', colors: colors.shoes },
   { t: 'text', key: 'sayText', label: 'Das sagt die Figur beim Antippen', placeholder: 'z. B. Hallo! Heute lernen wir die Uhr.', max: 300 },
-  { t: 'note', text: 'Leer lassen: Die Figur sagt ihren Namen. Mit Text spricht sie ihn, der Mund bewegt sich dazu.' },
+  { t: 'note', text: 'Leer lassen: Die Figur sagt ihren Namen. Mit Text spricht sie ihn, der Mund bewegt sich dazu. Im Puppentheater spricht sie nur mit eigener Aufnahme. Wie sie sich dabei bewegt, wählst du unter „Bewegung“.' },
   { t: 'choice', key: 'sayPitch', label: 'Stimme', options: (FIGURE_PITCHES as unknown as Choice[]).map((p) => ({ value: p.id, label: p.label })) },
 ];
 
@@ -56,15 +59,36 @@ export const figureFromDraft = ({ kind, feel, sayText, sayPitch, ...av }: Draft)
   say: { text: String(sayText ?? ''), pitch: String(sayPitch ?? 'normal') } as unknown as JsonValue,
 });
 
+let playing: HTMLAudioElement | null = null;
+/** “Anhören”: the recording, else the text or “Hallo, ich bin …”. */
+export function trySay(say: { text: string; audio?: string }, name = '') {
+  playing?.pause();
+  if (say.audio) { playing = new Audio(say.audio); void playing.play().catch(() => undefined); return; }
+  const text = say.text.trim() || (name.trim() ? `Hallo, ich bin ${name.trim()}!` : '');
+  if (text) speakGerman(text);
+}
+
 export default function FigureOptions({ settings, onChange, upload, busy }: { settings: LearningSettings; onChange: (patch: Partial<LearningSettings>) => void; upload: (file: File, done: (src: string) => void) => Promise<void>; busy: boolean }) {
   const draft = figureDraft(settings);
+  const say = sayOf(settings.say), move = moveOf(settings.move);
   const preview = svg(figureSvg(figureLook(settings.av), {}, {}));
+  const talks = !!(say.text.trim() || say.audio);
   return (
     <div className="receipt-options tool-options">
       <style>{FIGURE_CSS}</style>
       <div className="tool-preview figure-preview"><img src={preview} alt="Vorschau der Figur" /></div>
       <p className="option-hint">Ein Tipp auf die Figur: sie winkt und sagt „Hallo, ich bin …“ oder ihren Text.</p>
-      <ToolForm fields={FIGURE_FIELDS} value={draft} onChange={(d) => onChange(figureFromDraft(d))} upload={upload} busy={busy} />
+      <ToolForm fields={FIGURE_FIELDS} value={draft} onChange={(d) => { const next = figureFromDraft(d); onChange({ ...next, say: { ...(next.say as object), ...(say.audio ? { audio: say.audio } : {}) } as unknown as JsonValue }); }} upload={upload} busy={busy} />
+      <div className="receipt-option">
+        <strong>Eigene Aufnahme</strong>
+        <OwnRecording audio={say.audio} onChange={(audio) => onChange({ say: { text: say.text, pitch: say.pitch, ...(audio ? { audio } : {}) } as unknown as JsonValue })}
+          onTry={() => trySay(say, String(figureLook(settings.av).name ?? ''))}
+          hint={say.audio ? 'Mit eigener Aufnahme spricht die Aufnahme – der Text ist dann nur noch die Beschreibung.' : 'Ohne eigene Aufnahme spricht die Computerstimme.'} />
+      </div>
+      <Choices label="So bewegt sich die Figur beim Antippen" value={move ?? ''} onChange={(m) => onChange({ move: m || undefined })}
+        options={[{ value: '', label: talks ? 'Von selbst (reden)' : 'Von selbst (winken)', icon: 'refresh' as const }, ...FIGURE_MOVES.map(([value, label]) => ({ value, label, icon: <span className="figure-move" aria-hidden="true">{MOVE_ICONS[value]}</span> }))]} />
+      <p className="option-hint">Die Bewegung läuft, während die Figur spricht – auch beim Abspielen im Puppentheater.</p>
     </div>
   );
 }
+const MOVE_ICONS: Record<string, string> = { talk: '🗣', wave: '👋', cross: '🙅', dance: '💃', jump: '🦘', bow: '🙇', clap: '👏', cheer: '🙌', random: '🔀' };

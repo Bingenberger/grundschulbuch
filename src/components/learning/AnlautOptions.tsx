@@ -1,6 +1,6 @@
 'use client';
 // Settings of the “Anlaut-Tastatur”, like the dialog of the reference:
-// keys, pictures of the keys, practising words.
+// keys, pictures of the keys, own recordings of the sounds, practising words.
 import { useState } from 'react';
 import Icon from '../Icon';
 import { Choices } from './OptionControls';
@@ -11,6 +11,7 @@ import { safeAnlautAsset } from '@/lib/reference/anlaut-defaults';
 import defaults from '@/lib/reference/anlaut-keys.json';
 import { decodeMaps, encodeMaps } from '@/lib/reference/keys';
 import WordBank, { REFERENCE_WORD_LISTS } from './WordBank';
+import AnlautSounds from './AnlautSounds';
 
 type Key = { word: string; img?: string; alt?: { word: string; img?: string } };
 type Anlaut = {
@@ -44,7 +45,7 @@ const label = (g: string) => (g === 'ß' ? 'ß' : `${g.charAt(0).toUpperCase()}$
 export default function AnlautOptions({ value, onChange: save }: { value: unknown; onChange: (a: Anlaut) => void }) {
   const a = cleanAnlaut(decodeMaps(value, ['keys', 'sounds']), safeAnlautAsset) as Anlaut;
   const onChange = (next: Anlaut) => save(encodeMaps(next, ['keys', 'sounds']));
-  const [tab, setTab] = useState<'keys' | 'pictures' | 'practice'>('keys');
+  const [tab, setTab] = useState<'keys' | 'pictures' | 'sounds' | 'practice'>('keys');
   const [error, setError] = useState('');
   const [words, setWords] = useState((a.practice?.words ?? []).map((w) => w.w).join('\n'));
   const set = (v: Partial<Anlaut>) => onChange({ ...a, ...v });
@@ -73,6 +74,7 @@ export default function AnlautOptions({ value, onChange: save }: { value: unknow
           [
             ['keys', 'Tastatur'],
             ['pictures', 'Bilder'],
+            ['sounds', 'Laute'],
             ['practice', practising ? `Üben (${a.practice?.words.length ?? 0})` : 'Üben'],
           ] as const
         ).map(([id, text]) => (
@@ -154,6 +156,23 @@ export default function AnlautOptions({ value, onChange: save }: { value: unknow
             })}
           </div>
         </>
+      )}
+      {tab === 'sounds' && (
+        <AnlautSounds
+          pairs={a.pairs}
+          sounds={a.sounds}
+          tiles={tiles.map(({ g, second }) => {
+            const entry = second ? a.keys[g]?.alt : a.keys[g];
+            const note = second ? (VOWEL_NOTE.has(g) ? '• kurz' : '2') : a.pairs && PAIRS.includes(g) ? (VOWEL_NOTE.has(g) ? '— lang' : '1') : '';
+            return { g, second, name: `${label(g)}${note ? ` ${note}` : ''}`, word: entry?.word, img: entry?.img };
+          })}
+          onChange={(key, src) => {
+            const sounds = { ...a.sounds };
+            if (src) sounds[key] = src;
+            else delete sounds[key];
+            set({ sounds });
+          }}
+        />
       )}
       {tab === 'practice' && (
         <>

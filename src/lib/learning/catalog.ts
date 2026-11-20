@@ -166,6 +166,8 @@ export type LearningSettings = {
   /** Figur der Vorlage (1.47.3): look (av) and what it says (say: text, pitch). */
   av?: JsonValue;
   say?: JsonValue;
+  /** Figur: how it moves when tapped (see FigureWidget FIGURE_MOVES). */
+  move?: string;
   /** Sprechendes Foto: Foto, Mundlinie (Anteile des Fotos) und Stil. */
   photo?: JsonValue;
   /** Puppentheater der Vorlage (1.47.3): title, back, img, cast, next (the recording is in the response). */

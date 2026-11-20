@@ -224,6 +224,8 @@ Object.assign(aliases, {
   [pick('figure config', fns.get(find('figure editor start', t => t.startsWith('async function') && t.includes('(e17.av)') && t.includes('say: ') && t.includes('move: e17.move'))), /old: ([\w$]+)\(e17\.av\)/)]: 'figureConfig',
   [pick('figure picture', figureChoice, /__html: ([\w$]+)\(n10, \{\}, \{ view: [\w$]+\(n10, e17\.part\) \}\)/)]: 'figureSvg',
   [pick('figure part view', figureChoice, /view: ([\w$]+)\(n10, e17\.part\)/)]: 'figureView',
+  // Tapped on the page: it speaks (text or own recording) and moves (added 2026-11-20).
+  [pick('figure tap', code, /e17\.kind === `avatar`\) \{\s*([\w$]+)\(e17, t10\);/)]: 'speakFigure',
   [pick('voice pitches', sayEditor, /pitch, options: ([\w$]+)\.map/)]: 'FIGURE_PITCHES',
   FIGURE_CHOICES: 'FIGURE_CHOICES', FIGURE_COLORS: 'FIGURE_COLORS',
   [find('figure styles', t => t.startsWith('`\n.lh-av{position:absolute;inset:0}'))]: 'FIGURE_CSS',

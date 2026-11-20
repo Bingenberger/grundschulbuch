@@ -10,6 +10,7 @@ import { Choices } from '../ui/Choice';
 import Icon from '../Icon';
 import { sayOf } from './FigureWidget';
 import { photoItem, photoOf, type PhotoTalk } from './PhotoTalkWidget';
+import OwnRecording from './OwnRecording';
 
 type Choice = { id: string; label: string; hint?: string };
 const styles = PHOTO_STYLES as unknown as Choice[];
@@ -37,7 +38,11 @@ export default function PhotoTalkOptions({ settings, onChange, upload, busy }: {
   const [drag, setDrag] = useState<{ x1: number; y1: number; x2: number; y2: number } | null>(null);
   const preview = useRef<HTMLDivElement>(null);
   const set = (p: Partial<PhotoTalk>) => photo && onChange({ photo: { ...photo, ...p } as unknown as JsonValue });
-  const setSay = (p: Partial<{ text: string; pitch: string }>) => onChange({ say: { ...say, ...p } as unknown as JsonValue });
+  const setSay = (p: Partial<{ text: string; pitch: string; audio: string | undefined }>) => {
+    const next = { ...say, ...p };
+    if (!next.audio) delete next.audio;
+    onChange({ say: next as unknown as JsonValue });
+  };
   const take = async (src: string) => {
     const size = await measure(src);
     // Neues Foto: die Mundlinie beginnt in der Mitte, etwas unterhalb.
@@ -48,7 +53,7 @@ export default function PhotoTalkOptions({ settings, onChange, upload, busy }: {
   useLayoutEffect(() => {
     if (preview.current) renderPhotoTalk(preview.current, item, true, options);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(item)]);
+  }, [JSON.stringify([item, say.audio])]);
 
   const point = (e: React.PointerEvent<SVGSVGElement>) => {
     const box = e.currentTarget.getBoundingClientRect();
@@ -125,6 +130,11 @@ export default function PhotoTalkOptions({ settings, onChange, upload, busy }: {
         <input className="option-input" value={say.text} maxLength={300} placeholder="z. B. Hallo, ich bin Bello!" onChange={(e) => setSay({ text: e.target.value })} />
       </label>
       <Choices label="Stimme" value={say.pitch} onChange={(pitch) => setSay({ pitch })} options={pitches.map((p) => ({ value: p.id, label: p.label, icon: 'speaker' as const }))} />
+      <div className="receipt-option">
+        <strong>Eigene Aufnahme</strong>
+        <OwnRecording audio={say.audio} onChange={(audio) => setSay({ audio })}
+          hint={say.audio ? 'Mit eigener Aufnahme spricht die Aufnahme – der Text ist dann nur noch die Beschreibung. Der Mund bewegt sich, solange sie läuft.' : 'Ohne eigene Aufnahme spricht die Computerstimme. Im Puppentheater spricht das Foto nur mit eigener Aufnahme.'} />
+      </div>
       {photo && (
         <div className="photo-talk-preview">
           <div ref={preview} className="reference-widget lh-wg-phototalk" style={{ aspectRatio: `${photo.width} / ${photo.height}` }} />

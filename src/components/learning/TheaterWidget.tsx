@@ -10,6 +10,7 @@ import type { PageElement } from '@/lib/notebook-model';
 import { useEditor } from '@/lib/editor-store';
 import { fingerprint } from '@/lib/learning/werkzeuge';
 import { wavBlob } from '@/lib/learning/audio';
+import { moveOf, sayOf } from './FigureWidget';
 import { registerTheaterHost, registerTheaterPositions, registerTheaterSave, renderTheater, THEATER_CSS, theaterConfig } from '@/lib/reference/tools-runtime';
 import { LinkContext } from '../LinkContext';
 import ReferenceWidget from './ReferenceWidget';
@@ -51,6 +52,8 @@ async function asWav(blob: Blob) {
 const savers = new Map<string, { take: (take: unknown, blob: Blob) => Promise<void>; move: (positions: { x: number; y: number }[]) => void }>();
 let openPage: ((index: number) => void) | null = null;
 const KIND: Record<string, string> = { puppentheater: 'theater', figur: 'avatar' };
+/** In the theater a figure speaks only with its own recording (the key is the stored sound). */
+const theaterSay = (raw: unknown) => { const say = sayOf(raw); return { text: say.text, pitch: say.pitch, ...(say.audio ? { sound: say.audio } : {}) }; };
 let registered = false;
 function register() {
   if (registered) return;
@@ -61,7 +64,7 @@ function register() {
       const ids = s.book?.pageIds ?? s.pages.map((p) => p.id);
       return ids.map((id) => s.pages.find((p) => p.id === id)).filter(Boolean).map((p) => ({
         id: p!.id,
-        items: p!.elements.map((e) => ({ id: e.id, type: e.type, kind: KIND[e.widgetKind ?? ''] ?? e.widgetKind, ...(e.widgetKind === 'puppentheater' ? { th: theaterCurrent(e) } : {}), ...(e.settings?.av ? { av: e.settings.av, say: e.settings.say } : {}) })),
+        items: p!.elements.map((e) => ({ id: e.id, type: e.type, kind: KIND[e.widgetKind ?? ''] ?? e.widgetKind, ...(e.widgetKind === 'puppentheater' ? { th: theaterCurrent(e) } : {}), ...(e.settings?.av ? { av: e.settings.av, say: theaterSay(e.settings.say), ...(moveOf(e.settings.move) ? { move: moveOf(e.settings.move) } : {}) } : {}) })),
       }));
     },
     show: (index: number) => openPage?.(index),

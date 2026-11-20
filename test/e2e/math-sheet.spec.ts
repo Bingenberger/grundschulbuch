@@ -40,8 +40,9 @@ test('Mathe-Aufgaben: Dialog wie in der Vorlage, Seiten mit Eintippkästchen und
   await page.getByRole('complementary', { name: 'Seitenübersicht' }).getByRole('button', { name: 'Seite 1 öffnen' }).click();
   const surface = page.locator('.interaction-surface');
   await expect(surface.locator('img').first()).toHaveAttribute('src', /^\/api\/medien\//);
-  // Nothing is locked: the heading can be selected and changed afterwards.
-  await expect(surface.locator('.page-element.locked')).toHaveCount(0);
+  // Only the answer boxes are fixed (as in the reference); the heading can be selected and changed afterwards.
+  const answers = await surface.getByRole('textbox', { name: 'Antwort' }).count();
+  await expect(surface.locator('.page-element.locked')).toHaveCount(answers);
   await surface.getByText('Mathe bis 20', { exact: true }).click();
   await expect(surface.locator('.page-element.selected')).toHaveCount(1);
   const box = surface.getByRole('textbox', { name: 'Antwort' }).first();

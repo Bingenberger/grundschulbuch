@@ -81,7 +81,8 @@ function element(item: RefItem): PageElement {
       bold: !!item.bold,
       align: item.align || 'left',
       lineHeight: r2(lineHeight),
-      ...(item.placeholder !== undefined ? { placeholder: item.placeholder || ' ' } : {}),
+      // Answer boxes are fixed as in the reference: typing works, moving does not.
+      ...(item.placeholder !== undefined ? { placeholder: item.placeholder || ' ', locked: true } : {}),
       ...(item.placeholder !== undefined && item.answer !== undefined ? { answer: String(item.answer).slice(0, 100), ...(item.check === 'each' || item.check === 'button' ? { check: item.check } : {}) } : {}),
       ...(item.action === 'check' ? { action: 'check' as const, locked: true, background: item.fill || '#16a34a' } : {}),
     };

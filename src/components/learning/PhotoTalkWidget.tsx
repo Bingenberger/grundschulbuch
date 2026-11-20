@@ -6,7 +6,7 @@
 import { useLayoutEffect, useRef } from 'react';
 import type { PageElement } from '@/lib/notebook-model';
 import { PHOTO_CSS, renderPhotoTalk, speakPhotoTalk } from '@/lib/reference/tools-runtime';
-import { sayOf } from './FigureWidget';
+import { assetUrl, sayAssets, sayItem, sayOf, type Say } from './FigureWidget';
 import { useLearning } from './Runtime';
 
 export type PhotoTalk = { src: string; width: number; height: number; x1: number; y1: number; x2: number; y2: number; style: string };
@@ -26,11 +26,12 @@ export function photoOf(raw: unknown): PhotoTalk | undefined {
 }
 
 /** So erwartet es die Vorlage: das Foto als Asset, die Mundlinie als Anteile des Fotos. */
-export function photoItem(id: string, photo: PhotoTalk | undefined, say: { text: string; pitch: string }) {
+export function photoItem(id: string, photo: PhotoTalk | undefined, say: Say) {
   const { src, width, height, ...line } = photo ?? ({} as PhotoTalk);
   return {
-    item: { id, pt: photo ? { img: 'photo', ...line } : undefined, say },
-    options: { assets: photo ? { photo: { url: src, width, height } } : {}, assetUrl: (a: { url: string }) => a.url },
+    item: { id, pt: photo ? { img: 'photo', ...line } : undefined, say: sayItem(say) },
+    // An own recording speaks instead of the computer voice (as in Lernsachen-Heft 1.49.0).
+    options: { assets: { ...(photo ? { photo: { url: src, width, height } } : {}), ...sayAssets(say) }, assetUrl },
   };
 }
 
@@ -39,7 +40,7 @@ export default function PhotoTalkWidget({ element }: { element: PageElement }) {
   const box = useRef<HTMLDivElement>(null);
   const photo = photoOf(element.settings?.photo), say = sayOf(element.settings?.say);
   const { item, options } = photoItem(element.id, photo, say);
-  const key = JSON.stringify(item);
+  const key = JSON.stringify([item, say.audio]);
   useLayoutEffect(() => {
     if (box.current) renderPhotoTalk(box.current, item, true, options);
     // eslint-disable-next-line react-hooks/exhaustive-deps

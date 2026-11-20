@@ -235,3 +235,18 @@ dazu kommen aus unserer Bildsuche und liegen auf dem Schulserver.
 - Browserabläufe prüfen das Bearbeiten, Veröffentlichen, erneute Öffnen,
   Bildbefüllen und Vorlesen mit einer kontrollierten Teststimme. Die tatsächliche
   Stimmqualität hängt von den auf dem Gerät installierten Stimmen ab.
+
+## Nachgezogen aus 1.49.0 (20.11.2026)
+
+- **Eigene Aufnahmen** (`OwnRecording.tsx`, aufnehmen oder Datei, gespeichert
+  auf dem Schulserver): Figur und Sprechendes Foto (`say.audio`; an den Code
+  der Vorlage als Asset `voice` übergeben), im Puppentheater als `say.sound`.
+- **Figur:** Bewegung beim Antippen (`settings.move`: reden, winken, Arme
+  verschränken, tanzen, hüpfen, verbeugen, klatschen, jubeln, zufällig). Die
+  Figur spricht beim Antippen jetzt überhaupt (vorher fehlte der Aufruf der
+  Sprechfunktion; `speakFigure` im Port und im Extraktionsskript freigegeben).
+- **Anlaut-Tastatur › Laute** (`AnlautSounds.tsx`): jede Taste mit Bild und
+  Sprechhinweis, Anhören, Aufnehmen (endet nach 3 Sekunden), Löschen bringt den
+  mitgelieferten Laut zurück. Anders als in der Vorlage gelten die Aufnahmen
+  für diese Tastatur, nicht für alle Tastaturen der App.
+- Eintippkästchen der Arbeitsblätter sind festgemacht wie in der Vorlage.

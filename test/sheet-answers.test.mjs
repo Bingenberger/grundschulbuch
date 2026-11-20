@@ -80,6 +80,7 @@ test('Mathe-Aufgaben, Uhrzeiten, Geld, Noten: Lösungskontrolle wie in der Vorla
     const boxes = page.elements.filter((e) => e.placeholder !== undefined && e.type === 'text');
     assert.ok(boxes.length > 0, `${name}: answer boxes`);
     assert.ok(boxes.every((e) => typeof e.answer === 'string' && e.answer && e.check === 'button'), `${name}: every box knows its result`);
+    assert.ok(boxes.every((e) => e.locked), `${name}: boxes are fixed`);
     assert.ok(boxes.every((e) => sameAnswer(e.answer, e.answer)), `${name}: results are checkable`);
     assert.equal(page.elements.filter((e) => e.action === 'check').length, 1, `${name}: one Prüfen`);
     // Typing the results makes everything right.

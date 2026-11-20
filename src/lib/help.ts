@@ -147,10 +147,11 @@ export const helpTopics: HelpTopic[] = [
     ] },
 
   // Lernwerkzeuge
-  { id: 'lernwerkzeuge', chapter: 'lernen', title: 'Lernwerkzeuge', keywords: 'übung werkzeug fach mathe deutsch musik timer quiz',
+  { id: 'lernwerkzeuge', chapter: 'lernen', title: 'Lernwerkzeuge', keywords: 'übung werkzeug fach mathe deutsch musik timer quiz aufnahme figur laute',
     body: [
       '„Lernwerkzeuge“ öffnet alle interaktiven Bausteine, nach Fächern geordnet: Deutsch, Mathematik, Sachunterricht, Musik, Medien & Präsentation, Klassenführung, Unterstützte Kommunikation, Alltag, Beruf & Praktikum, Programmieren und Für alle Fächer.',
       'Du stellst ein Werkzeug vor dem Einfügen ein; später öffnet „Aufgabe gestalten“ in der Leiste die Einstellungen wieder. Was Kinder in ausgeteilten Heften bearbeiten, bleibt in ihrem Heft gespeichert.',
+      'Figur und Sprechendes Foto sprechen mit der Computerstimme oder mit deiner eigenen Aufnahme („Eigene Aufnahme …“); bei der Figur wählst du auch, wie sie sich beim Antippen bewegt. Bei der Anlaut-Tastatur sprichst du unter „Laute“ jeden Laut selbst ein – ohne eigene Aufnahme spricht sie die mitgelieferten Laute.',
     ] },
   { id: 'uebungen', chapter: 'lernen', title: 'Übungen: Quiz, Zuordnungen, Lesen & Schreiben', keywords: 'quiz zuordnung lückentext diktat memory kreuzworträtsel suchsel',
     body: [
