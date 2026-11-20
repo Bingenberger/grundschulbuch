@@ -25,10 +25,13 @@ type Props = { onClose: () => void; onInsert: (pages: Page[]) => Promise<void> }
 const svg = (markup: unknown) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(String(markup))}`;
 
 /** One of the four dialogs: exercises (or kind), a level, pages, preview. */
-function RefSheet({ title, icon, storage, defaults, clean, make, formats, hint, extra, onClose, onInsert, pictures }: Props & {
+function RefSheet({ title, icon, storage, defaults, clean, make, formats, hint, note, extra, checkable, onClose, onInsert, pictures }: Props & {
   title: string; icon: Parameters<typeof SheetDialog>[0]['icon']; storage: string; defaults: unknown; clean: (v: Settings) => Settings;
   make: (o: Settings, placed: { placed: Set<string> }) => RefPage[]; formats?: Format[]; hint: string; pictures?: number;
   extra?: (o: Settings, set: (v: Partial<Settings>) => void) => React.ReactNode;
+  /** Results are typed into boxes: offer the Lösungskontrolle. */
+  checkable?: boolean;
+  note?: string;
 }) {
   const [o, setO] = useState<Settings>(() => loadSettings(storage, clean(defaults as Settings), clean));
   const [roll, setRoll] = useState(0);
@@ -52,7 +55,8 @@ function RefSheet({ title, icon, storage, defaults, clean, make, formats, hint, 
           </Section>
         )}
         {extra?.(o, set)}
-        <PagesSection n={formats ? 3 : 4} o={o} set={set} chosen={formats ? (o.formats?.length ?? 0) : 1} missing={missing} />
+        <PagesSection n={formats ? 3 : 4} o={o} set={set} chosen={formats ? (o.formats?.length ?? 0) : 1} missing={missing} checkable={checkable} />
+        {note && <p className="sheet-note">{note}</p>}
       </div>
       <Preview pages={pages} hint={hint} />
     </SheetDialog>
@@ -71,13 +75,14 @@ function level(labels: [string, string, string][]) {
 
 export function LifeSheetDialog(props: Props) {
   return <RefSheet {...props} title="Rechnen im Alltag: Lohn, Fahrplan, Geld" icon="calculator" storage="rechnen-im-alltag" defaults={LIFE_DEFAULTS} clean={lifeClean} make={lifePages} formats={LIFE_FORMATS as unknown as Format[]}
-    hint="Die Antworten tippt man in die Kästchen – Uhrzeiten mit Punkt oder Doppelpunkt, Geld mit oder ohne €."
+    hint="Die Antworten tippt man in die Kästchen – Uhrzeiten mit Punkt oder Doppelpunkt, Geld mit oder ohne €." checkable
     extra={level([['easy', 'Leicht', 'ganze Euro, volle Stunden'], ['hard', 'Schwer', 'Cent, mehrere Tage, über die Stunde']])} />;
 }
 
 export function GridSheetDialog(props: Props) {
   return <RefSheet {...props} title="Karopapier: Symmetrie, Muster, Messen" icon="grid" storage="karopapier" defaults={GRID_DEFAULTS} clean={gridClean} make={gridPages} formats={GRID_FORMATS as unknown as Format[]}
-    hint="Gemalt und gezeichnet wird mit dem Stift (oder auf Papier) – die Längen tippt man in die Kästchen. Die Kästchen sind 5 mm groß, die Strecken echt lang."
+    hint="Gemalt und gezeichnet wird mit dem Stift (oder auf Papier) – die Längen tippt man in die Kästchen." checkable
+    note="Die Kästchen sind 5 mm groß, die Strecken echt lang – beim Drucken „Tatsächliche Größe“ bzw. 100 % wählen."
     extra={level([['easy', 'Leicht', 'kleine Figuren, ganze cm'], ['hard', 'Schwer', 'größere Figuren, halbe cm']])} />;
 }
 
@@ -126,7 +131,7 @@ export function PhonSheetDialog(props: Props) {
   }, []);
   const more = () => { setSearching(1); void onlinePhonPictures((map, left) => { setPictures(new Map(map)); setSearching(left); }).then(() => setSearching(0)); };
   return <RefSheet {...props} title="Laute hören" icon="headset" storage="laute-hoeren" defaults={PHON_DEFAULTS} clean={phonClean} make={(o, placed) => phonPages(o, pictures, placed)} formats={PHON_FORMATS as unknown as Format[]} pictures={pictures.size}
-    hint="Anlaute und Silbenzahlen tippt man in die Kästchen, alles andere mit dem Stift."
+    hint="Anlaute und Silbenzahlen tippt man in die Kästchen, alles andere mit dem Stift." checkable
     extra={(o, set) => (
       <Section title="2. Welcher Laut?">
         <Chips label="Laut" value={o.sound as string} onChange={(sound) => set({ sound })} options={(PHON_SOUNDS as unknown as string[]).map((s) => ({ value: s, label: s }))} />

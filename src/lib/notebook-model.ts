@@ -93,6 +93,13 @@ export type PageElement = {
   speechText?: string;
   /** Photo placeholder: label shown until someone puts a picture in. */
   placeholder?: string;
+  /** Answer box of a worksheet: the right result and how it is checked (✓/✗ at once or with “Prüfen”). */
+  answer?: string;
+  check?: 'each' | 'button';
+  /** Checked with “Prüfen”: ✓/✗ stays until the answer changes. */
+  marked?: boolean;
+  /** Locked text that works as the “Prüfen” button of its page. */
+  action?: 'check';
   /** Image credit (author, licence, source), shown on the page. */
   credit?: string;
   points?: Point[];
@@ -168,6 +175,8 @@ export type Page = {
   templateClassId?: string;
   templateRuling?: {top:number;pitch:number;baseline:number;xHeight:number;count:number;left:number;right:number};
   paperReferenceId?: string;
+  /** Tasks on this page need a ruler or set square: the pen is on and it lies ready. */
+  tool?: 'ruler' | 'square';
 
   elements: PageElement[];
 };

@@ -502,7 +502,7 @@ export function lockedDesign(element) {
   // Children type their answer into a locked answer box.
   if (element?.type === 'text' && (typeof element.placeholder === 'string'||typeof element.textHint==='string')) {
     const design = { ...element };
-    for (const key of ['text', 'runs']) delete design[key];
+    for (const key of ['text', 'runs', 'marked']) delete design[key];
     return design;
   }
   if (!['activity', 'widget'].includes(element.type)) return element;

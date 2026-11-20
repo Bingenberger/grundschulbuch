@@ -6,7 +6,7 @@ import Icon from '../Icon';
 import ScaledPage from '../ScaledPage';
 import type { Page } from '@/lib/notebook-model';
 
-export type SheetLayout = { layout: 'mixed' | 'single'; pages: number; solutions: boolean };
+export type SheetLayout = { layout: 'mixed' | 'single'; pages: number; solutions: boolean; check?: 'none' | 'each' | 'button' };
 
 /** Settings stay in this browser for the next time (like the reference). */
 export function loadSettings<T extends object>(key: string, defaults: T, clean: (v: T) => T): T {
@@ -90,7 +90,15 @@ export function Counter({ label, value, min = 1, max = 20, onChange }: { label: 
 }
 
 /** “Seiten”: one or several exercises per page, number of pages, solutions. */
-export function PagesSection<T extends SheetLayout>({ n, o, set, chosen, missing, solutionHint }: { n: number; o: T; set: (v: Partial<SheetLayout>) => void; chosen: number; missing: number; solutionHint?: string }) {
+const CHECK_NOTES = {
+  none: 'Die Kinder schreiben ihre Ergebnisse in die Kästchen – das Heft sagt nicht, ob sie stimmen.',
+  each: 'Sobald ein Kind ein Ergebnis eingetippt hat, erscheint daneben ✓ oder ✗.',
+  button: 'Oben rechts steht ein Knopf „Prüfen“: Er zeigt für die ganze Seite ✓ oder ✗ und wie viele Ergebnisse stimmen.',
+} as const;
+
+/** “Seiten”: one or several exercises per page, number of pages, solutions – and, where results are typed, the Lösungskontrolle. */
+export function PagesSection<T extends SheetLayout>({ n, o, set, chosen, missing, solutionHint, checkable }: { n: number; o: T; set: (v: Partial<SheetLayout>) => void; chosen: number; missing: number; solutionHint?: string; checkable?: boolean }) {
+  const check = o.check ?? 'none';
   const single = o.layout === 'single' && chosen > 1;
   return (
     <Section title={`${n}. Seiten`}>
@@ -113,6 +121,25 @@ export function PagesSection<T extends SheetLayout>({ n, o, set, chosen, missing
           </p>
         )}
         <Toggle checked={o.solutions} label="Lösungsseiten anhängen" hint={solutionHint ?? 'Am Ende kommen die Seiten noch einmal – mit allen Ergebnissen in Grün.'} onChange={(solutions) => set({ solutions })} />
+        {checkable && (
+          <div className="sheet-check-opt">
+            <strong>Lösungskontrolle</strong>
+            <Chips
+              label="Lösungskontrolle"
+              value={check}
+              onChange={(value) => set({ check: value })}
+              options={[
+                { value: 'none', label: 'Keine' },
+                { value: 'each', label: 'Sofort ✓ ✗' },
+                { value: 'button', label: 'Knopf „Prüfen“' },
+              ]}
+            />
+            <p className="sheet-note">
+              {CHECK_NOTES[check]}
+              {check !== 'none' && ' Geprüft werden die eingetippten Ergebnisse – was mit dem Stift gelöst wird (einkreisen, einzeichnen), nicht.'}
+            </p>
+          </div>
+        )}
       </div>
     </Section>
   );

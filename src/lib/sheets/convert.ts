@@ -21,8 +21,14 @@ export type RefItem = {
   alt?: string;
   /** Picture shipped with the app (`/kasse/…`, `/bilder/…`). */
   src?: string;
+  /** Lösungskontrolle: result of an answer box and how it is checked. */
+  answer?: string;
+  check?: 'each' | 'button';
+  /** The “Prüfen” button (a locked green box). */
+  action?: 'check';
+  fill?: string;
 };
-export type RefPage = { items: RefItem[]; paper?: string };
+export type RefPage = { items: RefItem[]; paper?: string; tool?: 'ruler' | 'square' };
 
 /** mm per reference unit (1400 units = 297 mm). */
 export const UNIT = 297 / 1400;
@@ -76,6 +82,8 @@ function element(item: RefItem): PageElement {
       align: item.align || 'left',
       lineHeight: r2(lineHeight),
       ...(item.placeholder !== undefined ? { placeholder: item.placeholder || ' ' } : {}),
+      ...(item.placeholder !== undefined && item.answer !== undefined ? { answer: String(item.answer).slice(0, 100), ...(item.check === 'each' || item.check === 'button' ? { check: item.check } : {}) } : {}),
+      ...(item.action === 'check' ? { action: 'check' as const, locked: true, background: item.fill || '#16a34a' } : {}),
     };
   }
   // A picture that is still missing: a placeholder to tap on later.
@@ -97,6 +105,7 @@ export function toPages(refPages: RefPage[], template?: string): Page[] {
     if (template) page.template = template;
     if (ref.paper && ref.paper !== '#ffffff') page.paperColor = ref.paper;
     page.elements = ref.items.map(element);
+    if (ref.tool === 'ruler' || ref.tool === 'square') page.tool = ref.tool;
     return page;
   });
 }

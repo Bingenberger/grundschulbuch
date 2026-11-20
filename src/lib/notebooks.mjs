@@ -182,6 +182,20 @@ export function validatePage(input) {
         result.placeholder = el.placeholder.slice(0, 200);
         if (el.text.length > 200) throw new BookError('Die Antwort ist zu lang.');
       }
+      // Lösungskontrolle of the worksheet generators.
+      if (el.answer !== undefined) {
+        if (typeof el.answer !== 'string' || el.answer.length > 100) throw new BookError('Ungültige Lösung.');
+        result.answer = el.answer;
+      }
+      if (el.check !== undefined) {
+        if (!['each', 'button'].includes(el.check)) throw new BookError('Ungültige Lösungskontrolle.');
+        result.check = el.check;
+      }
+      if (el.marked !== undefined) result.marked = !!el.marked;
+      if (el.action !== undefined) {
+        if (el.action !== 'check') throw new BookError('Ungültige Aktion.');
+        result.action = 'check';
+      }
       if (el.italic !== undefined) result.italic = !!el.italic;
       if (el.syllables !== undefined) result.syllables = !!el.syllables;
       if (el.textHint !== undefined) {
@@ -475,6 +489,10 @@ export function validatePage(input) {
   if(input.templateRuling!==undefined){
     const g=input.templateRuling;if(!g||typeof g!=='object')throw new BookError('Ungültige Vorlagenlineatur.');
     result.templateRuling={top:num(g.top,0,297),pitch:num(g.pitch,.5,100),baseline:num(g.baseline,0,100),xHeight:num(g.xHeight,.1,100),count:num(g.count,1,100),left:num(g.left,0,297),right:num(g.right,0,297)};
+  }
+  if (input.tool !== undefined) {
+    if (!['ruler', 'square'].includes(input.tool)) throw new BookError('Ungültiges Zeichenwerkzeug.');
+    result.tool = input.tool;
   }
   if(input.paperReferenceId!==undefined){if(!['blank','lin1','lin2','lin3','lines','lines-narrow','picture-lines','squares','squares-big','dots','music'].includes(input.paperReferenceId))throw new BookError('Unbekannte Papierlineatur.');result.paperReferenceId=input.paperReferenceId;}
   return result;

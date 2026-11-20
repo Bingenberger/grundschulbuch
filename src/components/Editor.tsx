@@ -54,7 +54,9 @@ import ElementBar from './editor/ElementBar';
 import ElementActions from './editor/ElementActions';
 import InlineText from './editor/InlineText';
 import { settleText, useTextEditing } from './editor/use-text-editing';
-import AnswerField, { isAnswerField } from './editor/AnswerField';
+import AnswerField, { CheckButton, isAnswerField, isCheckButton, typedAnswer } from './editor/AnswerField';
+import { useReadyGuide } from './editor/useReadyGuide';
+import { checkPage } from '@/lib/sheets/answers';
 import TemplateTextField,{isLockedTemplateField} from './editor/TemplateTextField';
 import { fitText } from './editor/text-measure';
 import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
@@ -325,6 +327,15 @@ export default function Editor({
       setGuide({ kind: setSquare ? 'triangle' : 'ruler', ...(view || { x: sheet.width / 2, y: sheet.height * 0.72 }), angle: 0 });
     },
   );
+  useReadyGuide(page, size, setGuide);
+  /** “Prüfen” on a worksheet page: ✓/✗ at every typed result and how many are right. */
+  const checkAnswers = () => {
+    const current = useEditor.getState().pages.find((p) => p.id === useEditor.getState().activeId);
+    if (!current) return;
+    const result = checkPage(current);
+    if (result.page !== current) s.edit(() => result.page);
+    setNotice(result.message);
+  };
   const pageIndex = s.book?.pageIds.indexOf(page?.id || '') ?? -1;
   async function run(task: () => Promise<void>, save = true) {
     setBusy(true);
@@ -1404,7 +1415,7 @@ export default function Editor({
                         }}
                         style={{
                           pointerEvents:
-                            s.tool === 'select' && el.type !== 'stroke'
+                            (s.tool === 'select' && el.type !== 'stroke') || isAnswerField(el) || isCheckButton(el)
                               ? 'auto'
                               : 'none',
                         }}
@@ -1417,8 +1428,10 @@ export default function Editor({
                             onHeight={writing.height}
                             onDone={writing.done}
                           />
-                        ) : isLockedTemplateField(el) ? <TemplateTextField element={el} onText={text=>s.edit(p=>({...p,elements:p.elements.map(e=>e.id===el.id?{...e,text,runs:undefined}:e)}))}/> : isAnswerField(el) ? (
-                          <AnswerField element={el} onAnswer={(text) => s.edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === el.id ? { ...e, text } : e)) }))} />
+                        ) : isLockedTemplateField(el) ? <TemplateTextField element={el} onText={text=>s.edit(p=>({...p,elements:p.elements.map(e=>e.id===el.id?{...e,text,runs:undefined}:e)}))}/> : isCheckButton(el) ? (
+                          <CheckButton element={el} onCheck={checkAnswers} />
+                        ) : isAnswerField(el) ? (
+                          <AnswerField element={el} typing={s.tool !== 'select'} onAnswer={(text) => s.edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === el.id ? typedAnswer(e, text) : e)) }))} />
                         ) : undefined}
                       </ElementView>
                     ))}

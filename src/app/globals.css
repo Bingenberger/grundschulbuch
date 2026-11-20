@@ -4825,6 +4825,11 @@ a.embed-poster {text-decoration:none;}
 .ck-opt-row input:focus-visible { outline: 3px solid #1c7ed6; outline-offset: 1px; }
 .answer-field { display: block; width: 100%; height: 100%; border: 0; margin: 0; background: transparent; outline: none; border-radius: 1mm; cursor: text; }
 .answer-field:focus-visible, .answer-field:focus { background: rgba(28, 126, 214, .08); box-shadow: 0 0 0 .5mm #1c7ed6; }
+.answer-mark { position: absolute; pointer-events: none; z-index: 2; filter: drop-shadow(0 .3mm .6mm rgba(0, 0, 0, .25)); }
+.answer-check { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; border: .5mm solid #15803d; border-radius: 2mm; cursor: pointer; font-weight: 700; }
+.answer-check:hover { filter: brightness(1.06); }
+.answer-check:focus-visible { outline: .7mm solid #1c7ed6; outline-offset: .5mm; }
+.sheet-check-opt { display: grid; gap: 8px; }
 
 /* Worksheet dialogs taken over from the reference (Mathe-Aufgaben, Uhrzeiten …) */
 .sheet-dialog { width: min(1000px, calc(100vw - 32px)); max-height: calc(100vh - 32px); display: flex; flex-direction: column; padding: 0; overflow: hidden; }

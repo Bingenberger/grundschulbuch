@@ -39,7 +39,9 @@ import ImageEditor, { editFromElement } from './ImageEditor';
 import { cascade, fillPlaceholder, imageElement, isPlaceholder, withEditedPicture, type ChosenImage } from './editor/image-elements';
 import InlineText from './editor/InlineText';
 import { useTextEditing } from './editor/use-text-editing';
-import AnswerField, { isAnswerField } from './editor/AnswerField';
+import AnswerField, { CheckButton, isAnswerField, isCheckButton, typedAnswer } from './editor/AnswerField';
+import { useReadyGuide } from './editor/useReadyGuide';
+import { checkPage } from '@/lib/sheets/answers';
 import TemplateTextField,{isLockedTemplateField} from './editor/TemplateTextField';
 import { clampZoom, fitZoom, usePinchZoom } from './editor/use-pinch-zoom';
 import { fitText } from './editor/text-measure';
@@ -176,6 +178,21 @@ export default function ChildEditor({
     setDraft(null);
     setErasePreview(null);
   }
+  useReadyGuide(page, page ? dimensions(page) : { width: 0, height: 0 }, setGuide, ready);
+  const [checkMessage, setCheckMessage] = useState('');
+  useEffect(() => {
+    if (!checkMessage) return;
+    const t = setTimeout(() => setCheckMessage(''), 5000);
+    return () => clearTimeout(t);
+  }, [checkMessage]);
+  /** “Prüfen” on a worksheet page: ✓/✗ at every typed result and how many are right. */
+  const checkAnswers = () => {
+    const current = useEditor.getState().pages.find((p) => p.id === useEditor.getState().activeId);
+    if (!current) return;
+    const result = checkPage(current);
+    if (result.page !== current) s.edit(() => result.page);
+    setCheckMessage(result.message);
+  };
   const fitPage = () => setZoom((z) => fitZoom(scroller.current, z));
   const readerStop = pageReader.stop;
   useEffect(() => readerStop, [page?.id, readerStop]);
@@ -633,7 +650,7 @@ export default function ChildEditor({
                   }}
                   style={{
                     pointerEvents:
-                      s.tool === 'select' && el.type !== 'stroke'
+                      (s.tool === 'select' && el.type !== 'stroke') || isAnswerField(el) || isCheckButton(el)
                         ? 'auto'
                         : 'none',
                   }}
@@ -646,8 +663,10 @@ export default function ChildEditor({
                       onHeight={writing.height}
                       onDone={writing.done}
                     />
-                  ) : isLockedTemplateField(el) ? <TemplateTextField element={el} onText={text=>s.edit(p=>({...p,elements:p.elements.map(e=>e.id===el.id?{...e,text,runs:undefined}:e)}))}/> : isAnswerField(el) ? (
-                    <AnswerField element={el} onAnswer={(text) => s.edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === el.id ? { ...e, text } : e)) }))} />
+                  ) : isLockedTemplateField(el) ? <TemplateTextField element={el} onText={text=>s.edit(p=>({...p,elements:p.elements.map(e=>e.id===el.id?{...e,text,runs:undefined}:e)}))}/> : isCheckButton(el) ? (
+                          <CheckButton element={el} onCheck={checkAnswers} />
+                        ) : isAnswerField(el) ? (
+                    <AnswerField element={el} typing={s.tool !== 'select'} onAnswer={(text) => s.edit((p) => ({ ...p, elements: p.elements.map((e) => (e.id === el.id ? typedAnswer(e, text) : e)) }))} />
                   ) : undefined}
                 </ElementView>
               ))}
@@ -695,6 +714,7 @@ export default function ChildEditor({
             </div>
           </section>
           {draft?.geometry && (s.tool === 'pen' || s.tool === 'marker') && <span className="shape-hint" role="status">Form erkannt – zum Übernehmen loslassen.</span>}
+          {checkMessage && <div className="undo-notice" role="status"><span>{checkMessage}</span><button type="button" className="undo-notice-close" aria-label="Hinweis schließen" onClick={() => setCheckMessage('')}>×</button></div>}
           {s.tool === 'pen' || s.tool === 'marker' || s.tool === 'eraser' ? (
             <>
               <DrawingBar features={features} surface={surface} pageId={page.id} guide={guide} onGuide={setGuide} />

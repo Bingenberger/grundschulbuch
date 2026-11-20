@@ -166,8 +166,15 @@ dazu kommen aus unserer Bildsuche und liegen auf dem Schulserver.
   Geld, Programmieren: Arbeitsblatt und Etiketten. Die Generatoren der Vorlage
   sind unverändert übernommen (`src/lib/sheets/sheets-1473.ts`, vom
   Extraktionsskript), die Dialoge folgen ihnen mit unseren Bausteinen
-  (Übungen, Stufe, Seiten, Lösungsseiten, Vorschau). Die Prüfen-Option der
-  Vorlage (✓/✗ beim Eintippen) bieten unsere Arbeitsblätter noch nicht an.
+  (Übungen, Stufe, Seiten, Lösungsseiten, Vorschau). Lösungskontrolle wie in
+  der Vorlage (Stand 20.11.2026) für Karopapier, Rechnen im Alltag und Laute
+  hören: „Keine“, „Sofort ✓ ✗“ oder „Knopf ‚Prüfen‘“ (zeigt ✓/✗ und „3 von 5
+  richtig · …“; das Zeichen bleibt, bis die Antwort geändert wird). Vergleich
+  in `lib/sheets/answers.ts` (7 = 7 cm = 70 mm, Uhrzeiten, Geld). Seiten mit
+  Lineal-Aufgaben (Karopapier „Strecken messen/zeichnen“, `page.tool`): Stift
+  an, Lineal unten links bereit, im Heft und im Kinderheft; auf anderen Seiten
+  geht es wieder weg. Eintippkästchen lassen sich auch mit eingeschaltetem
+  Stift antippen.
   „Laute hören“ nimmt die Anlautbilder des Hefts; weitere Bilder holt ein
   Knopf über den Schulserver bei ARASAAC, sonst steht das Wort da. Etiketten
   suchen ihre Bilder über die Bildsuche und werden mit „Vorlesen beim
