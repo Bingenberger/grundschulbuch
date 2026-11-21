@@ -6,7 +6,10 @@ import QRCode from 'qrcode';
 import type { PageElement, Page } from '@/lib/notebook-model';
 import { dimensions } from '@/lib/notebook-model';
 import { useLearning } from './Runtime';
-import templateVectors from '@/lib/reference/template-vectors.json';
+import landscapeVectors from '@/lib/reference/template-vectors.json';
+import portraitVectors from '@/lib/reference/template-vectors-portrait.json';
+/** Shapes of the original designs and of their portrait layouts. */
+const templateVectors = { ...landscapeVectors, ...portraitVectors };
 export function Shape({ element: el }: { element: PageElement }) {
   const vector = el.shape === 'template' && el.vectorId ? (templateVectors as Record<string,{markup:string;viewBox:number[]}>)[el.vectorId] : undefined;
   if(vector) return <svg viewBox={vector.viewBox.join(' ')} preserveAspectRatio="none" width="100%" height="100%" aria-label="Vorlagenform" style={{display:'block',overflow:'visible','--template-fill':el.fill||'none','--template-stroke':el.color||'none','--template-width':(el.strokeWidth??0)/(el.designScale||297/1400)} as React.CSSProperties} dangerouslySetInnerHTML={{__html:vector.markup}} />;

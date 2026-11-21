@@ -2,7 +2,8 @@ import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
 import path from 'node:path';
 import sharp from 'sharp';
-import templateVectors from './reference/template-vectors.json' with { type: 'json' };
+import landscapeVectors from './reference/template-vectors.json' with { type: 'json' };
+import portraitVectors from './reference/template-vectors-portrait.json' with { type: 'json' };
 import templateFonts from './reference/template-fonts.json' with { type: 'json' };
 import { templatePolicy, applyInsertionMode } from './template-policy.mjs';
 import {
@@ -19,6 +20,8 @@ import {
 } from './learning/validation.mjs';
 import { dataPath, readJson, writeJson, withLock } from './store.mjs';
 import { MAX_SIDE, cleanEdit, render } from './image-edit.mjs';
+/** Shapes of the original designs and of their portrait layouts (scripts/build-portrait-templates.mjs). */
+const templateVectors = { ...landscapeVectors, ...portraitVectors };
 
 export class BookError extends Error {
   constructor(message, status = 400) {

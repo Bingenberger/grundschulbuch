@@ -298,13 +298,25 @@ Vorlagen mit Video-Platzhalter bieten im Bereich „Gestalten“ eine Internetad
 Bestehende Vorlagenschlüssel werden bei entsprechenden Originalen beibehalten,
 damit schulweite Ersetzungen weiterhin zugeordnet werden. Bereits angelegte
 Seiten werden nicht automatisch umgestaltet. Querformat übernimmt die originale
-Anordnung und ist beim Einfügen der Standard; im Hochformat wird sie
-proportional eingepasst.
+Anordnung und ist beim Einfügen der Standard.
+
+Für das Hochformat hat jede der 84 Vorlagen (auch Papier & Lineatur) eine eigene
+Anordnung auf 990 × 1400 Einheiten (`page-templates-portrait.json`), gleicher
+Maßstab wie das Querformat: Bildbereiche, Spalten und Kästen rücken untereinander,
+Comic-Raster werden aufgerichtet, Linien, Lineaturen, Karos, Punkte, Notenzeilen
+und Schreibzeilen in Kästen laufen über die zusätzliche Höhe weiter (das
+Zeilenraster `grid` wächst mit). Rahmen, Linien und gerade Pfade werden in ihrer
+neuen Größe neu berechnet (`template-vectors-portrait.json`) statt verzerrt;
+Symbole, Kreise und Sterne behalten ihre Form. Alle Texte, Bild-, Video- und
+Vorleseplatzhalter des Originals sind enthalten. Die Anordnungen stehen als
+Regeln in `scripts/portrait-layouts.mjs`; `node scripts/build-portrait-templates.mjs`
+erzeugt daraus beide Dateien neu (nach jeder Neuextraktion der Originale ausführen).
 
 Die Daten lassen sich mit `node scripts/extract-page-templates.mjs` neu erzeugen
 (Chromium erforderlich; optional `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`). Der
-Browsertest `page-designs.spec.ts` vergleicht alle Originalseiten und prüft die
-Bearbeitung mit anschließender Veröffentlichung als Schulvorlage.
+Browsertest `page-designs.spec.ts` vergleicht alle Originalseiten, prüft die
+Hochformat-Anordnungen und die Bearbeitung mit anschließender Veröffentlichung als
+Schulvorlage.
 
 ## Endlospapier
 

@@ -124,3 +124,21 @@ test('Fest eingefügte Texthinweise bleiben für Lehrkraft und Kind mehrzeilig b
     for(const key of ['x','y','width','height','locked','textLinePitch'])expect(field[key]).toBe(hint[key]);
   }finally{await context.close();await page.request.post('/api/verwaltung',{headers,data:{action:'deleteClass',id:klass.id}});}
 });
+
+test('Jede Seitenvorlage hat im Hochformat ihre eigene Anordnung mit allen Formen',async({page})=>{
+  test.setTimeout(240000);await login(page);
+  const cases=[...originals.map(d=>({id:d.id,page:designPage(d.id,'portrait')[0]})),...Object.entries(paperDesignIds).map(([ruling,id])=>({id:'paper-'+id,page:referencePaper(ruling as keyof typeof paperDesignIds,'portrait')}))];
+  const response=await page.request.post('/api/werkstatt',{headers,data:{action:'create',title:'Hochformatvorlagen',pages:cases.map(d=>d.page)}});
+  expect(response.ok(),await response.text()).toBeTruthy();const {book}=await response.json();await page.goto(`/heft/${book.id}`);
+  const paper=page.locator('.paper:has(.interaction-surface)');
+  for(const [index,design] of cases.entries()){
+    if(index)await page.getByRole('button',{name:`Seite ${index+1} öffnen`,exact:true}).click();
+    const box=(await paper.boundingBox())!;
+    expect(Math.abs(box.width/box.height-210/297),design.id).toBeLessThan(.01);
+    // Every shape of the portrait layout is drawn from the shipped vector register.
+    const shapes=design.page.elements.filter(e=>e.type==='shape').length;
+    await expect(paper.locator('svg[aria-label="Vorlagenform"]'),design.id).toHaveCount(shapes);
+    if(design.id.startsWith('paper-')&&design.id!=='paper-blank')await expect(paper.locator('svg.lineatur[viewBox="0 0 990 1400"]'),design.id).toHaveCount(1);
+    if(process.env.PORTRAIT_SHOTS)await paper.screenshot({path:`${process.env.PORTRAIT_SHOTS}/${String(index).padStart(2,'0')}-${design.id}.png`,animations:'disabled'});
+  }
+});

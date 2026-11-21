@@ -12,7 +12,7 @@ after(()=>fs.rm(directory,{recursive:true,force:true}));
 const books=await import('../src/lib/notebooks.mjs');
 const compiled=await build({stdin:{contents:"export * from './src/lib/learning/page-designs'; export {templateCatalog} from './src/components/editor/page-templates';",resolveDir:process.cwd()},bundle:true,write:false,platform:'node',format:'cjs',packages:'external'});
 const mod={exports:{}};new Function('require','module','exports',compiled.outputFiles[0].text)(createRequire(import.meta.url),mod,mod.exports);
-const {pageDesigns,designPage}=mod.exports;
+const {pageDesigns,portraitDesigns,designFor,designPage}=mod.exports;
 test('Alle festen Katalogvorlagen und eigene Hochformatseiten starten im Querformat',()=>{
   const saved={id:crypto.randomUUID(),title:'Eigene Seite',page:{...designPage('profile','portrait')[0]}};
   for(const entry of mod.exports.templateCatalog([saved]).filter(e=>!e.configure))assert.equal(entry.build()[0].orientation,'landscape',entry.title);
@@ -43,16 +43,35 @@ test('Veröffentlichte Schulvorlagen bleiben beim Ersetzen früherer Katalogentw
 test('Alle Originalvorlagen bestehen aus unabhängigen bearbeitbaren Elementen und gültigen Seiten',()=>{
   assert.equal(pageDesigns.length,84);
   for(const design of pageDesigns) for(const orientation of ['landscape','portrait']) {
+    const layout=designFor(design.id,orientation);
     const [page]=designPage(design.id,orientation),[second]=designPage(design.id,orientation);
     const saved=books.validatePage(page);
     assert.equal(saved.backgroundImage,undefined);
     assert.ok(saved.elements.every(el=>!el.locked));
     assert.ok(!saved.elements.some(el=>el.type==='image'&&el.src));
-    assert.equal(saved.elements.length,design.items.length);
+    assert.equal(saved.elements.length,layout.items.length);
     assert.ok(saved.elements.every((el,i)=>el.id!==second.elements[i].id));
     for(const [i,el] of saved.elements.entries()) if(el.vectorId) {
-      assert.equal(el.type,'shape');assert.equal(el.vectorId,design.items[i].vectorId);
+      assert.equal(el.type,'shape');assert.equal(el.vectorId,layout.items[i].vectorId);
     }
+  }
+});
+test('Jede Vorlage hat eine eigene Hochformat-Anordnung mit allen Inhalten auf dem Blatt',()=>{
+  assert.equal(portraitDesigns.length,pageDesigns.length);
+  const content=item=>item.type+':'+(item.placeholder||item.html||item.label||item.kind||'');
+  for(const design of pageDesigns){
+    const portrait=designFor(design.id,'portrait');
+    assert.ok(portrait,design.id);
+    assert.equal(portrait.paper,design.paper);assert.equal(portrait.line,design.line);
+    // Every text, picture slot, video and read-aloud button of the original is there (rows may continue).
+    const have=new Map();for(const item of portrait.items)if(item.type!=='vector')have.set(content(item),(have.get(content(item))||0)+1);
+    for(const item of design.items)if(item.type!=='vector'){const key=content(item);assert.ok(have.get(key)>0,design.id+' fehlt '+key);have.set(key,have.get(key)-1);}
+    const [page]=designPage(design.id,'portrait');
+    assert.equal(page.orientation,'portrait');
+    for(const el of page.elements){
+      assert.ok(el.x>=-.5&&el.y>=-.5&&el.x+el.width<=210.5&&el.y+el.height<=297.5,`${design.id}: ${el.type} außerhalb des Blatts`);
+    }
+    if(design.grid){assert.ok(page.templateRuling,design.id);assert.ok(page.templateRuling.top+page.templateRuling.pitch*(page.templateRuling.count-1)<297,design.id);}
   }
 });
 test('Neue Seiten sind im Katalog erreichbar; das neue Lerntagebuch ersetzt die bisherige sichtbare Vorlage',()=>{

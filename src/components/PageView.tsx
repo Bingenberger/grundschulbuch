@@ -9,6 +9,7 @@ import { MicGlyph } from './learning/Cassette';
 import AudioButton, { TemplateAudioPlaceholder } from './learning/AudioButton';
 import {fontFamilyFor} from '@/lib/template-font';
 import pageDesigns from '@/lib/reference/page-templates.json';
+import portraitDesigns from '@/lib/reference/page-templates-portrait.json';
 import { eraserShapePath } from '@/lib/eraser-shapes';
 import Activity from './learning/Activity';
 import Widget from './learning/Widget';
@@ -38,7 +39,12 @@ export function RulingView({ page }: { page: Page }) {
     const tile=ENDLESS_TILES[original.id]||{x:800,w:100};
     return <svg className="lineatur" width="100%" height="100%" viewBox={`${size.left} ${size.top} ${size.width} ${size.height}`} aria-hidden="true"><defs><pattern id={uid} x={tile.x*k} y={top*k} width={tile.w*k} height={period*k} patternUnits="userSpaceOnUse"><g transform={`scale(${k}) translate(${-tile.x},${-top})`} dangerouslySetInnerHTML={{__html:page.lineColor?original.svg.replaceAll(original.line,page.lineColor):original.svg}}/></pattern></defs><rect x={size.left} y={size.top} width={size.width} height={size.height} fill={`url(#${uid})`}/></svg>;
   }
-  if(original)return <svg className="lineatur" width="100%" height="100%" viewBox="0 0 1400 990" preserveAspectRatio="xMidYMid meet" aria-hidden="true" dangerouslySetInnerHTML={{__html:page.lineColor?original.svg.replaceAll(original.line,page.lineColor):original.svg}}/>;
+  if(original){
+    // Upright pages get the paper's own portrait layout (990 × 1400), not a shrunk landscape sheet.
+    const sheet=page.orientation==='portrait'?portraitDesigns.find(d=>d.id===original.id)||original:original;
+    const box=sheet===original?'0 0 1400 990':'0 0 990 1400';
+    return <svg className="lineatur" width="100%" height="100%" viewBox={box} preserveAspectRatio="xMidYMid meet" aria-hidden="true" dangerouslySetInnerHTML={{__html:page.lineColor?sheet.svg.replaceAll(sheet.line,page.lineColor):sheet.svg}}/>;
+  }
   const { width, height, left, top } = dimensions(page);
   const endless = page.paperMode === 'endless';
   const r = page.ruling;

@@ -1,13 +1,21 @@
 import originals from '../reference/page-templates.json';
+import portraits from '../reference/page-templates-portrait.json';
 import { newPage, uuid, type Font, type Page, type PageElement } from '../notebook-model';
 export const pageDesigns = originals;
+/** The same designs laid out anew for upright A4 (990 × 1400 units, scripts/build-portrait-templates.mjs). */
+export const portraitDesigns = portraits as unknown as typeof originals;
+/** A design in the given orientation (its own portrait layout, not a shrunk landscape page). */
+export function designFor(id: string, orientation: Page['orientation'] = 'landscape') {
+  return (orientation === 'portrait' ? portraitDesigns : pageDesigns).find(d => d.id === id);
+}
 const fonts: Record<string, Font> = { arial:'Arial',andika:'Andika',nunito:'Nunito',grund:'Playwrite DE Grund',schreib:'Playwrite DE VA',sas:'Playwrite DE SAS',druck:'Andika',lexend:'Lexend',atkinson:'Atkinson Hyperlegible',merriweather:'Merriweather',caveat:'Caveat',comic:'Bangers' };
 type Item = Record<string, unknown> & { type:string;x:number;y:number;w:number;h:number };
-/** Original 1400 × 990 design; text, picture slots and every vector remain editable. */
+/** Original design (1400 × 990 landscape, 990 × 1400 portrait); text, picture slots and every vector remain editable. */
 export function designPage(id: string, orientation: Page['orientation'] = 'landscape'): Page[] {
-  const design = originals.find(d=>d.id===id);
+  const design = designFor(id, orientation);
   if(!design) throw Error('Unbekannte Seitenvorlage.');
-  const page=newPage('blanko',orientation), k=orientation==='landscape'?297/1400:210/1400, offset=orientation==='portrait'?(297-990*k)/2:0;
+  // Both layouts use the same scale: 1400 units are the long side of A4 (297 mm).
+  const page=newPage('blanko',orientation), k=297/1400, offset=0;
   page.paperColor=design.paper;
   page.lineColor=design.line;
   const grid=design.grid;
