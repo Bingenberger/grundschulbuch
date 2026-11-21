@@ -13,6 +13,7 @@ import { defaultTs } from './textsachen';
 import { defaultDnd } from './zuordnung';
 import { defaultQuiz } from './quiz';
 import { defaultZeit } from './zeit';
+import { paeckchenConfig, PAECKCHEN_DEFAULTS } from './paeckchen';
 export const widgetCatalog = {
   timer: ['Timer', 'Schule'],
   multitimer: ['Mehrere Timer', 'Schule'],
@@ -40,6 +41,7 @@ export const widgetCatalog = {
   calculator: ['Taschenrechner & Kassenzettel', 'Mathe'],
   mathtool: ['Mathe-Werkzeug', 'Mathe'],
   receipt: ['Kassenzettel', 'Mathe'],
+  paeckchen: ['Aufgabenpäckchen', 'Mathe'],
   geodraw: ['Geometrie: Formen zeichnen', 'Mathe'],
   checkout: ['Einkaufen an der Kasse', 'Mathe'],
   monsternames: ['Monsternamen lesen', 'Lesen & Schreiben'],
@@ -189,6 +191,8 @@ export type LearningSettings = {
   /** Animation der Vorlage (see learning/animation.ts). */
   anim?: JsonValue;
   /** Kassenzettel: number of items, level, money format, with change, receipts per round. */
+  /** Aufgabenpäckchen: task script, runs, columns, Lösungskontrolle and the tasks drawn. */
+  paeckchen?: JsonValue;
   receipt?: { count?: number; level?: 'simple' | 'complex'; format?: 'eurocent' | 'euro' | 'cent'; change?: boolean; rounds?: number };
   syllablePrompt?: 'image' | 'word' | 'audio' | 'both';
   syllableColours?: boolean;
@@ -339,6 +343,7 @@ export function defaultSettings(
   if (kind === 'syllablejoin') Object.assign(settings, { synth: encodeMaps(withRecordings(makeSynth()), ['sounds', 'voice']) as unknown as JsonValue });
   if (kind === 'monsternames') Object.assign(settings, { monster: makeMonster() as unknown as JsonValue });
   if (kind === 'checkout') Object.assign(settings, { checkout: defaultShop() as unknown as JsonValue });
+  if (kind === 'paeckchen') Object.assign(settings, { paeckchen: paeckchenConfig(PAECKCHEN_DEFAULTS) as unknown as JsonValue });
   if (kind === 'receipt') Object.assign(settings, { receipt: { count: 5, level: 'simple', format: 'eurocent', change: false, rounds: 3 } });
   if (kind === 'geometry') Object.assign(settings, { geometryMode: 'series', geometryHelp: 'preview', geometryCount: 5, geometryPreview: 3 });
   if (kind === 'syllables') Object.assign(settings, { syllablePrompt: 'image', syllableColours: true, font: 'Andika', speechRate: 0.85, volume: 0.8 });

@@ -39,7 +39,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   letterguess: 'Deutsch', cloze: 'Deutsch', typing: 'Deutsch', reading: 'Deutsch', crossword: 'Deutsch',
   wordsearch: 'Deutsch', wordle: 'Deutsch',
   // Mathematik
-  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', hoeren: 'Musik', werkzeug: 'Mathematik', linksammlung: 'Medien & Präsentation', programmieren: 'Programmieren', figur: 'Klassenführung', sprechfoto: 'Für alle Fächer', puppentheater: 'Medien & Präsentation', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', diaschau: 'Medien & Präsentation', trickfilm: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
+  calculator: 'Mathematik', mathtool: 'Mathematik', receipt: 'Mathematik', paeckchen: 'Mathematik', geodraw: 'Mathematik', checkout: 'Mathematik', monsternames: 'Deutsch', textsachen: 'Deutsch', zuordnung: 'Für alle Fächer', quizsachen: 'Für alle Fächer', zeit: 'Sachunterricht', phasen: 'Klassenführung', ampel: 'Klassenführung', hoeren: 'Musik', werkzeug: 'Mathematik', linksammlung: 'Medien & Präsentation', programmieren: 'Programmieren', figur: 'Klassenführung', sprechfoto: 'Für alle Fächer', puppentheater: 'Medien & Präsentation', stundenplan: 'Klassenführung', kalenderblatt: 'Sachunterricht', karte: 'Sachunterricht', elevator: 'Medien & Präsentation', medienseite: 'Medien & Präsentation', diaschau: 'Medien & Präsentation', trickfilm: 'Medien & Präsentation', sprechtaste: 'Unterstützte Kommunikation', satzleiste: 'Unterstützte Kommunikation', syllablejoin: 'Deutsch', anlaut: 'Deutsch', clapsyllables: 'Deutsch', placevalue: 'Mathematik', dienes: 'Mathematik', numberline: 'Mathematik', hundredfield: 'Mathematik', mathboard: 'Mathematik', shop: 'Mathematik', geometry: 'Mathematik', battleship: 'Mathematik',
   // Sachunterricht
   map: 'Sachunterricht', clock: 'Sachunterricht', calendar: 'Sachunterricht',
   // Musik
@@ -98,6 +98,7 @@ const SKIP = new Set([
   'widget-clapping',
   'widget-clapsyllables',
   'widget-receipt',
+  'widget-paeckchen',
   // Replaced by the new maths materials below; the Koordinaten-Spiel is gone.
   'math-place',
   'math-numberline',
@@ -469,6 +470,15 @@ toolBlocks.push({
   kind: 'checkout',
   preset: { ...defaultSettings('checkout'), title: 'Einkaufen an der Kasse' },
   words: 'Einkaufen an der Kasse Laden Kaufladen Geld Münzen Scheine Rückgeld Wechselgeld Kunde Bäckerei Kiosk Supermarkt',
+});
+toolBlocks.push({
+  id: 'paeckchen',
+  title: 'Aufgabenpäckchen',
+  subject: 'Mathematik',
+  type: 'widget',
+  kind: 'paeckchen',
+  preset: { ...defaultSettings('paeckchen'), title: 'Aufgabenpäckchen' },
+  words: 'Aufgabenpäckchen Päckchen Aufgaben Rechenaufgaben Plus Minus Mal Geteilt Ergänzen Nachbarzehner Zehner Einmaleins Skript eigene Aufgaben Arbeitsblatt prüfen',
 });
 toolBlocks.push({
   id: 'receipt-page',

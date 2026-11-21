@@ -12,6 +12,7 @@ import CreativeWidgets from './CreativeWidgets';
 import SlideshowWidget from './SlideshowWidget';
 import MathTool from './MathTool';
 import Receipt from './Receipt';
+import PaeckchenWidget from './PaeckchenWidget';
 import GeoDraw from './GeoDraw';
 import Checkout from './Checkout';
 import MonsterReader from './MonsterReader';
@@ -50,6 +51,7 @@ export default function Widget({ element }: { element: PageElement }) {
   if (element.settings?.musicTemplate) return <MusicTemplate element={element} />;
   if (kind === 'mathtool') return <MathTool element={element} />;
   if (kind === 'receipt') return <Receipt element={element} />;
+  if (kind === 'paeckchen') return <PaeckchenWidget element={element} />;
   if (kind === 'geodraw') return <GeoDraw element={element} />;
   if (kind === 'checkout') return <Checkout element={element} />;
   if (kind === 'monsternames') return <MonsterReader element={element} />;

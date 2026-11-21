@@ -153,6 +153,12 @@ export const helpTopics: HelpTopic[] = [
       'Du stellst ein Werkzeug vor dem Einfügen ein; später öffnet „Aufgabe gestalten“ in der Leiste die Einstellungen wieder. Was Kinder in ausgeteilten Heften bearbeiten, bleibt in ihrem Heft gespeichert.',
       'Figur und Sprechendes Foto sprechen mit der Computerstimme oder mit deiner eigenen Aufnahme („Eigene Aufnahme …“); bei der Figur wählst du auch, wie sie sich beim Antippen bewegt. Bei der Anlaut-Tastatur sprichst du unter „Laute“ jeden Laut selbst ein – ohne eigene Aufnahme spricht sie die mitgelieferten Laute.',
     ] },
+  { id: 'aufgabenpaeckchen', chapter: 'lernen', title: 'Aufgabenpäckchen mit eigenen Aufgaben', keywords: 'päckchen aufgaben rechnen skript nachbarzehner ergänzen plus minus einmaleins arbeitsblatt prüfen lücke',
+    body: [
+      'Unter Mathematik fügt „Aufgabenpäckchen“ einen Block Rechenaufgaben auf die Seite. Eine Vorlage füllt das Skript (z. B. „Zu den Nachbarzehnern“, „Plus bis 20 mit Übergang“, „Einmaleins“, „Geteilt mit Rest“); du kannst es beliebig ändern. Darunter stellst du Anzahl, Spalten und die Lösungskontrolle ein; die Vorschau zeigt genau die Aufgaben, die auf die Seite kommen. „Neue Zahlen“ würfelt sie neu.',
+      'So schreibt man Aufgaben: „a = 11..99“ zieht eine Zahl von 11 bis 99, „b = 2, 5, 10“ nimmt eine dieser Zahlen, „u = abrunden(a, 10)“ rechnet etwas aus, „wenn einer(a) ≠ 0“ behält nur passende Zahlen. Jede Zeile mit eckigen Klammern ist eine Aufgabe: „a + [o − a] = o“ – was in [ ] steht, wird ein Kästchen mit diesem Ergebnis. Mehrere Aufgabenzeilen ergeben ein Päckchen mit denselben Zahlen. Fehler zeigt der Dialog mit der Zeilennummer an; die Liste aller Funktionen steht unter „So schreibt man Aufgaben“.',
+      'Die Kinder tippen ihre Ergebnisse in die Kästchen; je nach Einstellung erscheint sofort ✓ oder ✗, oder erst nach „Prüfen“. Gedruckt wird ein normales Arbeitsblatt mit leeren Kästchen, ohne Knopf und Haken.',
+    ] },
   { id: 'uebungen', chapter: 'lernen', title: 'Übungen: Quiz, Zuordnungen, Lesen & Schreiben', keywords: 'quiz zuordnung lückentext diktat memory kreuzworträtsel suchsel',
     body: [
       'Unter „Für alle Fächer“ und „Deutsch“ stehen Übungen wie Quiz, Zuordnungen, Lesen & Schreiben (Diktat, Lückentext, Blitzlesen), Memory, Kreuzworträtsel, Suchsel und Wordle. Du gibst Wörter oder Text ein, die Übung entsteht daraus.',

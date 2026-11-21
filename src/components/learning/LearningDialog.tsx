@@ -86,6 +86,8 @@ import { mathTool, pageSize, viewSize } from '@/lib/learning/mathtool';
 import MathToolOptions from './MathToolOptions';
 import { unsolvable } from '@/lib/learning/code-editor';
 import { codeSettings } from './CodeWidget';
+import PaeckchenOptions from './PaeckchenOptions';
+import { generate, paeckchenConfig, paeckchenSize } from '@/lib/learning/paeckchen';
 import { uploadImage } from '@/lib/client-api';
 const activityIcons: Record<ActivityKind, IconName> = {
   quiz: 'questions', matching: 'flow_chart', cloze: 'rules', typing: 'signature',
@@ -100,7 +102,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   metronome: 'serial_tasks', tuner: 'electronics', echo: 'redo', notequiz: 'diploma_1',
   falling: 'music', recorder: 'audio_file', playlist: 'list', soundstudio: 'headset',
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
-  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', hoeren: 'headset', werkzeug: 'puzzle', linksammlung: 'link', programmieren: 'tree_structure', figur: 'businesswoman', sprechfoto: 'camera', puppentheater: 'clapperboard', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', elevator: 'podium_with_speaker', medienseite: 'camcorder_pro', diaschau: 'stack_of_photos', trickfilm: 'film_reel', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
+  map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', paeckchen: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', hoeren: 'headset', werkzeug: 'puzzle', linksammlung: 'link', programmieren: 'tree_structure', figur: 'businesswoman', sprechfoto: 'camera', puppentheater: 'clapperboard', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', elevator: 'podium_with_speaker', medienseite: 'camcorder_pro', diaschau: 'stack_of_photos', trickfilm: 'film_reel', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
   alphabet: 'kindle', communication: 'comments',
 };
@@ -135,6 +137,7 @@ function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) 
   if (kind === 'sprechfoto') { const p = photoOf(settings.photo); return { width: 64, height: p ? Math.round((64 * p.height) / p.width) : 64 }; }
   // The Puppentheater of the reference fills the page.
   if (kind === 'puppentheater') return { width: 277, height: 196 };
+  if (kind === 'paeckchen') return paeckchenSize(paeckchenConfig(settings.paeckchen));
   if (kind === 'placevalue' || kind === 'dienes') return { width: 220, height: 160 };
   if (kind === 'numberline') return { width: 250, height: 80 };
   if (kind === 'hundredfield') return { width: 200, height: 150 };
@@ -508,6 +511,11 @@ export default function LearningDialog({
                 onClose();
                 return;
               }
+              if (kind === 'paeckchen') {
+                const p = paeckchenConfig(settings.paeckchen);
+                const problem = generate(p.script, 1, p.seed, p.order).errors[0];
+                if (problem || !p.tasks.length) { setError(`Das Skript hat noch einen Fehler${problem?.line ? ` in Zeile ${problem.line}` : ''}: ${problem?.message ?? 'keine Aufgaben'}`); return; }
+              }
               if (kind === 'quizsachen') {
                 if (!quizConfig(settings.qz).quiz) { setError('Das Quiz ist noch nicht fertig: Es wird gerade gebaut oder es fehlt noch etwas (siehe Hinweis unter den Fragen).'); return; }
                 // Like in Lernsachen-Heft, the quiz comes on its own page.
@@ -575,6 +583,15 @@ export default function LearningDialog({
                     learning.width = Math.round(v.w * scale * 10) / 10;
                     learning.height = Math.round(v.h * scale * 10) / 10;
                   }
+                }
+              }
+              // Aufgabenpäckchen changed: as big as the new tasks need, at the same scale.
+              if (kind === 'paeckchen' && element) {
+                const before = paeckchenSize(paeckchenConfig(element.settings?.paeckchen)), after = paeckchenSize(paeckchenConfig(settings.paeckchen));
+                if (before.width !== after.width || before.height !== after.height) {
+                  const scale = element.width / before.width;
+                  learning.width = Math.round(after.width * scale * 10) / 10;
+                  learning.height = Math.round(after.height * scale * 10) / 10;
                 }
               }
               if (settings.musicTemplate && JSON.stringify(element?.settings?.musicConfig) !== JSON.stringify(readySettings.musicConfig) && learning.response) {
@@ -899,6 +916,7 @@ export default function LearningDialog({
             {kind === 'dienes' && <DienesOptions value={settings.dienes} onChange={(dienes) => patch({ dienes })} />}
             {kind === 'numberline' && <NumberLineOptions value={settings.numberline} onChange={(numberline) => patch({ numberline })} />}
             {kind === 'hundredfield' && <HundredFieldOptions value={settings.field} onChange={(field) => patch({ field })} />}
+            {kind === 'paeckchen' && <PaeckchenOptions value={settings.paeckchen} onChange={(paeckchen) => { setError(''); patch({ paeckchen }); }} />}
             {kind === 'receipt' && <ReceiptOptions value={settings.receipt} onChange={(receipt) => patch({ receipt })} />}
             {kind === 'mathboard' && (
               <Picker label="Rechenmaterial" value={settings.mode || 'beads'} onChange={(value) => patch({ mode: value })}
