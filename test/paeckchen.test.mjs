@@ -139,3 +139,27 @@ test('Unbrauchbare Einstellungen werden bereinigt', () => {
   assert.equal(c.order, 'script');
   assert.equal(c.tasks.length, 80);
 });
+
+test('„oder“: pro Durchgang eine der Aufgaben, zufällig – abziehen oder ergänzen', () => {
+  const script = RECIPES.find((r) => r.id === 'nachbarzehner-oder').script;
+  const { tasks, errors, perRun } = generate(script, 40, 11);
+  assert.deepEqual(errors, []);
+  assert.equal(perRun, 1);
+  assert.equal(tasks.length, 40);
+  const minus = tasks.map(text).filter((s) => / − /.test(s)), plus = tasks.map(text).filter((s) => / \+ /.test(s));
+  assert.equal(minus.length + plus.length, 40);
+  assert.ok(minus.length >= 8 && plus.length >= 8, `${minus.length} abziehen, ${plus.length} ergänzen`);
+  for (const s of minus) { const [, a, b, c] = s.match(/^(\d+) − \[(\d+)\] = (\d+)$/); assert.equal(+a - +b, +c); assert.equal(+c % 10, 0); assert.ok(+b > 0 && +b < 10); }
+  for (const s of plus) { const [, a, b, c] = s.match(/^(\d+) \+ \[(\d+)\] = (\d+)$/); assert.equal(+a + +b, +c); assert.equal(+c % 10, 0); assert.ok(+b > 0 && +b < 10); }
+  // Fixed tasks and choices mixed: “a + 1” always, then one of three.
+  const mixed = generate('a = 1..9\na + 1 = [a + 1]\na + 2 = [a + 2]\noder\na + 3 = [a + 3]\noder\na + 4 = [a + 4]', 30, 4);
+  assert.equal(mixed.perRun, 2);
+  assert.equal(mixed.tasks.length, 60);
+  const second = new Set(mixed.tasks.filter((_, i) => i % 2 === 1).map((t) => text(t).match(/\+ (\d)/)[1]));
+  assert.deepEqual([...second].sort(), ['2', '3', '4']);
+  assert.ok(mixed.tasks.filter((_, i) => i % 2 === 0).every((t) => / \+ 1 = /.test(text(t))));
+  // „oder“ needs a task above and below.
+  assert.equal(generate('a = 1..9\noder\na = [a]', 1, 1).errors[0].line, 2);
+  assert.match(generate('a = 1..9\na = [a]\noder', 1, 1).errors[0].message, /Nach „oder“ fehlt/);
+  assert.equal(generate('a = 1..9\na = [a]\noder\noder\na = [a]', 1, 1).errors[0].line, 4);
+});

@@ -27,6 +27,20 @@ a + [o − a] = o
 
 Bei a = 47 ergibt ein Durchgang `47 − ▢ = 40` und `47 + ▢ = 50`. Die Anzahl in den Einstellungen zählt Durchgänge: 8 Durchgänge sind hier 16 Aufgaben. Die Aufgaben eines Durchgangs bleiben in einer Spalte zusammen, außer unter „Reihenfolge“ ist „Gemischt“ gewählt. Dieselbe Zahl kommt nur dann zweimal vor, wenn es zu wenige gibt.
 
+## Abziehen oder ergänzen
+
+```
+a = 11..99
+wenn einer(a) ≠ 0
+u = abrunden(a, 10)
+o = aufrunden(a, 10)
+a − [a − u] = u
+oder
+a + [o − a] = o
+```
+
+Mit der Zeile `oder` zwischen zwei Aufgaben kommt pro Durchgang nur eine von beiden: Bei 12 Durchgängen entstehen also 12 Aufgaben, gemischt aus Abziehen und Ergänzen. Es dürfen auch mehr als zwei Aufgaben durch `oder` verbunden sein. Eine Aufgabe ohne `oder` davor beginnt eine neue Gruppe; so lassen sich feste Aufgaben und Auswahlen in einem Päckchen mischen.
+
 ## Zeilen
 
 Jede Zeile hat eine dieser Formen:
@@ -40,6 +54,7 @@ Jede Zeile hat eine dieser Formen:
 | `c = a · b` | ausrechnen |
 | `wenn …` (auch `nur wenn …`) | nur Zahlen, die diese Bedingung erfüllen |
 | Zeile mit `[ … ]` | eine Aufgabe |
+| `oder` (allein in einer Zeile) | zwischen zwei Aufgaben: pro Durchgang kommt nur eine davon, zufällig gewählt |
 | `# …` oder `// …` | Notiz, zählt nicht |
 
 Eine Variable gilt ab der Zeile, in der sie festgelegt wird. Die Bedingungen werden geprüft, wenn alle Variablen gezogen sind. Ist eine nicht erfüllt, wird der ganze Durchgang neu gezogen, höchstens 2000-mal. Lässt sich so nichts finden, nennt der Dialog die Zeile, an der es am häufigsten scheiterte. Ein leerer Bereich (`b = 1..a − 20` bei a = 15) oder eine Division durch 0 führt ebenfalls zu einem neuen Durchgang.

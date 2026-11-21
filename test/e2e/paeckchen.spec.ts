@@ -109,3 +109,24 @@ test('Aufgabenpäckchen: Skript, Vorschau, Ausfüllen, Prüfen, Druck und Kinder
     await context.close();
   }
 });
+
+test('Aufgabenpäckchen „abziehen oder ergänzen“: pro Zahl eine Aufgabe, gemischt', async ({ page }) => {
+  await login(page);
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Päckchen oder', orientation: 'portrait' } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  await page.getByRole('navigation', { name: 'Werkzeuge' }).getByRole('button', { name: 'Lernwerkzeuge', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Lernwerkzeuge & Übungen' });
+  await dialog.getByRole('navigation', { name: 'Fächer' }).getByRole('button', { name: /^Mathematik · / }).click();
+  await dialog.getByRole('button', { name: 'Aufgabenpäckchen', exact: true }).click();
+  await dialog.getByRole('radio', { name: 'Nachbarzehner: abziehen oder ergänzen' }).click();
+  await expect(dialog.getByRole('textbox', { name: 'Aufgabenskript' })).toHaveValue(/\noder\n/);
+  await expect(dialog.getByText('12 Aufgaben', { exact: true })).toBeVisible();
+  const tasks = dialog.locator('.pk-preview .pk-task');
+  await expect(tasks).toHaveCount(12);
+  const texts = await tasks.allTextContents();
+  expect(texts.some((t) => t.includes('−'))).toBeTruthy();
+  expect(texts.some((t) => t.includes('+'))).toBeTruthy();
+  await dialog.getByRole('button', { name: 'Auf die Seite übernehmen', exact: true }).click();
+  await expect(page.locator('.interaction-surface .paeckchen .pk-task')).toHaveCount(12);
+  await page.screenshot({ path: test.info().outputPath('paeckchen-oder.png') });
+});

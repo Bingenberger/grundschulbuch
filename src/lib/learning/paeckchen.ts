@@ -225,7 +225,8 @@ type Source = { k: 'range'; from: Expr; to: Expr; step?: Expr } | { k: 'list'; i
 type Line =
   | { k: 'def'; line: number; name: string; src: Source }
   | { k: 'cond'; line: number; e: Expr }
-  | { k: 'task'; line: number; parts: ({ s: string; refs: { at: number; len: number; e: Expr }[] } | { gap: Expr })[] };
+  /** `group`: tasks joined by a line „oder“ – one of them comes per run. */
+  | { k: 'task'; line: number; group: number; parts: ({ s: string; refs: { at: number; len: number; e: Expr }[] } | { gap: Expr })[] };
 export type Script = { lines: Line[]; errors: ScriptError[] };
 
 function parseSource(text: string): Source {
@@ -264,11 +265,17 @@ export function parseScript(source: string): Script {
   const lines: Line[] = [];
   const errors: ScriptError[] = [];
   const names = new Set<string>();
+  let groups = 0, orLine = 0;
   source.split(/\r?\n/).forEach((raw, index) => {
     const line = index + 1;
     const text = raw.replace(/(^|\s)(#|\/\/).*$/, '').trim();
     if (!text) return;
     try {
+      if (/^oder$/i.test(text)) {
+        if (!lines.some((l) => l.k === 'task') || orLine) throw new ScriptFault('„oder“ steht allein zwischen zwei Aufgaben – darüber und darunter muss je eine Aufgabe mit [ ] stehen.');
+        orLine = line;
+        return;
+      }
       const cond = text.match(/^(?:nur\s+)?wenn\s+(.+)$/i);
       if (cond) { lines.push({ k: 'cond', line, e: parseExpr(cond[1]) }); return; }
       if (text.includes('[')) {
@@ -283,7 +290,8 @@ export function parseScript(source: string): Script {
         }
         if (last < text.length) parts.push(parseText(text.slice(last), names));
         if (/[\[\]]/.test(parts.map((p) => ('s' in p ? p.s : '')).join(''))) throw new ScriptFault('Eine eckige Klammer [ ] ist nicht geschlossen.');
-        lines.push({ k: 'task', line, parts });
+        lines.push({ k: 'task', line, group: orLine ? groups - 1 : groups++, parts });
+        orLine = 0;
         return;
       }
       const def = text.match(/^([A-Za-zÄÖÜäöüß_][A-Za-z0-9ÄÖÜäöüß_]*)\s*=(?!=)\s*(.+)$/);
@@ -299,6 +307,7 @@ export function parseScript(source: string): Script {
       errors.push({ line, message: e instanceof ScriptFault ? e.message : String(e) });
     }
   });
+  if (orLine) errors.push({ line: orLine, message: 'Nach „oder“ fehlt noch eine Aufgabe mit [ ].' });
   if (!errors.length && !lines.some((l) => l.k === 'task')) errors.push({ line: 0, message: 'Es fehlt noch eine Aufgabe mit einer Lücke in [ ], z. B. „a + b = [a + b]“.' });
   return { lines, errors };
 }
@@ -348,7 +357,10 @@ function run(script: Script, random: () => number): Task[] {
         if (l.k === 'def') scope[l.name] = draw(l.src, scope, random);
         else if (l.k === 'cond' && !truthy(evaluate(l.e, scope))) throw new Redraw();
       }
-      return script.lines.filter((l): l is Extract<Line, { k: 'task' }> => l.k === 'task').map((l) => {
+      // Of tasks joined by „oder“ one comes, chosen at random.
+      const tasks = script.lines.filter((l): l is Extract<Line, { k: 'task' }> => l.k === 'task');
+      const chosen = [...new Set(tasks.map((l) => l.group))].map((g) => { const alts = tasks.filter((l) => l.group === g); return alts[Math.floor(random() * alts.length)]; });
+      return chosen.map((l) => {
         current = l.line;
         return {
           parts: l.parts.map((p): Part => {
@@ -374,7 +386,7 @@ const taskKey = (t: Task) => t.parts.map((p) => ('a' in p ? `[${p.a}]` : p.s)).j
 /** The tasks of `count` runs; the same numbers twice only when there are too few to choose from. */
 export function generate(source: string, count: number, seed: number, order: PaeckchenSettings['order'] = 'script'): { tasks: Task[]; errors: ScriptError[]; perRun: number } {
   const script = parseScript(source);
-  const perRun = script.lines.filter((l) => l.k === 'task').length;
+  const perRun = new Set(script.lines.flatMap((l) => (l.k === 'task' ? [l.group] : []))).size;
   if (script.errors.length) return { tasks: [], errors: script.errors, perRun };
   const random = randomFor(seed);
   const seen = new Set<string>();
@@ -410,6 +422,20 @@ wenn einer(a) ≠ 0
 u = abrunden(a, 10)
 o = aufrunden(a, 10)
 a − [a − u] = u
+a + [o − a] = o`,
+  },
+  {
+    id: 'nachbarzehner-oder',
+    title: 'Nachbarzehner: abziehen oder ergänzen',
+    count: 12,
+    script: `# Von einer Zahl bis 100 entweder zum Zehner davor
+# abziehen oder zum Zehner danach ergänzen
+a = 11..99
+wenn einer(a) ≠ 0
+u = abrunden(a, 10)
+o = aufrunden(a, 10)
+a − [a − u] = u
+oder
 a + [o − a] = o`,
   },
   {

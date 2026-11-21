@@ -70,7 +70,7 @@ export default function PaeckchenOptions({ value, onChange }: { value: JsonValue
         <ul className="pk-functions">
           {SHOWN_FUNCTIONS.map((f) => <li key={f}><code>{umlauts(FUNCTIONS[f].help ?? `${f}(…)`)}</code></li>)}
         </ul>
-        <p>Mehrere Aufgabenzeilen geben ein Päckchen mit denselben Zahlen, z. B. erst Mal, dann Geteilt.</p>
+        <p>Mehrere Aufgabenzeilen geben ein Päckchen mit denselben Zahlen, z. B. erst Mal, dann Geteilt. Steht zwischen zwei Aufgaben eine Zeile <code>oder</code>, kommt pro Durchgang nur eine der beiden – zufällig, z. B. abziehen oder ergänzen.</p>
       </details>
       <Slider label="Anzahl" value={c.count} min={1} max={40} format={(v) => (perRun > 1 ? `${v} × ${perRun} = ${v * perRun} Aufgaben` : v === 1 ? '1 Aufgabe' : `${v} Aufgaben`)} onChange={(count) => set({ count })} />
       <div className="receipt-option">
