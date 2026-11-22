@@ -11,7 +11,9 @@ const { musicPresets, musicSettings, musicPage } = await bundle('src/lib/learnin
 const { learningBlocks } = await bundle('src/lib/learning/blocks.ts');
 const { validatePage } = await import('../src/lib/notebooks.mjs');
 test('Alle Musikvorlagen einschließlich einstellbarer Varianten sind als Lernwerkzeug erreichbar', () => {
-  const blocks = learningBlocks.filter(b => b.subject === 'Musik');
+  // Notenlinien as a Lineatur on part of the page (not a page template) is counted apart.
+  assert.ok(learningBlocks.some(b => b.subject === 'Musik' && b.id === 'lineatur-noten'));
+  const blocks = learningBlocks.filter(b => b.subject === 'Musik' && b.kind !== 'lineatur');
   // 36 + Hör-Memory and Was hörst du? of Lernsachen-Heft 1.47.3.
   assert.equal(blocks.length, 38);
   for (const preset of musicPresets) assert.ok(blocks.some(b => b.id === `music-${preset.id}`), preset.id);

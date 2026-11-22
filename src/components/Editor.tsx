@@ -55,6 +55,7 @@ import DrawingBar from './editor/DrawingBar';
 import ElementBar from './editor/ElementBar';
 import ElementActions from './editor/ElementActions';
 import InlineText from './editor/InlineText';
+import { isLineatur, ridersOf } from '@/lib/lineatur';
 import { settleText, useTextEditing } from './editor/use-text-editing';
 import AnswerField, { CheckButton, isAnswerField, isCheckButton, typedAnswer } from './editor/AnswerField';
 import { useReadyGuide } from './editor/useReadyGuide';
@@ -63,7 +64,9 @@ import { checkPage } from '@/lib/sheets/answers';
 import TemplateTextField,{isLockedTemplateField} from './editor/TemplateTextField';
 import { fitText } from './editor/text-measure';
 import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
-import { elementCenter, resizeAtCorner, rotateTo, type Corner } from '@/lib/transform';
+import { elementCenter, resizeAtCorner, rotateTo, withSize, type Corner } from '@/lib/transform';
+import { outline, snapMove, snapResize, union, type Box, type Guide } from '@/lib/snap';
+import SnapGuides from './editor/SnapGuides';
 import PageBar, { type SchoolDraft } from './editor/PageBar';
 import TemplateChooser from './editor/TemplateChooser';
 import PageTiles from './editor/PageTiles';
@@ -107,6 +110,8 @@ type Gesture = {
   eraserOptions?: EraserOptions;
   /** Tapping a selected text box again starts writing in it. */
   editOnTap?: string;
+  /** Boxes of the other elements to snap to (collected on the first move). */
+  snapTo?: Box[];
 };
 const cloneElements = (elements: PageElement[], offset = 5) => {
   const groups = new Map<string, string>();
@@ -211,6 +216,7 @@ export default function Editor({
   const [preview, setPreview] = useState<PageElement[] | null>(null);
   const [erasePreview, setErasePreview] = useState<PageElement[] | null>(null);
   const [frame, setFrame] = useState<Rect | null>(null);
+  const [guides, setGuides] = useState<Guide[]>([]);
   const [panel, setPanel] = useState<'insert' | 'page' | null>(null);
   const features = featuresFor('teacher');
   if(templateEditing)for(const feature of ['pages','addPage','pageManage','files','share','print','templates','worksheet','rename'] as const)features.delete(feature);
@@ -460,7 +466,7 @@ export default function Editor({
         s.select(page.elements.filter((el) => !el.locked).map((el) => el.id));
         break;
       case 'activate':
-        if (first?.type === 'widget' || first?.type === 'activity')
+        if ((first?.type === 'widget' && !isLineatur(first)) || first?.type === 'activity')
           setLearning(first);
         else if (first?.type === 'text' && !first.locked) writing.begin(first.id);
         break;
@@ -610,7 +616,8 @@ export default function Editor({
   }
   function insert(el: PageElement) {
     if (page?.paperMode === 'endless') el = intoView(el, scroller.current, surface.current, size);
-    s.edit((p) => ({ ...p, elements: [...p.elements, el] }));
+    // A Lineatur lies under everything, so texts and writing stay on top of it.
+    s.edit((p) => ({ ...p, elements: isLineatur(el) ? [el, ...p.elements] : [...p.elements, el] }));
     s.select([el.id]);
     useEditor.setState({ tool: 'select' });
   }
@@ -970,9 +977,11 @@ export default function Editor({
       // An anchored tool (puppet theatre) only moves by its handle: a finger
       // missing a figure must not carry the whole stage away.
       if (target.locked || (body && handle === 'move' && anchoredOnPage(target))) return;
-      const originals = page!.elements.filter(
+      let originals = page!.elements.filter(
         (el) => ids.includes(el.id) && !el.locked,
       );
+      // Text and writing on a Lineatur go along when it moves.
+      if (handle === 'move') originals = [...originals, ...ridersOf(page!.elements, originals)];
       gesture.current = {
         type: handle === 'move' ? 'move' : handle === 'rotate' ? 'rotate' : 'resize',
         corner: handle === 'move' || handle === 'rotate' ? undefined : handle,
@@ -1007,8 +1016,24 @@ export default function Editor({
       else recognition.update(g.points, shape => setDraft({ ...g.stroke!, points: shape?.points || [...g.points], geometry: shape?.kind }), surface.current!.getBoundingClientRect().width / size.width, previousArrowShaft(page!.elements, g.stroke!));
     }
     else {
-      const dx = point.x - g.start.x,
+      let dx = point.x - g.start.x,
         dy = point.y - g.start.y;
+      // Red guide lines: catch page centre, margins and other elements (Alt turns it off).
+      const snapping = g.type !== 'rotate' && !event.altKey && g.originals.length > 0;
+      if (snapping && !g.snapTo) {
+        const moving = new Set(g.originals.map((el) => el.id));
+        g.snapTo = page!.elements.filter((el) => !moving.has(el.id) && el.type !== 'stroke').map(outline);
+      }
+      const tol = (event.pointerType === 'touch' ? 10 : 7) / (surface.current!.getBoundingClientRect().width / size.width);
+      const sheet = sheetSize(page!);
+      let lines: Guide[] = [];
+      if (snapping && g.type === 'move') {
+        const box = union(g.originals.map(outline));
+        const caught = snapMove({ ...box, x: box.x + dx, y: box.y + dy }, g.snapTo!, sheet, tol);
+        dx += caught.dx;
+        dy += caught.dy;
+        lines = caught.guides;
+      }
       setPreview(
         g.originals.map((el) => {
           if (g.type === 'move')
@@ -1018,9 +1043,16 @@ export default function Editor({
               y: Math.max(size.top - el.height + 5, Math.min(size.top + size.height - 5, el.y + dy)),
             };
           if (g.type === 'rotate') return rotateTo(el, g.pivot || elementCenter(el), g.start, point, event.shiftKey);
-          return resizeAtCorner(el, g.corner || 'se', g.start, point, event.shiftKey || el.type === 'image');
+          const corner = g.corner || 'se';
+          const keepRatio = event.shiftKey || el.type === 'image';
+          const resized = resizeAtCorner(el, corner, g.start, point, keepRatio);
+          if (!snapping || el.rotation || g.originals.length > 1) return resized;
+          const caught = snapResize(resized, corner.endsWith('e') ? 1 : -1, corner.startsWith('s') ? 1 : -1, g.snapTo!, sheet, tol, keepRatio);
+          lines = caught.guides;
+          return withSize(el, caught.box.x, caught.box.y, caught.box.width, caught.box.height);
         }),
       );
+      setGuides(lines);
     }
   }
   function end(event: React.PointerEvent, cancel = false) {
@@ -1050,6 +1082,7 @@ export default function Editor({
       if (Math.hypot(p.x - g.start.x, p.y - g.start.y) < tapDistance) {
         gesture.current = null;
         setPreview(null);
+        setGuides([]);
         writing.begin(g.editOnTap);
         return;
       }
@@ -1076,6 +1109,7 @@ export default function Editor({
       }));
     setDraft(null);
     setPreview(null);
+    setGuides([]);
     setErasePreview(null);
   }
   function layer(front: boolean) {
@@ -1271,6 +1305,7 @@ export default function Editor({
             onDuplicate={() => performCommand('duplicate')}
             onDelete={() => performCommand('delete')}
             onLink={(link) => s.patchElements({ link })}
+            onLock={() => performCommand('lock')}
           />
         }
       />
@@ -1468,6 +1503,7 @@ export default function Editor({
                         style={{ left: `${frame.x}mm`, top: `${frame.y}mm`, width: `${frame.width}mm`, height: `${frame.height}mm` }}
                       />
                     )}
+                    {guides.length > 0 && <SnapGuides guides={guides} />}
                     <LinkLayer elements={page.elements.map((el) => preview?.find((p) => p.id === el.id) || el)} />
                     {guide && (!board || boardPointer === 'none') && <DrawingRuler guide={guide} onChange={setGuide} onClose={() => setGuide(null)} />}
                     </World>

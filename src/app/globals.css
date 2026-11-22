@@ -1792,7 +1792,7 @@ a.embed-poster {text-decoration:none;}
 .geometry-board:focus-visible { outline: 3px solid #edaa35; outline-offset: 2px; }
 @media print { .geometry-guide { display: none; } }
 
-/* Farbige Icons (Flat Color Icons, icons8, MIT; eigene Ergänzungen in /icons). */
+/* Farbige Icons (Fluent Emoji flach, Microsoft, MIT; eigene Ergänzungen in /icons). */
 .icon {
   display: inline-block;
   flex-shrink: 0;
@@ -2116,7 +2116,7 @@ a.embed-poster {text-decoration:none;}
   gap: 10px;
   max-height: 42vh;
   overflow: auto;
-  padding: 8px 12px;
+  padding: 8px 12px 4px;
   background: #fcfcf9;
   border-top: 1px solid #dce2d6;
 }
@@ -2160,10 +2160,11 @@ a.embed-poster {text-decoration:none;}
 }
 .option-fold {
   flex-shrink: 0;
-  align-self: flex-start;
+  align-self: flex-end;
   display: flex;
   align-items: center;
   gap: 6px;
+  min-width: 124px;
   min-height: 40px;
   padding: 4px 10px;
   border: 1px solid #dce2d6;
@@ -2176,23 +2177,24 @@ a.embed-poster {text-decoration:none;}
 .option-fold:hover {
   background: #edf1e7;
 }
-.option-fold small {
-  font-size: 11px;
-  color: #7e8b79;
-}
+/* Same place open and folded: bottom right of the bar. */
 .option-bar:not(.folded) > .option-fold {
   position: sticky;
-  top: 0;
+  bottom: 0;
 }
 .option-bar.folded {
-  padding: 4px 12px;
+  align-items: center;
+  padding-top: 4px;
 }
-.option-bar.folded > .option-fold {
-  border-color: transparent;
-  background: none;
-}
-.option-bar.folded > .option-fold:hover {
-  background: #edf1e7;
+.option-folded-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: #7e8b79;
+  cursor: pointer;
 }
 .option-group {
   display: flex;
@@ -2252,6 +2254,44 @@ a.embed-poster {text-decoration:none;}
 .choice-icon .icon {
   width: 28px;
   height: 28px;
+}
+/* Compact choice: one button, the options open in a panel above it. */
+.choice-menu {
+  border-color: #dce2d6;
+  background: #fff;
+}
+.choice-menu[aria-expanded='true'] {
+  background: #e3ebdf;
+  border-color: #9fbf93;
+}
+.choice-menu > .icon:last-child {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 12px;
+  height: 12px;
+  opacity: 0.6;
+}
+.choice-panel {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: min(600px, calc(100vw - 16px));
+  max-height: 60vh;
+  overflow: auto;
+  padding: 6px 8px 8px;
+  border: 1px solid #dce2d6;
+  border-radius: 12px;
+  background: #fcfcf9;
+  box-shadow: 0 8px 28px rgba(31, 45, 36, 0.22);
+}
+.choice-panel-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 1px;
 }
 .choice-danger {
   color: #a63737;
@@ -2385,6 +2425,121 @@ a.embed-poster {text-decoration:none;}
   font-size: 11px;
   color: #6c7c61;
 }
+/* Compact bottom bar: small gaps, smaller buttons, so more page stays visible. */
+.option-bar {
+  gap: 8px;
+  padding: 4px 8px 3px;
+}
+.option-bar.folded {
+  padding-top: 3px;
+}
+.option-side {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+  padding-right: 6px;
+  border-right: 1px solid #e1e7dc;
+}
+.option-bar .option-sections {
+  gap: 0;
+  padding-right: 0;
+  border-right: 0;
+}
+.option-bar .option-sections button {
+  gap: 5px;
+  min-height: 28px;
+  padding: 1px 8px 1px 4px;
+  font-size: 11.5px;
+}
+.option-bar .option-sections .icon {
+  width: 18px;
+  height: 18px;
+}
+.option-bar .option-content {
+  gap: 3px 10px;
+}
+.option-bar .option-group {
+  gap: 0;
+}
+.option-bar .option-caption {
+  padding-left: 3px;
+  font-size: 9.5px;
+  line-height: 1.2;
+}
+.option-bar .choice {
+  min-width: 40px;
+  max-width: 84px;
+  padding: 1px 3px 2px;
+  border-radius: 8px;
+  font-size: 10px;
+  line-height: 1.15;
+}
+.option-bar .choice-icon {
+  min-height: 25px;
+}
+.option-bar .choice-icon .icon {
+  width: 22px;
+  height: 22px;
+}
+.option-bar .font-glyph {
+  font-size: 17px;
+  line-height: 23px;
+}
+.option-bar .swatch {
+  width: 21px;
+  height: 21px;
+}
+.option-bar .stepper {
+  gap: 0;
+  padding: 1px;
+  border-radius: 8px;
+}
+.option-bar .stepper button {
+  width: 30px;
+  height: 30px;
+}
+.option-bar .stepper input {
+  width: 44px;
+  font-size: 13px;
+}
+.option-bar .stepper-unit {
+  padding-right: 2px;
+  font-size: 11px;
+}
+.option-bar .option-input {
+  min-height: 32px;
+  padding: 4px 8px;
+}
+.option-bar .option-fold {
+  min-height: 30px;
+  min-width: 108px;
+  padding: 2px 8px;
+}
+/* The fold button sits bottom left: under the section list, or first in the bar. */
+.option-bar .option-side > .option-fold:hover {
+  background: #edf1e7;
+}
+.option-bar .option-side > .option-fold {
+  min-height: 30px;
+  padding: 2px 8px;
+  border: 1px solid #dce2d6;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+}
+.option-bar:not(.folded) > .option-fold {
+  order: -1;
+}
+.option-bar .choice-menu > .icon:last-child {
+  top: 2px;
+  right: 2px;
+  width: 10px;
+  height: 10px;
+}
 .board-mode .tool-rail,
 .board-mode .page-panel,
 .board-mode .option-bar,
@@ -2396,7 +2551,8 @@ a.embed-poster {text-decoration:none;}
   height: 100%;
   padding: 15px 0 80px;
 }
-@media (max-width: 1100px) {
+/* iPad in landscape: the top bar holds all actions incl. “Befestigen”. */
+@media (max-width: 1240px) {
   .header-button {
     min-width: 48px;
     padding: 3px 4px;
@@ -2406,6 +2562,8 @@ a.embed-poster {text-decoration:none;}
     width: 22px;
     height: 22px;
   }
+}
+@media (max-width: 1100px) {
   .editor-header .back-button span {
     font-size: 10px;
   }
@@ -2436,8 +2594,10 @@ a.embed-poster {text-decoration:none;}
     flex-direction: column;
   }
   .option-bar:not(.folded) > .option-fold {
-    order: -1;
     align-self: flex-end;
+  }
+  .option-bar.folded {
+    flex-direction: row;
   }
 }
 .board-choice {
@@ -2552,6 +2712,31 @@ a.embed-poster {text-decoration:none;}
   border: 1px solid #dce2d6;
   border-radius: 12px;
   background: #fbfcf8;
+}
+/* Red guide lines while moving and resizing (like Lernsachen-Heft). */
+.snap-guides {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 40;
+}
+.snap-guides line,
+.snap-guides path {
+  stroke: #e64980;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  fill: none;
+  opacity: 0.9;
+}
+.snap-guides line.page {
+  stroke-width: 1.3px;
+  stroke-dasharray: 2 1.5;
+}
+.snap-guides path.gap {
+  stroke-width: 1.5px;
+  stroke-linecap: round;
 }
 .selection-frame {
   position: absolute;
@@ -5104,7 +5289,8 @@ a.embed-poster {text-decoration:none;}
 .monster-options h3 { margin: 10px 0 0; font-size: 1.05rem; color: #c2410c; }
 .monster-options h4 { margin: 0; font-size: .95rem; }
 .monster-options .option-hint { align-self: stretch; max-width: none; margin: 0; font-size: 13px; color: #4b5563; }
-.option-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+/* Only the heading rows of these settings pages (not the bottom bar). */
+.option-row:has(> h4) { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .ts-part .property-label { font-size: 14px; font-weight: 700; color: #1f2937; }
 .ts-part .property-label textarea { font-size: 15px; }
 
@@ -5680,3 +5866,8 @@ a.embed-poster {text-decoration:none;}
 .pk-preview-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .pk-preview { max-width: 100%; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, .06); }
 @media (max-width: 640px) { .pk-help dl { grid-template-columns: 1fr; } }
+
+/* Lineatur als Baustein (nur ein Teil der Seite liniert). */
+.lineatur-block { display: block; overflow: visible; }
+.lineatur-glyph { display: inline-flex; flex: none; border-radius: 4px; background: #fff; box-shadow: inset 0 0 0 1px #d5dde3; overflow: hidden; }
+.lineatur-glyph svg { width: 100%; height: 100%; }

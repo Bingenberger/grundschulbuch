@@ -139,8 +139,12 @@ und mit einer echten Anton-Karte steht weiterhin aus.
   Inhalt an der alten Stelle neu angelegt).
 - Alle Einstellungen erscheinen als Knöpfe mit Icon und Text; es gibt keine
   Dropdown-Menüs mehr, auch nicht in den Dialogen der Lernwerkzeuge.
-- Icons: Flat Color Icons (icons8, MIT, npm `flat-color-icons`); fehlende
-  Motive sind im gleichen Stil unter `public/icons/` ergänzt.
+- Icons: Fluent Emoji im flachen Stil (Microsoft, MIT, npm
+  `@iconify-json/fluent-emoji-flat`), seit 22. November 2026 statt der Flat
+  Color Icons: modern, farbig und kindgerecht. `scripts/icon-map.mjs` ordnet
+  jedem Symbolnamen der App ein Emoji zu; `scripts/build-assets.mjs` schreibt
+  daraus `public/runtime/icons/`. Textmarker, Radierer und Zuschneiden gibt es
+  nicht als Emoji, sie sind im gleichen Stil unter `public/icons/` gezeichnet.
 - Was Kinder sehen, legen Lehrkräfte unter „Meine Klassen“ fest: als
   Vorgabe für die Klasse („Was die Kinder im Heft sehen“) und bei Bedarf als
   eigene Auswahl je Kind („Funktionen“). Ohne Einstellung gilt die Vorgabe aus
@@ -1297,6 +1301,67 @@ Eckpunkten und das Vorlesen der Aufgaben sind noch nicht ergänzt. Innerhalb die
 Strecken. Das flächenweise Radieren freier Zeichnungen im übrigen Editor bleibt
 ein eigener Ablauf. Diese Umsetzung belegt noch keine vollständige Gleichheit
 mit der Geometrievorlage.
+
+## Hilfslinien, untere Leiste und kompakte Einstellungen (22. November 2026)
+
+Wie in Lernsachen-Heft rasten Elemente beim Verschieben und beim Größe-Ändern an
+einer Ecke ein, und rote Hilfslinien zeigen, woran (`src/lib/snap.ts`,
+gezeichnet von `src/components/editor/SnapGuides.tsx`). Fangpunkte sind
+Seitenrand, Randlinie (15 mm), Seitenmitte, die Kanten und Mitten der anderen
+Elemente (ohne Striche) und gleiche Abstände zwischen Nachbarn. Linien an der
+Seite sind gestrichelt, gleiche Abstände bekommen einen Balken mit Endstrichen.
+Die Toleranz liegt bei 7 Bildschirmpunkten mit der Maus und 10 mit dem Finger.
+Gedrehte Elemente werden mit ihrem umschließenden Kasten verglichen und beim
+Größe-Ändern nicht gefangen. Mehrere gewählte Elemente rasten als ein Kasten
+ein. Mit gedrückter Alt-Taste geht es frei. Das gilt in Lehrkraft- und
+Kinderheft.
+
+Der Knopf zum Ein- und Ausklappen der unteren Leiste liegt in beiden Zuständen
+unten links an derselben Stelle (unter den Bereichen). Eingeklappt zeigt die
+Leiste daneben nur ihren Namen. Die Leiste ist kompakter: kleinere Abstände,
+Knöpfe und Zahlenfelder.
+
+Einstellungen mit vielen Möglichkeiten (Schrift, Ausrichtung, Farbe, Deckkraft,
+Form, Hintergrund, Rahmenlinie und Rahmenfarbe des Textkastens) zeigen in der
+Leiste nur noch die gewählte Möglichkeit mit Icon und Text (`ChoiceMenu` in
+`src/components/ui/Choice.tsx`). Ein Tipp öffnet darüber ein kleines Feld mit
+allen Möglichkeiten, weiterhin mit Icon und Text und ohne `<select>`. Fett,
+Kursiv, Unterstrichen, Silben, „Wörter einzeln formatieren“ und „Passend zur
+Lineatur“ stehen zusammen unter „Auszeichnung“. „Maße & Position“ (Breite,
+Höhe, Drehung, Abstand links und oben) ist kein eigener Bereich mehr, sondern
+steht mit unter „Anordnen“.
+
+In der oberen Leiste gibt es für jedes gewählte Element „Befestigen“ (wieder
+„Lösen“): Befestigte Elemente lassen sich nicht verschieben, verändern oder
+löschen. Kinder sehen den Knopf nicht.
+
+## Lineatur als Lernwerkzeug (22. November 2026)
+
+Lineaturen gibt es nicht mehr nur als ganze Seite: Unter Lernwerkzeuge liegt
+für jede Lineatur ein Baustein, der nur einen Teil der Seite liniert
+(Widget-Art `lineatur`, Einstellungen `settings.lineatur = {ruling, house?,
+color?}`). Deutsch: Lineatur 1, Lineatur 1 mit Zeilenhaus, Lineatur 2,
+Lineatur 3, Linien, Linien eng; Mathematik: Kariert 5 mm, Kariert 1 cm,
+Rechenkästchen; Musik: Notenlinien; Für alle Fächer: Punktraster. Die Bausteine
+kommen ohne Einstellungsschritt auf die Seite, 18 cm breit, und liegen unter
+allen anderen Elementen. Die Maße der Schreiblinien folgen den Originalpapieren
+von Lernsachen-Heft (1400 Einheiten = 297 mm); die Zeilen wiederholen sich, so
+weit der Kasten reicht, ohne verzerrt zu werden (`src/lib/lineatur.ts`,
+gezeichnet von `src/components/learning/LineaturWidget.tsx`).
+
+In der unteren Leiste unter „Gestalten“ › „Lineatur“: Art (alle zehn
+Lineaturen), Zeilenhaus (nur bei den Lineaturen mit vier Linien) und
+Linienfarbe. Das Zeilenhaus färbt Dachgeschoss (hellblau), Erdgeschoss (gelb)
+und Keller (braun) und setzt an jeden Zeilenanfang ein kleines Haus mit Dach,
+Wohnung und Keller.
+
+Textfelder rasten auf der Lineatur ein wie auf einer linierten Seite
+(`fitTextToRuling` in `src/lib/text-fit.ts` nimmt zuerst die Lineatur, auf der
+der Text liegt): Die Grundlinie liegt auf der Schreiblinie, der Zeilenabstand
+folgt den Zeilen. Kommt ein Text von außerhalb auf die Lineatur, bekommt er
+auch ihre Schriftgröße. Wird die Lineatur verschoben, wandern Texte und
+Geschriebenes, die darauf liegen, mit. Karos, Punkte und Notenlinien haben
+keine Schreibzeilen; dort bleibt der Text, wie er ist.
 
 ## Prüfungen
 

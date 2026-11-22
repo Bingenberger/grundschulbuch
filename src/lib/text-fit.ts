@@ -2,6 +2,7 @@
 // one text line per ruled row and the baseline on the writing line. All in mm.
 import { dimensions, type Page, type PageElement } from './notebook-model';
 import {fontFamilyFor} from './template-font';
+import { lineaturUnder } from './lineatur';
 
 export type RulingRows = {
   /** Distance between two writing rows. */
@@ -74,12 +75,15 @@ export function fitTextToRuling(
   measure: TextMeasure,
   { autoSize = false, lines }: { autoSize?: boolean; lines?: number } = {},
 ): PageElement | null {
-  const rows = rulingRows(page);
-  if (!rows || el.type !== 'text' || el.locked || el.rotation % 360 !== 0) return null;
+  if (el.type !== 'text' || el.locked || el.rotation % 360 !== 0) return null;
   if (el.textFrame && el.textFrame !== 'none') return null;
   if ((el.borderWidth ?? 0) > 0 || (el.background && el.background !== 'none')) return null;
+  // A Lineatur on the page (building block) comes before the ruling of the page itself.
+  const local = page.elements ? lineaturUnder(page.elements, el) : null;
+  const rows = local?.rows ?? rulingRows(page);
+  if (!rows) return null;
   const font = fontFamilyFor(el);
-  const g=page.templateRuling;
+  const g=local?undefined:page.templateRuling;
   if(g&&page.paperMode!=='endless'&&(el.x+el.width<=g.left||el.x>=g.right||el.y>rows.last||el.y+el.height<g.top-g.pitch))return null;
   if(el.textLinePitch&&g)return {...el,lineHeight:el.textLinePitch/((el.fontSize||18)*ptToMm),...(lines!==undefined?{height:round(Math.max(1,lines)*el.textLinePitch,3)}:{})};
   let fontMm = (el.fontSize || 18) * ptToMm;
@@ -102,7 +106,7 @@ export function fitTextToRuling(
     ...el,
     fontSize,
     lineHeight,
-    ...(g?{textLinePitch:lineMm}:{}),
+    ...(g?{textLinePitch:lineMm}:local?{textLinePitch:undefined}:{}),
     y: round(row - baseline, 3),
     height: round(count * lineMm, 3),
   };

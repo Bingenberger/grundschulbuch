@@ -50,6 +50,12 @@ export const helpTopics: HelpTopic[] = [
       'Bei Mathe-Aufgaben, Uhrzeiten üben, Rechnen mit Geld, Noten lernen, Karopapier, Rechnen im Alltag und Laute hören gibt es eine Lösungskontrolle: Die Kinder tippen ihre Ergebnisse in die Kästchen, und daneben erscheint sofort ✓ oder ✗ – oder erst, wenn sie oben rechts auf „Prüfen“ tippen. Auf Seiten zum Messen und Zeichnen ist der Stift schon an, und das Lineal liegt unten links bereit; die Kästchen lassen sich trotzdem antippen.',
       'Eine Seite kann auch Endlospapier sein: Es wächst in alle Richtungen mit dem Inhalt. Endlospapier kommt nicht ins PDF und nicht auf den Drucker.',
     ] },
+  { id: 'lineatur-baustein', chapter: 'seiten', title: 'Lineatur nur auf einem Teil der Seite', keywords: 'lineatur zeilenhaus schreiblinien kariert rechenkästchen notenlinien punkte teil baustein',
+    body: [
+      'Unter „Lernwerkzeuge“ gibt es jede Lineatur auch als Baustein: Lineatur 1 (auch mit Zeilenhaus), 2 und 3, Linien, Linien eng, Kariert, Rechenkästchen, Notenlinien und Punktraster. Der Baustein liniert nur einen Teil der Seite; ziehe ihn größer, dann kommen weitere Zeilen dazu.',
+      'Unten unter „Gestalten“ wählst du eine andere Lineatur, die Linienfarbe und bei den Lineaturen mit vier Linien das Zeilenhaus: Dachgeschoss, Erdgeschoss und Keller sind farbig, und am Zeilenanfang steht ein kleines Haus.',
+      'Ziehst du ein Textfeld auf die Schreiblinien, rastet es ein: Die Schrift bekommt die passende Größe und steht auf der Grundlinie. Verschiebst du die Lineatur, wandern Texte und Geschriebenes darauf mit. Mit „Befestigen“ bleibt die Lineatur fest liegen.',
+    ] },
   { id: 'seite-einstellen', chapter: 'seiten', title: 'Seite einstellen: Papier, Farben, Rahmen', keywords: 'design hintergrund papierfarbe rahmen format hoch quer',
     body: [
       '„Seite“ links in der Werkzeugleiste öffnet unten die Einstellungen der Seite: Papier (Format hoch oder quer, Lineatur), Farben & Bild (Papier- und Linienfarbe, Hintergrundbild), Rahmen, Vorlage und Seiten.',
@@ -114,8 +120,8 @@ export const helpTopics: HelpTopic[] = [
   // Bearbeiten
   { id: 'auswaehlen', chapter: 'bearbeiten', title: 'Auswählen, verschieben, drehen', keywords: 'markieren größer kleiner drehen sperren festmachen',
     body: [
-      'Mit „Auswahl“ tippst du ein Element an. Ziehen verschiebt es, die Griffe an den Ecken machen es größer oder kleiner, der Drehgriff dreht es. Hilfslinien zeigen, wo es einrastet.',
-      'Gesperrte Elemente bleiben an ihrem Platz – praktisch für Arbeitsblätter, die Kinder nicht verschieben sollen.',
+      'Mit „Auswahl“ tippst du ein Element an. Ziehen verschiebt es, die Griffe an den Ecken machen es größer oder kleiner, der Drehgriff dreht es. Rote Hilfslinien zeigen, wo es einrastet: an der Seitenmitte, am Rand und Seitenrand, an Kanten und Mitten anderer Elemente und bei gleichen Abständen. Mit gedrückter Alt-Taste geht es ohne Einrasten.',
+      '„Befestigen“ in der oberen Leiste hält ein gewähltes Element an seinem Platz – praktisch für Arbeitsblätter, die Kinder nicht verschieben sollen. Befestigte Elemente lassen sich weder verschieben noch verändern oder löschen; „Lösen“ macht sie wieder beweglich.',
     ] },
   { id: 'mehrere', chapter: 'bearbeiten', title: 'Mehrere Elemente und Gruppen', keywords: 'gruppieren rahmen alles auswählen',
     body: [
@@ -234,7 +240,7 @@ export const helpTopics: HelpTopic[] = [
   { id: 'ipad', chapter: 'tastatur', title: 'iPad und Apple Pencil', keywords: 'ipad tablet pencil finger zoomen',
     body: [
       'Mit zwei Fingern ziehst du die Seite größer oder kleiner. Mit „Nur Stift“ (unter Stift → Malen mit) malt nur der Pencil, und die Hand darf aufliegen.',
-      'Die Leiste unten lässt sich mit „Einklappen“ klein machen, damit mehr Platz für die Seite bleibt.',
+      'Die Leiste unten lässt sich mit „Einklappen“ klein machen, damit mehr Platz für die Seite bleibt. „Ausklappen“ liegt an derselben Stelle unten links. Einstellungen mit vielen Möglichkeiten wie Schrift, Farbe oder Ausrichtung zeigen nur die gewählte; ein Tipp darauf öffnet die übrigen darüber.',
     ] },
 ];
 

@@ -110,3 +110,31 @@ test('Anfasser: an allen vier Ecken vergrößern, über dem Rahmen drehen, über
   expect(el.x).toBeGreaterThan(before.x + 15);
   expect(Math.abs(el.y - before.y)).toBeLessThan(1);
 });
+
+test('Jedes Element lässt sich in der oberen Leiste befestigen und wieder lösen', async ({ page }) => {
+  await login(page);
+  const text: PageElement = { id: uuid(), type: 'text', x: 20, y: 150, width: 100, height: 20, rotation: 0, locked: false, color: '#253c42', text: 'Fester Satz', font: 'Andika', fontSize: 18 };
+  const created = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'create', title: 'Befestigen',
+    pages: [{ ...newPage(), elements: [stroke(40), text] }] } })).json();
+  await page.goto(`/heft/${created.book.id}`);
+  const surface = page.locator('.interaction-surface');
+  const actions = page.getByRole('group', { name: 'Aktionen für die Auswahl' });
+  for (const pick of [() => surface.getByText('Fester Satz').click(), async () => {
+    const box = (await surface.boundingBox())!;
+    await page.mouse.click(box.x + 80 / 210 * box.width, box.y + 45 / 297 * box.height);
+  }]) {
+    await pick();
+    await actions.getByRole('button', { name: 'Befestigen', exact: true }).click();
+    await expect(actions.getByRole('button', { name: 'Lösen', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await expect(actions.getByRole('button', { name: 'Löschen', exact: true })).toBeDisabled();
+    await page.keyboard.press('Escape');
+  }
+  await expect(page.getByText('✓ Gespeichert', { exact: true })).toBeVisible();
+  const saved = await (await page.request.post('/api/werkstatt', { headers: origin, data: { action: 'open', id: created.book.id } })).json();
+  expect(saved.pages[0].elements.every((el: PageElement) => el.locked)).toBe(true);
+  // Loosen the text again.
+  await surface.getByText('Fester Satz').click();
+  await actions.getByRole('button', { name: 'Lösen', exact: true }).click();
+  await expect(actions.getByRole('button', { name: 'Befestigen', exact: true })).toBeVisible();
+  await expect(actions.getByRole('button', { name: 'Löschen', exact: true })).toBeEnabled();
+});

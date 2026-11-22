@@ -13,7 +13,8 @@ const turn = (p: XY, deg: number): XY => {
   return { x: p.x * Math.cos(a) - p.y * Math.sin(a), y: p.x * Math.sin(a) + p.y * Math.cos(a) };
 };
 
-function withSize(el: PageElement, x: number, y: number, width: number, height: number): PageElement {
+/** The element at a new place and size (drawn points scale along). */
+export function withSize(el: PageElement, x: number, y: number, width: number, height: number): PageElement {
   return {
     ...el,
     x,

@@ -82,6 +82,7 @@ export const widgetCatalog = {
   clapping: ['Silben klatschen', 'Lesen & Schreiben'],
   alphabet: ['Anlaut-Tastatur', 'Lesen & Schreiben'],
   communication: ['Kommunikationstafel', 'Kommunikation'],
+  lineatur: ['Lineatur', 'Lesen & Schreiben'],
 } as const;
 export type WidgetKind = keyof typeof widgetCatalog;
 export const activityCatalog = {
@@ -110,6 +111,8 @@ export type JsonValue =
   | { [key: string]: JsonValue };
 export type LearningMedia = { image?: string; audio?: string; hideText?: boolean };
 export type LearningSettings = {
+  /** Lineatur auf einem Teil der Seite: Art, Zeilenhaus (Klasse 1), Linienfarbe. */
+  lineatur?: { ruling: import('../lineatur').LineaturKind; house?: boolean; color?: string };
   /** Music pages rebuilt from the supplied reference; existing widgets keep their settings. */
   musicTemplate?: string;
   /** Several library songs inserted as separate pages (new karaoke tools only). */

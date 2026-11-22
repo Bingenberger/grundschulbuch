@@ -11,6 +11,7 @@ import {
   uuid,
   compactStroke,
   dimensions,
+  sheetSize,
   newPage,
   type BookData,
   type Notebook,
@@ -48,7 +49,9 @@ import { fitText } from './editor/text-measure';
 import { tapDistance } from '@/lib/selection';
 import ElementActions from './editor/ElementActions';
 import SelectionHandles, { type HandleKind } from './editor/SelectionHandles';
-import { elementCenter, resizeAtCorner, rotateTo, type Corner } from '@/lib/transform';
+import { elementCenter, resizeAtCorner, rotateTo, withSize, type Corner } from '@/lib/transform';
+import { outline, snapMove, snapResize, type Box, type Guide } from '@/lib/snap';
+import SnapGuides from './editor/SnapGuides';
 import { SelectBar, ShapesBar, findStamp } from './editor/ContextBars';
 import PageBar from './editor/PageBar';
 import EmbedDialog from './learning/EmbedDialog';
@@ -96,6 +99,7 @@ export default function ChildEditor({
   const [showAudio, setShowAudio] = useState(false);
   const [recordTarget, setRecordTarget] = useState<string | null>(null);
   const [draft, setDraft] = useState<PageElement | null>(null);
+  const [guides, setGuides] = useState<Guide[]>([]);
   const [guide, setGuide] = useState<DrawingGuide | null>(null);
   const [erasePreview, setErasePreview] = useState<PageElement[] | null>(null);
   const surface = useRef<HTMLDivElement>(null);
@@ -123,6 +127,7 @@ export default function ChildEditor({
     eraserOptions?: EraserOptions;
     /** Tapping a selected text box again starts writing in it. */
     editOnTap?: string;
+    snapTo?: Box[];
   } | null>(null);
   const page = s.pages.find((p) => p.id === s.activeId);
   const writing = useTextEditing(page?.id);
@@ -324,16 +329,38 @@ export default function ChildEditor({
       erase();
       return;
     }
+    // Red guide lines as in the teacher's editor (Alt turns them off).
+    const snapping = g.move && g.handle !== 'rotate' && !e.altKey;
+    if (snapping && !g.snapTo) g.snapTo = page!.elements.filter((el) => el.id !== g.el.id && el.type !== 'stroke').map(outline);
+    const tol = (e.pointerType === 'touch' ? 10 : 7) / (surface.current!.getBoundingClientRect().width / size.width);
     if (g.move && g.handle === 'rotate')
       setDraft(rotateTo(g.el, elementCenter(g.el), g.start, p, e.shiftKey));
-    else if (g.move && g.handle && g.handle !== 'move')
-      setDraft(resizeAtCorner(g.el, g.handle as Corner, g.start, p, e.shiftKey || g.el.type === 'image'));
-    else if (g.move)
+    else if (g.move && g.handle && g.handle !== 'move') {
+      const corner = g.handle as Corner, keepRatio = e.shiftKey || g.el.type === 'image';
+      const resized = resizeAtCorner(g.el, corner, g.start, p, keepRatio);
+      if (!snapping || g.el.rotation) {
+        setDraft(resized);
+        setGuides([]);
+      } else {
+        const caught = snapResize(resized, corner.endsWith('e') ? 1 : -1, corner.startsWith('s') ? 1 : -1, g.snapTo!, sheetSize(page!), tol, keepRatio);
+        setDraft(withSize(g.el, caught.box.x, caught.box.y, caught.box.width, caught.box.height));
+        setGuides(caught.guides);
+      }
+    } else if (g.move) {
+      let dx = p.x - g.start.x, dy = p.y - g.start.y;
+      if (snapping) {
+        const box = outline(g.el);
+        const caught = snapMove({ ...box, x: box.x + dx, y: box.y + dy }, g.snapTo!, sheetSize(page!), tol);
+        dx += caught.dx;
+        dy += caught.dy;
+        setGuides(caught.guides);
+      }
       setDraft({
         ...g.el,
-        x: Math.max(size.left, Math.min(size.left + size.width - 5, g.el.x + p.x - g.start.x)),
-        y: Math.max(size.top, Math.min(size.top + size.height - 5, g.el.y + p.y - g.start.y)),
+        x: Math.max(size.left, Math.min(size.left + size.width - 5, g.el.x + dx)),
+        y: Math.max(size.top, Math.min(size.top + size.height - 5, g.el.y + dy)),
       });
+    }
     else if (g.points.length < 19000) {
       appendSamples(g.points, samples);
       if (g.guideEdge) setDraft({ ...g.el, points: [...g.points] });
@@ -353,6 +380,7 @@ export default function ChildEditor({
       if (Math.hypot(p.x - g.start.x, p.y - g.start.y) < tapDistance) {
         gesture.current = null;
         setDraft(null);
+        setGuides([]);
         writing.begin(g.editOnTap);
         return;
       }
@@ -375,6 +403,7 @@ export default function ChildEditor({
     }
     if (g && !cancel && g.erase) s.edit(p => ({ ...p, elements: eraseElements(g.originals!, g.points, g.eraserId!, g.eraserOptions!, g.eraserProgress) }));
     setDraft(null);
+    setGuides([]);
     setErasePreview(null);
   }
   function erase() {
@@ -684,6 +713,7 @@ export default function ChildEditor({
                   }}
                 />
               )}
+              {guides.length > 0 && <SnapGuides guides={guides} />}
               <LinkLayer elements={page.elements.map((el) => (draft?.id === el.id ? draft : el))} />
               {guide && <DrawingRuler guide={guide} onChange={setGuide} onClose={() => setGuide(null)} />}
               </World>

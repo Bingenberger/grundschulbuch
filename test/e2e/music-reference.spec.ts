@@ -109,7 +109,9 @@ test('Musikauswahl fügt vollständige Seiten ein und öffnet die Einstellvarian
   await expect.poll(() => pianoPreview.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth === 480)).toBe(true);
   await page.screenshot({ path: test.info().outputPath('musik-vorschaubilder.png') });
   await expect(dialog.getByRole('button', { name: 'Klanggeschichte', exact: true })).toHaveCount(0);
-  await expect(dialog.getByRole('button', { name: 'Notenlinien', exact: true })).toHaveCount(0);
+  // Notenlinien only as a Lineatur on part of the page, not as the former page template.
+  await expect(dialog.getByRole('button', { name: 'Notenlinien', exact: true })).toHaveCount(1);
+  await expect(dialog.getByRole('button', { name: 'Notenlinien', exact: true }).locator('.lineatur-glyph')).toHaveCount(1);
   await dialog.getByRole('button', { name: 'Klavier', exact: true }).click();
   await expect(dialog).toHaveCount(0); await expect(page.locator('.interaction-surface .music-template')).toHaveAttribute('aria-label', 'Klavier');
   dialog = await open(); await dialog.getByRole('button', { name: 'Instrument einstellen', exact: true }).click();

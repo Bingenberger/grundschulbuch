@@ -16,6 +16,7 @@ import { TALK_BACK } from '../reference/class-runtime';
 import type { MathToolKind } from './mathtool';
 import { geoConfig } from './geodraw';
 import { musicPresets, musicKind, musicSettings, musicPage } from './music';
+import { lineaturLabels, type LineaturKind } from '../lineatur';
 
 export const SUBJECTS = [
   'Deutsch',
@@ -56,6 +57,7 @@ const subjectOf: Record<WidgetKind | ActivityKind, Subject> = {
   // Für alle Fächer
   quiz: 'Für alle Fächer', matching: 'Für alle Fächer', memory: 'Für alle Fächer', maze: 'Für alle Fächer',
   connect4: 'Für alle Fächer',
+  lineatur: 'Deutsch',
 };
 
 export type LearningBlock = {
@@ -396,6 +398,23 @@ toolBlocks.push({ id: 'ts-erklaerbaer', title: 'Erklärbär', subject: 'Medien &
 toolBlocks.push({ id: 'elevator', title: 'Elevator Pitch', subject: 'Medien & Präsentation', type: 'widget', kind: 'elevator', preset: { ...defaultSettings('elevator'), title: 'Elevator Pitch' }, words: 'Elevator Pitch Kurzvortrag Vortrag Zeit Fahrstuhl Präsentation sprechen' });
 toolBlocks.push({ id: 'karte', title: 'Karte', subject: 'Sachunterricht', type: 'widget', kind: 'karte', preset: { ...defaultSettings('karte'), title: 'Meine Karte' }, words: 'Karte Stadtplan Ort Schulweg Weg Markierung Entfernung messen OpenStreetMap Heimatort' });
 toolBlocks.push({ id: 'kalenderblatt', title: 'Das sprechende Kalenderblatt', subject: 'Sachunterricht', type: 'widget', kind: 'kalenderblatt', preset: { ...defaultSettings('kalenderblatt'), title: 'Das sprechende Kalenderblatt' }, pages: () => fullPageWidget('kalenderblatt', { ...defaultSettings('kalenderblatt'), title: 'Das sprechende Kalenderblatt' }), words: 'Kalender Kalenderblatt Datum Wochentag Monat Jahr Jahreszeit Morgenkreis heute sprechen' });
+// Lineaturen als Baustein: nur ein Teil der Seite liniert; Texte rasten auf den Zeilen ein.
+for (const [ruling, subject, house, words] of [
+  ['linie1', 'Deutsch', false, 'Klasse 1 Grundschrift Schreiblinien vier Linien Hilfslinien'],
+  ['linie1', 'Deutsch', true, 'Klasse 1 Zeilenhaus Haus Dach Keller Erdgeschoss Grundschrift Schreiblinien'],
+  ['linie2', 'Deutsch', false, 'Klasse 2 Schreiblinien vier Linien Hilfslinien'],
+  ['linie3', 'Deutsch', false, 'Klasse 3 Klasse 4 Schreiblinien vier Linien Hilfslinien'],
+  ['linie4', 'Deutsch', false, 'liniert Linien Aufsatz Schreibzeilen'],
+  ['linieneng', 'Deutsch', false, 'liniert eng klein Schreibzeilen'],
+  ['karo5', 'Mathematik', false, 'kariert Karos Kästchen Rechnen 5 mm'],
+  ['karo10', 'Mathematik', false, 'kariert groß Kästchen Rechnen 1 cm'],
+  ['rechnen', 'Mathematik', false, 'Rechenkästchen Kästchen Ziffern einzeln'],
+  ['noten', 'Musik', false, 'Notenlinien Noten Notensystem Musik'],
+  ['punkte', 'Für alle Fächer', false, 'Punktraster Punkte gepunktet Zeichnen'],
+] as const) {
+  const title = `${lineaturLabels[ruling as LineaturKind]}${house ? ' mit Zeilenhaus' : ''}`;
+  toolBlocks.push({ id: `lineatur-${ruling}${house ? '-haus' : ''}`, title, subject, type: 'widget', kind: 'lineatur', direct: true, preset: { title, lineatur: { ruling, ...(house ? { house: true } : {}) } }, words: `Lineatur ${title} ${words}` });
+}
 toolBlocks.push({ id: 'stundenplan', title: 'Bilder-Stundenplan', subject: 'Klassenführung', type: 'widget', kind: 'stundenplan', preset: { ...defaultSettings('stundenplan'), title: 'Bilder-Stundenplan' }, words: 'Stundenplan Bilder Fächer Woche Pausen Nach der Schule Tagesablauf Piktogramme' });
 // Tools of Lernsachen-Heft 1.47.3 (tool host of the reference): one block per
 // catalogue entry; a single tool opens its settings first, a page of several
@@ -500,7 +519,7 @@ const musicBlocks: LearningBlock[] = [{ id: 'music-notes', title: 'Noten lernen'
 
 export const learningBlocks: LearningBlock[] = [...toolBlocks, ...musicBlocks, ...blueprints.map(fromBlueprint)]
   .filter((b): b is LearningBlock => !!b)
-  .map(block => ({ ...block, preview: block.preview || `/previews/${block.subject === 'Mathematik' ? 'math' : 'tools'}/${block.id}.webp` }))
+  .map(block => block.kind === 'lineatur' ? block : ({ ...block, preview: block.preview || `/previews/${block.subject === 'Mathematik' ? 'math' : 'tools'}/${block.id}.webp` }))
   .sort((a, b) => SUBJECTS.indexOf(a.subject) - SUBJECTS.indexOf(b.subject));
 
 /** Interactive templates (widgets, activities, the communication book) are building blocks now. */

@@ -1,4 +1,5 @@
 'use client';
+import { lineaturUnder } from '@/lib/lineatur';
 import { useEffect, useRef, useState } from 'react';
 import { useEditor } from '@/lib/editor-store';
 import type { Page, PageElement } from '@/lib/notebook-model';
@@ -73,7 +74,17 @@ export function useTextEditing(pageId: string | undefined, blocked = false) {
   };
 }
 
-/** Places text that was moved or resized back on the ruling. */
+/**
+ * Places text that was moved or resized back on the ruling. Text that comes
+ * onto a Lineatur from elsewhere also takes the letter size of its rows.
+ */
 export function settleText(elements: PageElement[], page: Page) {
-  return elements.map((el) => (el.type === 'text' ? fitText(el, page) : el));
+  const after = { ...page, elements: page.elements.map((el) => elements.find((n) => n.id === el.id) || el) };
+  return elements.map((el) => {
+    if (el.type !== 'text') return el;
+    const before = page.elements.find((old) => old.id === el.id);
+    const now = lineaturUnder(after.elements, el)?.element;
+    const was = before && lineaturUnder(page.elements, before)?.element;
+    return fitText(el, after, { autoSize: !!now && now.id !== was?.id });
+  });
 }

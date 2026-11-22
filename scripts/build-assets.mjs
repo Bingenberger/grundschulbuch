@@ -27,11 +27,22 @@ await fs.cp(
   'public/runtime/pdf-fonts',
   { recursive: true },
 );
-// Flat Color Icons (icons8, MIT) for the toolbars; only the SVG files are served.
+// Fluent Emoji (flat, Microsoft, MIT) for the toolbars: one SVG per app icon
+// name (scripts/icon-map.mjs); motifs without an emoji live in public/icons.
 await fs.rm('public/runtime/icons', { recursive: true, force: true });
-await fs.cp('node_modules/flat-color-icons/svg', 'public/runtime/icons', {
-  recursive: true,
-});
+await fs.mkdir('public/runtime/icons', { recursive: true });
+{
+  const { default: iconMap } = await import('./icon-map.mjs');
+  const fluent = JSON.parse(await fs.readFile('node_modules/@iconify-json/fluent-emoji-flat/icons.json', 'utf8'));
+  for (const [name, emoji] of Object.entries(iconMap)) {
+    if (!emoji) continue;
+    const icon = fluent.icons[emoji];
+    if (!icon) throw new Error(`Fluent Emoji „${emoji}“ für das Symbol „${name}“ fehlt`);
+    const width = icon.width || fluent.width || 32, height = icon.height || fluent.height || 32;
+    await fs.writeFile(`public/runtime/icons/${name}.svg`,
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">${icon.body}</svg>`);
+  }
+}
 const licenses = {};
 const manifest = JSON.parse(await fs.readFile('package.json', 'utf8'));
 for (const name of Object.keys(manifest.dependencies)) {

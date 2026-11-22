@@ -1,5 +1,6 @@
 import { findMusicPreset, validateMusicConfig } from './music-validation.mjs';
 export const WIDGET_KINDS = [
+  'lineatur',
   'timer',
   'multitimer',
   'clock',
@@ -458,6 +459,11 @@ export function widgetSettings(value) {
   array('path', (v) => v && finite(v.x, 0, 100) && finite(v.y, 0, 100));
   array('notes', (v) => Number.isInteger(v) && finite(v, 0, 127));
   check('beats', beatRows);
+  // Lineatur auf einem Teil der Seite (lib/lineatur.ts).
+  check('lineatur', (v) => v && typeof v === 'object' && !Array.isArray(v) &&
+    ['linie1', 'linie2', 'linie3', 'linie4', 'linieneng', 'karo5', 'karo10', 'rechnen', 'punkte', 'noten'].includes(v.ruling) &&
+    optional(v, 'house', (h) => typeof h === 'boolean') && optional(v, 'color', (c) => typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c)) &&
+    Object.keys(v).every((k) => ['ruling', 'house', 'color'].includes(k)));
   check(
     'background',
     (value) =>

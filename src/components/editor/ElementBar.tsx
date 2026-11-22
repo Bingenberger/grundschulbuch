@@ -4,13 +4,23 @@ import { useEditor } from '@/lib/editor-store';
 import { fonts, type PageElement } from '@/lib/notebook-model';
 import type { Feature } from '@/lib/features';
 import RichTextDialog from '../learning/RichTextDialog';
-import { ChoiceButton, Choices, ColorChoice, OptionGroup, Stepper } from '../ui/Choice';
+import { ChoiceButton, ChoiceMenu, Choices, ColorChoice, OptionGroup, Stepper } from '../ui/Choice';
 import { AlignGlyph, FontGlyph, OpacityGlyph, StrokeGlyph, SwatchGlyph } from '../ui/Glyphs';
 import OptionBar, { type OptionSection } from './OptionBar';
 import { palette } from './DrawingBar';
 import { isPlaceholder } from './image-elements';
 import { FrameGlyph, frameFill, frameKind, frameLine, frameWidth, type TextFrameKind } from '../TextFrame';
 import { fitText, onRuling, pxToMm } from './text-measure';
+import { isFourLine, isLineatur, LINEATUR_KINDS, lineaturLabels, lineaturSettings, type LineaturSettings } from '@/lib/lineatur';
+import { LineaturGlyph } from '../learning/LineaturWidget';
+
+const lineaturColors: [string, string][] = [
+  ['', 'Blau'],
+  ['#8d969b', 'Grau'],
+  ['#4caf50', 'Grün'],
+  ['#e57373', 'Rot'],
+  ['#253c42', 'Dunkel'],
+];
 
 export type ElementActions = {
   onResize: (factor: number) => void;
@@ -130,7 +140,41 @@ export default function ElementBar({
               {first.url && <ChoiceButton icon="share" label="In neuem Fenster öffnen" onClick={() => window.open(first.url, '_blank', 'noopener')} />}
             </OptionGroup>
           )}
-          {(first.type === 'widget' || first.type === 'activity') && actions.onConfigure && (
+          {isLineatur(first) && (() => {
+            const l = lineaturSettings(first);
+            const set = (values: Partial<LineaturSettings>) => {
+              const next = { ...l, ...values };
+              if (!isFourLine(next.ruling)) delete next.house;
+              if (!next.color) delete next.color;
+              patch({ settings: { ...first.settings, title: lineaturLabels[next.ruling], lineatur: next } });
+            };
+            return (
+              <OptionGroup label="Lineatur">
+                <ChoiceMenu
+                  label="Art"
+                  value={l.ruling}
+                  onChange={(ruling) => set({ ruling })}
+                  options={LINEATUR_KINDS.map((ruling) => ({ value: ruling, label: lineaturLabels[ruling], icon: <LineaturGlyph settings={{ ruling }} /> }))}
+                />
+                {isFourLine(l.ruling) && (
+                  <ChoiceButton
+                    icon={<LineaturGlyph settings={{ ...l, house: true }} wide={1.4} />}
+                    label="Zeilenhaus"
+                    title="Dach, Erdgeschoss und Keller farbig, mit kleinem Haus am Zeilenanfang (Klasse 1)"
+                    pressed={!!l.house}
+                    onClick={() => set({ house: !l.house })}
+                  />
+                )}
+                <ChoiceMenu
+                  label="Linienfarbe"
+                  value={l.color || ''}
+                  onChange={(color) => set({ color: color || undefined })}
+                  options={lineaturColors.map(([color, label]) => ({ value: color, label, icon: <SwatchGlyph color={color || '#5b8fd6'} /> }))}
+                />
+              </OptionGroup>
+            );
+          })()}
+          {(first.type === 'widget' || first.type === 'activity') && !isLineatur(first) && actions.onConfigure && (
             <OptionGroup label={first.type === 'widget' ? 'Lernwerkzeug' : 'Übung'}>
               <ChoiceButton icon="settings" label="Aufgabe gestalten" onClick={() => actions.onConfigure!(first)} />
               {first.type === 'widget' && first.widgetKind === 'textsachen' && actions.onMoreExercises && (
@@ -140,17 +184,12 @@ export default function ElementBar({
           )}
           {first.type === 'text' && (
             <>
-              <OptionGroup label="Schrift">
-                {Object.entries(fonts).map(([font, label]) => (
-                  <ChoiceButton
-                    key={font}
-                    icon={<FontGlyph font={font} />}
-                    label={label}
-                    pressed={first.font === font}
-                    onClick={() => patchText({ font: font as PageElement['font'], referenceFont:undefined }, true)}
-                  />
-                ))}
-              </OptionGroup>
+              <ChoiceMenu
+                label="Schrift"
+                value={first.font || ''}
+                onChange={(font) => patchText({ font: font as PageElement['font'], referenceFont: undefined }, true)}
+                options={Object.entries(fonts).map(([font, label]) => ({ value: font, label, icon: <FontGlyph font={font} /> }))}
+              />
               <Stepper
                 label="Schriftgröße"
                 value={first.fontSize || 18}
@@ -160,20 +199,6 @@ export default function ElementBar({
                 unit="pt"
                 onChange={(fontSize) => patchText({ fontSize })}
               />
-              <OptionGroup label="Lesen">
-                <ChoiceButton
-                  icon={<span className="syllable-glyph" aria-hidden="true"><span style={{ color: '#1565c0' }}>Sil</span><span style={{ color: '#d32f2f' }}>ben</span></span>}
-                  label="Silben rot und blau"
-                  title="Den Text in Silben blau und rot zeigen (Silbenmethode) – beim Schreiben ist er schwarz"
-                  pressed={!!first.syllables}
-                  onClick={() => patch({ syllables: !first.syllables })}
-                />
-              </OptionGroup>
-              {ruled && (
-                <OptionGroup label="Lineatur">
-                  <ChoiceButton icon="rules" label="Passend zur Lineatur" onClick={() => patchText({}, true)} />
-                </OptionGroup>
-              )}
               <OptionGroup label="Auszeichnung">
                 <ChoiceButton
                   icon={<span className="font-glyph"><strong>F</strong></span>}
@@ -181,11 +206,31 @@ export default function ElementBar({
                   pressed={!!first.bold}
                   onClick={() => patch({ bold: !first.bold })}
                 />
+                <ChoiceButton
+                  icon={<span className="font-glyph"><em style={{ fontFamily: 'Georgia, serif' }}>K</em></span>}
+                  label="Kursiv"
+                  pressed={!!first.italic}
+                  onClick={() => patch({ italic: !first.italic })}
+                />
+                <ChoiceButton
+                  icon={<span className="font-glyph"><u>U</u></span>}
+                  label="Unterstrichen"
+                  pressed={!!first.underline}
+                  onClick={() => patch({ underline: !first.underline })}
+                />
+                <ChoiceButton
+                  icon={<span className="syllable-glyph" aria-hidden="true"><span style={{ color: '#1565c0' }}>Sil</span><span style={{ color: '#d32f2f' }}>ben</span></span>}
+                  label="Silben rot und blau"
+                  title="Den Text in Silben blau und rot zeigen (Silbenmethode) – beim Schreiben ist er schwarz"
+                  pressed={!!first.syllables}
+                  onClick={() => patch({ syllables: !first.syllables })}
+                />
                 {has('elementArrange') && (
                   <ChoiceButton icon="rules" label="Wörter einzeln formatieren" onClick={() => setRich(true)} />
                 )}
+                {ruled && <ChoiceButton icon="rules" label="Passend zur Lineatur" onClick={() => patchText({}, true)} />}
               </OptionGroup>
-              <Choices
+              <ChoiceMenu
                 label="Ausrichtung"
                 value={first.align || 'left'}
                 onChange={(align) => patch({ align })}
@@ -267,18 +312,14 @@ export default function ElementBar({
             </OptionGroup>
           )}
           {colorful && (
-            <OptionGroup label="Farbe">
-              {palette.map(([color, label]) => (
-                <ChoiceButton
-                  key={color}
-                  icon={<SwatchGlyph color={color} />}
-                  label={label}
-                  pressed={first.color.toLowerCase() === color}
-                  onClick={() => patch({ color })}
-                />
-              ))}
-              <ColorChoice label="Eigene Farbe" ariaLabel="Farbe des Elements" value={first.color} onChange={(color) => patch({ color })} />
-            </OptionGroup>
+            <ChoiceMenu
+              label="Farbe"
+              value={first.color.toLowerCase()}
+              onChange={(color) => patch({ color })}
+              options={palette.map(([color, label]) => ({ value: color, label, icon: <SwatchGlyph color={color} /> }))}
+              face={palette.some(([c]) => c === first.color.toLowerCase()) ? undefined : { icon: <SwatchGlyph color={first.color} />, label: 'Eigene' }}
+              extra={<ColorChoice label="Eigene Farbe" ariaLabel="Farbe des Elements" value={first.color} onChange={(color) => patch({ color })} />}
+            />
           )}
           {first.type === 'shape' && (
             <>
@@ -298,7 +339,7 @@ export default function ElementBar({
             </>
           )}
           {has('elementArrange') && (
-            <Choices
+            <ChoiceMenu
               label="Deckkraft"
               value={first.opacity ?? 1}
               onChange={(opacity) => patch({ opacity })}
@@ -320,7 +361,7 @@ export default function ElementBar({
           icon: 'comments',
           content: (
             <>
-              <Choices
+              <ChoiceMenu
                 label="Form"
                 value={frameKind(first)}
                 onChange={(textFrame) => {
@@ -329,30 +370,25 @@ export default function ElementBar({
                 }}
                 options={textFrames.map(([value, label]) => ({ value, label, icon: <FrameGlyph kind={value} /> }))}
               />
-              <OptionGroup label="Hintergrund">
-                <ChoiceButton
-                  icon="cancel"
-                  label="Ohne"
-                  pressed={frameFill(first) === 'none'}
-                  onClick={() => patch({ background: 'none' })}
-                />
-                {fills.map(([color, label]) => (
-                  <ChoiceButton
-                    key={color}
-                    icon={<SwatchGlyph color={color} />}
-                    label={label}
-                    pressed={frameFill(first).toLowerCase() === color}
-                    onClick={() => patch({ background: color })}
+              <ChoiceMenu
+                label="Hintergrund"
+                value={frameFill(first).toLowerCase()}
+                onChange={(background) => patch({ background })}
+                options={[
+                  { value: 'none', label: 'Ohne', icon: 'cancel' },
+                  ...fills.map(([color, label]) => ({ value: color, label, icon: <SwatchGlyph color={color} /> })),
+                ]}
+                face={frameFill(first) === 'none' || fills.some(([c]) => c === frameFill(first).toLowerCase()) ? undefined : { icon: <SwatchGlyph color={frameFill(first)} />, label: 'Eigene' }}
+                extra={
+                  <ColorChoice
+                    label="Eigene Farbe"
+                    ariaLabel="Hintergrundfarbe"
+                    value={frameFill(first) === 'none' ? '#ffffff' : frameFill(first)}
+                    onChange={(background) => patch({ background })}
                   />
-                ))}
-                <ColorChoice
-                  label="Eigene Farbe"
-                  ariaLabel="Hintergrundfarbe"
-                  value={frameFill(first) === 'none' ? '#ffffff' : frameFill(first)}
-                  onChange={(background) => patch({ background })}
-                />
-              </OptionGroup>
-              <Choices
+                }
+              />
+              <ChoiceMenu
                 label="Rahmenlinie"
                 value={frameWidth(first)}
                 onChange={(borderWidth) => {
@@ -366,29 +402,24 @@ export default function ElementBar({
                 }))}
               />
               {frameWidth(first) > 0 && (
-                <OptionGroup label="Rahmenfarbe">
-                  <ChoiceButton
-                    icon={<span className="font-glyph" style={{ color: first.color }}>A</span>}
-                    label="Wie die Schrift"
-                    pressed={!first.borderColor}
-                    onClick={() => patch({ borderColor: undefined })}
-                  />
-                  {palette.map(([color, label]) => (
-                    <ChoiceButton
-                      key={color}
-                      icon={<SwatchGlyph color={color} />}
-                      label={label}
-                      pressed={first.borderColor?.toLowerCase() === color}
-                      onClick={() => patch({ borderColor: color })}
+                <ChoiceMenu
+                  label="Rahmenfarbe"
+                  value={first.borderColor?.toLowerCase() || ''}
+                  onChange={(color) => patch({ borderColor: color || undefined })}
+                  options={[
+                    { value: '', label: 'Wie die Schrift', icon: <span className="font-glyph" style={{ color: first.color }}>A</span> },
+                    ...palette.map(([color, label]) => ({ value: color, label, icon: <SwatchGlyph color={color} /> })),
+                  ]}
+                  face={!first.borderColor || palette.some(([c]) => c === first.borderColor!.toLowerCase()) ? undefined : { icon: <SwatchGlyph color={first.borderColor} />, label: 'Eigene' }}
+                  extra={
+                    <ColorChoice
+                      label="Eigene Farbe"
+                      ariaLabel="Rahmenfarbe"
+                      value={frameLine(first)}
+                      onChange={(borderColor) => patch({ borderColor })}
                     />
-                  ))}
-                  <ColorChoice
-                    label="Eigene Farbe"
-                    ariaLabel="Rahmenfarbe"
-                    value={frameLine(first)}
-                    onChange={(borderColor) => patch({ borderColor })}
-                  />
-                </OptionGroup>
+                  }
+                />
               )}
             </>
           ),
@@ -439,7 +470,7 @@ export default function ElementBar({
         {(has('elementLock') || has('collection')) && (
           <OptionGroup label="Bearbeiten">
             {has('elementLock') && actions.onLock && (
-              <ChoiceButton icon={allLocked ? 'unlock' : 'lock'} label={allLocked ? 'Entsperren' : 'Sperren'} onClick={actions.onLock} />
+              <ChoiceButton icon={allLocked ? 'unlock' : 'lock'} label={allLocked ? 'Lösen' : 'Befestigen'} onClick={actions.onLock} />
             )}
             {has('collection') && actions.onCollection && (
               <ChoiceButton icon="filing_cabinet" label="In Sammlung sichern" onClick={actions.onCollection} />
@@ -452,26 +483,19 @@ export default function ElementBar({
             <ChoiceButton icon="plus" label="Weitere Übung" title="Mehr Übungen mit demselben Text oder denselben Wörtern, jede auf einer eigenen Seite" onClick={() => actions.onMoreExercises!(first)} />
           </OptionGroup>
         )}
-        {allLocked && <span className="option-hint">Gesperrte Elemente lassen sich nicht verändern.</span>}
+        {first && !locked && has('elementGeometry') && actions.onGeometry && (
+          <>
+            <Stepper label="Breite" value={first.width} min={1} max={400} unit="mm" onChange={(n) => actions.onGeometry!('width', n)} />
+            <Stepper label="Höhe" value={first.height} min={1} max={400} unit="mm" onChange={(n) => actions.onGeometry!('height', n)} />
+            <Stepper label="Drehung" value={Math.round(first.rotation)} min={-180} max={180} step={5} unit="°" onChange={(rotation) => patch({ rotation })} />
+            <Stepper label="Abstand links" value={Math.round(first.x)} min={-297} max={594} unit="mm" onChange={(x) => patch({ x })} />
+            <Stepper label="Abstand oben" value={Math.round(first.y)} min={-297} max={594} unit="mm" onChange={(y) => patch({ y })} />
+          </>
+        )}
+        {allLocked && <span className="option-hint">Befestigte Elemente lassen sich nicht verändern. „Lösen“ macht sie wieder beweglich.</span>}
       </>
     ),
   });
-
-  if (first && !locked && has('elementGeometry') && actions.onGeometry)
-    sections.push({
-      id: 'geometry',
-      label: 'Maße & Position',
-      icon: 'ruler',
-      content: (
-        <>
-          <Stepper label="Breite" value={first.width} min={1} max={400} unit="mm" onChange={(n) => actions.onGeometry!('width', n)} />
-          <Stepper label="Höhe" value={first.height} min={1} max={400} unit="mm" onChange={(n) => actions.onGeometry!('height', n)} />
-          <Stepper label="Drehung" value={Math.round(first.rotation)} min={-180} max={180} step={5} unit="°" onChange={(rotation) => patch({ rotation })} />
-          <Stepper label="Abstand links" value={Math.round(first.x)} min={-297} max={594} unit="mm" onChange={(x) => patch({ x })} />
-          <Stepper label="Abstand oben" value={Math.round(first.y)} min={-297} max={594} unit="mm" onChange={(y) => patch({ y })} />
-        </>
-      ),
-    });
 
   return (
     <>

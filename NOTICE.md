@@ -80,7 +80,7 @@ Dateiköpfen aus den veröffentlichten Apps gewonnen.
 | Hypher 0.2.5 | Bram Stein | BSD-3-Clause | ebenda |
 | Originalschriften der Vorlagen einschließlich Gruschudru basic | jeweilige Urheber laut eingebetteten Metadaten | SIL Open Font License 1.1 | `public/fonts/reference/` mit `OFL.txt` und [Herkunft](public/fonts/reference/SOURCES.md) |
 | Schriften Andika, Atkinson Hyperlegible, Bangers, Caveat, Lexend, Merriweather, Nunito, Playwrite DE Grund/VA/SAS | jeweilige Urheber (Google Fonts) | SIL Open Font License 1.1 | `public/fonts/` mit `OFL.txt` und [Herkunft](public/fonts/SOURCES.md) |
-| Flat Color Icons | icons8 | MIT | Symbole der Werkzeugleisten (`public/runtime/icons/`) |
+| Fluent Emoji (flach) | Microsoft | MIT | Symbole der Werkzeugleisten (`public/runtime/icons/`, Zuordnung in `scripts/icon-map.mjs`) |
 | npm-Abhängigkeiten (Next.js, React, pdf.js …) | jeweilige Urheber | jeweils eigene Lizenz | Lizenztexte in `DEPENDENCY-LICENSES.json` im Quellcode-Archiv und unter „Lizenzen“ im exportierten Heft |
 
 Fremdbestandteile mit eigener Lizenz behalten diese Lizenz. CC BY-NC-SA 4.0

@@ -46,9 +46,11 @@ import SlideshowSheet from './SlideshowSheet';
 import AnimationSheet from './AnimationSheet';
 import { StillFrame } from './TextsachenFrame';
 import MusicTemplate from './MusicTemplate';
+import LineaturWidget from './LineaturWidget';
 export default function Widget({ element }: { element: PageElement }) {
   const kind = element.widgetKind!;
   if (element.settings?.musicTemplate) return <MusicTemplate element={element} />;
+  if (kind === 'lineatur') return <LineaturWidget element={element} />;
   if (kind === 'mathtool') return <MathTool element={element} />;
   if (kind === 'receipt') return <Receipt element={element} />;
   if (kind === 'paeckchen') return <PaeckchenWidget element={element} />;

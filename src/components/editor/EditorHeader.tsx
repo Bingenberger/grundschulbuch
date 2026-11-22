@@ -119,7 +119,7 @@ export default function EditorHeader({
         )}
         {(has('files') || has('print')) && onSave && (
           <button type="button" className="header-button" disabled={busy} onClick={onSave}>
-            <Icon name="import" size={24} />
+            <Icon name="speichern" size={24} />
             <span>Speichern</span>
           </button>
         )}

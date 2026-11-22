@@ -54,41 +54,54 @@ export default function OptionBar({
   const [chosen, setChosen] = useState<string>('');
   const isFolded = useSyncExternalStore(subscribe, readFolded, () => false);
   const current = visible.find((s) => s.id === chosen) || visible[0];
+  // The fold button sits in the same spot in both states (bottom left), so a
+  // second tap undoes the first without hunting for the button.
+  const fold = (
+    <button
+      type="button"
+      className="option-fold"
+      aria-expanded={!isFolded}
+      aria-label={isFolded ? `${label} ausklappen` : undefined}
+      onClick={() => setFolded(!isFolded)}
+    >
+      <Icon name={isFolded ? 'up' : 'down'} size={20} />
+      <span>{isFolded ? 'Ausklappen' : 'Einklappen'}</span>
+    </button>
+  );
   if (isFolded)
     return (
       <section className="option-bar folded" aria-label={label}>
-        <button type="button" className="option-fold" aria-expanded={false} onClick={() => setFolded(false)}>
-          <Icon name="up" size={20} />
-          <span>{label}</span>
-          <small>ausklappen</small>
-        </button>
+        {fold}
+        <span className="option-folded-label" aria-hidden="true" onClick={() => setFolded(false)}>
+          {label}
+        </span>
       </section>
     );
   return (
     <section className="option-bar" aria-label={label}>
       {visible.length > 1 && (
-        <div className="option-sections" role="group" aria-label={`${label}: Bereiche`}>
-          {visible.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              aria-pressed={current?.id === s.id}
-              onClick={() => setChosen(s.id)}
-            >
-              <Icon name={s.icon} size={22} />
-              <span>{s.label}</span>
-            </button>
-          ))}
+        <div className="option-side">
+          <div className="option-sections" role="group" aria-label={`${label}: Bereiche`}>
+            {visible.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                aria-pressed={current?.id === s.id}
+                onClick={() => setChosen(s.id)}
+              >
+                <Icon name={s.icon} size={22} />
+                <span>{s.label}</span>
+              </button>
+            ))}
+          </div>
+          {fold}
         </div>
       )}
       <div className="option-content">
         {children}
         {current?.content}
       </div>
-      <button type="button" className="option-fold" aria-expanded onClick={() => setFolded(true)}>
-        <Icon name="down" size={20} />
-        <span>Einklappen</span>
-      </button>
+      {visible.length > 1 ? null : fold}
     </section>
   );
 }

@@ -20,10 +20,15 @@ test('Untere Leiste lässt sich einklappen, bleibt beim Werkzeugwechsel und nach
   const openBar = (await bar.boundingBox())!.height;
   await page.screenshot({ path: test.info().outputPath('leiste-offen.png') });
 
+  const foldAt = (await bar.getByRole('button', { name: 'Einklappen' }).boundingBox())!;
   await bar.getByRole('button', { name: 'Einklappen' }).tap();
   await expect(bar.getByRole('group', { name: 'Radierart' })).toHaveCount(0);
   const toggle = bar.getByRole('button', { name: /Radierer einstellen/ });
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  // Folding and unfolding happen in the same spot: no hunting for the button.
+  const unfoldAt = (await toggle.boundingBox())!;
+  expect(Math.abs(unfoldAt.x - foldAt.x)).toBeLessThan(2);
+  expect(Math.abs(unfoldAt.y + unfoldAt.height - foldAt.y - foldAt.height)).toBeLessThan(2);
   const foldedBar = (await bar.boundingBox())!.height;
   expect(foldedBar).toBeLessThanOrEqual(50);
   expect(foldedBar).toBeLessThan(openBar);

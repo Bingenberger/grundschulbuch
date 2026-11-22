@@ -14,6 +14,7 @@ function HeaderAction({
   disabled,
   danger,
   pressed,
+  expands,
   title,
 }: {
   icon: IconName;
@@ -22,6 +23,8 @@ function HeaderAction({
   disabled?: boolean;
   danger?: boolean;
   pressed?: boolean;
+  /** Opens a pop-up (then `pressed` also means expanded). */
+  expands?: boolean;
   title?: string;
 }) {
   return (
@@ -30,7 +33,7 @@ function HeaderAction({
       className={`header-button ${danger ? 'header-danger' : ''}`}
       disabled={disabled}
       aria-pressed={pressed}
-      aria-expanded={pressed}
+      aria-expanded={expands ? pressed : undefined}
       title={title}
       onClick={onClick}
     >
@@ -192,6 +195,7 @@ export default function ElementActions({
   onDuplicate,
   onDelete,
   onLink,
+  onLock,
 }: {
   features: Set<Feature>;
   /** Number of selected elements (0: only “Einfügen” is offered). */
@@ -207,6 +211,8 @@ export default function ElementActions({
   onDuplicate: () => void;
   onDelete: () => void;
   onLink: (link: ElementLink | undefined) => void;
+  /** Fix the selection in place (or loosen it again); without it no button. */
+  onLock?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const clipboard = features.has('elementClipboard');
@@ -227,6 +233,7 @@ export default function ElementActions({
             icon="link"
             label={link ? 'Link ändern' : 'Link'}
             pressed={open}
+            expands
             disabled={locked}
             title={locked ? 'Gesperrte Elemente lassen sich nicht verlinken.' : undefined}
             onClick={() => setOpen(!open)}
@@ -235,6 +242,15 @@ export default function ElementActions({
             <LinkPopover link={link} pages={pages} pageIds={pageIds} onChange={onLink} onClose={() => setOpen(false)} />
           )}
         </span>
+      )}
+      {count > 0 && onLock && features.has('elementLock') && (
+        <HeaderAction
+          icon={locked ? 'unlock' : 'lock'}
+          label={locked ? 'Lösen' : 'Befestigen'}
+          pressed={locked}
+          title={locked ? 'Das Element wieder verschiebbar und veränderbar machen' : 'Das Element an seinem Platz befestigen: Es lässt sich dann nicht mehr verschieben, verändern oder löschen'}
+          onClick={onLock}
+        />
       )}
       {count > 0 && <HeaderAction icon="empty_trash" label="Löschen" danger disabled={locked} onClick={onDelete} />}
     </div>

@@ -1,4 +1,6 @@
 'use client';
+import { lineaturSettings, lineaturStartSize } from '@/lib/lineatur';
+import { LineaturGlyph } from './LineaturWidget';
 import TextsachenOptions from './TextsachenOptions';
 import ZuordnungOptions from './ZuordnungOptions';
 import QuizOptions from './QuizOptions';
@@ -104,7 +106,7 @@ const widgetIcons: Record<WidgetKind, IconName> = {
   karaoke: 'voice_presentation', slideshow: 'stack_of_photos', animation: 'film_reel',
   map: 'globe', calculator: 'calculator', mathtool: 'calculator', receipt: 'todo_list', paeckchen: 'todo_list', geodraw: 'ruler', checkout: 'shop', monsternames: 'reading', textsachen: 'reading_ebook', zuordnung: 'flow_chart', quizsachen: 'questions', zeit: 'clock', phasen: 'overtime', ampel: 'speaker', hoeren: 'headset', werkzeug: 'puzzle', linksammlung: 'link', programmieren: 'tree_structure', figur: 'businesswoman', sprechfoto: 'camera', puppentheater: 'clapperboard', stundenplan: 'planner', kalenderblatt: 'calendar', karte: 'globe', sprechtaste: 'speaker', satzleiste: 'comments', elevator: 'podium_with_speaker', medienseite: 'camcorder_pro', diaschau: 'stack_of_photos', trickfilm: 'film_reel', syllablejoin: 'workflow', anlaut: 'kindle', clapsyllables: 'sports_mode', placevalue: 'grid', dienes: 'stack_of_photos', numberline: 'timeline', hundredfield: 'grid', mathboard: 'org_unit', shop: 'shop',
   geometry: 'radar_plot', monster: 'idea', synthesis: 'mind_map', clapping: 'like',
-  alphabet: 'kindle', communication: 'comments',
+  alphabet: 'kindle', communication: 'comments', lineatur: 'rules',
 };
 const subjectIcons: Record<Subject, IconName> = {
   Deutsch: 'reading', Mathematik: 'calculator', Sachunterricht: 'globe', Musik: 'music',
@@ -116,6 +118,7 @@ const blockIcon = (b: LearningBlock): IconName =>
 
 /** Size of a newly inserted learning element in mm. */
 function startSize(kind: WidgetKind | ActivityKind, settings: LearningSettings) {
+  if (kind === 'lineatur') return lineaturStartSize(lineaturSettings({ settings }));
   if (kind === 'mathtool') return pageSize(mathTool(settings));
   if (kind === 'zeit') return zeitSize(zeitConfig(settings.zeit));
   if (kind === 'phasen') return MULTI_TIMER_SIZE;
@@ -362,7 +365,7 @@ export default function LearningDialog({
                             {b.preview ? <span className="learning-block-preview">
                               {/* eslint-disable-next-line @next/next/no-img-element -- Static previews of the actual tools. */}
                               <img src={b.preview} alt={`Vorschau: ${b.title}`} width={480} height={340} loading="lazy" decoding="async" />
-                            </span> : <Icon name={blockIcon(b)} size={34} />}
+                            </span> : b.kind === 'lineatur' && b.preset ? <LineaturGlyph settings={lineaturSettings({ settings: b.preset })} size={34} wide={1.6} /> : <Icon name={blockIcon(b)} size={34} />}
                             <span>{b.title}</span>
                           </button>
                         ))}

@@ -34,7 +34,7 @@ test('Text wird direkt im Textfeld geschrieben, mit Cursor und passend zur Linea
 
   // Font settings live in “Gestalten”; line spacing follows the ruling.
   const bar = page.getByRole('region', { name: 'Element einstellen' });
-  await expect(bar.getByRole('group', { name: 'Schrift', exact: true })).toBeVisible();
+  await expect(bar.getByRole('button', { name: /^Schrift: / })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Zeilenabstand erhöhen' })).toHaveCount(0);
 
   await page.keyboard.press('Escape');
@@ -61,28 +61,46 @@ test('Textkasten: jede Form zeichnet einen eigenen Rahmen, Hintergrund und Rahme
   const surface = page.locator('.interaction-surface');
   await surface.getByText('Wie geht es dir?', { exact: false }).click();
   const bar = page.getByRole('region', { name: 'Element einstellen' });
+  // Italic and underline sit beside bold.
+  const words = surface.locator('.page-element').first();
+  await bar.getByRole('group', { name: 'Auszeichnung' }).getByRole('button', { name: /Kursiv$/ }).click();
+  await bar.getByRole('group', { name: 'Auszeichnung' }).getByRole('button', { name: /Unterstrichen$/ }).click();
+  await expect(bar.getByRole('button', { name: /Kursiv$/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(words.getByText('Wie geht es dir?', { exact: false })).toHaveCSS('font-style', 'italic');
+  await expect(words.getByText('Wie geht es dir?', { exact: false })).toHaveCSS('text-decoration-line', 'underline');
+  // Size and position live under “Anordnen” now.
+  await expect(bar.getByRole('button', { name: 'Maße & Position', exact: true })).toHaveCount(0);
+  await bar.getByRole('button', { name: 'Anordnen', exact: true }).click();
+  await expect(bar.getByLabel('Breite', { exact: true })).toHaveValue('80');
   await bar.getByRole('button', { name: 'Textkasten', exact: true }).click();
+  // Compact settings: a button shows the current choice, tapping it opens the options above.
+  const choose = async (group: string, name: string) => {
+    await bar.getByRole('button', { name: new RegExp(`^${group}: `) }).click();
+    await page.getByRole('group', { name: group, exact: true }).getByRole('button', { name, exact: true }).click();
+    await expect(page.locator('.choice-panel')).toHaveCount(0);
+  };
   const shapes: string[] = [];
   for (const name of ['Kasten', 'Notizzettel', 'Sprechblase', 'Denkblase', 'Rufblase', 'Banner']) {
-    await bar.getByRole('group', { name: 'Form' }).getByRole('button', { name, exact: true }).click();
+    await choose('Form', name);
     const frame = surface.locator('.page-element .text-frame');
     await expect(frame).toBeVisible();
     shapes.push(await frame.evaluate((svg) => svg.innerHTML));
   }
   expect(new Set(shapes).size).toBe(6);
   // Thought bubbles need more room; the box grows with them.
-  await bar.getByRole('group', { name: 'Form' }).getByRole('button', { name: 'Denkblase', exact: true }).click();
+  await choose('Form', 'Denkblase');
+  await expect(bar.getByRole('button', { name: 'Form: Denkblase', exact: true })).toBeVisible();
   await expect.poll(async () => parseFloat(await surface.locator('.page-element').first().evaluate((el) => (el as HTMLElement).style.height))).toBeGreaterThan(26);
 
-  await bar.getByRole('group', { name: 'Hintergrund' }).getByRole('button', { name: 'Blau', exact: true }).click();
+  await choose('Hintergrund', 'Blau');
   await expect(surface.locator('.text-frame path').first()).toHaveAttribute('fill', '#bbdefb');
-  await bar.getByRole('group', { name: 'Rahmenlinie' }).getByRole('button', { name: 'Dick', exact: true }).click();
+  await choose('Rahmenlinie', 'Dick');
   await expect(surface.locator('.text-frame path').first()).toHaveAttribute('stroke-width', '1.4');
-  await bar.getByRole('group', { name: 'Rahmenfarbe' }).getByRole('button', { name: 'Rot', exact: true }).click();
+  await choose('Rahmenfarbe', 'Rot');
   await expect(surface.locator('.text-frame path').first()).toHaveAttribute('stroke', '#e03131');
 
   // A plain text box can get a line and a fill too.
-  await bar.getByRole('group', { name: 'Form' }).getByRole('button', { name: 'Ohne', exact: true }).click();
+  await choose('Form', 'Ohne');
   await expect(surface.locator('.text-frame path').first()).toHaveAttribute('stroke', '#e03131');
   await expect(page.getByRole('status').filter({ hasText: 'Gespeichert' })).toBeVisible();
   await page.reload();

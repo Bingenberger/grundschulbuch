@@ -1,6 +1,7 @@
 'use client';
 // Every setting is a row of buttons with icon and text – no drop-down menus.
-import type { ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import Icon, { type IconName } from '../Icon';
 import { FontGlyph, TextGlyph } from './Glyphs';
 import { fonts } from '@/lib/notebook-model';
@@ -267,5 +268,143 @@ export function FontPicker({
         icon: <FontGlyph font={font} />,
       }))}
     />
+  );
+}
+
+/**
+ * A compact choice for the bottom bar: one button with the caption above shows
+ * the current option (icon and text); tapping it opens a small panel above with
+ * all options as buttons. Not a drop-down: options keep icon and text.
+ */
+export function ChoiceMenu<T extends string | number | boolean>({
+  label,
+  options,
+  value,
+  onChange,
+  disabled,
+  face,
+  extra,
+}: {
+  label: string;
+  options: ChoiceOption<T>[];
+  value: T;
+  onChange: (value: T) => void;
+  disabled?: boolean;
+  /** Shown on the button instead of the current option (e.g. when none fits). */
+  face?: { icon: ChoiceIcon; label: string };
+  /** More controls at the end of the panel, e.g. a colour field. */
+  extra?: ReactNode;
+}) {
+  const current = options.find((o) => o.value === value);
+  const shown = face || current || { icon: 'settings' as ChoiceIcon, label: '–' };
+  return (
+    <MenuButton label={label} icon={shown.icon} text={shown.label} disabled={disabled}>
+      {(close) => (
+        <>
+          {options.map((o) => (
+            <ChoiceButton
+              key={String(o.value)}
+              icon={o.icon}
+              label={o.label}
+              title={o.title}
+              pressed={value === o.value}
+              onClick={() => {
+                onChange(o.value);
+                close();
+              }}
+            />
+          ))}
+          {extra}
+        </>
+      )}
+    </MenuButton>
+  );
+}
+
+/** Captioned button that opens a panel with any content above it. */
+export function MenuButton({
+  label,
+  icon,
+  text,
+  disabled,
+  children,
+}: {
+  label: string;
+  icon: ChoiceIcon;
+  text: string;
+  disabled?: boolean;
+  children: (close: () => void) => ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const button = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  const [place, setPlace] = useState<{ left: number; bottom: number } | null>(null);
+  useLayoutEffect(() => {
+    if (!open || !button.current) return;
+    const r = button.current.getBoundingClientRect();
+    const width = panel.current?.offsetWidth || 0;
+    setPlace({
+      left: Math.max(8, Math.min(window.innerWidth - width - 8, r.left)),
+      bottom: window.innerHeight - r.top + 6,
+    });
+  }, [open]);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: PointerEvent) => {
+      const t = e.target as Node;
+      if (!panel.current?.contains(t) && !button.current?.contains(t)) setOpen(false);
+    };
+    const key = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        setOpen(false);
+        button.current?.focus();
+      }
+    };
+    window.addEventListener('pointerdown', away, true);
+    window.addEventListener('keydown', key, true);
+    return () => {
+      window.removeEventListener('pointerdown', away, true);
+      window.removeEventListener('keydown', key, true);
+    };
+  }, [open]);
+  return (
+    <div className="option-group">
+      <span className="option-caption" aria-hidden="true">
+        {label}
+      </span>
+      <div className="option-row">
+        <button
+          ref={button}
+          type="button"
+          className="choice choice-menu"
+          aria-label={`${label}: ${text}`}
+          aria-haspopup="true"
+          aria-expanded={open}
+          disabled={disabled}
+          onClick={() => setOpen(!open)}
+        >
+          <span className="choice-icon">{renderIcon(icon)}</span>
+          <span className="choice-label">{text}</span>
+          <Icon name="up" size={14} />
+        </button>
+      </div>
+      {open &&
+        createPortal(
+          <div
+            ref={panel}
+            className="choice-panel"
+            role="group"
+            aria-label={label}
+            style={place ? { left: place.left, bottom: place.bottom } : { visibility: 'hidden' }}
+          >
+            <span className="option-caption" aria-hidden="true">
+              {label}
+            </span>
+            <div className="choice-panel-row">{children(() => setOpen(false))}</div>
+          </div>,
+          document.body,
+        )}
+    </div>
   );
 }

@@ -134,6 +134,10 @@ test('Alle Lernwerkzeuge und Übungen lassen sich im Heft öffnen', async ({
       await expect(page.locator('.interaction-surface .lh-wg-timetable')).toHaveAttribute('aria-label', /^Stundenplan/);
       continue;
     }
+    if (catalogue[i].kind === 'lineatur') {
+      await expect(page.locator('.interaction-surface svg.lineatur-block')).toHaveAttribute('aria-label', 'Lineatur 1');
+      continue;
+    }
     if (catalogue[i].kind === 'paeckchen') {
       await expect(page.locator('.interaction-surface .paeckchen .pk-box').first()).toBeVisible();
       continue;

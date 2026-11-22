@@ -1,10 +1,12 @@
 /* eslint-disable @next/next/no-img-element -- Static SVG files, no optimisation needed. */
-// Colored icons. Most come from Flat Color Icons (icons8, MIT), copied to
-// /runtime/icons by scripts/build-assets.mjs; the set lacks a few school tools,
-// which are drawn in the same style under /icons.
-const own = [
-  'textmarker', 'radierer', 'geodreieck', 'pipette', 'filzstift', 'fueller',
-  'buntstift', 'pinsel', 'farbeimer', 'seiten', 'schere', 'drehen', 'zuschneiden', 'balken', 'kassette',
+// Colorful, child-friendly icons: Fluent Emoji (flat style, Microsoft, MIT),
+// written to /runtime/icons by scripts/build-assets.mjs following
+// scripts/icon-map.mjs. A few motifs have no emoji and are drawn in the same
+// style under /icons. The names are the app's own and stay stable.
+const own = ['textmarker', 'radierer', 'zuschneiden'] as const;
+const mapped = [
+  'geodreieck', 'pipette', 'filzstift', 'fueller', 'buntstift', 'pinsel', 'farbeimer',
+  'seiten', 'schere', 'drehen', 'balken', 'kassette', 'speichern',
 ] as const;
 export const flatIcons = [
   'about', 'add_image', 'alarm_clock', 'approval', 'audio_file', 'binoculars',
@@ -27,7 +29,7 @@ export const flatIcons = [
   'tree_structure', 'undo', 'unlock', 'up', 'video_projector',
   'voice_presentation', 'workflow',
 ] as const;
-export type IconName = (typeof own)[number] | (typeof flatIcons)[number];
+export type IconName = (typeof own)[number] | (typeof mapped)[number] | (typeof flatIcons)[number];
 
 export function iconSource(name: IconName) {
   return (own as readonly string[]).includes(name)
