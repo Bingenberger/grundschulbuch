@@ -6,6 +6,7 @@ import { keyedHash } from './sessions.mjs';
 import { dataPath, readJson, writeJson, withLock } from './store.mjs';
 import { BookError } from './notebooks.mjs';
 import { childById, type ChildRecord } from './classes.mjs';
+import { schoolEndHour } from './school-hours.mjs';
 const COOKIE = 'gsb_kind';
 const fileFor = (token: string) =>
   dataPath('kinder-sitzungen', `${keyedHash('child-session', token)}.json`);
@@ -21,21 +22,19 @@ const schoolTime = () =>
     dateStyle: 'short',
     timeStyle: 'short',
   }).format(new Date());
-export function schoolEndHour() {
-  const n = Number(process.env.SCHOOL_END_HOUR || 16);
-  return Number.isInteger(n) && n >= 1 && n <= 24 ? n : 16;
-}
+export { schoolEndHour } from './school-hours.mjs';
 export async function currentChild(): Promise<ChildRecord | null> {
   const token = (await cookies()).get(COOKIE)?.value;
   if (!token || !/^[a-f0-9]{64}$/.test(token)) return null;
   return withLock(`kind-${keyedHash('child-session', token)}`, async () => {
     const record = await readJson<Record | null>(fileFor(token), null);
     const now = schoolTime();
+    const end = await schoolEndHour();
     if (
       !record ||
       Date.now() - record.touched > 600000 ||
       record.schoolDay !== now.slice(0, 10) ||
-      Number(now.slice(11, 13)) >= schoolEndHour()
+      Number(now.slice(11, 13)) >= end
     )
       return null;
     const child = await childById(record.childId);
@@ -48,7 +47,7 @@ export async function startChildSession(
   response: NextResponse,
   child: Pick<ChildRecord, 'id' | 'cardVersion'>,
 ) {
-  if (Number(schoolTime().slice(11, 13)) >= schoolEndHour())
+  if (Number(schoolTime().slice(11, 13)) >= (await schoolEndHour()))
     throw new BookError(
       'Für heute ist Schulschluss. Du kannst dich morgen wieder anmelden.',
       403,

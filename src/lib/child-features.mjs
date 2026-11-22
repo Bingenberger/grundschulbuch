@@ -11,6 +11,7 @@ export const CHILD_FEATURES = [
   'page',
   'imageUpload',
   'imageSearch',
+  'imageWeb',
   'imageEdit',
   'pages',
   'readAloud',
@@ -26,8 +27,8 @@ export const CHILD_FEATURES = [
 ];
 
 /** Used while a class has no own setting. */
-// Sound recordings and web pages are opt-in (privacy, supervision).
-export const CHILD_DEFAULTS = CHILD_FEATURES.filter((f) => !['brushFountain', 'audio', 'internet'].includes(f));
+// Sound recordings, web pages and Wikimedia Commons (no youth filter) are opt-in (privacy, supervision).
+export const CHILD_DEFAULTS = CHILD_FEATURES.filter((f) => !['brushFountain', 'audio', 'internet', 'imageWeb'].includes(f));
 
 /** Returns a clean list or throws a German message for invalid input. */
 export function cleanChildFeatures(list) {

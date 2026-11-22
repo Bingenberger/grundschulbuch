@@ -2,6 +2,7 @@ import { listAdminAccounts } from './accounts.mjs';
 import { listAllClasses } from './classes.mjs';
 import { readSchoolTemplates } from './notebooks.mjs';
 import { youtubeSettings } from './video-search.mjs';
+import { schoolHoursSettings } from './school-hours.mjs';
 
 /** Everything the admin area shows at once. */
 export async function adminOverview() {
@@ -13,6 +14,7 @@ export async function adminOverview() {
     hidden: school.hidden,
     policies: school.policies,
     youtube: await youtubeSettings(),
+    schoolHours: await schoolHoursSettings(),
   };
 }
 export type AdminOverview = Awaited<ReturnType<typeof adminOverview>>;

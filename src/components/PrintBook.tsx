@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { BookData } from '@/lib/notebook-model';
 import PageView from './PageView';
+import { twoUpSheets } from '@/lib/two-up';
 async function printWhenLoaded() {
   await document.fonts.ready;
   await Promise.all(
@@ -17,11 +18,15 @@ export default function PrintBook({
   data,
   only = null,
   autoPrint = false,
+  twoUp: initialTwoUp = false,
 }: {
   data: BookData;
   only?: string[] | null;
   autoPrint?: boolean;
+  /** Zwei Seiten verkleinert (A5) auf einem A4-Blatt. */
+  twoUp?: boolean;
 }) {
+  const [twoUp, setTwoUp] = useState(initialTwoUp);
   const [orientation, setOrientation] = useState<'all' | 'portrait' | 'landscape'>('all');
   const [busy, setBusy] = useState(false);
   const printable = data.pages.filter(
@@ -73,6 +78,12 @@ export default function PrintBook({
             />
           </label>
         )}
+        {printable.length > 1 && (
+          <label className="print-twoup">
+            <input type="checkbox" checked={twoUp} onChange={(e) => setTwoUp(e.target.checked)} />{' '}
+            2 Seiten auf ein Blatt (A5) – zum Durchschneiden
+          </label>
+        )}
         <button
           className="knopf knopf-haupt"
           disabled={busy || (mixed && orientation === 'all')}
@@ -85,11 +96,20 @@ export default function PrintBook({
           {busy ? 'Schriften und Bilder laden …' : 'Drucken / als PDF sichern'}
         </button>
       </div>
-      <style>{`@media print { @page { size: A4 ${pages[0]?.orientation === 'landscape' ? 'landscape' : 'portrait'}; margin: 0; } }`}</style>
-      <div className="print-pages">
-        {pages.map((page) => (
-          <PageView key={page.id} page={page} />
-        ))}
+      {/* Zwei Querformat-Seiten kommen auf ein A4-Blatt im Hochformat und umgekehrt. */}
+      <style>{`@media print { @page { size: A4 ${(pages[0]?.orientation === 'landscape') !== twoUp ? 'landscape' : 'portrait'}; margin: 0; } }`}</style>
+      <div className={`print-pages${twoUp ? ' two-up' : ''}`}>
+        {twoUp
+          ? twoUpSheets(pages).map((pair) => (
+              <div key={pair[0].id} className={`print-sheet ${pair[0].orientation}`}>
+                {pair.map((page) => (
+                  <div key={page.id} className="print-half">
+                    <PageView page={page} />
+                  </div>
+                ))}
+              </div>
+            ))
+          : pages.map((page) => <PageView key={page.id} page={page} />)}
       </div>
     </main>
   );

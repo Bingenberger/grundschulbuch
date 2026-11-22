@@ -24,12 +24,14 @@ export const helpTopics: HelpTopic[] = [
   { id: 'neues-heft', chapter: 'hefte', title: 'Ein neues Heft anlegen', keywords: 'erstellen anlegen heft neu',
     body: [
       'Im Regal („Mein Regal“) legt „Neues Heft“ ein leeres Heft an – du gibst ihm einen Namen und eine Farbe für den Umschlag. Mit einem Tipp auf den Umschlag öffnest du es.',
-      'Unter dem Umschlag stehen „Umbenennen“, „Duplizieren“, „Speichern …“ und „Löschen“. Die Suche über den Heften findet Hefte nach ihrem Namen.',
+      '„Mehr“ (•••) an jedem Heft öffnet „Umbenennen“, „Duplizieren“, „Speichern …“, „In Ordner legen“ und „Löschen“. Die Suche über den Heften findet Hefte nach ihrem Namen.',
+      'Oben rechts wählst du „Kacheln“ (kleine Hefte mit Vorschau der ersten Seite) oder „Liste“ und sortierst nach „Zuletzt“ bearbeitet oder „A–Z“. Das Gerät merkt sich beides.',
     ] },
   { id: 'ordner', chapter: 'hefte', title: 'Ordner', keywords: 'sortieren ordnen',
     body: [
-      '„Neuer Ordner“ legt einen Ordner an. Ein Heft kommt hinein, wenn du es auf den Ordner ziehst oder unter dem Umschlag bei „Ohne Ordner“ einen Ordner wählst.',
-      'Oben wählst du, welche Hefte du siehst: alle, nur die ohne Ordner oder die eines Ordners.',
+      'Die Ordner stehen links mit der Zahl ihrer Hefte. „Neuer Ordner“ legt einen an – den Namen tippst du gleich in die Liste; jeder neue Ordner bekommt eine eigene Farbe.',
+      'Ein Heft kommt hinein, wenn du es auf den Ordner ziehst oder bei „Mehr“ unter „In Ordner legen“ einen Ordner wählst. „Mehr“ am Ordner (beim Darüberfahren) benennt ihn um oder entfernt ihn; die Hefte bleiben dabei im Regal.',
+      'Links wählst du, welche Hefte du siehst: alle, nur die ohne Ordner oder die eines Ordners.',
     ] },
   { id: 'oeffnen', chapter: 'hefte', title: 'Heft, ePub oder PDF öffnen', keywords: 'import importieren datei laden pdf beschriften',
     body: [
@@ -161,7 +163,7 @@ export const helpTopics: HelpTopic[] = [
     ] },
   { id: 'aufgabenpaeckchen', chapter: 'lernen', title: 'Aufgabenpäckchen mit eigenen Aufgaben', keywords: 'päckchen aufgaben rechnen skript nachbarzehner ergänzen plus minus einmaleins arbeitsblatt prüfen lücke',
     body: [
-      'Unter Mathematik fügt „Aufgabenpäckchen“ einen Block Rechenaufgaben auf die Seite. Eine Vorlage füllt das Skript (z. B. „Zu den Nachbarzehnern“, „Plus bis 20 mit Übergang“, „Einmaleins“, „Geteilt mit Rest“); du kannst es beliebig ändern. Darunter stellst du Anzahl, Spalten und die Lösungskontrolle ein; die Vorschau zeigt genau die Aufgaben, die auf die Seite kommen. „Neue Zahlen“ würfelt sie neu.',
+      'Unter Mathematik fügt „Aufgabenpäckchen“ einen Block Rechenaufgaben auf die Seite. Eine Vorlage füllt das Skript (z. B. „Zu den Nachbarzehnern“, „Plus bis 20 mit Übergang“, „Einmaleins“, „Geteilt mit Rest“); du kannst es beliebig ändern. Darunter stellst du Anzahl, Spalten und die Lösungskontrolle ein; die Vorschau zeigt genau die Aufgaben, die auf die Seite kommen. „Neue Zahlen“ würfelt sie neu. Auf der Seite erzeugt „Neu generieren“ unten in der Leiste (unter „Gestalten“) jederzeit dieselben Aufgaben mit anderen Zahlen; eingetragene Ergebnisse werden dabei geleert.',
       'So schreibt man Aufgaben: „a = 11..99“ zieht eine Zahl von 11 bis 99, „b = 2, 5, 10“ nimmt eine dieser Zahlen, „u = abrunden(a, 10)“ rechnet etwas aus, „wenn einer(a) ≠ 0“ behält nur passende Zahlen. Jede Zeile mit eckigen Klammern ist eine Aufgabe: „a + [o − a] = o“ – was in [ ] steht, wird ein Kästchen mit diesem Ergebnis. Mehrere Aufgabenzeilen ergeben ein Päckchen mit denselben Zahlen. Steht zwischen zwei Aufgaben eine Zeile „oder“, kommt pro Durchgang nur eine davon, zufällig gewählt – etwa abziehen oder ergänzen (Vorlage „Nachbarzehner: abziehen oder ergänzen“). Fehler zeigt der Dialog mit der Zeilennummer an; die Liste aller Funktionen steht unter „So schreibt man Aufgaben“.',
       'Die Kinder tippen ihre Ergebnisse in die Kästchen; je nach Einstellung erscheint sofort ✓ oder ✗, oder erst nach „Prüfen“. Gedruckt wird ein normales Arbeitsblatt mit leeren Kästchen, ohne Knopf und Haken.',
     ] },
@@ -199,6 +201,7 @@ export const helpTopics: HelpTopic[] = [
   { id: 'karten', chapter: 'klassen', title: 'Anmelden mit Karte', keywords: 'karte qr code anmelden login kinder',
     body: [
       'Kinder melden sich mit ihrer Karte an: „Karte scannen“ und die Karte vor die Kamera halten. Die Karten der Kinder findest du unter „Meine Klassen“; „Wem gehört diese Karte?“ ordnet eine Karte einem Kind zu.',
+      'Kinder können sich bis zum Schulschluss anmelden (voreingestellt 16 Uhr); dann werden sie abgemeldet und sehen „Für heute ist Schulschluss“. Die Verwaltung stellt die Uhrzeit unter „Einstellungen“ → „Schulschluss für Kinder“ für die ganze Schule ein – etwa 18 Uhr für den Ganztag oder „Ganzer Tag“ für Hausaufgaben.',
     ] },
   { id: 'austeilen', chapter: 'klassen', title: 'Ein Heft austeilen', keywords: 'austeilen verteilen kopie kinderheft',
     body: [
@@ -214,6 +217,7 @@ export const helpTopics: HelpTopic[] = [
     body: [
       'Unter „Was die Kinder im Heft sehen“ schaltest du für die Klasse oder ein einzelnes Kind Werkzeuge ein oder aus. Die Oberfläche der Kinder ist dieselbe wie deine, nur mit weniger Knöpfen.',
       '„Freigegebene Bilder“ sind eine Sammlung, die Kinder ohne eigenes Hochladen verwenden dürfen.',
+      '„Wikimedia Commons“ unter „Bilder“ ist zunächst aus. Eingeschaltet suchen die Kinder im Bilddialog auch in Wikimedia Commons. Commons hat keinen eigenen Jugendschutzfilter: Für Kinder werden Suchwörter, Dateinamen, Beschreibungen und Kategorien mit einer Sperrliste geprüft und ungeeignete Treffer weggelassen. Das ist ein Schutz, aber keine Garantie – schalte es nur ein, wenn du die Bildersuche begleiten kannst.',
     ] },
 
   // Speichern
@@ -225,6 +229,7 @@ export const helpTopics: HelpTopic[] = [
   { id: 'drucken', chapter: 'speichern', title: 'Drucken und PDF', keywords: 'drucken ausdrucken pdf drucker',
     body: [
       'Unter „Speichern“ macht „PDF“ eine PDF-Datei – jede Seite in ihrer A4-Ausrichtung, Links bleiben anklickbar. „Am Drucker drucken“ öffnet die Druckansicht; stelle dort A4, Maßstab 100 %, Ränder „Keine“ und ohne Kopf- und Fußzeilen ein.',
+      '„2 Seiten auf ein Blatt (A5)“ verkleinert je zwei Seiten auf ein A4-Blatt: zwei Querformat-Seiten untereinander auf einem Blatt im Hochformat, zwei Hochformat-Seiten nebeneinander auf einem Blatt quer. Eine feine gestrichelte Linie zeigt, wo du durchschneidest – so werden aus einem A4-Ausdruck zwei A5-Seiten. Das gilt für die PDF und für den Drucker; in der Druckansicht lässt es sich auch noch ein- und ausschalten. Links sind in dieser PDF nicht anklickbar.',
     ] },
   { id: 'weitergeben', chapter: 'speichern', title: 'Im Kollegium weitergeben', keywords: 'kollegium kollegin teilen lehrkraft kopie',
     body: [

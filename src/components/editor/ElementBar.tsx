@@ -13,6 +13,8 @@ import { FrameGlyph, frameFill, frameKind, frameLine, frameWidth, type TextFrame
 import { fitText, onRuling, pxToMm } from './text-measure';
 import { isFourLine, isLineatur, LINEATUR_KINDS, lineaturLabels, lineaturSettings, type LineaturSettings } from '@/lib/lineatur';
 import { LineaturGlyph } from '../learning/LineaturWidget';
+import { paeckchenConfig, redraw as redrawPaeckchen } from '@/lib/learning/paeckchen';
+import type { JsonValue } from '@/lib/learning/catalog';
 
 const lineaturColors: [string, string][] = [
   ['', 'Blau'],
@@ -177,6 +179,14 @@ export default function ElementBar({
           {(first.type === 'widget' || first.type === 'activity') && !isLineatur(first) && actions.onConfigure && (
             <OptionGroup label={first.type === 'widget' ? 'Lernwerkzeug' : 'Übung'}>
               <ChoiceButton icon="settings" label="Aufgabe gestalten" onClick={() => actions.onConfigure!(first)} />
+              {first.type === 'widget' && first.widgetKind === 'paeckchen' && (
+                <ChoiceButton
+                  icon="drehen"
+                  label="Neu generieren"
+                  title="Dieselben Aufgaben mit anderen Zahlen; eingetragene Ergebnisse werden geleert"
+                  onClick={() => patch({ settings: { ...first.settings, paeckchen: redrawPaeckchen(paeckchenConfig(first.settings?.paeckchen)) as unknown as JsonValue } })}
+                />
+              )}
               {first.type === 'widget' && first.widgetKind === 'textsachen' && actions.onMoreExercises && (
                 <ChoiceButton icon="plus" label="Weitere Übung" title="Mehr Übungen mit demselben Text oder denselben Wörtern, jede auf einer eigenen Seite" onClick={() => actions.onMoreExercises!(first)} />
               )}

@@ -85,6 +85,8 @@ export default function SaveDialog({
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [title, setTitle] = useState(book.title);
+  /** Zwei Seiten verkleinert auf ein A4-Blatt (A5), zum Beispiel zwei Querformat-Seiten untereinander. */
+  const [twoUp, setTwoUp] = useState(false);
   const busy = !!progress;
   const selected = chosen ? pages.filter((p) => chosen.includes(p.id)) : pages;
   const printable = selected.filter((p) => p.paperMode !== 'endless');
@@ -148,7 +150,7 @@ export default function SaveDialog({
       } else if (kind === 'pdf') {
         blob = await helpers.exportPdf(data, () => undefined, (done, total) =>
           setProgress({ kind, done, total }),
-        );
+        { twoUp });
         [ext, label] = ['pdf', 'PDF gespeichert'];
       } else if (kind === 'scorm') {
         blob = await helpers.exportScorm(data);
@@ -157,7 +159,7 @@ export default function SaveDialog({
         blob = await helpers.exportEpub(data);
         [ext, label] = ['epub', 'ePub gespeichert'];
       }
-      const name = nameFor(list, ext);
+      const name = kind === 'pdf' && twoUp ? nameFor(list, 'A5.pdf') : nameFor(list, ext);
       setProgress(null);
       if (canShareFiles()) {
         // Noch in der Berührung: gleich das Teilen-Menü, sonst über den Knopf.
@@ -191,6 +193,7 @@ export default function SaveDialog({
       await saveName();
       if (!(await flushEditor())) throw new Error('Bitte erst die offenen Änderungen speichern.');
       const query = new URLSearchParams({ drucken: '1' });
+      if (twoUp) query.set('zwei', '1');
       if (list.length < pages.length) query.set('seiten', list.map((p) => p.id).join(','));
       window.location.assign(`/drucken/${book.id}?${query}`);
     } catch (e) {
@@ -338,6 +341,22 @@ export default function SaveDialog({
           {allowPrint && (
             <>
               <h3 className="save-h">Drucken und PDF</h3>
+              {printable.length > 1 && (
+                <button
+                  type="button"
+                  className={`save-twoup${twoUp ? ' is-on' : ''}`}
+                  aria-pressed={twoUp}
+                  disabled={busy}
+                  onClick={() => setTwoUp((on) => !on)}
+                >
+                  <span className="save-twoup-sheet" aria-hidden="true"><i /><i /></span>
+                  <span>
+                    <strong>2 Seiten auf ein Blatt (A5)</strong>
+                    <small>{landscape.length ? 'Zwei Querformat-Seiten untereinander auf einem A4-Blatt – zum Durchschneiden in zwei A5-Seiten.' : 'Zwei Hochformat-Seiten nebeneinander auf einem A4-Blatt (quer) – zum Durchschneiden in zwei A5-Seiten.'}</small>
+                  </span>
+                  <span className="save-twoup-switch" aria-hidden="true" />
+                </button>
+              )}
               {option({
                 kind: 'pdf',
                 icon: 'document',
@@ -346,7 +365,9 @@ export default function SaveDialog({
                 title: 'PDF',
                 text: noPrint
                   ? 'Seiten mit Endlospapier gibt es nicht als PDF – wähle andere Seiten.'
-                  : 'Zum Drucken, Verschicken oder Abgeben – jede Seite in ihrer A4-Ausrichtung, so wie sie im Heft aussieht.',
+                  : twoUp
+                    ? 'Je zwei Seiten verkleinert auf einem A4-Blatt, mit feiner Schnittlinie in der Mitte.'
+                    : 'Zum Drucken, Verschicken oder Abgeben – jede Seite in ihrer A4-Ausrichtung, so wie sie im Heft aussieht.',
               })}
               {readyFor('pdf')}
               {mixed ? (

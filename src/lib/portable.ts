@@ -5,6 +5,7 @@ import { mediaReferences } from './learning/validation.mjs';
 import { downloadBlob } from './learning/audio';
 import { api, uploadImage } from './client-api';
 import {fontFamilyFor} from './template-font';
+import { twoUpSheets } from './two-up';
 export type PortableBook = BookData & {
   format: 'grundschulbuch';
   version: 1;
@@ -503,6 +504,7 @@ export async function exportPdf(
   data: BookData,
   onProgress: (message: string) => void,
   onStep?: (done: number, total: number) => void,
+  options: { twoUp?: boolean } = {},
 ): Promise<Blob> {
   if(data.pages.some(p=>p.paperMode==='endless'))throw new Error('Endlospapier wird als Heftdatei oder HTML gespeichert und nicht als PDF gedruckt.');
   const { PDFDocument, PDFName, PDFString } = await import('pdf-lib'),
@@ -512,6 +514,31 @@ export async function exportPdf(
   pdf.setCreator('Grundschulbuch');
   const k = 72 / 25.4,
     added: import('pdf-lib').PDFPage[] = [];
+  if (options.twoUp) {
+    // Two A4 pages shrunk to A5 on one A4 sheet, with a light cutting line between them.
+    const { rgb } = await import('pdf-lib');
+    let done = 0;
+    for (const pair of twoUpSheets(data.pages)) {
+      const landscape = pair[0].orientation === 'landscape',
+        sheetW = (landscape ? 210 : 297) * k,
+        sheetH = (landscape ? 297 : 210) * k,
+        w = (landscape ? 210 : 148.5) * k,
+        h = (landscape ? 148.5 : 210) * k;
+      const sheet = pdf.addPage([sheetW, sheetH]);
+      for (let j = 0; j < pair.length; j++) {
+        onProgress(`PDF-Seite ${done + 1} von ${data.pages.length}`);
+        onStep?.(done++, data.pages.length);
+        const image = await pdf.embedPng((await pageSnapshot(pair[j])).png);
+        // PDF coordinates start at the bottom: the first page goes on top (or left).
+        sheet.drawImage(image, landscape ? { x: 0, y: sheetH - (j + 1) * h, width: w, height: h } : { x: j * w, y: 0, width: w, height: h });
+      }
+      const line = { thickness: 0.4, color: rgb(0.75, 0.78, 0.8), dashArray: [4, 4] };
+      if (landscape) sheet.drawLine({ start: { x: 0, y: sheetH / 2 }, end: { x: sheetW, y: sheetH / 2 }, ...line });
+      else sheet.drawLine({ start: { x: sheetW / 2, y: 0 }, end: { x: sheetW / 2, y: sheetH }, ...line });
+    }
+    onStep?.(data.pages.length, data.pages.length);
+    return new Blob([new Uint8Array(await pdf.save())], { type: 'application/pdf' });
+  }
   for (let i = 0; i < data.pages.length; i++) {
     onProgress(`PDF-Seite ${i + 1} von ${data.pages.length}`);
     onStep?.(i, data.pages.length);

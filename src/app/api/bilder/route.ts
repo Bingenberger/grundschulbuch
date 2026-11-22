@@ -6,14 +6,16 @@ import { BookError, storeImage } from '@/lib/notebooks.mjs';
 import { SourceError, galleryOrigin, loadImage, searchImages, findKaraokeImage } from '@/lib/image-sources.mjs';
 export const dynamic = 'force-dynamic';
 
-/** Who may use which source: children only pictograms and the school gallery. */
+/** Who may use which source: children pictograms and the school gallery, Wikimedia Commons only when switched on. */
 async function access(source: string) {
   const teacher = await currentUser();
   if (teacher) return { owner: teacher.id, child: null };
   const child = await currentChild();
   if (!child) throw new SourceError('Bitte anmelden.', 401);
-  if (!child.features.includes('imageSearch') || !['arasaac', 'galerie'].includes(source))
-    throw new SourceError('Diese Bildquelle ist hier nicht freigegeben.', 403);
+  const allowed =
+    (['arasaac', 'galerie'].includes(source) && child.features.includes('imageSearch')) ||
+    (source === 'wikimedia' && child.features.includes('imageWeb'));
+  if (!allowed) throw new SourceError('Diese Bildquelle ist hier nicht freigegeben.', 403);
   return { owner: child.id, child };
 }
 
@@ -32,7 +34,7 @@ export async function GET(request: Request) {
   if (params.has('quellen')) return NextResponse.json({ galerie: !!galleryOrigin() });
   const source = params.get('quelle') || '';
   try {
-    await access(source);
+    const { child } = await access(source);
     const picture = params.get('bild');
     if (picture) {
       const image = await loadImage(source, picture);
@@ -48,7 +50,7 @@ export async function GET(request: Request) {
       const match = await findKaraokeImage(params.get('q') || '', params.get('begriff') || '', request.signal);
       return NextResponse.json({ items: match ? [match] : [], more: false, page: 1 });
     }
-    return NextResponse.json(await searchImages(source, params.get('q') || '', params.get('seite') || 1), {
+    return NextResponse.json(await searchImages(source, params.get('q') || '', params.get('seite') || 1, { child: !!child }), {
       headers: { 'Cache-Control': 'private, max-age=300' },
     });
   } catch (e) {

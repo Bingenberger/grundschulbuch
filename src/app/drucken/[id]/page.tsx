@@ -8,7 +8,7 @@ export default async function Drucken({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ seiten?: string; drucken?: string }>;
+  searchParams: Promise<{ seiten?: string; drucken?: string; zwei?: string }>;
 }) {
   const user = await currentUser();
   if (!user) redirect('/anmelden');
@@ -19,7 +19,7 @@ export default async function Drucken({
       if (e instanceof BookError && [400, 404].includes(e.status)) notFound();
       throw e;
     });
-  const { seiten, drucken } = await searchParams;
+  const { seiten, drucken, zwei } = await searchParams;
   const only = typeof seiten === 'string' && seiten ? seiten.split(',') : null;
-  return <PrintBook data={data} only={only} autoPrint={drucken === '1'} />;
+  return <PrintBook data={data} only={only} autoPrint={drucken === '1'} twoUp={zwei === '1'} />;
 }

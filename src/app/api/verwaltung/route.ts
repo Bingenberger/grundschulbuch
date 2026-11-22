@@ -6,6 +6,7 @@ import * as books from '@/lib/notebooks.mjs';
 import { boundedBody } from '@/lib/http';
 import { adminOverview } from '@/lib/admin';
 import { setYoutubeSettings } from '@/lib/video-search.mjs';
+import { setSchoolEndHour } from '@/lib/school-hours.mjs';
 export const dynamic = 'force-dynamic';
 
 /** Admin area: accounts, classes, children and school templates. */
@@ -80,6 +81,9 @@ export async function POST(request: Request) {
           ...(body.key !== undefined ? { key: body.key } : {}),
           ...(body.childSearch !== undefined ? { childSearch: !!body.childSearch } : {}),
         });
+        break;
+      case 'schoolHours':
+        result = await setSchoolEndHour(body.endHour ?? null);
         break;
       default:
         return jsonError('Unbekannte Aktion.', 400);

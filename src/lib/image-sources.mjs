@@ -133,7 +133,28 @@ const plain = (html) =>
     .replace(/\s+/g, ' ')
     .trim();
 
-async function wikimedia(query, page) {
+// Commons has no SafeSearch. For children, searches, file names and categories
+// are checked against this list (German and English); a hit is left out. A
+// protective layer, not a guarantee – the switch is off for children by default.
+const CHILD_BLOCK = new RegExp(
+  [
+    'nackt', 'nudit', '\\bnude\\b', '\\bnudes\\b', 'naked', 'topless', 'oben ohne', 'erotik', 'erotic', '\\bsex', 'porn', 'fetisch', 'fetish', 'bdsm', 'bondage',
+    'genital', 'penis', 'vagina', 'vulva', 'brüste', 'busen', '\\bbreasts?\\b', 'nipple', 'brustwarze', 'buttocks', 'dessous', 'lingerie',
+    'unterwäsche', 'underwear', 'striptease', 'stripper', 'prostitu', 'masturb', 'kondom', 'condom', 'onlyfans', 'playboy', 'hentai',
+    '\\bleiche', 'corpse', 'dead bod', 'cadaver', 'kadaver', 'autopsie', 'autopsy', '\\bgore\\b', 'blutig', 'bloody', 'enthaupt', 'behead', 'hinricht',
+    'execution', 'lynching', 'folter', 'torture', 'suizid', 'suicide', 'selbstmord', 'schusswunde', 'gunshot wound', 'gemetzel', 'massaker', 'massacre',
+    'kriegsverbrech', 'war crime', '\\bdrogen', 'kokain', 'cocaine', '\\bheroin\\b', 'crystal meth',
+    'hakenkreuz', 'swastika', '\\bkkk\\b',
+  ].join('|'),
+  'iu',
+);
+/** Whether a text is unsuitable for children (search words, titles, categories). */
+export function blockedForChildren(text) {
+  return CHILD_BLOCK.test(String(text || '').normalize('NFC'));
+}
+
+async function wikimedia(query, page, { child = false } = {}) {
+  if (child && blockedForChildren(query)) return { items: [], page, more: false, blocked: true };
   const params = new URLSearchParams({
     action: 'query',
     format: 'json',
@@ -143,10 +164,11 @@ async function wikimedia(query, page) {
     gsrnamespace: '6',
     gsrlimit: String(PER_PAGE),
     gsroffset: String((page - 1) * PER_PAGE),
-    prop: 'imageinfo',
+    prop: child ? 'imageinfo|categories' : 'imageinfo',
+    ...(child ? { cllimit: 'max', clshow: '!hidden' } : {}),
     iiprop: 'url|extmetadata|size|mime',
     iiurlwidth: '330',
-    iiextmetadatafilter: 'Artist|LicenseShortName|AttributionRequired|ObjectName',
+    iiextmetadatafilter: child ? 'Artist|LicenseShortName|AttributionRequired|ObjectName|ImageDescription|Categories' : 'Artist|LicenseShortName|AttributionRequired|ObjectName',
     iiextmetadatalanguage: 'de',
     uselang: 'de',
   });
@@ -158,6 +180,10 @@ async function wikimedia(query, page) {
     if (!info?.thumburl || !/^image\/(jpeg|png|webp|svg\+xml|tiff)$/.test(info.mime || '')) continue;
     const meta = info.extmetadata || {};
     const title = plain(meta.ObjectName?.value) || String(p.title || '').replace(/^(File|Datei):/i, '').replace(/\.[a-z0-9]{2,5}$/i, '').replace(/_/g, ' ');
+    if (child) {
+      const about = [p.title, title, plain(meta.ImageDescription?.value), plain(meta.Categories?.value), ...(p.categories || []).map((c) => c.title)].join(' ');
+      if (blockedForChildren(about)) continue;
+    }
     const artist = plain(meta.Artist?.value) || 'unbekannt';
     const license = plain(meta.LicenseShortName?.value) || 'Lizenz siehe Wikimedia Commons';
     // Without tracking parameters; thumbnails come in fixed steps, 1280 px is plenty.
@@ -178,7 +204,7 @@ async function wikimedia(query, page) {
       pageUrl: info.descriptionurl,
     });
   }
-  return { items, page, more: Boolean(data?.continue) };
+  return { items, page, more: Boolean(data?.continue?.gsroffset ?? (!child && data?.continue)) };
 }
 
 async function galerie(query, page) {
@@ -204,11 +230,11 @@ async function galerie(query, page) {
 }
 
 /** Normalised search result: items with thumb/full URL, title and credit. */
-export async function searchImages(source, query, page = 1) {
+export async function searchImages(source, query, page = 1, options = {}) {
   const q = String(query || '').trim().slice(0, 100);
   const n = Math.max(1, Math.min(50, Number.parseInt(page, 10) || 1));
   if (source === 'arasaac') return q ? arasaac(q, n) : { items: [], page: n, more: false };
-  if (source === 'wikimedia') return q ? wikimedia(q, n) : { items: [], page: n, more: false };
+  if (source === 'wikimedia') return q ? wikimedia(q, n, options) : { items: [], page: n, more: false };
   if (source === 'galerie') return galerie(q, n);
   throw new SourceError('Unbekannte Bildquelle.', 400);
 }

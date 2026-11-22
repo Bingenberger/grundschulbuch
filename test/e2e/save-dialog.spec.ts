@@ -60,6 +60,7 @@ test('Speichern und teilen: Kachelauswahl, Links im PDF und Speichern aus dem Re
 
   // Im Regal: „Speichern …“ am Heft, ohne es zu öffnen.
   await page.getByRole('button', { name: 'Mein Regal', exact: true }).click();
+  await page.getByRole('button', { name: 'Linkprobe: mehr' }).click();
   await page.getByRole('button', { name: 'Linkprobe speichern' }).click();
   const picker = page.getByRole('dialog', { name: 'Welche Seiten speichern?' });
   await picker.getByRole('button', { name: 'Alle 3 Seiten – weiter', exact: true }).click();

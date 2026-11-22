@@ -9,7 +9,7 @@ export default async function ChildLayout({
     <>
       <SharedDeviceGuard
         enabled={!!(await currentChild())}
-        schoolEndHour={schoolEndHour()}
+        schoolEndHour={await schoolEndHour()}
       />
       {children}
     </>

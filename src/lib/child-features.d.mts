@@ -9,6 +9,7 @@ export type ChildFeature =
   | 'page'
   | 'imageUpload'
   | 'imageSearch'
+  | 'imageWeb'
   | 'imageEdit'
   | 'pages'
   | 'readAloud'

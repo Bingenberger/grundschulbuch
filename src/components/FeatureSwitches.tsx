@@ -15,6 +15,7 @@ const info: Record<ChildFeature, [IconName, string]> = {
   reader: ['reading_ebook', 'Lesemodus'],
   imageUpload: ['camera', 'Eigene Bilder & Fotos'],
   imageSearch: ['search', 'Bilder suchen'],
+  imageWeb: ['globe', 'Wikimedia Commons'],
   imageEdit: ['edit_image', 'Bilder bearbeiten'],
   pages: ['seiten', 'Seitenübersicht'],
   readAloud: ['speaker', 'Vorlesen'],
@@ -31,7 +32,7 @@ const info: Record<ChildFeature, [IconName, string]> = {
 const groups: [string, ChildFeature[]][] = [
   ['Werkzeuge', ['pen', 'eraser', 'text', 'image', 'audio', 'insert', 'internet', 'page']],
   ['Heft', ['pages', 'reader', 'readAloud']],
-  ['Bilder', ['imageUpload', 'imageSearch', 'imageEdit']],
+  ['Bilder', ['imageUpload', 'imageSearch', 'imageWeb', 'imageEdit']],
   ['Stift & Radierer', ['brushFountain', 'brushWater', 'fill', 'eyedropper', 'guides', 'shapeRecognition', 'eraserOptions']],
   ['Gestalten', ['elementStyle']],
 ];

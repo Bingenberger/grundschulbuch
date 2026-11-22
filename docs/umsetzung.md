@@ -525,7 +525,12 @@ Heftkopien in Local Storage oder IndexedDB. Alle Heftdaten liegen auf dem Server
 Hefte“ werden ausstehende Änderungen gespeichert. Inaktivität beendet die Sitzung
 nach knapp zehn Minuten; die Oberfläche speichert vorher. Der Server lehnt
 Sitzungen nach zehn Minuten ohne Aktivität und ab der konfigurierten Schulschluss-
-Stunde ab. Schulschluss richtet sich nach Europe/Berlin, standardmäßig 16 Uhr.
+Stunde ab. Schulschluss richtet sich nach Europe/Berlin, standardmäßig 16 Uhr
+(`SCHOOL_END_HOUR`); seit 22.11.2026 stellt die Verwaltung ihn unter
+„Einstellungen“ → „Schulschluss für Kinder“ ohne Neustart ein (12–20 Uhr oder
+„Ganzer Tag“ bis Mitternacht, `src/lib/school-hours.mjs`, gespeichert in
+`einstellungen/schulschluss.json`). Die Einstellung der Verwaltung geht der
+Umgebungsvariable vor; „Zurück zur Voreinstellung“ entfernt sie.
 Auch die Regalansicht besitzt einen Inaktivitätstimer. Ein Safari-Seitenschnappschuss
 wird vor dem Verlassen verdeckt; bei einer Wiederherstellung wird die Anmeldung
 neu geprüft.
@@ -1362,6 +1367,42 @@ folgt den Zeilen. Kommt ein Text von außerhalb auf die Lineatur, bekommt er
 auch ihre Schriftgröße. Wird die Lineatur verschoben, wandern Texte und
 Geschriebenes, die darauf liegen, mit. Karos, Punkte und Notenlinien haben
 keine Schreibzeilen; dort bleibt der Text, wie er ist.
+
+## 2 Seiten auf ein Blatt und neues Regal (22. November 2026)
+
+Unter „Speichern“ › „Drucken und PDF“ gibt es den Umschalter „2 Seiten auf ein
+Blatt (A5)“ (ab zwei druckbaren Seiten). Er gilt für die PDF
+(`exportPdf(…, { twoUp })` in `src/lib/portable.ts`) und für die Druckansicht
+(`/drucken/[id]?zwei=1`, dort auch als Häkchen). Aufeinanderfolgende Seiten
+gleicher Ausrichtung teilen sich ein Blatt (`twoUpSheets` in
+`src/lib/two-up.ts`): zwei Querformat-Seiten auf 210 × 148,5 mm untereinander
+auf A4 hoch, zwei Hochformat-Seiten nebeneinander auf A4 quer, mit einer
+gestrichelten Schnittlinie. Eine übrige Seite steht allein auf ihrem Blatt.
+Die PDF heißt `….A5.pdf`; Links sind darin nicht anklickbar.
+
+Das Regal (`src/components/Shelf.tsx`) hat eine Ordnerspalte links (Alle Hefte,
+Ohne Ordner, Ordner in eigener Farbe mit Zahl der Hefte, Ablegen per Ziehen,
+Anlegen und Umbenennen direkt in der Liste, Entfernen über „Mehr“). Rechts
+stehen Überschrift des gewählten Bereichs, Suche, Sortierung (Zuletzt / A–Z)
+und Ansicht (Kacheln / Liste), beides im Browser gemerkt. Die Hefte sind kleine
+Karten mit Vorschau der ersten Seite auf der Umschlagfarbe; die ganze Karte
+öffnet das Heft. Umbenennen, Duplizieren, Speichern, In Ordner legen und
+Löschen liegen im Menü „Mehr“ (`src/components/ui/PopMenu.tsx`). Auf schmalen
+Bildschirmen werden die Ordner eine waagrechte Leiste.
+
+## Wikimedia Commons für Kinder (22. November 2026)
+
+Neue Kinderfunktion `imageWeb` („Wikimedia Commons“ unter „Bilder“ in den
+Schaltern der Klasse oder des Kindes), nicht in `CHILD_DEFAULTS`, also erst
+nach Einschalten sichtbar. `/api/bilder` lässt Kinder Commons nur mit dieser
+Funktion durchsuchen (ARASAAC und Schulgalerie weiter über `imageSearch`).
+Commons kennt kein SafeSearch; für Kinder prüft `searchImages(…, { child: true })`
+in `src/lib/image-sources.mjs` das Suchwort (gesperrt: keine Anfrage an
+Commons, Antwort `blocked: true`, im Dialog „Nach diesem Wort kannst du hier
+nicht suchen“) sowie Dateiname, Titel, Beschreibung und sichtbare Kategorien
+jedes Treffers gegen eine Sperrliste (`blockedForChildren`, deutsch und
+englisch, mit Wortgrenzen, damit „Nudeln“ oder „gleiche“ nicht hängen bleiben).
+Lehrkräfte suchen unverändert ohne Filter.
 
 ## Prüfungen
 

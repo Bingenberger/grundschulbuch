@@ -5871,3 +5871,136 @@ a.embed-poster {text-decoration:none;}
 .lineatur-block { display: block; overflow: visible; }
 .lineatur-glyph { display: inline-flex; flex: none; border-radius: 4px; background: #fff; box-shadow: inset 0 0 0 1px #d5dde3; overflow: hidden; }
 .lineatur-glyph svg { width: 100%; height: 100%; }
+
+/* Drucken: 2 Seiten auf ein Blatt (A5). Querformat-Seiten untereinander auf A4 hoch, Hochformat-Seiten nebeneinander auf A4 quer. */
+.print-twoup { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-weight: 600; }
+.print-twoup input { width: 20px; height: 20px; }
+.print-sheet { position: relative; display: flex; overflow: hidden; background: #fff; margin: 0 auto 25px; box-shadow: 0 2px 15px #283e3a22; }
+.print-sheet.landscape { width: 210mm; height: 297mm; flex-direction: column; }
+.print-sheet.portrait { width: 297mm; height: 210mm; flex-direction: row; }
+.print-half { position: relative; overflow: hidden; }
+.print-sheet.landscape .print-half { width: 210mm; height: 148.5mm; }
+.print-sheet.portrait .print-half { width: 148.5mm; height: 210mm; }
+.print-half .paper { transform: scale(0.70711); transform-origin: 0 0; margin: 0 !important; box-shadow: none !important; }
+.print-sheet::after { content: ""; position: absolute; border: 0 dashed #c0c8cc; pointer-events: none; }
+.print-sheet.landscape::after { left: 0; right: 0; top: 50%; border-top-width: 0.3mm; }
+.print-sheet.portrait::after { top: 0; bottom: 0; left: 50%; border-left-width: 0.3mm; }
+@media print {
+  .print-sheet { margin: 0; box-shadow: none; break-after: page; page-break-after: always; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .print-sheet:last-child { break-after: auto; page-break-after: auto; }
+  .print-pages.two-up .paper { break-after: auto !important; page-break-after: auto !important; }
+}
+
+/* Dialog „Speichern“: Umschalter für 2 Seiten auf ein Blatt. */
+.save-twoup { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 10px 12px; margin-bottom: 8px; border: 1px solid #d5dfd8; border-radius: 12px; background: #fff; cursor: pointer; font: inherit; color: inherit; }
+.save-twoup strong { display: block; }
+.save-twoup small { color: #5d6f66; }
+.save-twoup.is-on { border-color: #52796f; background: #eef5f0; }
+.save-twoup-sheet { flex: none; width: 26px; height: 36px; border: 1.5px solid #52796f; border-radius: 3px; display: flex; flex-direction: column; padding: 3px; gap: 3px; background: #fff; }
+.save-twoup-sheet i { flex: 1; background: #b7d3c4; border-radius: 1px; }
+.save-twoup-switch { flex: none; margin-left: auto; width: 40px; height: 22px; border-radius: 11px; background: #c9d3ce; position: relative; transition: background .15s; }
+.save-twoup-switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s; }
+.save-twoup.is-on .save-twoup-switch { background: #52796f; }
+.save-twoup.is-on .save-twoup-switch::after { transform: translateX(18px); }
+
+/* ---------- Regal (neu, 22.11.2026): Ordnerspalte links, kleine Hefte mit Seitenvorschau ---------- */
+.shelf .shelf-body { padding-top: 34px; }
+.shelf .shelf-heading { margin-bottom: 22px; align-items: flex-end; }
+.shelf .shelf-heading h1 { font-size: 40px; margin: 0 0 4px; }
+.shelf .shelf-heading p { font-size: 13px; }
+.shelf-heading-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.shelf .shelf-heading .knopf { min-height: 44px; padding: 8px 16px; }
+.shelf-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 28px; align-items: start; }
+
+.shelf-folders { position: sticky; top: 16px; display: flex; flex-direction: column; gap: 2px; background: #fff; border: 1px solid #e3e8e1; border-radius: 14px; padding: 10px; }
+.shelf-folders h2 { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: #7a877d; margin: 14px 8px 4px; font-weight: 700; }
+.folder-row { display: flex; align-items: center; gap: 9px; width: 100%; min-height: 38px; padding: 6px 9px; border: 0; border-radius: 9px; background: none; font: inherit; font-size: 14px; color: #2f4238; text-align: left; cursor: pointer; }
+.folder-row > span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.folder-row > small { font-size: 12px; color: #7a877d; background: #eef2ec; border-radius: 10px; padding: 1px 8px; }
+.folder-row:hover { background: #f1f5ef; }
+.folder-row[aria-pressed='true'] { background: #e1ede4; font-weight: 600; }
+.folder-row[aria-pressed='true'] > small { background: #fff; }
+.folder-item { position: relative; display: flex; align-items: center; border-radius: 9px; }
+.folder-item .pop-menu { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity .12s; }
+.folder-item:hover .pop-menu, .folder-item:focus-within .pop-menu, .folder-item .pop-menu:has([aria-expanded='true']) { opacity: 1; }
+.folder-item:hover .folder-row > small, .folder-item:focus-within .folder-row > small { visibility: hidden; }
+.folder-item.is-drop, .folder-row.is-drop { outline: 2px dashed #52796f; outline-offset: -2px; background: #e8f2ea; }
+.folder-row.is-editing { background: #f1f5ef; cursor: default; }
+.folder-row.is-editing input { flex: 1; min-width: 0; font: inherit; font-size: 14px; border: 1px solid #9ec8ba; border-radius: 6px; padding: 4px 7px; }
+.folder-new { color: #52796f; }
+.folder-hint { font-size: 11px; color: #8a968c; margin: 8px 8px 2px; }
+.folder-glyph { flex: none; }
+
+.shelf-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+.shelf-toolbar h2 { font-size: 22px; font-weight: 600; margin: 0 auto 0 0; display: flex; align-items: baseline; gap: 8px; }
+.shelf-toolbar h2 small { font-size: 14px; color: #7a877d; font-weight: 500; }
+.shelf .search { width: 230px; padding: 6px 11px; }
+.shelf-switch { display: inline-flex; border: 1px solid #d9ded5; border-radius: 9px; background: #fff; padding: 2px; }
+.shelf-switch button { display: inline-flex; align-items: center; gap: 5px; border: 0; background: none; font: inherit; font-size: 13px; color: #4b5d52; padding: 5px 10px; border-radius: 7px; min-height: 32px; cursor: pointer; }
+.shelf-switch button[aria-pressed='true'] { background: #e1ede4; color: #22382c; font-weight: 600; }
+
+.shelf .book-grid { grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 22px 18px; }
+.shelf .book-card { position: relative; display: flex; flex-direction: column; background: #fff; border: 1px solid #e3e8e1; border-radius: 12px; overflow: visible; transition: box-shadow .15s, transform .15s; }
+.shelf .book-card:hover { box-shadow: 0 6px 18px #263e3b1a; transform: translateY(-2px); }
+.shelf .book-cover { height: auto; aspect-ratio: 4 / 3; display: grid; place-items: center; border-radius: 11px 11px 0 0; background: color-mix(in srgb, var(--book) 30%, #f7f8f4); border-top: 6px solid var(--book); box-shadow: none; overflow: hidden; transform: none; }
+.shelf .book-cover:hover { transform: none; }
+.shelf .cover-preview { position: static; transform: none; opacity: 1; width: 82%; bottom: auto; right: auto; box-shadow: 0 2px 8px #1f2f2a26; border-radius: 2px; overflow: hidden; background: #fff; line-height: 0; }
+.shelf .cover-preview.portrait { width: 44%; }
+.shelf .book-caption { margin: 0; padding: 10px 12px 12px; padding-right: 44px; }
+.shelf .book-caption a { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 14px; line-height: 1.3; font-weight: 600; overflow: hidden; color: #22382c; }
+.shelf .book-caption a::after { content: ""; position: absolute; inset: 0; border-radius: 12px; } /* ganze Karte klickbar */
+.shelf .book-caption p { margin: 3px 0 0; font-size: 12px; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+.book-folder-tag { display: inline-flex; align-items: center; gap: 3px; color: #5d6e60; }
+.book-folder-tag .folder-glyph { width: 14px; height: 14px; }
+.shelf .book-actions { position: absolute; right: 6px; bottom: 9px; z-index: 2; display: block; }
+.shelf .new-book { height: auto; min-height: 100%; aspect-ratio: auto; border-radius: 12px; gap: 4px; padding: 20px 10px; }
+.shelf .book-grid .new-book { min-height: 190px; }
+
+/* Liste */
+.book-list { display: flex; flex-direction: column; background: #fff; border: 1px solid #e3e8e1; border-radius: 12px; }
+.book-list .book-card { flex-direction: row; align-items: center; border: 0; border-bottom: 1px solid #eef1ec; border-radius: 0; padding: 6px 10px; gap: 12px; }
+.book-list .book-card:hover { transform: none; box-shadow: none; background: #f7faf6; }
+.book-list .book-cover { width: 72px; flex: none; border-radius: 6px; border-top-width: 3px; }
+.book-list .book-caption { flex: 1; padding: 4px 0; min-width: 0; }
+.book-list .book-actions { position: static; }
+.book-list .new-book { flex-direction: row; min-height: 52px; border: 0; border-radius: 0 0 12px 12px; background: none; justify-content: flex-start; padding: 8px 16px; gap: 10px; }
+.book-list .new-book small { display: none; }
+
+/* Aufklappmenü */
+.pop-menu { position: relative; display: inline-block; }
+.pop-menu-button { display: inline-flex; align-items: center; gap: 5px; border: 1px solid transparent; background: none; border-radius: 8px; padding: 4px 8px; min-height: 32px; font: inherit; font-size: 12px; color: #4b5d52; cursor: pointer; }
+.pop-menu-button:hover, .pop-menu-button[aria-expanded='true'] { background: #eef3ec; border-color: #d9e2d6; }
+.pop-menu-dots { letter-spacing: -1px; font-size: 11px; }
+.book-card .pop-menu-button > span:not(.pop-menu-dots) { display: none; }
+.book-list .pop-menu-button > span:not(.pop-menu-dots) { display: inline; }
+.pop-menu.is-small .pop-menu-button { min-height: 28px; padding: 2px 6px; }
+.pop-menu-panel { position: absolute; right: 0; top: calc(100% + 4px); z-index: 30; min-width: 210px; max-height: 360px; overflow: auto; background: #fff; border: 1px solid #dfe5dc; border-radius: 12px; box-shadow: 0 10px 30px #1f2f2a2e; padding: 6px; }
+.pop-menu-panel.is-up { top: auto; bottom: calc(100% + 4px); }
+.pop-menu-panel hr { border: 0; border-top: 1px solid #edf0eb; margin: 5px 4px; }
+.pop-menu-title { font-size: 11px; color: #7a877d; text-transform: uppercase; letter-spacing: 1px; margin: 8px 8px 2px; font-weight: 700; }
+.pop-menu-item { display: flex; align-items: center; gap: 9px; width: 100%; border: 0; background: none; border-radius: 8px; padding: 7px 9px; min-height: 36px; font: inherit; font-size: 14px; color: #2f4238; text-align: left; cursor: pointer; }
+.pop-menu-item:hover { background: #f1f5ef; }
+.pop-menu-item[aria-pressed='true'] { font-weight: 600; }
+.pop-menu-item > span:nth-child(2) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pop-menu-icon { display: inline-flex; width: 20px; justify-content: center; }
+.pop-menu-check { color: #52796f; }
+.pop-menu-item.is-danger { color: #b3261e; }
+
+@media (max-width: 860px) {
+  .shelf-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .shelf-folders { position: static; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; padding: 6px; gap: 4px; }
+  .shelf-folders h2, .folder-hint { display: none; }
+  .shelf-folders .folder-row { width: auto; flex: none; }
+  .folder-item { flex: none; }
+  .folder-item .pop-menu { opacity: 1; }
+  .shelf .search { width: 100%; order: 3; }
+  .shelf .book-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .shelf .book-cover, .shelf .new-book { height: auto; }
+}
+.shelf .book-actions button { min-height: 0; }
+.shelf .book-actions .pop-menu-item { font-size: 14px; color: #2f4238; padding: 7px 9px; min-height: 36px; text-decoration: none; }
+.shelf .book-actions .pop-menu-item.is-danger { color: #b3261e; }
+.shelf .book-actions .pop-menu-button { font-size: 12px; padding: 4px 8px; min-height: 32px; text-decoration: none; }
+/* Das offene Menü liegt über den Nachbarkarten (sonst klickt man durch auf ein anderes Heft). */
+.shelf .book-card:has(.pop-menu-panel) { z-index: 25; transform: none; }
+.folder-item:has(.pop-menu-panel) { z-index: 25; }

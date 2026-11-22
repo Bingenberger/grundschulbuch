@@ -50,6 +50,11 @@ test('Aufgabenpäckchen: Skript, Vorschau, Ausfüllen, Prüfen, Druck und Kinder
   const sheet = page.locator('.interaction-surface .paeckchen');
   const tasks = sheet.locator('.pk-task');
   await expect(tasks).toHaveCount(16);
+  // „Neu generieren“ in the bottom bar: the same tasks with other numbers.
+  const drawn = await tasks.allInnerTexts();
+  await page.getByRole('region', { name: 'Element einstellen' }).getByRole('button', { name: 'Neu generieren' }).click();
+  await expect.poll(async () => (await tasks.allInnerTexts()).join('|')).not.toBe(drawn.join('|'));
+  await expect(tasks).toHaveCount(16);
   // Fill in all but the last one right, the last one wrong.
   for (let i = 0; i < 16; i++) {
     const box = tasks.nth(i).getByRole('textbox');

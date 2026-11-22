@@ -1,6 +1,5 @@
 'use client';
 import Icon from './Icon';
-import { Picker } from './ui/Choice';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/client-api';
@@ -11,6 +10,7 @@ import FileDialog from './FileDialog';
 import SaveDialog from './SaveDialog';
 import HelpDialog from './HelpDialog';
 import LogoutButton from '@/app/LogoutButton';
+import { FolderGlyph, MenuItem, PopMenu } from './ui/PopMenu';
 const colors = [
   '#52796f',
   '#c48057',
@@ -19,6 +19,8 @@ const colors = [
   '#c7a24b',
   '#657b57',
 ];
+/** Neue Ordner bekommen der Reihe nach eine eigene Farbe. */
+const folderColors = ['#52796f', '#e09f3e', '#637ca5', '#c05d7b', '#7a9e3a', '#8e6fb5', '#d1704b', '#3d9aa8'];
 export default function Shelf({
   initialBooks,
   name,
@@ -37,6 +39,23 @@ export default function Shelf({
   const [folders, setFolders] = useState<Folder[]>([]),
     [folder, setFolder] = useState('all');
   const [query, setQuery] = useState('');
+  const [creating, setCreating] = useState(false);
+  const [renaming, setRenaming] = useState<string | null>(null);
+  // Ansicht und Sortierung merkt sich das Gerät.
+  const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [sort, setSort] = useState<'recent' | 'name'>('recent');
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('regal.view') === 'list') setView('list');
+      if (localStorage.getItem('regal.sort') === 'name') setSort('name');
+    } catch {}
+  }, []);
+  function remember<T extends string>(key: string, set: (value: T) => void, value: T) {
+    set(value);
+    try {
+      localStorage.setItem(`regal.${key}`, value);
+    } catch {}
+  }
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   useEffect(() => {
@@ -123,25 +142,23 @@ export default function Shelf({
       );
     });
   }
-  async function createFolder() {
-    const title = prompt('Wie heißt der neue Ordner?');
-    if (title?.trim())
+  async function createFolder(title: string) {
+    if (title.trim())
       await folderTask(async () => {
-        const f = await api<Folder>('folder', { title });
+        const f = await api<Folder>('folder', { title: title.trim(), color: folderColors[folders.length % folderColors.length] });
         setFolders((current) => [...current, f]);
         setFolder(f.id);
       });
   }
-  async function renameFolder(f: Folder) {
-    const title = prompt('Ordnername', f.title);
-    if (title?.trim())
+  async function renameFolder(f: Folder, title: string) {
+    if (title.trim() && title.trim() !== f.title)
       await folderTask(async () => {
-        await api('folder', { folderId: f.id, title });
+        await api('folder', { folderId: f.id, title: title.trim() });
         setFolders(await api<Folder[]>('folders'));
       });
   }
   async function deleteFolder(f: Folder) {
-    if (confirm('Ordner entfernen? Die Hefte bleiben im Regal.'))
+    if (confirm(`Ordner „${f.title}“ entfernen? Die Hefte bleiben im Regal.`))
       await folderTask(async () => {
         await api('removeFolder', { folderId: f.id });
         setFolders(await api<Folder[]>('folders'));
@@ -149,6 +166,53 @@ export default function Shelf({
         setFolder('all');
       });
   }
+  const newBook = () => {
+    setDialog({ type: 'new' });
+    setTitle('');
+    setColor(colors[books.length % colors.length]);
+  };
+  const needle = query.toLocaleLowerCase('de');
+  const inFolder = (b: BookSummary) =>
+    folder === 'all' ? true : folder === 'none' ? !b.folderId || !folders.some((f) => f.id === b.folderId) : b.folderId === folder;
+  const shown = books
+    .filter((b) => inFolder(b) && b.title.toLocaleLowerCase('de').includes(needle))
+    .sort((a, b) => (sort === 'name' ? a.title.localeCompare(b.title, 'de') : b.updatedAt.localeCompare(a.updatedAt)));
+  const current = folders.find((f) => f.id === folder);
+  const heading = folder === 'all' ? 'Alle Hefte' : folder === 'none' ? 'Ohne Ordner' : current?.title || 'Ordner';
+  const count = (id: string) =>
+    books.filter((b) => (id === 'all' ? true : id === 'none' ? !b.folderId || !folders.some((f) => f.id === b.folderId) : b.folderId === id)).length;
+  const dropOn = (folderId: string | null) => ({
+    onDragOver: (e: React.DragEvent) => {
+      e.preventDefault();
+      (e.currentTarget as HTMLElement).classList.add('is-drop');
+    },
+    onDragLeave: (e: React.DragEvent) => (e.currentTarget as HTMLElement).classList.remove('is-drop'),
+    onDrop: (e: React.DragEvent) => {
+      e.preventDefault();
+      (e.currentTarget as HTMLElement).classList.remove('is-drop');
+      const book = books.find((b) => b.id === e.dataTransfer.getData('text/plain'));
+      if (book && (book.folderId || null) !== folderId) void moveBook(book, folderId);
+    },
+  });
+  const folderTitle = (b: BookSummary) => folders.find((f) => f.id === b.folderId)?.title;
+  const bookMenu = (book: BookSummary) => (
+    <PopMenu label={`${book.title}: mehr`}>
+      {(close) => (
+        <>
+          <MenuItem icon="buntstift" onClick={() => { close(); setDialog({ type: 'rename', book }); setTitle(book.title); setColor(book.color); }}>Umbenennen</MenuItem>
+          <MenuItem icon="stack_of_photos" onClick={() => { close(); void duplicate(book); }}>Duplizieren</MenuItem>
+          <MenuItem icon="speichern" label={`${book.title} speichern`} onClick={() => { close(); void openSave(book); }}>Speichern …</MenuItem>
+          <div className="pop-menu-title">In Ordner legen</div>
+          <MenuItem icon="cancel" pressed={!book.folderId} onClick={() => { close(); void moveBook(book, null); }}>Ohne Ordner</MenuItem>
+          {folders.map((f) => (
+            <MenuItem key={f.id} icon={<FolderGlyph color={f.color} />} pressed={book.folderId === f.id} onClick={() => { close(); void moveBook(book, f.id); }}>{f.title}</MenuItem>
+          ))}
+          <hr />
+          <MenuItem icon="empty_trash" danger label={`${book.title} löschen`} onClick={() => { close(); setDialog({ type: 'delete', book }); }}>Löschen</MenuItem>
+        </>
+      )}
+    </PopMenu>
+  );
   return (
     <main className="shelf">
       <header className="app-header">
@@ -172,229 +236,155 @@ export default function Shelf({
         </div>
       </header>
       <div className="shelf-body">
-        <div className="eyebrow">DEIN PLATZ FÜR GUTE IDEEN</div>
         <div className="shelf-heading">
           <div>
             <h1>
               Mein Regal<span className="title-dot">.</span>
             </h1>
-            <p>Aus einer leeren Seite wird ein kleines Stück Lernen.</p>
+            <p>
+              {books.length} {books.length === 1 ? 'Heft' : 'Hefte'} · nur für dich
+            </p>
           </div>
-          <button
-            className="knopf knopf-haupt"
-            onClick={() => {
-              setDialog({ type: 'new' });
-              setTitle('');
-              setColor(colors[books.length % colors.length]);
-            }}
-          >
-            <Icon name="plus" size={22} /> Neues Heft
-          </button>
-        </div>
-        <button className="knopf" onClick={() => setShowFiles(true)}>
-          <Icon name="opened_folder" size={22} /> Heft, ePub oder PDF öffnen
-        </button>
-        <div className="shelf-filter">
-          <label className="search">
-            <Icon name="search" size={20} />
-            <input
-              aria-label="Hefte suchen"
-              placeholder="Ein Heft suchen …"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </label>
-          <span>
-            {books.length} {books.length === 1 ? 'Heft' : 'Hefte'} · nur für
-            dich
-          </span>
+          <div className="shelf-heading-actions">
+            <button className="knopf" onClick={() => setShowFiles(true)}>
+              <Icon name="opened_folder" size={22} /> Heft, ePub oder PDF öffnen
+            </button>
+            <button className="knopf knopf-haupt" onClick={newBook}>
+              <Icon name="plus" size={22} /> Neues Heft
+            </button>
+          </div>
         </div>
         {error && (
           <p className="fehler" role="alert">
             {error}
           </p>
         )}
-        <div className="folder-bar">
-          <button
-            className="knopf compact"
-            aria-pressed={folder === 'all'}
-            onClick={() => setFolder('all')}
-          >
-            Alle Hefte
-          </button>
-          <button
-            className="knopf compact"
-            aria-pressed={folder === 'none'}
-            onClick={() => setFolder('none')}
-          >
-            Ohne Ordner
-          </button>
-          {folders.map((f) => (
-            <div
-              key={f.id}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
-                e.preventDefault();
-                const book = books.find(
-                  (b) => b.id === e.dataTransfer.getData('text/plain'),
-                );
-                if (book) void moveBook(book, f.id);
-              }}
-            >
-              <button
-                className="knopf compact"
-                aria-pressed={folder === f.id}
-                onClick={() => setFolder(f.id)}
-              >
-                <Icon name="folder" size={18} /> {f.title}
-              </button>
-              <button
-                className="folder-edit"
-                aria-label={`Ordner ${f.title} umbenennen`}
-                onClick={() => void renameFolder(f)}
-              >
-                ✎
-              </button>
-              <button
-                className="folder-edit"
-                aria-label={`Ordner ${f.title} löschen`}
-                onClick={() => void deleteFolder(f)}
-              >
-                ×
-              </button>
-            </div>
-          ))}
-          <button className="knopf compact" onClick={() => void createFolder()}>
-            <Icon name="folder" size={18} /> Neuer Ordner
-          </button>
-        </div>
-        <div className="book-grid">
-          {books
-            .filter((b) =>
-              folder === 'all' || folder === 'none'
-                ? !b.folderId || folder === 'all'
-                : b.folderId === folder,
-            )
-            .filter((b) =>
-              b.title
-                .toLocaleLowerCase('de')
-                .includes(query.toLocaleLowerCase('de')),
-            )
-            .map((book) => (
-              <article
-                className="book-card"
-                key={book.id}
-                draggable
-                onDragStart={(e) =>
-                  e.dataTransfer.setData('text/plain', book.id)
-                }
-              >
-                <Link
-                  className="book-cover"
-                  href={`/heft/${book.id}`}
-                  style={{ background: book.color }}
+        <div className="shelf-layout">
+          <nav className="shelf-folders" aria-label="Ordner">
+            <button type="button" className="folder-row" aria-pressed={folder === 'all'} onClick={() => setFolder('all')}>
+              <Icon name="library" size={20} /> <span>Alle Hefte</span> <small>{count('all')}</small>
+            </button>
+            <button type="button" className="folder-row" aria-pressed={folder === 'none'} onClick={() => setFolder('none')} {...dropOn(null)}>
+              <Icon name="document" size={20} /> <span>Ohne Ordner</span> <small>{count('none')}</small>
+            </button>
+            <h2>Ordner</h2>
+            {folders.map((f) =>
+              renaming === f.id ? (
+                <form
+                  key={f.id}
+                  className="folder-row is-editing"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const value = new FormData(e.currentTarget).get('title') as string;
+                    setRenaming(null);
+                    void renameFolder(f, value);
+                  }}
                 >
-                  <span className="book-binding" />
-                  <div className="book-label">
-                    <span>GRUNDSCHULBUCH</span>
-                    <strong>{book.title}</strong>
-                    <small>
-                      {book.pageIds.length}{' '}
-                      {book.pageIds.length === 1 ? 'Seite' : 'Seiten'} · A4
-                    </small>
-                  </div>
-                  <div className="cover-preview">
-                    <ScaledPage page={book.preview} decorative />
-                  </div>
-                </Link>
-                <div className="book-caption">
-                  <Link href={`/heft/${book.id}`}>{book.title}</Link>
-                  <p>
-                    Bearbeitet am{' '}
-                    {new Date(book.updatedAt).toLocaleDateString('de-DE')}
-                  </p>
+                  <FolderGlyph color={f.color} />
+                  <input name="title" aria-label={`Neuer Name für ${f.title}`} defaultValue={f.title} maxLength={80} autoFocus onBlur={(e) => e.currentTarget.form?.requestSubmit()} onKeyDown={(e) => e.key === 'Escape' && setRenaming(null)} />
+                </form>
+              ) : (
+                <div key={f.id} className="folder-item" {...dropOn(f.id)}>
+                  <button type="button" className="folder-row" aria-pressed={folder === f.id} onClick={() => setFolder(f.id)}>
+                    <FolderGlyph color={f.color} /> <span>{f.title}</span> <small>{count(f.id)}</small>
+                  </button>
+                  <PopMenu label={`Ordner ${f.title}: mehr`} small>
+                    {(close) => (
+                      <>
+                        <MenuItem icon="buntstift" label={`Ordner ${f.title} umbenennen`} onClick={() => { close(); setRenaming(f.id); }}>Umbenennen</MenuItem>
+                        <MenuItem icon="empty_trash" danger label={`Ordner ${f.title} löschen`} onClick={() => { close(); void deleteFolder(f); }}>Ordner entfernen</MenuItem>
+                      </>
+                    )}
+                  </PopMenu>
                 </div>
-                <div className="book-actions">
-                  <details className="book-folder">
-                    <summary>
-                      <Icon name="folder" size={18} />
-                      {folders.find((f) => f.id === book.folderId)?.title || 'Ohne Ordner'}
-                    </summary>
-                    <Picker
-                      compact
-                      label="In Ordner legen"
-                      name={`Ordner für ${book.title}`}
-                      value={book.folderId || ''}
-                      onChange={async (folderId) => {
-                      try {
-                        const saved = await api<Notebook>('update', {
-                          id: book.id,
-                          revision: book.revision,
-                          folderId: folderId || null,
-                        });
-                        setBooks(
-                          books.map((b) =>
-                            b.id === book.id ? { ...b, ...saved } : b,
-                          ),
-                        );
-                      } catch (e) {
-                        setError((e as Error).message);
-                      }
-                      }}
-                      options={[
-                        { value: '', label: 'Ohne Ordner', icon: 'cancel' },
-                        ...folders.map((f) => ({ value: f.id, label: f.title, icon: 'folder' as const })),
-                      ]}
-                    />
-                  </details>
-                  <button
-                    onClick={() => {
-                      setDialog({ type: 'rename', book });
-                      setTitle(book.title);
-                      setColor(book.color);
-                    }}
-                    disabled={busy}
-                  >
-                    Umbenennen
-                  </button>
-                  <button onClick={() => duplicate(book)} disabled={busy}>
-                    Duplizieren
-                  </button>
-                  <button
-                    aria-label={`${book.title} speichern`}
-                    onClick={() => void openSave(book)}
-                    disabled={busy}
-                  >
-                    Speichern …
-                  </button>
-                  <button
-                    aria-label={`${book.title} löschen`}
-                    onClick={() => setDialog({ type: 'delete', book })}
-                    disabled={busy}
-                  >
-                    Löschen
-                  </button>
-                </div>
-              </article>
-            ))}
-          <button
-            className="new-book"
-            onClick={() => {
-              setDialog({ type: 'new' });
-              setTitle('');
-            }}
-          >
-            <Icon name="idea" size={56} />
-            <strong>Eine neue Idee?</strong>
-            <small>Lege ein leeres Heft an.</small>
-          </button>
+              ),
+            )}
+            {creating ? (
+              <form
+                className="folder-row is-editing"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const value = new FormData(e.currentTarget).get('title') as string;
+                  setCreating(false);
+                  void createFolder(value);
+                }}
+              >
+                <FolderGlyph color="#9aa9a0" />
+                <input name="title" aria-label="Name des neuen Ordners" placeholder="Name des Ordners" maxLength={80} autoFocus onBlur={(e) => (e.currentTarget.value.trim() ? e.currentTarget.form?.requestSubmit() : setCreating(false))} onKeyDown={(e) => e.key === 'Escape' && setCreating(false)} />
+              </form>
+            ) : (
+              <button type="button" className="folder-row folder-new" onClick={() => setCreating(true)}>
+                <Icon name="plus" size={18} /> <span>Neuer Ordner</span>
+              </button>
+            )}
+            {folders.length > 0 && <p className="folder-hint">Hefte lassen sich auf einen Ordner ziehen.</p>}
+          </nav>
+          <section className="shelf-main" aria-label={heading}>
+            <div className="shelf-toolbar">
+              <h2>
+                {heading} <small>{shown.length}</small>
+              </h2>
+              <label className="search">
+                <Icon name="search" size={20} />
+                <input aria-label="Hefte suchen" placeholder="Ein Heft suchen …" value={query} onChange={(e) => setQuery(e.target.value)} />
+              </label>
+              <div className="shelf-switch" role="group" aria-label="Sortieren">
+                <button type="button" aria-pressed={sort === 'recent'} onClick={() => remember('sort', setSort, 'recent')}>
+                  <Icon name="clock" size={18} /> Zuletzt
+                </button>
+                <button type="button" aria-pressed={sort === 'name'} onClick={() => remember('sort', setSort, 'name')}>
+                  <Icon name="list" size={18} /> A–Z
+                </button>
+              </div>
+              <div className="shelf-switch" role="group" aria-label="Ansicht">
+                <button type="button" aria-pressed={view === 'grid'} onClick={() => remember('view', setView, 'grid')}>
+                  <Icon name="grid" size={18} /> Kacheln
+                </button>
+                <button type="button" aria-pressed={view === 'list'} onClick={() => remember('view', setView, 'list')}>
+                  <Icon name="todo_list" size={18} /> Liste
+                </button>
+              </div>
+            </div>
+            <div className={view === 'list' ? 'book-list' : 'book-grid'}>
+              {shown.map((book) => (
+                <article
+                  className="book-card"
+                  key={book.id}
+                  draggable
+                  onDragStart={(e) => e.dataTransfer.setData('text/plain', book.id)}
+                  style={{ '--book': book.color } as React.CSSProperties}
+                >
+                  <Link className="book-cover" href={`/heft/${book.id}`} tabIndex={-1} aria-hidden="true">
+                    <span className={`cover-preview ${book.preview.orientation}`}>
+                      <ScaledPage page={book.preview} decorative />
+                    </span>
+                  </Link>
+                  <div className="book-caption">
+                    <Link href={`/heft/${book.id}`}>{book.title}</Link>
+                    <p>
+                      {book.pageIds.length} {book.pageIds.length === 1 ? 'Seite' : 'Seiten'} · {new Date(book.updatedAt).toLocaleDateString('de-DE')}
+                      {folder === 'all' && folderTitle(book) && (
+                        <span className="book-folder-tag">
+                          <FolderGlyph color={folders.find((f) => f.id === book.folderId)!.color} /> {folderTitle(book)}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="book-actions">{bookMenu(book)}</div>
+                </article>
+              ))}
+              {!query && (
+                <button className="new-book" onClick={newBook}>
+                  <Icon name="plus" size={28} />
+                  <strong>Eine neue Idee?</strong>
+                  <small>Lege ein leeres Heft an.</small>
+                </button>
+              )}
+            </div>
+            {query && !shown.length && <p className="leer">Kein Heft mit diesem Namen gefunden.</p>}
+            {!query && !shown.length && folder !== 'all' && <p className="leer">In diesem Ordner liegt noch kein Heft. Ziehe ein Heft hierher oder lege es über „Mehr“ in den Ordner.</p>}
+          </section>
         </div>
-        {books.length > 0 &&
-          !books.some((b) =>
-            b.title
-              .toLocaleLowerCase('de')
-              .includes(query.toLocaleLowerCase('de')),
-          ) && <p className="leer">Kein Heft mit diesem Namen gefunden.</p>}
         <footer className="shelf-footer">
           <span>Für kleine Schritte und große Entdeckungen.</span>
           <span>Deine Hefte bleiben auf dem Schulserver.</span>

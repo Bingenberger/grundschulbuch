@@ -24,7 +24,10 @@ export function searchImages(
   source: string,
   query: string,
   page?: number | string,
-): Promise<{ items: ImageHit[]; page: number; more: boolean }>;
+  /** Children: Wikimedia results are checked against a block list. */
+  options?: { child?: boolean },
+): Promise<{ items: ImageHit[]; page: number; more: boolean; blocked?: boolean }>;
+export function blockedForChildren(text: string): boolean;
 export function allowedImageUrl(source: string, url: string): boolean;
 export function loadImage(source: string, url: string): Promise<{ buffer: Buffer; type: string }>;
 

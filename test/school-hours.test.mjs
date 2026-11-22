@@ -1,0 +1,30 @@
+import { test, after } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'grundschulbuch-schulschluss-'));
+process.env.GRUNDSCHULBUCH_DATA_DIR = directory;
+process.env.SESSION_SECRET = 'school-hours-secret'.padEnd(48, 'x');
+delete process.env.SCHOOL_END_HOUR;
+const hours = await import('../src/lib/school-hours.mjs');
+after(() => fs.rm(directory, { recursive: true, force: true }));
+
+test('Schulschluss: Voreinstellung des Servers, von der Verwaltung überschreibbar und zurücksetzbar', async () => {
+  assert.equal(await hours.schoolEndHour(), 16);
+  process.env.SCHOOL_END_HOUR = '15';
+  assert.deepEqual(await hours.schoolHoursSettings(), { endHour: 15, own: false, serverEndHour: 15, updatedAt: null });
+  const set = await hours.setSchoolEndHour(24);
+  assert.equal(set.endHour, 24);
+  assert.equal(set.own, true);
+  assert.equal(await hours.schoolEndHour(), 24);
+  await assert.rejects(hours.setSchoolEndHour(0));
+  await assert.rejects(hours.setSchoolEndHour(18.5));
+  await assert.rejects(hours.setSchoolEndHour('18'));
+  assert.equal(await hours.schoolEndHour(), 24);
+  const back = await hours.setSchoolEndHour(null);
+  assert.equal(back.own, false);
+  assert.equal(await hours.schoolEndHour(), 15);
+  process.env.SCHOOL_END_HOUR = 'quatsch';
+  assert.equal(await hours.schoolEndHour(), 16);
+});

@@ -101,3 +101,29 @@ test('Nur Adressen der Suchen werden geladen, nur Rasterbilder werden angenommen
   mockFetch(() => answer(Buffer.alloc(13 * 1024 * 1024), { type: 'image/png' }));
   await assert.rejects(loadImage('arasaac', 'https://static.arasaac.org/pictograms/1/1_500.png'), /zu groß/);
 });
+
+test('Wikimedia für Kinder: gesperrte Suchwörter fragen gar nicht erst, ungeeignete Treffer fallen heraus', async () => {
+  const { blockedForChildren } = await import('../src/lib/image-sources.mjs');
+  for (const ok of ['Nudeln', 'gleiche Formen', 'Comicstrip', 'Drogerie', 'Katze', 'Essex']) assert.equal(blockedForChildren(ok), false, ok);
+  for (const bad of ['nackt', 'nude woman', 'Leiche', 'Porno', 'Hakenkreuz']) assert.equal(blockedForChildren(bad), true, bad);
+  let calls = mockFetch(() => answer({}));
+  const refused = await searchImages('wikimedia', 'nackt', 1, { child: true });
+  assert.deepEqual(refused, { items: [], page: 1, more: false, blocked: true });
+  assert.equal(calls.length, 0);
+  const file = (pageid, title, categories, description = '') => ({
+    pageid, index: pageid, title, categories: categories.map((c) => ({ title: `Category:${c}` })),
+    imageinfo: [{ mime: 'image/jpeg', width: 800, height: 600, url: `https://upload.wikimedia.org/wikipedia/commons/a/ab/${pageid}.jpg`, thumburl: `https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/${pageid}.jpg/330px-${pageid}.jpg`, extmetadata: { ImageDescription: { value: description } } }],
+  });
+  calls = mockFetch(() => answer({ continue: { gsroffset: 30, continue: '-||' }, query: { pages: [
+    file(1, 'File:Katze im Garten.jpg', ['Cats in gardens']),
+    file(2, 'File:Statue.jpg', ['Nude sculptures']),
+    file(3, 'File:Bild.jpg', ['Paintings'], 'Eine nackte Figur'),
+  ] } }));
+  const result = await searchImages('wikimedia', 'Garten', 1, { child: true });
+  assert.deepEqual(result.items.map((i) => i.id), ['1']);
+  assert.equal(result.more, true);
+  assert.match(calls[0].url, /prop=imageinfo%7Ccategories/);
+  // Teachers search as before, without the filter.
+  mockFetch(() => answer({ query: { pages: [file(2, 'File:Statue.jpg', ['Nude sculptures'])] } }));
+  assert.equal((await searchImages('wikimedia', 'Statue')).items.length, 1);
+});

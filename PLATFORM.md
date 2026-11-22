@@ -53,7 +53,7 @@ Weitere optionale Umgebungsvariablen:
 
 | Variable | Bedeutung |
 | --- | --- |
-| `SCHOOL_END_HOUR` | Schulschluss für Kinder in Europe/Berlin, ganze Stunde 1–24, Standard 16 |
+| `SCHOOL_END_HOUR` | Voreinstellung für den Schulschluss der Kinder in Europe/Berlin, ganze Stunde 1–24, Standard 16; die Verwaltung kann sie unter „Einstellungen“ überschreiben |
 | `GALLERY_ORIGIN` | Bildergalerie der Schule (JSON-API v1) für den Reiter „Schulgalerie“; Standard `https://bilder.gsndk.de`, leer schaltet sie ab |
 | `WOERTERBUCH_ORIGIN` | Link zum Wörterbuch; kein direkter Suchadapter |
 | `GRUNDSCHULBUCH_ASSET_DIR` | Betreiberinhalte. Im Container `/assets`, in Compose schreibgeschützt gemountet. JSON-Vorlagen unter `vorlagen/`; Beispiel in `docs/schulvorlage.json`. |

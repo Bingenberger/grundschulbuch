@@ -355,16 +355,18 @@ function SearchTab({ source, onChoose, busy }: { source: SearchSource; onChoose:
   const [more, setMore] = useState(false);
   const [state, setState] = useState<'idle' | 'loading' | 'done'>(source === 'galerie' ? 'loading' : 'idle');
   const [error, setError] = useState('');
+  const [blocked, setBlocked] = useState(false);
   const fetchPage = useCallback(
     async (q: string, n: number) => {
       const response = await fetch(`/api/bilder?${new URLSearchParams({ quelle: source, q, seite: String(n) })}`);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
-      return data as { items: Hit[]; more: boolean };
+      return data as { items: Hit[]; more: boolean; blocked?: boolean };
     },
     [source],
   );
-  const show = (n: number, data: { items: Hit[]; more: boolean }) => {
+  const show = (n: number, data: { items: Hit[]; more: boolean; blocked?: boolean }) => {
+    setBlocked(!!data.blocked);
     setHits((old) => (n === 1 ? data.items : [...old, ...data.items]));
     setPage(n);
     setMore(data.more);
@@ -426,7 +428,8 @@ function SearchTab({ source, onChoose, busy }: { source: SearchSource; onChoose:
       </form>
       <p className="image-tab-note">{sourceNotes[source]}</p>
       {error && <p className="fehler" role="alert">{error}</p>}
-      {state === 'done' && !error && !hits.length && <p className="image-tab-intro">Nichts gefunden. Versuche ein anderes Wort.</p>}
+      {state === 'done' && !error && blocked && <p className="image-tab-intro">Nach diesem Wort kannst du hier nicht suchen. Versuche ein anderes Wort.</p>}
+      {state === 'done' && !error && !blocked && !hits.length && <p className="image-tab-intro">Nichts gefunden. Versuche ein anderes Wort.</p>}
       <div className="image-hits" aria-busy={state === 'loading'}>
         {hits.map((hit) => (
           <button key={`${hit.id}-${hit.thumb}`} type="button" className="image-hit" disabled={busy} title={hit.credit || hit.title} onClick={() => onChoose(hit)}>

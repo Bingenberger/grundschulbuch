@@ -4,7 +4,8 @@ import { useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import QRCode from 'qrcode';
 import Icon from './Icon';
-import { ChoiceButton } from './ui/Choice';
+import { ChoiceButton, Choices } from './ui/Choice';
+import type { SchoolHoursSettings } from '@/lib/school-hours.mjs';
 import { Preview } from './editor/TemplateChooser';
 import { categoryIcon, templateCatalog, type TemplateEntry } from './editor/page-templates';
 import { starterTemplates } from '@/lib/generators';
@@ -105,13 +106,22 @@ export default function Verwaltung({ initial, me, initialTab='konten' }: { initi
         <Classes data={data} busy={busy} run={run} putClass={putClass} setData={setData} onCards={setCards} onMessage={setMessage} />
       )}
       {tab === 'einstellungen' && (
-        <Settings
-          youtube={data.youtube}
-          busy={busy}
-          run={run}
-          onYoutube={(youtube) => setData((d) => ({ ...d, youtube }))}
-          onMessage={setMessage}
-        />
+        <>
+          <SchoolHours
+            settings={data.schoolHours}
+            busy={busy}
+            run={run}
+            onChange={(schoolHours) => setData((d) => ({ ...d, schoolHours }))}
+            onMessage={setMessage}
+          />
+          <Settings
+            youtube={data.youtube}
+            busy={busy}
+            run={run}
+            onYoutube={(youtube) => setData((d) => ({ ...d, youtube }))}
+            onMessage={setMessage}
+          />
+        </>
       )}
       {tab === 'vorlagen' && (
         <Templates
@@ -739,6 +749,68 @@ function Templates({ data, busy, run, setData }: Shared) {
       </div>
       {view==='list'&&shown.length>pageSize&&<div className="admin-template-footer">{pagination('unten')}</div>}
     </>
+  );
+}
+
+/** Schulschluss: until when children can sign in (Europe/Berlin), for the whole school. */
+const END_HOURS = [12, 13, 14, 15, 16, 17, 18, 20, 24];
+const hourText = (h: number) => (h === 24 ? 'Ganzer Tag (bis Mitternacht)' : `${h} Uhr`);
+function SchoolHours({
+  settings,
+  busy,
+  run,
+  onChange,
+  onMessage,
+}: {
+  settings: SchoolHoursSettings;
+  busy: boolean;
+  run: (task: () => Promise<void>) => Promise<void>;
+  onChange: (settings: SchoolHoursSettings) => void;
+  onMessage: (message: string) => void;
+}) {
+  const save = (endHour: number | null) =>
+    run(async () => {
+      const next = await admin<SchoolHoursSettings>('schoolHours', { endHour });
+      onChange(next);
+      onMessage(
+        endHour === null
+          ? `Schulschluss wieder wie auf dem Server eingestellt: ${hourText(next.endHour)}.`
+          : next.endHour === 24
+            ? 'Kinder können sich jetzt den ganzen Tag anmelden, zum Beispiel für Hausaufgaben.'
+            : `Schulschluss für Kinder ist jetzt um ${next.endHour} Uhr.`,
+      );
+    });
+  const options = [...new Set([...END_HOURS, settings.endHour])].sort((a, b) => a - b);
+  return (
+    <section className="karte class-section admin-settings">
+      <h2>Schulschluss für Kinder</h2>
+      <p>
+        Ab dieser Uhrzeit können sich Kinder nicht mehr anmelden, und angemeldete Kinder werden abgemeldet – damit auf
+        gemeinsam genutzten Geräten nachmittags niemand im Heft eines anderen Kindes landet. Für Ganztag oder Hausaufgaben
+        lässt sich die Zeit verlängern. Lehrkräfte sind davon nicht betroffen.
+      </p>
+      <p className="admin-settings-state" role="status">
+        <Icon name="clock" size={22} />{' '}
+        {settings.endHour === 24
+          ? 'Kinder können sich den ganzen Tag anmelden; um Mitternacht beginnt ein neuer Schultag.'
+          : `Kinder können sich bis ${settings.endHour} Uhr anmelden.`}
+        {settings.own
+          ? settings.updatedAt ? ` Eingestellt in der Verwaltung am ${dateTime(settings.updatedAt)}.` : ''
+          : ' Das ist die Voreinstellung des Servers.'}
+      </p>
+      <Choices
+        label="Schulschluss"
+        value={settings.endHour}
+        disabled={busy}
+        onChange={(endHour) => void save(endHour)}
+        options={options.map((h) => ({ value: h, label: hourText(h), icon: h === 24 ? 'home' : 'clock' }))}
+      />
+      {settings.own && (
+        <button type="button" className="knopf" disabled={busy} onClick={() => void save(null)}>
+          Zurück zur Voreinstellung des Servers ({hourText(settings.serverEndHour)})
+        </button>
+      )}
+    </section>
   );
 }
 
