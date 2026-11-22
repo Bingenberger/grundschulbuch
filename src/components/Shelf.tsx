@@ -1,6 +1,6 @@
 'use client';
 import Icon from './Icon';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/client-api';
 import type { Folder } from '@/lib/notebooks.mjs';
@@ -21,6 +21,29 @@ const colors = [
 ];
 /** Neue Ordner bekommen der Reihe nach eine eigene Farbe. */
 const folderColors = ['#52796f', '#e09f3e', '#637ca5', '#c05d7b', '#7a9e3a', '#8e6fb5', '#d1704b', '#3d9aa8'];
+// Ansicht und Sortierung merkt sich das Gerät.
+// Ohne Speicher (privates Fenster) gilt die Wahl bis zum Neuladen.
+const regalListeners = new Set<() => void>();
+const regalChosen = new Map<string, string>();
+function readRegal(key: string) {
+  try {
+    return localStorage.getItem(`regal.${key}`) ?? regalChosen.get(key) ?? null;
+  } catch {
+    return regalChosen.get(key) ?? null;
+  }
+}
+function rememberRegal(key: string, value: string) {
+  regalChosen.set(key, value);
+  try {
+    localStorage.setItem(`regal.${key}`, value);
+  } catch {}
+  regalListeners.forEach((l) => l());
+}
+function subscribeRegal(listener: () => void) {
+  regalListeners.add(listener);
+  return () => regalListeners.delete(listener);
+}
+
 export default function Shelf({
   initialBooks,
   name,
@@ -41,21 +64,8 @@ export default function Shelf({
   const [query, setQuery] = useState('');
   const [creating, setCreating] = useState(false);
   const [renaming, setRenaming] = useState<string | null>(null);
-  // Ansicht und Sortierung merkt sich das Gerät.
-  const [view, setView] = useState<'grid' | 'list'>('grid');
-  const [sort, setSort] = useState<'recent' | 'name'>('recent');
-  useEffect(() => {
-    try {
-      if (localStorage.getItem('regal.view') === 'list') setView('list');
-      if (localStorage.getItem('regal.sort') === 'name') setSort('name');
-    } catch {}
-  }, []);
-  function remember<T extends string>(key: string, set: (value: T) => void, value: T) {
-    set(value);
-    try {
-      localStorage.setItem(`regal.${key}`, value);
-    } catch {}
-  }
+  const view = useSyncExternalStore(subscribeRegal, () => readRegal('view') === 'list' ? 'list' : 'grid', () => 'grid');
+  const sort = useSyncExternalStore(subscribeRegal, () => readRegal('sort') === 'name' ? 'name' : 'recent', () => 'recent');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   useEffect(() => {
@@ -329,18 +339,18 @@ export default function Shelf({
                 <input aria-label="Hefte suchen" placeholder="Ein Heft suchen …" value={query} onChange={(e) => setQuery(e.target.value)} />
               </label>
               <div className="shelf-switch" role="group" aria-label="Sortieren">
-                <button type="button" aria-pressed={sort === 'recent'} onClick={() => remember('sort', setSort, 'recent')}>
+                <button type="button" aria-pressed={sort === 'recent'} onClick={() => rememberRegal('sort', 'recent')}>
                   <Icon name="clock" size={18} /> Zuletzt
                 </button>
-                <button type="button" aria-pressed={sort === 'name'} onClick={() => remember('sort', setSort, 'name')}>
+                <button type="button" aria-pressed={sort === 'name'} onClick={() => rememberRegal('sort', 'name')}>
                   <Icon name="list" size={18} /> A–Z
                 </button>
               </div>
               <div className="shelf-switch" role="group" aria-label="Ansicht">
-                <button type="button" aria-pressed={view === 'grid'} onClick={() => remember('view', setView, 'grid')}>
+                <button type="button" aria-pressed={view === 'grid'} onClick={() => rememberRegal('view', 'grid')}>
                   <Icon name="grid" size={18} /> Kacheln
                 </button>
-                <button type="button" aria-pressed={view === 'list'} onClick={() => remember('view', setView, 'list')}>
+                <button type="button" aria-pressed={view === 'list'} onClick={() => rememberRegal('view', 'list')}>
                   <Icon name="todo_list" size={18} /> Liste
                 </button>
               </div>
